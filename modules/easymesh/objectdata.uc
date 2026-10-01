@@ -1421,36 +1421,35 @@ function link_to_opclass_map_build(affiliated_aps, radios) {
 }
 
 /**
- * Factory for converting AP MLD affiliated STA data to TR-181
- * STAMLD.AffiliatedSTA objects.
+ * Converts an affiliated STA of a STA MLD association to a TR-181
+ * STAMLD.AffiliatedSTA object. umapd attaches the metrics the agent reported
+ * under the address of the affiliated STA and its affiliated AP (EasyMesh 6.1
+ * 10.2.1): the counters of the Affiliated STA Metrics TLV, and the link and
+ * extended link metrics.
  *
- * @param {object} client_index - Associated clients keyed by BSSID then MAC
- * @returns {function} converter function (s) => TR-181 AffiliatedSTA object
+ * @param {object} s - affiliated STA from umapd get_agent ap_mld
+ * @returns {object} TR-181 AffiliatedSTA object
  */
-function stamld_affiliated_sta_to_object_factory(client_index) {
-	return function(s) {
-		let mac = s.affiliated_sta_mac_addr ?? "";
-		let client = client_index?.[s.bssid]?.[mac] ?? {};
-		let aff = client.affiliated_metrics ?? {};
-		let link = client.link_metrics ?? {};
-		let ext = client.extended_metrics ?? {};
+function stamld_affiliated_sta_to_object(s) {
+	let aff = s.affiliated_metrics ?? {};
+	let link = s.link_metrics ?? {};
+	let ext = s.extended_metrics ?? {};
 
-		return {
-			MACAddress: mac,
-			BSSID: s.bssid ?? "",
-			BytesSent: counter_format(aff.bytes_sent),
-			BytesReceived: counter_format(aff.bytes_received),
-			PacketsSent: counter_format(aff.packets_sent),
-			PacketsReceived: counter_format(aff.packets_received),
-			ErrorsSent: counter_format(aff.packets_sent_errors),
-			SignalStrength: counter_format(link.uplink_rcpi),
-			EstMACDataRateDownlink: counter_format(link.estimated_downlink_mac_data_rate),
-			EstMACDataRateUplink: counter_format(link.estimated_uplink_mac_data_rate),
-			LastDataDownlinkRate: counter_format(ext.last_data_downlink_rate),
-			LastDataUplinkRate: counter_format(ext.last_data_uplink_rate),
-			UtilizationReceive: counter_format(ext.utilization_receive),
-			UtilizationTransmit: counter_format(ext.utilization_transmit)
-		};
+	return {
+		MACAddress: s.affiliated_sta_mac_addr ?? "",
+		BSSID: s.bssid ?? "",
+		BytesSent: counter_format(aff.bytes_sent),
+		BytesReceived: counter_format(aff.bytes_received),
+		PacketsSent: counter_format(aff.packets_sent),
+		PacketsReceived: counter_format(aff.packets_received),
+		ErrorsSent: counter_format(aff.packets_sent_errors),
+		SignalStrength: counter_format(link.uplink_rcpi),
+		EstMACDataRateDownlink: counter_format(link.estimated_downlink_mac_data_rate),
+		EstMACDataRateUplink: counter_format(link.estimated_uplink_mac_data_rate),
+		LastDataDownlinkRate: counter_format(ext.last_data_downlink_rate),
+		LastDataUplinkRate: counter_format(ext.last_data_uplink_rate),
+		UtilizationReceive: counter_format(ext.utilization_receive),
+		UtilizationTransmit: counter_format(ext.utilization_transmit)
 	};
 }
 
@@ -1459,10 +1458,9 @@ function stamld_affiliated_sta_to_object_factory(client_index) {
  *
  * @param {object|null} t2lm_entry - T2LM entry for this AP MLD
  * @param {object} link_to_bssid - linkid-to-BSSID lookup
- * @param {object} client_index - Associated clients keyed by BSSID then MAC
  * @returns {function} converter function (sta) => TR-181 STAMLD object
  */
-function stamld_to_object_factory(t2lm_entry, link_to_bssid, client_index) {
+function stamld_to_object_factory(t2lm_entry, link_to_bssid) {
 	let t2lm_neg = t2lm_entry?.tid_to_link_mapping_negotiation ? "true" : "false";
 
 	return function(sta) {
@@ -1495,8 +1493,7 @@ function stamld_to_object_factory(t2lm_entry, link_to_bssid, client_index) {
 			STATIDLinkMapNumberOfEntries: sprintf('%d', length(sta_tid_link_map)),
 			STATIDLinkMap: ubbf.enumerate_instances(sta_tid_link_map, (e) => e),
 			AffiliatedSTANumberOfEntries: sprintf('%d', length(affiliated)),
-			AffiliatedSTA: ubbf.enumerate_instances(affiliated,
-				stamld_affiliated_sta_to_object_factory(client_index))
+			AffiliatedSTA: ubbf.enumerate_instances(affiliated, stamld_affiliated_sta_to_object)
 		};
 	};
 }
@@ -1511,7 +1508,6 @@ function apmld_to_object_factory(api_data) {
 	let t2lm_list = api_data.capability?.tid_to_link_mapping;
 	let radios = api_data.capability?.radios ?? {};
 	let aff_ap_metrics = api_data.affiliated_ap_metrics ?? {};
-	let client_index = api_data.client_index ?? {};
 
 	return function(mld) {
 		let affiliated_aps = mld.affiliated_aps ?? [];
@@ -1575,7 +1571,7 @@ function apmld_to_object_factory(api_data) {
 			},
 			STAMLDNumberOfEntries: sprintf('%d', length(sta_mlds)),
 			STAMLD: ubbf.enumerate_instances(sta_mlds,
-				stamld_to_object_factory(t2lm_entry, link_to_bssid, client_index)),
+				stamld_to_object_factory(t2lm_entry, link_to_bssid)),
 			LinkToOpClassMapNumberOfEntries: sprintf('%d', length(link_opclass)),
 			LinkToOpClassMap: ubbf.enumerate_instances(link_opclass, (e) => e)
 		};
@@ -1641,7 +1637,6 @@ function device_to_object(device, api_data, is_controller, easymesh, device_cfg,
 	api_data.ap_extended_metrics = device.map?.ap_extended_metrics ?? [];
 	let associated_clients = {};
 	let affiliated_ap_metrics = {};
-	let client_index = {};
 	for (let radio in device.map?.ap_operational_bss ?? []) {
 		for (let bss in radio.bss ?? []) {
 			if (bss.affiliated_ap_metrics)
@@ -1651,17 +1646,10 @@ function device_to_object(device, api_data, is_controller, easymesh, device_cfg,
 				continue;
 
 			associated_clients[bss.mac_address] = bss.associated_clients;
-			let by_mac = (client_index[bss.mac_address] = {});
-			for (let client in bss.associated_clients) {
-				let sta_mac = client.mac_address ?? client.mac;
-				if (sta_mac)
-					by_mac[sta_mac] = client;
-			}
 		}
 	}
 	api_data.associated_clients = associated_clients;
 	api_data.affiliated_ap_metrics = affiliated_ap_metrics;
-	api_data.client_index = client_index;
 	api_data.sta_capabilities = client_capabilities_get(api_data.associated_clients, api_data._ubus_object);
 	api_data.bss_configuration_report = device.map?.bss_configuration_report ?? [];
 	api_data.backhaul_bss_configuration = device.map?.backhaul_bss_configuration ?? [];
