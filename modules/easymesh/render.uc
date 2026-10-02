@@ -82,7 +82,8 @@ function render_config() {
 		let keys = config.EasyMesh?.Controller;
 		if (keys)
 			for (let key in ['c_sign_key_privkey', 'c_sign_key_pubkey_x', 'c_sign_key_pubkey_y',
-			                 'net_access_key_privkey', 'net_access_key_pubkey_x', 'net_access_key_pubkey_y', 'connector'])
+			                 'net_access_key_privkey', 'net_access_key_pubkey_x', 'net_access_key_pubkey_y', 'connector',
+			                 'pp_key_privkey', 'pp_key_pubkey_x', 'pp_key_pubkey_y'])
 				uci_set_string(output, `umapd.controller.${key}`, keys[key]);
 
 		let ts = config.EasyMesh?.TrafficSeparation;
