@@ -1,0 +1,77 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FAP.ApplicationPlatform.Control.TerminalLocation.",
+  "object": {
+    "path": "Device.FAP.ApplicationPlatform.Control.TerminalLocation.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "APIEnable",
+        "access": "readWrite",
+        "description": "Enable or disable TerminalLocation API exposure on FAP",
+        "type": "boolean"
+      },
+      {
+        "name": "QueueEnable",
+        "access": "readWrite",
+        "description": "Enable or disable Request queueing for the API",
+        "type": "boolean"
+      },
+      {
+        "name": "Queueing",
+        "access": "readWrite",
+        "description": "Determines how FAP handles simultaneous requests from different Applications to TerminalLocation API.",
+        "type": "string",
+        "enumerations": [
+          "FiFo",
+          "Priority"
+        ]
+      },
+      {
+        "name": "MaxAPIUsersNumber",
+        "access": "readWrite",
+        "description": "Determines the Max Number of different Applications that can send Requests to TerminalLocation API.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "QueryMobileLocationResponseAddress",
+        "access": "readWrite",
+        "description": "Specifies Terminal Address Format to be used in QueryMobileLocation Responses.",
+        "type": "string",
+        "enumerations": [
+          "TelUri",
+          "AnonymousReference"
+        ]
+      },
+      {
+        "name": "QueryMobileLocationResponseLongitudeLatitude",
+        "access": "readWrite",
+        "description": "Include or exclude FAP Longitude and Latitude arguments in Responses to QueryMobileLocation Requests.",
+        "type": "boolean"
+      },
+      {
+        "name": "QueryMobileLocationResponseAltitude",
+        "access": "readWrite",
+        "description": "Include or exclude FAP Altitude argument in Responses to QueryMobileLocation Requests .",
+        "type": "boolean"
+      },
+      {
+        "name": "QueryMobileLocationResponseTimestamp",
+        "access": "readWrite",
+        "description": "Specifies Response Timestamp in {{units}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 86399
+      }
+    ],
+    "description": "This object contains parameters related to the TerminalLocation API.",
+    "children": []
+  }
+}

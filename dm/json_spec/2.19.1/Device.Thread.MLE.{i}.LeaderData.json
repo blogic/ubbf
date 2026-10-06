@@ -1,0 +1,55 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Thread.MLE.{i}.LeaderData.",
+  "object": {
+    "path": "Device.Thread.MLE.{i}.LeaderData.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "DataVersion",
+        "access": "readOnly",
+        "description": "The full Network Data Version the Node currently uses.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "LeaderRouterID",
+        "access": "readOnly",
+        "description": "The 8-bit {{param}} the Node attempts to utilize upon becoming a router or leader on the Thread network.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "PartitionID",
+        "access": "readOnly",
+        "description": "The Thread Leader Partition ID for the Thread network to which the Node is joined.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "StableDataVersion",
+        "access": "readOnly",
+        "description": "The Network Data Version for the stable subset of data the Node currently uses.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Weighting",
+        "access": "readOnly",
+        "description": "The Thread Leader weight used when operating in the Leader role.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      }
+    ],
+    "description": "Indicates the leader data.",
+    "children": []
+  }
+}

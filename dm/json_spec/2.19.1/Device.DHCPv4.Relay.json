@@ -1,0 +1,40 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv4.Relay.",
+  "object": {
+    "path": "Device.DHCPv4.Relay.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the DHCP Relay Agent function.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of the DHCP relay. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "ForwardingNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "DHCP Relay Agent (conditional relaying).",
+    "children": []
+  }
+}

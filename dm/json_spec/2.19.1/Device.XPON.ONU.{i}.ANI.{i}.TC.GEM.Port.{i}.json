@@ -1,0 +1,53 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.GEM.Port.{i}.",
+  "object": {
+    "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.GEM.Port.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "PortNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "PortID",
+        "access": "readOnly",
+        "description": "Identifies a GEM port. See: * {{bibref|G.9807.1|Section C.6.1.5.8}} * {{bibref|G.984.3|Section 5.5.5}} * {{bibref|G.987.3|Section 6.4.4}} * {{bibref|G.989.3|Section 6.1.5.8}}",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65534
+      },
+      {
+        "name": "Direction",
+        "access": "readOnly",
+        "description": "Type of connection this GEM port is used for. {{enum}} See: {{bibref|G.988|Section 9.2.3}}.",
+        "type": "string",
+        "enumerations": [
+          "UNI-to-ANI",
+          "ANI-to-UNI",
+          "bidirectional"
+        ]
+      },
+      {
+        "name": "PortType",
+        "access": "readOnly",
+        "description": "GEM port type.",
+        "type": "string",
+        "enumerations": [
+          "unicast",
+          "multicast",
+          "broadcast"
+        ]
+      }
+    ],
+    "description": "GEM port table. Each entry gives info about a(n) (X)GEM port.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "PortID"
+      ]
+    }
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.HPNA.Diagnostics.",
+  "object": {
+    "path": "Device.HPNA.Diagnostics.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [],
+    "description": "The HPNA Diagnostics object.",
+    "commands": [
+      {
+        "name": "PHYThroughput()",
+        "version": "2.12",
+        "async": "true",
+        "input": [
+          "Interface",
+          "NumPacketsInBurst",
+          "BurstInterval",
+          "TestPacketPayloadLength",
+          "PayloadEncoding",
+          "PayloadDataGen",
+          "PayloadType",
+          "PriorityLevel"
+        ],
+        "output": [
+          "Status",
+          null,
+          null,
+          "SrcMACAddress",
+          "DestMACAddress",
+          "PHYRate",
+          "BaudRate",
+          "SNR",
+          "PacketsReceived",
+          "Attenuation"
+        ]
+      },
+      {
+        "name": "PerformanceMonitoring()",
+        "version": "2.12",
+        "async": "true",
+        "input": [
+          "Interface",
+          "SampleInterval"
+        ],
+        "output": [
+          "Status",
+          "CurrentStart",
+          "CurrentEnd",
+          null,
+          "MACAddress",
+          "BytesSent",
+          "BytesReceived",
+          "PacketsSent",
+          "PacketsReceived",
+          "BroadcastPacketsSent",
+          "BroadcastPacketsReceived",
+          "MulticastPacketsSent",
+          "MulticastPacketsReceived",
+          "PacketsCrcErrored",
+          "PacketsCrcErroredHost",
+          "PacketsShortErrored",
+          "PacketsShortErroredHost",
+          "RxPacketsDropped",
+          "TxPacketsDropped",
+          "ControlRequestLocal",
+          "ControlReplyLocal",
+          "ControlRequestRemote",
+          "ControlReplyRemote",
+          "PacketsSentWire",
+          "BroadcastPacketsSentWire",
+          "MulticastPacketsSentWire",
+          "PacketsInternalControl",
+          "BroadcastPacketsInternalControl",
+          "PacketsReceivedQueued",
+          "PacketsReceivedForwardUnknown",
+          "NodeUtilization",
+          "TimeStamp",
+          null,
+          null,
+          "HostSrcMACAddress",
+          "HostDestMACAddress",
+          "HPNASrcMACAddress",
+          "HPNADestMACAddress",
+          "PHYRate",
+          "BaudRate",
+          "SNR",
+          "PacketsSent",
+          "PacketsReceived",
+          "LARQPacketsReceived",
+          "FlowSpec"
+        ]
+      }
+    ],
+    "children": []
+  }
+}

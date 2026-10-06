@@ -1,0 +1,37 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XMPP.",
+  "object": {
+    "path": "Device.XMPP.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ConnectionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SupportedServerConnectAlgorithms",
+        "access": "readOnly",
+        "description": "The algorithms supported by the CPE for resolving XMPP server addresses and ports. {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "DNS-SRV",
+          "DNS",
+          "ServerTable",
+          "WebSocket"
+        ],
+        "version": "2.12"
+      }
+    ],
+    "description": "The {{object}} represents the XMPP capabilities of the device{{template|XMPP-APP-REF}}.",
+    "children": []
+  }
+}

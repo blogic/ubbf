@@ -1,0 +1,942 @@
+#!/usr/bin/ucode
+'use strict';
+
+import * as ubus from 'ubus';
+import * as uloop from 'uloop';
+import * as uci from 'uci';
+import * as fs from 'fs';
+import * as math from 'math';
+import * as mqtt from 'mqtt';
+import * as ubbf from 'ubbf';
+import { deflate } from 'zlib';
+import { task_run, TASK_MARGIN_S } from 'ubbf.utils.process';
+import { curl_send } from 'ubbf.utils.curl';
+import { dm_event_send } from 'ubbf.utils.events';
+import { log_init, log_info, log_warn, log_err, log_exception } from 'ubbf.utils.logging';
+import { json_value } from 'ubbf.utils.bulkdata-encode';
+
+log_init('ubbf-bulkdata');
+
+const DEFAULT_REPORTING_INTERVAL = 86400;
+// R-BULK.3: from the tenth retry on, the wait comes from the range of the
+// tenth.
+const RETRY_RANGE_MAX_COUNT = 10;
+// NumberOfRetainedFailedReports -1 asks for as many as possible.
+const RETAINED_MAX = 64;
+// uloop keeps a timer in an int of milliseconds.
+const TIMER_MAX_MS = 2147483000;
+const STATE_DIR = '/var/run/ubbf-bulkdata';
+const STATE_FILE = `${STATE_DIR}/state.json`;
+const HTTP_TIMEOUT_S = 60;
+const HTTP_CONNECT_TIMEOUT_S = 30;
+const MQTT_TIMEOUT_MS = 30000;
+
+// TR-106 names of the schema types, for the CSV ParameterType column.
+const TR106_TYPES = {
+	DM_STRING: 'string', DM_DATETIME: 'dateTime', DM_BOOL: 'boolean',
+	DM_INT: 'int', DM_UINT: 'unsignedInt', DM_LONG: 'long', DM_ULONG: 'unsignedLong',
+	DM_BASE64: 'base64', DM_HEXBIN: 'hexBinary', DM_DECIMAL: 'decimal'
+};
+
+let profiles = {};
+let stats = {
+	reports_sent: 0,
+	reports_failed: 0,
+	bytes_sent: 0,
+	last_collection_time: null
+};
+
+/**
+ * Writes the daemon state for the TR-181 handler, which reads it without a
+ * ubus call: the handler runs in the agent's thread, and a ubus call into
+ * this daemon while it waits for the agent would block both.
+ */
+function state_write() {
+	let st = { pid: int(fs.readlink('/proc/self')), profiles: {} };
+
+	for (let key, p in profiles)
+		st.profiles[key] = { enable: p.enable, is_working: p.is_working };
+
+	fs.mkdir(STATE_DIR, 0755);
+	fs.writefile(STATE_FILE + '.tmp', sprintf('%J', st));
+	fs.rename(STATE_FILE + '.tmp', STATE_FILE);
+}
+
+function uri_escape(str) {
+	if (!str)
+		return '';
+
+	let result = '';
+	for (let i = 0; i < length(str); i++) {
+		let c = substr(str, i, 1);
+		let code = ord(c);
+
+		if ((code >= 0x30 && code <= 0x39) ||
+		    (code >= 0x41 && code <= 0x5A) ||
+		    (code >= 0x61 && code <= 0x7A) ||
+		    c == '-' || c == '_' || c == '.' || c == '~') {
+			result += c;
+		} else {
+			result += sprintf('%%%02X', code);
+		}
+	}
+	return result;
+}
+
+/**
+ * Reads parameter values through the data model with their schema types.
+ * Secured values read as empty strings, as in a USP Get without a secured
+ * role.
+ *
+ * @param {array} paths - Paths, partial paths and wildcards
+ * @returns {array|null} `[{ path, value, type }]`, or null on failure
+ */
+function values_get(paths) {
+	let res = ubus.call('bbf-dm', 'get', { paths, typed: true, mask_secured: true });
+
+	if (type(res?.params) != 'array') {
+		log_warn('get of %J failed: %s', paths, res?.error ?? ubus.error());
+		return null;
+	}
+
+	return res.params;
+}
+
+/**
+ * Collects one reference. An object reference whose whole subtree does not
+ * fit one ubus reply is collected one child at a time.
+ *
+ * @param {string} reference - Parameter, partial path or wildcard
+ * @returns {array} `[{ path, value, type }]`
+ */
+function reference_collect(reference) {
+	let params = values_get([ reference ]);
+	if (params)
+		return params;
+
+	if (substr(reference, -1) != '.')
+		return [];
+
+	let names = ubus.call('bbf-dm', 'names', { path: reference, next_level: true });
+	let out = [];
+
+	for (let child in names?.params ?? []) {
+		let p = values_get([ child.path ]);
+		if (p)
+			out = [ ...out, ...p ];
+	}
+
+	return out;
+}
+
+/**
+ * Report name of a collected path for a reference with a Name (R-BULK.9,
+ * R-BULK.10): the Name, then the instance numbers that stand for the
+ * wildcards, then the rest of the path below an object reference.
+ *
+ * @param {string} name - Name of the Parameter row
+ * @param {string} reference - Its Reference
+ * @param {string} path - Collected path
+ * @returns {string} Report name
+ */
+function report_name(name, reference, path) {
+	let ref = split(rtrim(reference, '.'), '.');
+	let parts = split(path, '.');
+	let out = [ name ];
+
+	for (let i = 0; i < length(ref) && i < length(parts); i++)
+		if (ref[i] == '*')
+			push(out, parts[i]);
+
+	if (substr(reference, -1) == '.')
+		out = [ ...out, ...slice(parts, length(ref)) ];
+
+	return join('.', out);
+}
+
+/**
+ * Collects the values of a profile: every Parameter row, without the paths
+ * of the excluded rows (R-BULK.10a).
+ *
+ * @param {object} profile - Profile
+ * @returns {array} `[{ name, value, type }]`, sorted by name
+ */
+function parameters_collect(profile) {
+	let excluded = {};
+
+	for (let p in profile.excludes)
+		for (let e in reference_collect(p.reference))
+			excluded[e.path] = true;
+
+	let seen = {};
+	let out = [];
+
+	for (let p in profile.parameters) {
+		for (let e in reference_collect(p.reference)) {
+			if (excluded[e.path])
+				continue;
+
+			let name = p.name ? report_name(p.name, p.reference, e.path) : e.path;
+			if (seen[name])
+				continue;
+
+			seen[name] = true;
+			push(out, { name, value: e.value, type: e.type });
+		}
+	}
+
+	return sort(out, (a, b) => (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0);
+}
+
+function timestamp_format(timestamp, format) {
+	if (format == 'None')
+		return null;
+
+	if (format == 'ISO-8601')
+		return ubbf.iso8601_format(timestamp);
+
+	return timestamp;
+}
+
+function hierarchy_set(obj, name, value) {
+	let parts = split(name, '.');
+	let node = obj;
+
+	for (let i = 0; i < length(parts) - 1; i++) {
+		if (type(node[parts[i]]) != 'object')
+			node[parts[i]] = {};
+		node = node[parts[i]];
+	}
+
+	node[parts[-1]] = value;
+}
+
+/**
+ * One JSON report entry, in the configured ReportFormat (A.7.2.3).
+ */
+function json_entry_build(profile, now, params) {
+	let entry = {};
+	let ts = timestamp_format(now, profile.json_report_timestamp);
+
+	if (ts != null)
+		entry.CollectionTime = ts;
+
+	for (let e in params) {
+		if (profile.json_report_format == 'NameValuePair')
+			entry[e.name] = json_value(e);
+		else
+			hierarchy_set(entry, e.name, json_value(e));
+	}
+
+	return entry;
+}
+
+function csv_field_escape(value, field_sep, escape_char) {
+	if (value == null)
+		return '';
+
+	let str = sprintf('%s', value);
+
+	if (index(str, field_sep) < 0 && index(str, escape_char) < 0 &&
+	    index(str, '\n') < 0 && index(str, '\r') < 0)
+		return str;
+
+	return escape_char + replace(str, escape_char, escape_char + escape_char) + escape_char;
+}
+
+/**
+ * The data rows of one CSV report (A.7.1); the header is built at send
+ * time, because retained rows join the same report.
+ */
+function csv_rows_build(profile, now, params) {
+	let fs_ = profile.csv_field_separator;
+	let esc = profile.csv_escape_character;
+	let ts = timestamp_format(now, profile.csv_row_timestamp);
+	let rows = [];
+	let cell = (v) => csv_field_escape(v, fs_, esc);
+
+	if (profile.csv_report_format == 'ParameterPerRow') {
+		for (let e in params) {
+			let row = (ts != null) ? [ cell(ts) ] : [];
+			push(row, cell(e.name), cell(e.value), cell(TR106_TYPES[e.type] ?? 'string'));
+			push(rows, join(fs_, row));
+		}
+
+		return { rows };
+	}
+
+	let names = map(params, (e) => e.name);
+	let row = (ts != null) ? [ cell(ts) ] : [];
+
+	for (let e in params)
+		push(row, cell(e.value));
+
+	return { names, rows: [ join(fs_, row) ] };
+}
+
+function csv_header(profile, names) {
+	let fs_ = profile.csv_field_separator;
+	let ts = (profile.csv_row_timestamp != 'None');
+
+	if (profile.csv_report_format == 'ParameterPerRow')
+		return join(fs_, [ ...(ts ? [ 'ReportTimestamp' ] : []), 'ParameterName', 'ParameterValue', 'ParameterType' ]);
+
+	return join(fs_, [ ...(ts ? [ 'ReportTimestamp' ] : []),
+		...map(names, (n) => csv_field_escape(n, fs_, profile.csv_escape_character)) ]);
+}
+
+/**
+ * Collects one report: a JSON entry or a set of CSV rows.
+ */
+function report_collect(profile) {
+	let now = time();
+	let params = parameters_collect(profile);
+
+	stats.last_collection_time = ubbf.iso8601_format(now);
+
+	if (profile.encoding_type == 'CSV')
+		return csv_rows_build(profile, now, params);
+
+	return json_entry_build(profile, now, params);
+}
+
+/**
+ * The body that carries the retained reports first and then the current
+ * one (A.7.1.2, A.7.2.2).
+ */
+function body_build(profile, reports) {
+	if (profile.encoding_type != 'CSV')
+		return sprintf('%J', { Report: reports });
+
+	let rs = profile.csv_row_separator;
+	let lines = [ csv_header(profile, reports[-1]?.names ?? []) ];
+
+	for (let r in reports)
+		lines = [ ...lines, ...r.rows ];
+
+	return join(rs, lines) + rs;
+}
+
+function media_type(profile) {
+	return (profile.encoding_type == 'CSV')
+		? 'text/csv; charset=UTF-8; header=present'
+		: 'application/json; charset=UTF-8';
+}
+
+function report_format(profile) {
+	return (profile.encoding_type == 'CSV') ? profile.csv_report_format : profile.json_report_format;
+}
+
+function http_url_build(profile) {
+	let info = ubus.call('bbf-dm', 'get', { paths: [
+		'Device.DeviceInfo.ManufacturerOUI',
+		'Device.DeviceInfo.ProductClass',
+		'Device.DeviceInfo.SerialNumber'
+	] }) ?? {};
+	let params = [
+		'oui=' + uri_escape(info['Device.DeviceInfo.ManufacturerOUI'] ?? ''),
+		'pc=' + uri_escape(info['Device.DeviceInfo.ProductClass'] ?? ''),
+		'sn=' + uri_escape(info['Device.DeviceInfo.SerialNumber'] ?? '')
+	];
+
+	for (let p in profile.http_uri_params) {
+		let v = values_get([ p.reference ]);
+		push(params, sprintf('%s=%s', uri_escape(p.name || p.reference), uri_escape(v?.[0]?.value ?? '')));
+	}
+
+	let url = profile.http_url;
+	return url + ((index(url, '?') >= 0) ? '&' : '?') + join('&', params);
+}
+
+function http_date() {
+	let tm = gmtime(time());
+	// ucode gmtime() numbers weekdays 1-7 with Sunday = 7
+	let days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+	let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+	return sprintf('%s, %02d %s %04d %02d:%02d:%02d GMT',
+		days[tm.wday - 1], tm.mday, months[tm.mon - 1], tm.year, tm.hour, tm.min, tm.sec);
+}
+
+/**
+ * Sends the body over HTTP in a child process, so that the daemon keeps
+ * serving its events meanwhile.
+ */
+function http_send(profile, body, done) {
+	if (!profile.http_url) {
+		log_err('profile %s: no HTTP URL configured', profile.key);
+		return done(false);
+	}
+
+	let headers = {
+		'Content-Type': media_type(profile),
+		'BBF-Report-Format': report_format(profile)
+	};
+
+	if (profile.http_compression == 'GZIP') {
+		try {
+			body = deflate(body, true);
+			headers['Content-Encoding'] = 'gzip';
+		} catch (e) {
+			log_warn('profile %s: GZIP compression failed, sending uncompressed: %s', profile.key, e);
+		}
+	}
+
+	if (profile.http_use_date_header)
+		headers['Date'] = http_date();
+
+	// tmpfile_name() creates the file with mode 0600 and a random name.
+	let path = ubbf.tmpfile_name('bulkdata', '.body');
+	if (!path || fs.writefile(path, body) == null) {
+		log_err('profile %s: cannot write the report body', profile.key);
+		if (path)
+			fs.unlink(path);
+		return done(false);
+	}
+
+	let url = http_url_build(profile);
+	let opts = { headers, timeout: HTTP_TIMEOUT_S, connect_timeout: HTTP_CONNECT_TIMEOUT_S };
+	if (profile.http_username != '')
+		opts = { ...opts, username: profile.http_username, password: profile.http_password };
+
+	let bytes = length(body);
+
+	task_run(() => curl_send(profile.http_method, url, path, opts), function(r) {
+		fs.unlink(path);
+
+		if (r.success) {
+			stats.bytes_sent += bytes;
+			return done(true);
+		}
+
+		log_err('profile %s: HTTP report failed: %s', profile.key, r.error ?? trim(r.output ?? ''));
+		done(false);
+	}, { timeout: HTTP_TIMEOUT_S + TASK_MARGIN_S });
+}
+
+/**
+ * Reads the referenced MQTT client of the agent. The non-secret values come
+ * from the agent; its CLI reads a secure parameter as an empty string, so
+ * the password of Device.MQTT.Client.1, which obuspa builds from the UCI
+ * section obuspa.acs, comes from there.
+ */
+function mqtt_client_get(reference) {
+	let client = {};
+	let p = fs.popen(sprintf('obuspa -c get %s.', ubbf.shell_escape(reference)), 'r');
+
+	for (let line = p?.read('line'); line; line = p.read('line')) {
+		let m = match(trim(line), /^([^ ]+) => (.*)$/);
+		if (m)
+			client[split(m[1], '.')[-1]] = trim(m[2]);
+	}
+	p?.close();
+
+	if (!client.BrokerAddress)
+		return null;
+
+	if (reference == 'Device.MQTT.Client.1') {
+		let acs = uci.cursor().get_all('obuspa', 'acs') ?? {};
+		if (acs.broker_address == client.BrokerAddress) {
+			client.Password = acs.password ?? '';
+			client.CACert = acs.ca_cert;
+		}
+	}
+
+	return client;
+}
+
+/**
+ * Publishes the body with an own MQTT session to the broker of the
+ * referenced client. A second session must not use the agent's ClientID:
+ * the broker would disconnect the agent.
+ */
+function mqtt_send(profile, body, done) {
+	let client = mqtt_client_get(profile.mqtt_reference);
+	if (!client) {
+		log_err('profile %s: MQTT reference %s does not resolve', profile.key, profile.mqtt_reference);
+		return done(false);
+	}
+
+	if (!profile.mqtt_topic) {
+		log_err('profile %s: no MQTT topic configured', profile.key);
+		return done(false);
+	}
+
+	let finished;
+	let timer;
+	let finish = (ok, c) => {
+		if (finished)
+			return;
+		finished = true;
+		timer?.cancel();
+		c?.disconnect();
+		if (ok)
+			stats.bytes_sent += length(body);
+		done(ok);
+	};
+
+	let tls = match(client.TransportProtocol ?? '', /TLS/) != null;
+	let opts = {
+		reconnect: false,
+		tls,
+		on_connect: (c) => {
+			if (!c.publish(profile.mqtt_topic, body, profile.mqtt_qos, profile.mqtt_retain)) {
+				log_err('profile %s: MQTT publish failed: %s', profile.key, mqtt.error());
+				finish(false, c);
+			}
+		},
+		on_publish: (c, mid) => finish(true, c),
+		on_error: (c, msg) => {
+			log_err('profile %s: MQTT: %s', profile.key, msg);
+			finish(false, c);
+		},
+		on_disconnect: (c) => finish(false)
+	};
+
+	if (client.Username) {
+		opts.username = client.Username;
+		opts.password = client.Password ?? '';
+	}
+	if (tls && client.CACert)
+		opts.ca_cert = client.CACert;
+
+	let id = sprintf('%s-bulkdata-%d', client.ClientID || 'ubbf', profile.instance);
+	let c = mqtt.connect(client.BrokerAddress, int(client.BrokerPort) || 1883, id, opts);
+	if (!c) {
+		log_err('profile %s: MQTT connect failed: %s', profile.key, mqtt.error());
+		return done(false);
+	}
+
+	timer = uloop.timer(MQTT_TIMEOUT_MS, () => {
+		log_err('profile %s: MQTT publish timed out', profile.key);
+		finish(false, c);
+	});
+}
+
+function uspevt_send(profile, body, done) {
+	if (!profile.instance) {
+		log_err('profile %s: unknown TR-181 instance, cannot emit Push! event', profile.key);
+		return done(false);
+	}
+
+	dm_event_send(sprintf('Device.BulkData.Profile.%d.Push!', profile.instance), { Data: body });
+	stats.bytes_sent += length(body);
+	done(true);
+}
+
+function report_send(profile, body, done) {
+	switch (profile.protocol) {
+	case 'HTTP': return http_send(profile, body, done);
+	case 'MQTT': return mqtt_send(profile, body, done);
+	case 'USPEventNotif': return uspevt_send(profile, body, done);
+	}
+
+	log_warn('profile %s: unsupported protocol %s', profile.key, profile.protocol);
+	done(false);
+}
+
+/**
+ * Wait before retry n (Annex A): a random value between m*(k/1000)^(n-1)
+ * and m*(k/1000)^n, with the range of the tenth retry from then on.
+ */
+function retry_wait_calculate(profile) {
+	let m = profile.http_retry_min_interval;
+	let k = profile.http_retry_multiplier / 1000.0;
+	let n = min(max(profile.retry_count, 1), RETRY_RANGE_MAX_COUNT);
+	let lo = m * math.pow(k, n - 1);
+	let range = int(m * math.pow(k, n) - lo);
+
+	return int(lo) + ((range > 0) ? math.rand() % range : 0);
+}
+
+function timer_set(timer, ms, fn) {
+	ms = min(ms, TIMER_MAX_MS);
+
+	if (timer) {
+		timer.set(ms);
+		return timer;
+	}
+
+	return uloop.timer(ms, fn);
+}
+
+/**
+ * Seconds to the next reporting point: TimeReference, or the start time of
+ * the profile when TimeReference is the Unknown Time, plus whole intervals.
+ */
+function next_report_wait(profile) {
+	let interval = profile.reporting_interval;
+	let elapsed = ((time() - profile.phase) % interval + interval) % interval;
+
+	return interval - elapsed;
+}
+
+let report_point;
+let report_new;
+let attempt;
+
+function report_schedule(profile) {
+	let wait = next_report_wait(profile);
+	log_info('profile %s: next report in %d seconds', profile.key, wait);
+	profile.timer = timer_set(profile.timer, wait * 1000, () => report_point(profile));
+}
+
+function attempt_result(profile, ok) {
+	// A reload while a report was in flight hands the profile state to a
+	// new object; the result belongs to that one.
+	if (profile.successor)
+		return attempt_result(profile.successor, ok);
+
+	profile.in_flight = false;
+	if (profile.stopped)
+		return;
+
+	profile.is_working = ok;
+
+	if (ok) {
+		stats.reports_sent++;
+		profile.retained_reports = [];
+		profile.pending = null;
+		profile.retry_count = 0;
+		log_info('profile %s: report sent', profile.key);
+	} else {
+		stats.reports_failed++;
+	}
+
+	state_write();
+
+	if (profile.point_due) {
+		profile.point_due = false;
+		return report_new(profile);
+	}
+
+	if (ok || !profile.http_retry_enable || profile.protocol != 'HTTP')
+		return;
+
+	// R-BULK.2/3: the same report goes again until it is delivered or the
+	// next reporting point; that point moves it to the retained reports.
+	profile.retry_count++;
+	let wait = retry_wait_calculate(profile);
+	if (wait >= next_report_wait(profile))
+		return;
+
+	log_info('profile %s: retry %d in %d seconds', profile.key, profile.retry_count, wait);
+	profile.retry_timer = timer_set(profile.retry_timer, wait * 1000, () => attempt(profile));
+}
+
+attempt = function(profile) {
+	if (profile.in_flight || !profile.pending)
+		return;
+
+	profile.in_flight = true;
+	report_send(profile, body_build(profile, [ ...profile.retained_reports, profile.pending ]),
+		(ok) => attempt_result(profile, ok));
+};
+
+/**
+ * A reporting point: a report that is still undelivered joins the retained
+ * reports (A.2.3.2), then a new report is collected and sent. While a send
+ * is in flight, this waits for its result.
+ */
+report_point = function(profile) {
+	report_schedule(profile);
+
+	if (!profile.enable)
+		return;
+
+	if (profile.in_flight) {
+		profile.point_due = true;
+		return;
+	}
+
+	report_new(profile);
+};
+
+report_new = function(profile) {
+	profile.retry_timer?.cancel();
+	profile.retry_timer = null;
+
+	if (profile.pending) {
+		if (profile.number_retained_reports != 0) {
+			push(profile.retained_reports, profile.pending);
+			let cap = (profile.number_retained_reports < 0) ? RETAINED_MAX : min(profile.number_retained_reports, RETAINED_MAX);
+			while (length(profile.retained_reports) > cap)
+				shift(profile.retained_reports);
+		}
+		profile.pending = null;
+	}
+
+	profile.retry_count = 0;
+	profile.pending = report_collect(profile);
+	attempt(profile);
+};
+
+function profile_start(profile) {
+	report_schedule(profile);
+	log_info('profile %s: started', profile.key);
+}
+
+function profile_stop(profile) {
+	profile.stopped = true;
+	profile.timer?.cancel();
+	profile.retry_timer?.cancel();
+	profile.timer = null;
+	profile.retry_timer = null;
+}
+
+/**
+ * Parses an integer UCI option with a real default. `int(x) ?? def`
+ * cannot work: int(null) is 0 and int('garbage') is NaN, neither of
+ * which triggers the nullish fallback.
+ */
+function int_option(value, def) {
+	if (value == null)
+		return def;
+	let n = int(value);
+	return (n == n) ? n : def;
+}
+
+// render.uc writes control characters of the CSV separators as \t, \n,
+// \r and \\, because UCI values cannot carry them.
+function separator_decode(s, def) {
+	if (s == null || s == '')
+		return def;
+
+	return replace(s, /\\(.)/g, (m, c) => ({ t: '\t', n: '\n', r: '\r' })[c] ?? c);
+}
+
+function json_list(values) {
+	let out = [];
+
+	for (let v in (type(values) == 'array') ? values : (values ? [ values ] : [])) {
+		let o;
+		try { o = json(v); } catch (e) { o = null; }
+		if (type(o) == 'object' && o.reference)
+			push(out, o);
+	}
+
+	return out;
+}
+
+function profile_from_section(section) {
+	let instance = int(section.instance);
+	if (!(instance >= 1))
+		return null;
+
+	let time_reference = section.time_reference ? usp_datetime_to_unix(section.time_reference) : 0;
+	let protocol = section.protocol ?? '';
+
+	return {
+		key: sprintf('Profile.%d', instance),
+		instance,
+		alias: section.alias,
+		enable: (section.enable == '1') && protocol != '',
+		protocol,
+		encoding_type: section.encoding_type || 'JSON',
+		reporting_interval: max(int_option(section.reporting_interval, DEFAULT_REPORTING_INTERVAL), 1),
+		// Unknown Time (0001-01-01T00:00:00Z) parses to a negative epoch
+		time_reference: (time_reference > 0 || section.time_reference == '1970-01-01T00:00:00Z') ? time_reference : null,
+		number_retained_reports: int_option(section.number_retained_reports, 0),
+
+		http_url: section.http_url,
+		http_username: section.http_username ?? '',
+		http_password: section.http_password ?? '',
+		http_method: (section.http_method == 'PUT') ? 'PUT' : 'POST',
+		http_compression: section.http_compression ?? 'None',
+		http_use_date_header: (section.http_use_date_header != '0'),
+		http_retry_enable: (section.http_retry_enable == '1'),
+		http_retry_min_interval: int_option(section.http_retry_min_interval, 5),
+		http_retry_multiplier: int_option(section.http_retry_multiplier, 2000),
+		http_uri_params: json_list(section.http_uri_param),
+
+		mqtt_reference: section.mqtt_reference,
+		mqtt_topic: section.mqtt_topic,
+		mqtt_qos: min(max(int_option(section.mqtt_qos, 0), 0), 2),
+		mqtt_retain: (section.mqtt_retain == '1'),
+
+		json_report_format: section.json_report_format || 'ObjectHierarchy',
+		json_report_timestamp: section.json_report_timestamp || 'Unix-Epoch',
+
+		csv_field_separator: separator_decode(section.csv_field_separator, ','),
+		csv_row_separator: separator_decode(section.csv_row_separator, '\n'),
+		csv_escape_character: separator_decode(section.csv_escape_character, '"'),
+		csv_report_format: section.csv_report_format || 'ParameterPerColumn',
+		csv_row_timestamp: section.csv_row_timestamp || 'Unix-Epoch',
+
+		parameters: json_list(section.parameter),
+		excludes: json_list(section.exclude),
+
+		is_working: true,
+		retry_count: 0,
+		retained_reports: [],
+		pending: null,
+		in_flight: false,
+		timer: null,
+		retry_timer: null
+	};
+}
+
+function config_load() {
+	let cursor = uci.cursor();
+	if (!cursor.load('bulkdata'))
+		return null;
+
+	if (!cursor.get_all('bulkdata', 'global')?.enable)
+		return null;
+
+	let loaded = {};
+
+	for (let name, section in cursor.get_all('bulkdata')) {
+		if (section['.type'] != 'profile')
+			continue;
+
+		let p = profile_from_section(section);
+		if (!p) {
+			log_warn('profile section %s without a TR-181 instance, skipped', name);
+			continue;
+		}
+
+		loaded[p.key] = p;
+		log_info('loaded profile %s: protocol=%s interval=%d', p.key, p.protocol, p.reporting_interval);
+	}
+
+	return loaded;
+}
+
+/**
+ * Takes over the state of a profile that the reload keeps: the schedule
+ * phase, and the retained and pending reports while the encoding is the
+ * same (A.2.3.2 drops them on an EncodingType change).
+ */
+function profile_carry(p, old) {
+	p.phase = (p.time_reference != null) ? p.time_reference : (old?.phase ?? time());
+
+	if (!old || old.encoding_type != p.encoding_type)
+		return;
+
+	if (old.in_flight && p.enable) {
+		old.successor = p;
+		p.in_flight = true;
+	}
+
+	p.retained_reports = old.retained_reports;
+	p.pending = old.pending;
+	p.retry_count = old.retry_count;
+	p.is_working = old.is_working;
+}
+
+function profiles_apply(loaded) {
+	for (let key, p in profiles)
+		profile_stop(p);
+
+	for (let key, p in loaded)
+		profile_carry(p, profiles[key]);
+
+	profiles = loaded;
+
+	for (let key, p in profiles)
+		if (p.enable)
+			profile_start(p);
+
+	state_write();
+}
+
+function profile_find(req) {
+	let alias = req.args?.alias;
+	for (let key, p in profiles)
+		if (p.alias == alias || key == alias)
+			return p;
+	return null;
+}
+
+const methods = {
+	status: {
+		call: function(req) {
+			let active = 0, failing = 0;
+
+			for (let key, p in profiles) {
+				if (!p.enable)
+					continue;
+				active++;
+				if (!p.is_working)
+					failing++;
+			}
+
+			return {
+				running: true,
+				profiles_active: active,
+				profiles_error: failing,
+				error: failing ? 'One or more profiles have errors' : null
+			};
+		},
+		args: {}
+	},
+	profile_status: {
+		call: function(req) {
+			let p = profile_find(req);
+			if (!p)
+				return { error: 'profile not found' };
+
+			return {
+				alias: p.alias,
+				is_working: p.is_working,
+				retry_count: p.retry_count,
+				retained_reports: length(p.retained_reports)
+			};
+		},
+		args: { alias: '' }
+	},
+	force_report: {
+		call: function(req) {
+			let p = profile_find(req);
+			if (!p)
+				return { error: 'profile not found' };
+
+			if (p.timer)
+				p.timer.set(1);
+
+			return { success: true };
+		},
+		args: { alias: '' }
+	},
+	stats: {
+		call: function(req) {
+			return { ...stats };
+		},
+		args: {}
+	},
+	reload: {
+		call: function(req) {
+			log_info('reloading configuration');
+			let loaded = config_load();
+
+			if (!loaded) {
+				profiles_apply({});
+				return { success: false, error: 'no configuration' };
+			}
+
+			profiles_apply(loaded);
+			return { success: true, profiles: length(profiles) };
+		},
+		args: {}
+	}
+};
+
+uloop.init();
+uloop.guard((e) => log_exception('ubbf-bulkdata', e));
+ubus.guard((e) => log_exception('ubbf-bulkdata ubus', e));
+
+log_info('starting');
+
+let loaded = config_load();
+if (!loaded) {
+	log_warn('no configuration found or bulkdata disabled');
+	exit(0);
+}
+
+ubus.publish('ubbf-bulkdata', methods);
+profiles_apply(loaded);
+
+log_info('running with %d profiles', length(profiles));
+
+uloop.run();

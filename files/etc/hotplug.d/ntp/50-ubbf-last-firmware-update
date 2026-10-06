@@ -1,0 +1,8 @@
+case "$ACTION" in
+	step|stratum|periodic) ;;
+	*) exit 0 ;;
+esac
+[ -f /tmp/ubbf/firmware-updated ] || exit 0
+read -r uptime _ < /proc/uptime
+echo $(( $(date +%s) - ${uptime%.*} )) > /etc/ubbf/last_firmware_update
+rm -f /tmp/ubbf/firmware-updated

@@ -1,0 +1,32 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.IEEE1905.Network.AL.{i}.Interface.{i}.NonIEEE1905Neighbor.{i}.",
+  "object": {
+    "path": "Device.IEEE1905.Network.AL.{i}.Interface.{i}.NonIEEE1905Neighbor.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "NonIEEE1905NeighborNumberOfEntries",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "NeighborInterfaceId",
+        "access": "readOnly",
+        "description": "MAC Address of the interface for the {{object}}.",
+        "type": "string",
+        "maxLength": 17,
+        "pattern": "",
+        "dataType": "MACAddress"
+      }
+    ],
+    "description": "This object represents an instance of a Non-IEEE1905 Neighbor for the {{object|###.AL}}. These fields come from a Topology response message as defined in {{bibref|IEEE1905.1a|Table 6-14: Non-1905 neighbor device TLV}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "NeighborInterfaceId"
+      ]
+    }
+  }
+}

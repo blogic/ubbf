@@ -1,0 +1,6 @@
+#!/bin/sh
+# USER is attacker-controlled (client-supplied SSH username); strip JSON-breaking chars.
+U=$(printf '%s' "$USER" | tr -d '\\"')
+exec ubus -t 5 call bbf-device sshguard_auth_event \
+	"{\"reason\":\"$REASON\",\"ip\":\"$IP\",\"user\":\"$U\"}" \
+	>/dev/null 2>&1

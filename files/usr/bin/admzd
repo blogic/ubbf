@@ -1,0 +1,503 @@
+#!/usr/bin/ucode
+'use strict';
+
+// Advanced DMZ daemon. Cooperates with the netifd `admz` proto handler
+// (/lib/netifd/proto/admz.sh + /lib/netifd/admz.script) which owns the
+// WAN device's IPv4 address binding. When ADMZ is enabled, the proto
+// handler binds the RFC2544 non-routable secondary 198.18.0.1/32 onto
+// the WAN device instead of the leased public IP, and publishes the
+// lease (ip, netmask, router, dns, lease_time) into the interface
+// status data field. This daemon reads the published lease, installs
+// the host-route + proxy-neigh + onlink default route that complete
+// the ADMZ data plane, restarts dnsmasq when the lease IP changes
+// (the dhcp-host stanza for the ADMZ MAC has to track the public IP),
+// and publishes a status ubus object the renderer reads for TR-181.
+
+import * as ubus from 'ubus';
+import * as uloop from 'uloop';
+import * as uci from 'uci';
+import * as fs from 'fs';
+import * as rtnl from 'rtnl';
+import * as log from 'log';
+
+const POLL_INTERVAL_MS = 2000;
+
+let current_state = 'DISABLED';     // DISABLED | NO_MAC | ARMED | ACTIVE
+let current_lease = null;            // {ip, gw, dns:[], lan_dev, wan_dev} when ACTIVE
+let cfg = {};                        // last loaded UCI section
+let ubus_conn = null;
+let ubus_obj = null;
+let poll_timer = null;
+
+log.openlog('admzd', 0, log.LOG_DAEMON);
+
+// --------------------------------------------------------------------
+// Helpers
+// --------------------------------------------------------------------
+
+/**
+ * Loads /etc/config/admz `config admz 'main'`. Returns a config object
+ * with sensible defaults if the section is missing.
+ *
+ * @returns {object} {enable, mac, lease_time, wan_iface, lan_dev, secondary_ip}
+ */
+function config_load() {
+	let out = {
+		enable: false,
+		mac: '',
+		lease_time: 3600,
+		wan_iface: 'wan',
+		lan_dev: '',
+		secondary_ip: '198.18.0.1'
+	};
+
+	let cursor = uci.cursor();
+	if (!cursor.load('admz'))
+		return out;
+
+	let s = cursor.get_all('admz', 'main');
+	if (!s)
+		return out;
+
+	out.enable = (s.enable == '1' || s.enable == 'true');
+	out.mac = lc(s.advanced_dmz_host ?? '');
+	out.lease_time = +(s.lease_time ?? 3600);
+	out.wan_iface = s.wan_iface ?? 'wan';
+	out.lan_dev = s.lan_dev ?? 'br-lan';
+	out.secondary_ip = s.secondary_ip ?? '198.18.0.1';
+
+	return out;
+}
+
+/**
+ * Reads `network.interface.<iface>.status` and extracts the ADMZ lease
+ * snapshot stuffed in by /lib/netifd/admz.script (admz_lease_*). Returns
+ * null when the proto handler has not yet published a lease (e.g. WAN
+ * is down or proto=dhcp still in effect from a stale UCI section).
+ *
+ * @param {string} iface - netifd interface name
+ * @returns {object|null} {up, l3_device, ip, netmask, gw, dns:[]}
+ */
+function lease_observe(iface) {
+	let status = ubus.call({ object: 'network.interface.' + iface, method: 'status', data: {} });
+	if (!status)
+		return null;
+
+	if (!status.up)
+		return { up: false };
+
+	let l3 = status.l3_device ?? status.device;
+	let data = status.data ?? {};
+
+	if (!data.admz_lease_ip)
+		return { up: true, l3_device: l3 };
+
+	let dns = [];
+	if (type(data.admz_lease_dns) == 'string')
+		dns = split(data.admz_lease_dns, ' ');
+
+	return {
+		up: true,
+		l3_device: l3,
+		ip: data.admz_lease_ip,
+		netmask: data.admz_lease_netmask ?? '255.255.255.0',
+		gw: data.admz_lease_router ?? '',
+		dns: dns
+	};
+}
+
+/**
+ * Writes a value to /proc/sys/net/ipv4/conf/<dev>/<key>. Best-effort:
+ * logs but does not propagate failures, the renderer-driven UCI device
+ * option provides the authoritative source.
+ *
+ * @param {string} dev - interface name
+ * @param {string} key - sysctl leaf (e.g. 'proxy_arp')
+ * @param {string} value - string value to write
+ */
+function sysctl_write(dev, key, value) {
+	let path = sprintf('/proc/sys/net/ipv4/conf/%s/%s', dev, key);
+	let rc = fs.writefile(path, value + '\n');
+	if (rc == null)
+		log.syslog(log.LOG_WARNING, 'sysctl %s := %s failed: %s', path, value, fs.error() ?? 'unknown');
+}
+
+// --------------------------------------------------------------------
+// Kernel operations
+// --------------------------------------------------------------------
+
+/**
+ * Installs `<ip>/32 dev <lan_dev>` in the main routing table so the
+ * kernel forwards inbound packets destined to the public WAN IP onto
+ * the LAN bridge where the customer router holds it.
+ *
+ * @param {string} ip - WAN public IPv4
+ * @param {string} lan_dev - LAN bridge device name
+ */
+function route_lan_install(ip, lan_dev) {
+	let r = rtnl.request(rtnl.const.RTM_NEWROUTE,
+		rtnl.const.NLM_F_CREATE | rtnl.const.NLM_F_REPLACE,
+		{
+			family: rtnl.const.AF_INET,
+			dst: ip,
+			dst_len: 32,
+			oif: lan_dev,
+			table: rtnl.const.RT_TABLE_MAIN,
+			scope: rtnl.const.RT_SCOPE_LINK,
+			type: rtnl.const.RTN_UNICAST,
+			protocol: 3
+		});
+	if (r == null)
+		log.syslog(log.LOG_WARNING, 'route_lan_install %s/32 dev %s failed: %s',
+			ip, lan_dev, rtnl.error() ?? 'unknown');
+}
+
+/**
+ * Removes the /32 lan-side route. Idempotent.
+ *
+ * @param {string} ip - WAN public IPv4
+ * @param {string} lan_dev - LAN bridge device name
+ */
+function route_lan_remove(ip, lan_dev) {
+	rtnl.request(rtnl.const.RTM_DELROUTE, 0, {
+		family: rtnl.const.AF_INET,
+		dst: ip,
+		dst_len: 32,
+		oif: lan_dev,
+		table: rtnl.const.RT_TABLE_MAIN
+	});
+}
+
+/**
+ * Installs an onlink default route via the ISP gateway sourced from the
+ * RG's secondary. The kernel rejects the route without RTNH_F_ONLINK
+ * because $gw is not in any subnet bound to the WAN device once the
+ * proto handler applies our /32 secondary. The ucode rtnl module does
+ * not surface RTNH_F_ONLINK, so this shells to /sbin/ip which does.
+ *
+ * @param {string} wan_dev - WAN device name
+ * @param {string} gw - ISP gateway IPv4
+ * @param {string} src - RG source IPv4 (the secondary)
+ */
+function default_route_install(wan_dev, gw, src) {
+	let cmd = sprintf('ip -4 route replace default via %s dev %s onlink src %s 2>/dev/null',
+		gw, wan_dev, src);
+	let rc = system(cmd);
+	if (rc != 0)
+		log.syslog(log.LOG_WARNING, 'default_route_install rc=%d cmd=%s', rc, cmd);
+}
+
+/**
+ * Removes our onlink default. Letting netifd reinstall its own happens
+ * naturally when admzd issues a network.interface.<wan> renew which
+ * fires udhcpc SIGUSR1 which re-invokes admz.script which, with
+ * admz.main.enable=0, emits the normal default-via-router route.
+ */
+function default_route_remove() {
+	system('ip -4 route del default 2>/dev/null');
+}
+
+/**
+ * Installs an IPv4 proxy-neigh entry: the kernel will answer ARP
+ * requests for <ip> arriving on <dev>, as long as the device-level
+ * proxy_arp sysctl is enabled.
+ *
+ * @param {string} dev - device on which to proxy
+ * @param {string} ip - IPv4 address to proxy
+ */
+function neigh_proxy_install(dev, ip) {
+	let r = rtnl.request(rtnl.const.RTM_NEWNEIGH,
+		rtnl.const.NLM_F_CREATE | rtnl.const.NLM_F_REPLACE,
+		{
+			family: rtnl.const.AF_INET,
+			dev: dev,
+			dst: ip,
+			flags: rtnl.const.NTF_PROXY,
+			state: rtnl.const.NUD_PERMANENT
+		});
+	if (r == null)
+		log.syslog(log.LOG_WARNING, 'neigh_proxy_install %s dev %s failed: %s',
+			ip, dev, rtnl.error() ?? 'unknown');
+}
+
+/**
+ * Removes a proxy-neigh entry. Idempotent.
+ *
+ * @param {string} dev - device on which the proxy lives
+ * @param {string} ip - IPv4 address
+ */
+function neigh_proxy_remove(dev, ip) {
+	rtnl.request(rtnl.const.RTM_DELNEIGH, 0, {
+		family: rtnl.const.AF_INET,
+		dev: dev,
+		dst: ip,
+		flags: rtnl.const.NTF_PROXY
+	});
+}
+
+// --------------------------------------------------------------------
+// State machine transitions
+// --------------------------------------------------------------------
+
+/**
+ * Determines whether two lease snapshots refer to the same kernel state.
+ * Difference in any of {ip, gw} triggers a re-apply.
+ *
+ * @param {object|null} a - lease snapshot
+ * @param {object|null} b - lease snapshot
+ * @returns {boolean}
+ */
+function lease_equal(a, b) {
+	if (a == null && b == null)
+		return true;
+	if (a == null || b == null)
+		return false;
+	return a.ip == b.ip && a.gw == b.gw;
+}
+
+/**
+ * Computes target state from UCI config and the proto handler's
+ * published lease. Returns the state plus the lease snapshot for
+ * ACTIVE transitions.
+ *
+ * @returns {object} {state, lease}
+ */
+function target_compute() {
+	if (!cfg.enable)
+		return { state: 'DISABLED', lease: null };
+	if (!cfg.mac || cfg.mac == '')
+		return { state: 'NO_MAC', lease: null };
+	if (!cfg.lan_dev || cfg.lan_dev == '') {
+		log.syslog(log.LOG_WARNING, 'admz: lan_dev not configured, refusing to activate');
+		return { state: 'DISABLED', lease: null };
+	}
+
+	let obs = lease_observe(cfg.wan_iface);
+	if (!obs || !obs.up || !obs.ip || !obs.gw)
+		return { state: 'ARMED', lease: null };
+
+	return {
+		state: 'ACTIVE',
+		lease: {
+			ip: obs.ip,
+			gw: obs.gw,
+			dns: obs.dns,
+			netmask: obs.netmask,
+			lan_dev: cfg.lan_dev,
+			wan_dev: obs.l3_device ?? cfg.wan_iface
+		}
+	};
+}
+
+/**
+ * Installs the ACTIVE kernel state for a given lease. Idempotent:
+ * every operation underneath uses REPLACE flags or tolerates an
+ * existing entry, so re-applying is safe.
+ *
+ * @param {object} lease - {ip, gw, dns:[], lan_dev, wan_dev}
+ */
+function apply_active(lease) {
+	let wan_dev = lease.wan_dev;
+	let lan_dev = lease.lan_dev;
+
+	sysctl_write(wan_dev, 'proxy_arp', '1');
+	sysctl_write(lan_dev, 'proxy_arp', '1');
+	sysctl_write(wan_dev, 'forwarding', '1');
+	sysctl_write(lan_dev, 'forwarding', '1');
+
+	// /32 host route to LAN bridge so the kernel forwards inbound
+	// packets destined to the public WAN IP onto the wire the customer
+	// router sits on.
+	route_lan_install(lease.ip, lan_dev);
+
+	// Onlink default via the ISP gateway, sourced from the secondary.
+	// onlink because the WAN device has no subnet containing the gateway
+	// once the proto handler applied our 198.18.0.1/32.
+	default_route_install(wan_dev, lease.gw, cfg.secondary_ip);
+
+	// Proxy-neigh entries: RG answers ARP for <wan-pub> on the WAN side
+	// (upstream gateway resolves it to the WAN MAC and forwards there),
+	// and for <isp-gw> on the LAN side (ADMZ host resolves it to the
+	// br-lan MAC and ships frames there).
+	neigh_proxy_install(wan_dev, lease.ip);
+	neigh_proxy_install(lan_dev, lease.gw);
+}
+
+/**
+ * Tears down the ACTIVE kernel state. Removes proxy entries, the /32
+ * route, and the onlink default route. Triggers a netifd renew so
+ * udhcpc re-invokes admz.script with the new admz.main.enable value;
+ * when going DISABLED, the script applies the leased IP normally and
+ * netifd reinstalls the default-via-router route.
+ *
+ * @param {object} lease - the cached lease being torn down
+ */
+function tear_down_active(lease) {
+	let wan_dev = lease.wan_dev;
+	let lan_dev = lease.lan_dev;
+
+	neigh_proxy_remove(wan_dev, lease.ip);
+	neigh_proxy_remove(lan_dev, lease.gw);
+	route_lan_remove(lease.ip, lan_dev);
+	default_route_remove();
+
+	ubus.call({ object: 'network.interface.' + cfg.wan_iface, method: 'renew', data: {} });
+}
+
+/**
+ * Drives the daemon from current state to target state, performing
+ * kernel operations exactly once per transition.
+ *
+ * @param {object} target - {state, lease}
+ */
+function transition(target) {
+	let from = current_state;
+	let to = target.state;
+	let lease_change = (to == 'ACTIVE' && from == 'ACTIVE' && !lease_equal(current_lease, target.lease));
+
+	if (from == 'ACTIVE' && (to != 'ACTIVE' || lease_change))
+		tear_down_active(current_lease);
+
+	if (to == 'ACTIVE')
+		apply_active(target.lease);
+
+	current_state = to;
+	current_lease = target.lease;
+
+	log.syslog(log.LOG_NOTICE, 'admz: %s -> %s%s',
+		from, to,
+		(to == 'ACTIVE') ? sprintf(' (lease %s via %s)', current_lease.ip, current_lease.gw) : '');
+
+	// dnsmasq must re-read its config when the ADMZ host stanza changes:
+	// the dhcp-host=mac,wan_pub entry has to track the leased public IP.
+	// SIGHUP does not re-read dhcp-host or dhcp-range, so restart the
+	// init when the transition crosses the ACTIVE boundary or the lease
+	// IP changed.
+	let needs_restart = (from == 'ACTIVE') != (to == 'ACTIVE') || lease_change;
+	if (needs_restart)
+		system('/etc/init.d/dnsmasq restart >/dev/null 2>&1');
+}
+
+// --------------------------------------------------------------------
+// Polling loop
+// --------------------------------------------------------------------
+
+/**
+ * Periodic reconciliation. Computes target state, compares to current,
+ * transitions if needed, and re-applies idempotently when ACTIVE to
+ * catch netifd-driven state changes.
+ */
+function poll_tick() {
+	cfg = config_load();
+	let target = target_compute();
+
+	if (target.state == current_state && lease_equal(target.lease, current_lease)) {
+		if (current_state == 'ACTIVE' && current_lease)
+			apply_active(current_lease);
+	} else {
+		transition(target);
+	}
+
+	poll_timer = uloop.timer(POLL_INTERVAL_MS, poll_tick);
+}
+
+// --------------------------------------------------------------------
+// ubus object
+// --------------------------------------------------------------------
+
+/**
+ * Builds the response object for `ubus call admz status`. The renderer
+ * (dhcp.uc, firewall-admz.uc, tr181/NAT.uc::ip_passthrough_get) reads
+ * this from a different process so the synchronous-same-process
+ * deadlock does not apply.
+ *
+ * @returns {object} state + lease snapshot
+ */
+function ubus_status_build() {
+	let r = {
+		state: current_state,
+		enable: cfg.enable,
+		mac: cfg.mac,
+		lease_time: cfg.lease_time,
+		secondary_ip: cfg.secondary_ip,
+		wan_iface: cfg.wan_iface,
+		lan_dev: cfg.lan_dev
+	};
+	if (current_lease) {
+		r.lease_ip = current_lease.ip;
+		r.gateway = current_lease.gw;
+		r.dns_servers = current_lease.dns;
+	}
+	return r;
+}
+
+/**
+ * Drains any pending poll work and reconciles immediately. Issued by
+ * `ubus call admz reload` after the renderer has rewritten
+ * /etc/config/admz, AND triggers a netifd renew so the proto handler
+ * re-applies according to the new admz.main.enable value.
+ */
+function reconcile_now() {
+	cfg = config_load();
+
+	// Force udhcpc to renew so admz.script re-reads admz.main.enable
+	// and applies the right address (198.18.0.1 vs leased IP). The
+	// poll loop picks up the resulting state change within
+	// POLL_INTERVAL_MS.
+	ubus.call({ object: 'network.interface.' + cfg.wan_iface, method: 'renew', data: {} });
+
+	let target = target_compute();
+	if (target.state == current_state && lease_equal(target.lease, current_lease)) {
+		if (current_state == 'ACTIVE' && current_lease)
+			apply_active(current_lease);
+	} else {
+		transition(target);
+	}
+}
+
+// --------------------------------------------------------------------
+// Lifecycle
+// --------------------------------------------------------------------
+
+/**
+ * Signal handler installed for SIGTERM and SIGINT. Tears down kernel
+ * state cleanly. The proto handler stays in place; whoever stops admzd
+ * is presumably about to also stop the wan interface or replace admzd.
+ */
+function cleanup_on_exit() {
+	if (current_state == 'ACTIVE' && current_lease)
+		tear_down_active(current_lease);
+	uloop.end();
+}
+
+uloop.init();
+
+cfg = config_load();
+
+ubus_conn = ubus.connect();
+ubus_obj = ubus_conn.publish('admz', {
+	status: {
+		call: function(req) {
+			return ubus_status_build();
+		},
+		args: {}
+	},
+	reload: {
+		call: function(req) {
+			reconcile_now();
+			return { state: current_state };
+		},
+		args: {}
+	}
+});
+
+uloop.signal('SIGTERM', cleanup_on_exit);
+uloop.signal('SIGINT', cleanup_on_exit);
+uloop.signal('SIGHUP', reconcile_now);
+
+log.syslog(log.LOG_NOTICE, 'admzd starting: enable=%s mac=%s wan=%s lan=%s',
+	cfg.enable, cfg.mac, cfg.wan_iface, cfg.lan_dev);
+
+poll_tick();
+uloop.run();
+uloop.done();

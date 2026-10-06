@@ -1,0 +1,70 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.IoTCapability.{i}.PulseControl.",
+  "object": {
+    "path": "Device.IoTCapability.{i}.PulseControl.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "enumerations": [
+          "PushButton",
+          "MagneticContact",
+          "ElectronicLock",
+          "MotionTrigger"
+        ],
+        "dataType": "IoTPulseType"
+      },
+      {
+        "name": "Description",
+        "access": "readOnly",
+        "description": "Human-readable description of the {{object}}. For example, a more detailed description of {{param|Type}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Duration",
+        "access": "readWrite",
+        "description": "Some {{object}} instances can provide a duration together with the latest state change. The duration is an indication of the time, measured in {{units}}, between the start of the state change and the end of the state change: i.e., returning to its orignal state. The original state can be a low state or high state.",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "Transition",
+        "access": "readWrite",
+        "description": "Indicates the moment a pulse is generated. This can be a {{enum|RisingEdge}} transition: in case the sensor changes from low to high state. {{enum|FallingEdge}} transition: in case the sensor changes from high to low state.",
+        "type": "string",
+        "enumerations": [
+          "RisingEdge",
+          "FallingEdge"
+        ]
+      }
+    ],
+    "description": "{{object}} provides information to an actuator that sensor changed from one state to another state. In addition to the state change, the {{object}} can provide additional information about the type of transition via {{param|Transition}} and the pulse duration via {{param|Duration}}.",
+    "commands": [
+      {
+        "name": "TransitionHigh()",
+        "async": "false",
+        "input": [
+          "Duration"
+        ]
+      },
+      {
+        "name": "TransitionLow()",
+        "async": "false",
+        "input": [
+          "Duration"
+        ]
+      }
+    ],
+    "children": []
+  }
+}

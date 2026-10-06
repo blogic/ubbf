@@ -1,0 +1,20 @@
+#!/usr/bin/ucode
+// usb-allow apply           applies the ubbf_usb policy to all USB devices
+// usb-allow device <dir>    applies it to one device (hotplug add)
+'use strict';
+
+import { cursor } from 'uci';
+import { policy_load, policy_apply, device_apply } from 'ubbf.usb_allow';
+
+const ROOT = '/sys/bus/usb/devices';
+
+let policy = policy_load(cursor());
+
+if (ARGV[0] == 'apply')
+	policy_apply(policy, ROOT);
+else if (ARGV[0] == 'device' && ARGV[1])
+	device_apply(policy, ARGV[1]);
+else {
+	warn('usage: usb-allow apply | device <sysfs dir>\n');
+	exit(1);
+}

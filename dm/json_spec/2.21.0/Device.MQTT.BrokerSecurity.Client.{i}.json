@@ -1,0 +1,78 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.MQTT.BrokerSecurity.Client.{i}.",
+  "object": {
+    "path": "Device.MQTT.BrokerSecurity.Client.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ClientNumberOfEntries",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.21"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this MQTT client identity entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "A unique, human-readable name for this MQTT client identity entry.",
+        "type": "string"
+      },
+      {
+        "name": "Description",
+        "access": "readWrite",
+        "description": "A human-readable description of this MQTT client identity entry.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ClientID",
+        "access": "readWrite",
+        "description": "The MQTT protocol-level Client Identifier for this client, sent in the CONNECT packet (see {{bibref|MQTT50|section 3.1.3.1}}). It uniquely identifies this client identity and can be used for matching ACL rules, either on its own or in conjunction with the {{param|Username}} from this entry.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string"
+      },
+      {
+        "name": "Username",
+        "access": "readWrite",
+        "description": "Username for this client. When {{param|Device.MQTT.Broker.{i}.AuthenticationMethod}} is {{enum|UsernamePassword|Device.MQTT.Broker.{i}.AuthenticationMethod}}, this username is used for authentication, matched against the username provided by the client. When certificate-based authentication is used (e.g., {{enum|CertViaCN|Device.MQTT.Broker.{i}.AuthenticationMethod}}), this username is matched against the username derived from the client's certificate for authorization purposes. If {{empty}}, this rule may apply to anonymous clients, provided {{param|Device.MQTT.Broker.{i}.AllowAnonymous}} is {{true}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Password",
+        "access": "readWrite",
+        "description": "The password for this user, to be provided by the client. This parameter is only used for authentication when {{param|Device.MQTT.Broker.{i}.AuthenticationMethod}} is set to {{enum|UsernamePassword|Device.MQTT.Broker.{i}.AuthenticationMethod}}.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "Configuration for an MQTT client identity, which represents an entry in an authorization table that the local broker uses to authorize incoming MQTT client connections. This is different from the {{object|##.Client}} object, which defines the credentials that a specific MQTT client instance on this device should use when connecting to an external or internal MQTT broker. {{object}} defines the credentials for a single client, which can be based on a {{param|ClientID}}, a {{param|Username}}/{{param|Password}} pair, or a certificate identity (which is not stored here but verified by the broker against these entries).",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Name"
+      ]
+    }
+  }
+}

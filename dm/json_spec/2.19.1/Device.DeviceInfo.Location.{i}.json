@@ -1,0 +1,78 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.Location.{i}.",
+  "object": {
+    "path": "Device.DeviceInfo.Location.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "LocationNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Source",
+        "access": "readOnly",
+        "description": "Identifies the source of the location data.",
+        "default": "External",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "GPS",
+          "AGPS",
+          "Manual",
+          "External"
+        ]
+      },
+      {
+        "name": "AcquiredTime",
+        "access": "readOnly",
+        "description": "The time when the location was acquired.",
+        "type": "dateTime"
+      },
+      {
+        "name": "ExternalSource",
+        "access": "readOnly",
+        "description": "URL, MAC address, or other identifier that identifies an \"External\" source of this location. Meaningful only if {{param|Source}} has a value of {{enum|External|Source}}, otherwise it MUST be {{empty}}. If {{param|ExternalProtocol}} has a value of {{enum|CWMP|ExternalProtocol}}, this is the URL or IP address of the Controller.",
+        "type": "string"
+      },
+      {
+        "name": "ExternalProtocol",
+        "access": "readOnly",
+        "description": "Protocol used to acquire a location from an \"External\" source. {{enum}} Meaningful only if {{param|Source}} has a value of {{enum|External|Source}}, otherwise it MUST be {{empty}}.",
+        "default": "CWMP",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "CWMP",
+          "USP",
+          "OMA-DM",
+          "SNMP",
+          "UPnP",
+          "HELD",
+          "DHCPv4",
+          "DHCPv6",
+          "LLDP-MED",
+          "MLP",
+          "Other"
+        ]
+      },
+      {
+        "name": "DataObject",
+        "access": "readWrite",
+        "description": "The currently valid location information. Writable only when {{param|ExternalProtocol}} has a value of {{enum|CWMP|ExternalProtocol}} or {{enum|USP|ExternalProtocol}}. If obtained through the local GPS/AGPS then the location information is formatted according to {{bibref|RFC5491}}. If manually configured then location information will be XML-formatted according to {{bibref|RFC5491}} (geographical information) and {{bibref|RFC5139}} (civic addresses). If obtained by an external source this is the location information as received. If it's an XML document (e.g. CWMP, OMA-DM, UPnP, HELD, MLP) the location information will be represented as-is, otherwise it will be converted to base64. CWMP or USP configured location information will be XML-formatted according to {{bibref|RFC5491}} (geographical information) and {{bibref|RFC5139}} (civic addresses). Only zero or one Location object instance with value {{enum|CWMP|ExternalProtocol}} or {{enum|USP|ExternalProtocol}} MUST exist at any given time.",
+        "type": "string",
+        "maxLength": 1200
+      }
+    ],
+    "description": "This object contains Location information.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Source",
+        "ExternalSource"
+      ]
+    }
+  }
+}

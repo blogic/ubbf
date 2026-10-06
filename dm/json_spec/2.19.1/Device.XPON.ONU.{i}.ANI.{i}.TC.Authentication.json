@@ -1,0 +1,31 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.Authentication.",
+  "object": {
+    "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.Authentication.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Password",
+        "access": "readWrite",
+        "description": "All ITU based PON standards specify authentication by PLOAM password or registration ID. See: * {{bibref|G.9807.1|Section C.15.2.1}} * {{bibref|G.984.3|Section VI.2}} * {{bibref|G.987.3|Section 15.2.1}} * {{bibref|G.989.3|Section 15.2.1}} All those standards mention that a method to enter the password is beyond their scope. This parameter and the parameter {{param|HexadecimalPassword}} standardize a method to enter the password. In case of G-PON as PON mode, the password can be up to 10 bytes long. See {{bibref|G.984.3|Section 9.2.4.2}}. For the other PON modes, the password can be up to 36 bytes long. See: * {{bibref|G.9807.1|Section C.11.3.4.2}} * {{bibref|G.987.3|Section 11.3.4.2}} * {{bibref|G.989.3|Section 11.3.4.2}} If {{param|HexadecimalPassword}} is {{false}}, the password is in ASCII format. Then all 95 printable characters with decimal codes in the range 32 to 126 inclusive are allowed. Each character corresponds with 1 byte in the password. If {{param|HexadecimalPassword}} is {{true}}, the password is in hexadecimal format. Then only the characters 0 to 9, a to f, and A to F are allowed. Each character corresponds with 1 nibble in the password. Depending on the value of {{param|HexadecimalPassword}} and the PON mode, a different number of characters are applicable. If {{param|HexadecimalPassword}} is {{false}}: * In case of G-PON as PON mode, only the 1st 10 characters are applicable. * In case of another PON mode, only the 1st 36 characters are applicable. If {{param|HexadecimalPassword}} is {{true}}: * In case of G-PON as PON mode, the 1st 20 characters are all relevant. The other characters are not applicable. * In case of another PON mode, all 72 characters are relevant. This parameter is set to {{empty}} if no authentication via a password is required.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 72
+      },
+      {
+        "name": "HexadecimalPassword",
+        "access": "readWrite",
+        "description": "If {{false}}, {{param|Password}} is in ASCII format. If {{true}}, {{param|Password}} is in hexadecimal format. See {{param|Password}} for more info.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object shows info related to authentication of the ONU to the OLT.",
+    "children": []
+  }
+}

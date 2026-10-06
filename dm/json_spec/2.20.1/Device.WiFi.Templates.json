@@ -1,0 +1,59 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.WiFi.Templates.",
+  "object": {
+    "path": "Device.WiFi.Templates.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "BSSTemplateNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.20"
+      },
+      {
+        "name": "RadioTemplateNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.20"
+      },
+      {
+        "name": "SecurityTemplateNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.20"
+      },
+      {
+        "name": "SecurityGroupNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.20"
+      },
+      {
+        "name": "APMLDTemplateNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.20"
+      },
+      {
+        "name": "SSCTemplateNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.20"
+      }
+    ],
+    "description": "Wi-Fi Configuration Templates provide a comprehensive way to configure Wi-Fi. Configuration Templates can be applied across multiple deployments in an operator's network, and across multiple APs, radios and BSSs. A set of Configuration Templates can be pre-defined, which can then handle many different services and scenarios by matching flags to select a particular template depending on AP or radio capabilities and topology. Different BSSs can be configured across different radios to provision different types of services. A detailed description of how to use Wi-Fi Configuration Templates is in {{bibref|DataElements|Section 3.4}}. The Configuration Template Manager (CTM) interprets and implements Configuration Templates for each deployment.",
+    "children": []
+  }
+}

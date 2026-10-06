@@ -1,0 +1,49 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.UPnP.Device.IGD.",
+  "object": {
+    "path": "Device.UPnP.Device.IGD.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "MaxLeaseLifetime",
+        "access": "readWrite",
+        "description": "Specifies the maximum duration, in {{units}}, for a UPnP-IGD port mapping lease that the UPnP-IGD service will grant. When a UPnP control point requests a lease duration exceeding this value, the UPnP-IGD service will still grant the port mapping request, but the actual lease lifetime will be capped at this value. Once this maximum lifetime expires, the port mapping will be automatically removed. A value of 0 indicates no {{param}} is specified.",
+        "default": "86400",
+        "defaultType": "implementation",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "CleanupInterval",
+        "access": "readWrite",
+        "description": "Specifies the interval, in {{units}}, at which the Device's UPnP-IGD service automatically cleans up inactive UPnP port mappings. A port mapping is typically considered inactive if no network traffic has been observed traversing it for a predefined timeout period, which is an implementation-specific value within the UPnP-IGD service. During the cleanup process, mappings that meet this inactivity criteria are removed. A value of ''0'' disables this automatic cleanup mechanism, causing port mappings to persist until explicitly removed by the control point or the UPnP-IGD service restarts.",
+        "default": "0",
+        "defaultType": "implementation",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AllowReservedAddress",
+        "access": "readWrite",
+        "description": "Indicates whether the Device allows port forwarding requests from UPnP control points even when the external (WAN) interface of the IGD has a private or reserved IPv4 address. When set to {{true}}, the IGD service will process and attempt to establish port mappings despite having a non-public IP address on its WAN interface. When set to {{false}}, the IGD will prevent the establishment of port mappings if it detects a private or reserved IP address on its WAN interface.",
+        "default": "false",
+        "defaultType": "implementation",
+        "type": "boolean"
+      },
+      {
+        "name": "EnableIPv6",
+        "access": "readWrite",
+        "description": "Enables or disables IPv6 support for the UPnP IGD service.",
+        "default": "false",
+        "defaultType": "implementation",
+        "type": "boolean"
+      }
+    ],
+    "description": "When {{param|#.UPnPIGD}} is set to {{true}}, this object defines the configuration parameters of the UPnP-IGD service embedded in the device.",
+    "children": []
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Logical.",
+  "object": {
+    "path": "Device.Logical.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "InterfaceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Logical object. This object models several Logical interface objects, each representing a different stack layer, including: {{object|Interface}}. {{object|Interface}} is a logical interface which can point to other stackable interface layers. The intention of the logical interface is to simplify the configuration management of individual {{bibref|TR-181i2}} services. Instead of configuring the individual network services with a physical interface and deal with reconfiguration problems that may arise from switching between WAN interfaces. The intention is that the network services are configured with a logical interface and that this configuration stays unchanged during the switching between WAN interfaces. The software service (For example a WAN mode manger.) responsible for handling the WAN interface changes must then only care about rewriting the LowerLayers parameter of the Logical Interface Objects.",
+    "children": []
+  }
+}

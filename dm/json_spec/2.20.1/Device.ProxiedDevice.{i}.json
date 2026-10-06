@@ -1,0 +1,120 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.ProxiedDevice.{i}.",
+  "object": {
+    "path": "Device.ProxiedDevice.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ProxiedDeviceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "enumerations": [
+          "Alarm",
+          "AntiTheft",
+          "Bell",
+          "Clock",
+          "Door",
+          "Fan",
+          "GarageDoor",
+          "HVAC",
+          "Light",
+          "Lock",
+          "Meter",
+          "Motor",
+          "Oven",
+          "PowerStrip",
+          "Sensor",
+          "SensorStrip",
+          "Siren",
+          "Thermostat"
+        ],
+        "dataType": "IoTDeviceType",
+        "version": "2.13"
+      },
+      {
+        "name": "Description",
+        "access": "readOnly",
+        "description": "Human-readable description of the {{object}}. e.g. a more detailed description of {{param|Type}}.",
+        "type": "string",
+        "maxLength": 256,
+        "version": "2.13"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "A textual name of the instance, which can be assigned by the user. {{object}}.",
+        "type": "string",
+        "maxLength": 64,
+        "version": "2.13"
+      },
+      {
+        "name": "Online",
+        "access": "readOnly",
+        "description": "This parameter provides the state of the {{object}} on the underlying (proxied) connected network.",
+        "type": "boolean",
+        "version": "2.13"
+      },
+      {
+        "name": "LastTimeContacted",
+        "access": "readOnly",
+        "description": "The date time of the last successful contact.",
+        "type": "dateTime",
+        "version": "2.13"
+      },
+      {
+        "name": "InterfaceReference",
+        "access": "readOnly",
+        "description": "{{reference|a protocol object that uses the {{param|ProxyProtocol}}}}.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        },
+        "version": "2.13"
+      },
+      {
+        "name": "ProxyProtocol",
+        "access": "readOnly",
+        "description": "The protocol being used to communicate between the Agent and this Proxied Device. {{enum}} Vendors can extend the enumerated values with vendor specific extensions, in which case the rules outlined in {{bibref|TR-106|3.3}} MUST be adhered to.",
+        "type": "string",
+        "enumerations": [
+          "Z-Wave",
+          "ZigBee",
+          "UPnP-DM"
+        ],
+        "version": "2.13"
+      },
+      {
+        "name": "NodeNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.13"
+      }
+    ],
+    "description": "Each entry in the table is a ProxiedDevice object that is a mount point. Each ProxiedDevice represents distinct hardware Devices. ProxiedDevice objects are virtual and abstracted representation of functionality, that exists on hardware other than that which the Agent is running.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

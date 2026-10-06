@@ -1,0 +1,31 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DSL.Line.{i}.Stats.CurrentDay.",
+  "object": {
+    "path": "Device.DSL.Line.{i}.Stats.CurrentDay.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ErroredSecs",
+        "access": "readOnly",
+        "description": "Number of errored {{units}} since the second most recent DSL Showtime (ES-L as defined in ITU-T Rec. {{bibref|G.997.1}}). Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1. If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SeverelyErroredSecs",
+        "access": "readOnly",
+        "description": "Number of severely errored {{units}} since the second most recent DSL Showtime (SES-L as defined in ITU-T Rec. {{bibref|G.997.1}}). Note: This parameter is OPTIONAL at the G and S/T interfaces in G.997.1 Amendment 1. If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "This object contains DSL line statistics accumulated during the current day. See {{bibref|G.997.1|Chapter 7.2.6}}. Note: The {{object}} parameters SHOULD NOT be reset when the interface statistics are reset via an interface disable / enable cycle.",
+    "children": []
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.WireGuard.Peer.{i}.",
+  "object": {
+    "path": "Device.WireGuard.Peer.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "PeerNumberOfEntries",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this Peer configuration.",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.20"
+      },
+      {
+        "name": "PublicKey",
+        "access": "readWrite",
+        "description": "The base64 encoded public key of the peer. Note: The min and max length requirements have been changed in Device:2.21 to reflect the representation as a base64 encoded key of 32 bytes.",
+        "type": "string",
+        "minLength": 44,
+        "maxLength": 44
+      },
+      {
+        "name": "PresharedKey",
+        "access": "readWrite",
+        "description": "The base64 encoded pre-shared key for this WireGuard Peer. When {{empty}} is provided, no pre-shared key is used. Note: The min and max length requirements have been changed in Device:2.21 to reflect the representation as a base64 encoded key of 32 bytes.",
+        "secured": true,
+        "type": "string",
+        "lengths": [
+          [
+            0,
+            0
+          ],
+          [
+            44,
+            44
+          ]
+        ]
+      },
+      {
+        "name": "AllowedIPs",
+        "access": "readWrite",
+        "description": "Each item represents an IPv4/v6 subnets in CIDR notation from which incoming traffic is allowed and to which outgoing traffic is directed for this peer. '0.0.0.0/0' maybe specified for matching all IPv4 addresses and '::/0' for matching all IPv6 addresses. When {{empty}} is provided, no traffic is routed to this peer.",
+        "list": true,
+        "type": "string",
+        "maxLength": 45,
+        "dataType": "IPAddress"
+      },
+      {
+        "name": "EndpointAddress",
+        "access": "readWrite",
+        "description": "The remote network address (IP or hostname) of the peer. {{empty}} indicates that the endpoint address is not used.",
+        "type": "string"
+      },
+      {
+        "name": "EndpointPort",
+        "access": "readWrite",
+        "description": "The UDP port of the remote peer. A value of `-1` indicates that the endpoint port is not used.",
+        "type": "int",
+        "ranges": [
+          [
+            -1,
+            -1
+          ],
+          [
+            1,
+            65535
+          ]
+        ]
+      },
+      {
+        "name": "PersistentKeepalive",
+        "access": "readWrite",
+        "description": "An interval in {{units}} to send an authenticated empty packet to the peer. This is useful for keeping NAT mappings alive. A value of `0` disables this feature.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "LastHandshakeTime",
+        "access": "readOnly",
+        "description": "The amount of time in {{units}} since the last handshake was sent with this peer.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "WireGuard Peer table, an entry in this table represents a WireGuard peer.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

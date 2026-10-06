@@ -1,0 +1,62 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.SFPs.SFPProperties.SFP.{i}.",
+  "object": {
+    "path": "Device.SFPs.SFPProperties.SFP.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "SFPNumberOfEntries",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this entry.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "VendorName",
+        "access": "readWrite",
+        "description": "The vendor name of the SFP. When empty, the vendor name is not used in determining the SFP type.",
+        "type": "string",
+        "maxLength": 16
+      },
+      {
+        "name": "VendorOUI",
+        "access": "readWrite",
+        "description": "The vendor organizationally unique identifier (OUI) field of the SFP. When empty, the vendor OUI is not used in determining the SFP type.",
+        "type": "hexBinary",
+        "minLength": 3,
+        "maxLength": 3
+      },
+      {
+        "name": "VendorPN",
+        "access": "readWrite",
+        "description": "The vendor part number (PN) of the SFP. When empty, the vendor PN is not used in determining the SFP type. The ASCII character `*` is interpreted as a wildcard character. Note: the string \"*\" as value for this parameter is equivalent to the empty string as value for this parameter.",
+        "type": "string",
+        "maxLength": 16
+      },
+      {
+        "name": "SFPType",
+        "access": "readWrite",
+        "description": "It has the same allowed values as {{param|##.SFPCage.{i}.SFPType}}, except for \"Unsupported\".",
+        "type": "string",
+        "enumerationRef": "##.SupportedSFPTypes"
+      }
+    ],
+    "description": "List of SFPs to help implementations to determine the SFP type. {{param|##.SFPCage.{i}.SFPType}} reports the SFP type. SFPs themselves do not report their type. Implementations typically try to determine a value for that parameter based on the values for parameters such as: - {{param|##.Mgmt.SFF8472.{i}.Transceiver.Transceiver}} - {{param|##.Mgmt.SFF8472.{i}.Transceiver.BRNominal}} - {{param|##.Mgmt.SFF8472.{i}.Transceiver.Wavelength}} This approach is not foolproof: many SFPs do not report correct values. They e.g. might report 0 as value for all transceiver codes. What all SFPs normally report correctly is their vendor name, vendor OUI and part number, cfr: - {{param|##.Mgmt.SFF8472.{i}.Transceiver.VendorName}} - {{param|##.Mgmt.SFF8472.{i}.Transceiver.VendorOUI}} - {{param|##.Mgmt.SFF8472.{i}.Transceiver.VendorPN}} Therefore this table specifies the SFP type based on vendor name, vendor OUI and/or part number. After reading those 3 properties, implementations can look up the value to assign to {{param|##.SFPCage.{i}.SFPType}} in this table. This list is allowed to include a built-in module/SFP to help an implementation to determine the type of such a module/SFP.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "VendorName",
+        "VendorOUI",
+        "VendorPN"
+      ]
+    }
+  }
+}

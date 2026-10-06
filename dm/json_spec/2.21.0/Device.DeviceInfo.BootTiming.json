@@ -1,0 +1,41 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.DeviceInfo.BootTiming.",
+  "object": {
+    "path": "Device.DeviceInfo.BootTiming.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "BootStartTime",
+        "access": "readOnly",
+        "description": "The timestamp when the boot process started.",
+        "type": "dateTime"
+      },
+      {
+        "name": "BootCompleteTime",
+        "access": "readOnly",
+        "description": "The timestamp of when the boot (of all systems) is complete.",
+        "type": "dateTime"
+      },
+      {
+        "name": "BootDuration",
+        "access": "readOnly",
+        "description": "Duration of the most recent boot ({{param|BootCompleteTime}} - {{param|BootStartTime}}), in {{units}}. This value is calculated by the device as a convenience, since it can also be derived by the controller.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LastBootMilestoneNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Boot performance metrics for monitoring and analyzing device boot time and milestones. This object provides detailed historical timing metrics for the most recent boot cycle, allowing for performance analysis and troubleshooting of boot-related issues.",
+    "children": []
+  }
+}

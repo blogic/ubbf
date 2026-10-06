@@ -1,0 +1,173 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.QoS.",
+  "object": {
+    "path": "Device.QoS.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "MaxClassificationEntries",
+        "access": "readOnly",
+        "description": "The maximum number of entries available in the Classification table.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ClassificationNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxAppEntries",
+        "access": "readOnly",
+        "description": "The maximum number of entries available in the {{object|App}} table.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AppNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxFlowEntries",
+        "access": "readOnly",
+        "description": "The maximum number of entries available in the {{object|Flow}} table.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "FlowNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxPolicerEntries",
+        "access": "readOnly",
+        "description": "The maximum number of entries available in the {{object|Policer}} table.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PolicerNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxQueueEntries",
+        "access": "readOnly",
+        "description": "The maximum number of entries available in the {{object|Queue}} table.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "QueueNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "QueueStatsNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxShaperEntries",
+        "access": "readOnly",
+        "description": "The maximum number of entries available in the {{object|Shaper}} table.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ShaperNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxSchedulerEntries",
+        "access": "readOnly",
+        "description": "The maximum number of entries available in the {{object|Scheduler}} table.",
+        "type": "unsignedInt",
+        "version": "2.16"
+      },
+      {
+        "name": "SchedulerNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.16"
+      },
+      {
+        "name": "DefaultForwardingPolicy",
+        "access": "readWrite",
+        "description": "Identifier of the forwarding policy associated with traffic not associated with any specified classifier.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DefaultTrafficClass",
+        "access": "readWrite",
+        "description": "Identifier of the traffic class associated with traffic not associated with any specified classifier.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DefaultPolicer",
+        "access": "readWrite",
+        "description": "{{reference}} Indicates the ''Policer'' table entry for traffic not associated with any specified classifier. {{empty}} indicates a null policer.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "Policer.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "DefaultQueue",
+        "access": "readWrite",
+        "description": "{{reference}} Indicates the ''Queue'' table entry for traffic not associated with any specified classifier. Note: The interpretation of {{empty}} value is implementation specific.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "Queue.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "DefaultDSCPMark",
+        "access": "readWrite",
+        "description": "DSCP to mark traffic not associated with any specified classifier. A value of -1 indicates no change from the incoming packet. A value of -2 indicates automatic marking of DSCP based upon the EthernetPriority value of the incoming packet as defined in {{bibref|TR-181i2|Annex A}}.",
+        "type": "int",
+        "minInclusive": -2
+      },
+      {
+        "name": "DefaultEthernetPriorityMark",
+        "access": "readWrite",
+        "description": "Ethernet priority code (as defined in {{bibref|802.1Q-2011}}) to mark traffic not associated with any specified classifier. A value of -1 indicates no change from the incoming packet. A value of -2 indicates automatic marking of EthernetPriority based upon the DSCP value of the incoming packet as defined in {{bibref|TR-181i2|Annex A}}.",
+        "type": "int",
+        "minInclusive": -2
+      },
+      {
+        "name": "DefaultInnerEthernetPriorityMark",
+        "access": "readWrite",
+        "description": "Ethernet priority code (as defined in {{bibref|802.1Q-2011}}) to mark traffic of the inner VLAN Tag as defined in 802.1Q, when the PDU is not associated with any specified classifier. This parameter is only applicable when the PDU has 2 VLAN Tags. A value of -1 indicates no change from the incoming packet. A value of -2 indicates automatic marking of EthernetPriority based upon the DSCP value of the incoming packet as defined in {{bibref|TR-181i2|Annex A}}.",
+        "type": "int",
+        "minInclusive": -2,
+        "version": "2.12"
+      },
+      {
+        "name": "AvailableAppList",
+        "access": "readOnly",
+        "description": "{{list}} List items represent URNs, each indicating a protocol supported for use as a ProtocolIdentifier in the App table. This list MAY include any of the URNs defined in {{bibref|TR-181i2|Annex A}} as well as other URNs defined elsewhere.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string"
+      }
+    ],
+    "description": "Queue management configuration object.",
+    "children": []
+  }
+}

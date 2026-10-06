@@ -1,0 +1,100 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.WiFi.Templates.SecurityTemplate.{i}.",
+  "object": {
+    "path": "Device.WiFi.Templates.SecurityTemplate.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "SecurityTemplateNumberOfEntries",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.20"
+      },
+      {
+        "name": "SecurityTemplateID",
+        "access": "writeOnceReadOnly",
+        "description": "Static and persistent ID element. At most one {{object}} instance can exist with a given value for {{param}}.",
+        "type": "string"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Determines if this template is considered by the Configuration Template Manager in the template matching process.",
+        "type": "boolean"
+      },
+      {
+        "name": "Priority",
+        "access": "readWrite",
+        "description": "This value indicates in which order the {{object}} are to be matched. 255 is the highest priority, 0 is the lowest priority.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "RSNOSupportFlag",
+        "access": "readWrite",
+        "description": "Indicates support for Robust Security Network (RSN) Overriding (RSNO). RSN Overriding (RSNO) is also known as MRSNO and is used in WPA3-Personal Compatibility Mode. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "true",
+          "false",
+          "null"
+        ]
+      },
+      {
+        "name": "SupportedAKMSuiteFlag",
+        "access": "readWrite",
+        "description": "{{list}} Authentication and Key Management (AKM) suite selector. Only the listed enumeration values are allowed in this string. {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "psk",
+          "dpp",
+          "sae",
+          "sae-ext-key",
+          "SuiteSelector"
+        ]
+      },
+      {
+        "name": "SupportedAKMSuiteSelectorFlag",
+        "access": "readWrite",
+        "description": "{{list}} AKM suite selector, the AKM suite selector (OUI and type) is encoded as a 4-octet hex-encoded value without internal delimiters, e.g. 506F9A02 {{bibref|802.11-2020|Table 9-151}}. {{param}} applies if {{param|SupportedAKMSuiteFlag}} includes value \"SuiteSelector\".",
+        "list": true,
+        "type": "hexBinary",
+        "minLength": 4,
+        "maxLength": 4
+      },
+      {
+        "name": "OperatingGenerationFlag",
+        "access": "readWrite",
+        "description": "{{list}} The AP advertises support in its beacon frames for each Wi-Fi generation in this list for this flag to match. For example {{param}} could be \"5,6,7\".",
+        "list": true,
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 255
+      },
+      {
+        "name": "SecurityIEs",
+        "access": "readWrite",
+        "description": "Concatenation of all BSS Security related IEs with Element IDs, without delimiters as hex encoded octets {{bibref|EasyMesh}}. Note that this {{param}} and the {{object|RSNE}}, {{object|RSNOE}}, {{object|RSNO2E}}, {{object|RSNXE}}, {{object|RSNXOE}} objects are independent and may be set separately. If this {{param}} is not empty, the Configuration Template Manager (CTM) uses the value of this {{param}} and ignores the content of the RSNE/RSNOE/RSNO2E/RSNXE/RSNXOE objects.",
+        "type": "hexBinary"
+      }
+    ],
+    "description": "Table of SecurityTemplates for Wi-Fi configuration {{bibref|WPA3v3.0}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "SecurityTemplateID"
+      ]
+    }
+  }
+}

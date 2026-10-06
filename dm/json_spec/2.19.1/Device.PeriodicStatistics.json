@@ -1,0 +1,35 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PeriodicStatistics.",
+  "object": {
+    "path": "Device.PeriodicStatistics.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "MinSampleInterval",
+        "access": "readOnly",
+        "description": "Minimum sample interval in {{units}} that the CPE is able to support. A value of 0 indicates no specific minimum sample interval.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxReportSamples",
+        "access": "readOnly",
+        "description": "Maximum number of samples of each statistic that the CPE is able to store and report. A value of 0 indicates no specific maximum number of samples.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SampleSetNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object configures collection of periodic statistics for the device. Periodic statistics are measured over a sample interval (which can be aligned with absolute time) and are made available to the Controller as a comma-separated list of the most recent <n> samples. This object provides a single set of global settings that affect the entire device unless overridden locally.",
+    "children": []
+  }
+}

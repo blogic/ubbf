@@ -1,0 +1,41 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.SFPs.",
+  "object": {
+    "path": "Device.SFPs.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "SFPCageNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SupportedSFPTypes",
+        "access": "readOnly",
+        "description": "Indicates the SFP types supported by the CPE.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "G-PON",
+          "XG-PON",
+          "NG-PON2",
+          "XGS-PON",
+          "EPON",
+          "MoCA",
+          "Optical Ethernet",
+          "Electrical Ethernet"
+        ],
+        "version": "2.21"
+      }
+    ],
+    "description": "This object describes the Small Form-Factor Pluggable (SFP) cages and the transceivers hosted in them. The object definition is based on parts of {{bibref|SFF-8024}} and {{bibref|SFF-8472}}. This data model is extensible to support new SFP management protocol standards in the future.",
+    "children": []
+  }
+}

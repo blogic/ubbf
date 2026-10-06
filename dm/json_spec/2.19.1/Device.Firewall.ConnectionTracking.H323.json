@@ -1,0 +1,41 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Firewall.ConnectionTracking.H323.",
+  "object": {
+    "path": "Device.Firewall.ConnectionTracking.H323.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the connection tracking support for the H323 protocol (H323 ALG).",
+        "type": "boolean"
+      },
+      {
+        "name": "RegistrationRequestTTL",
+        "access": "readWrite",
+        "description": "When no TTL is specified in the registration request message the TTL specified here will be used.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "GKRoutedOnly",
+        "access": "readWrite",
+        "description": "Only accept calls from the gatekeeper.",
+        "type": "boolean"
+      },
+      {
+        "name": "CallForwardFilter",
+        "access": "readWrite",
+        "description": "Create call forwarding expectations only when both endpoints are on different sides, as determined by routing information.",
+        "type": "boolean"
+      }
+    ],
+    "description": "H.323 is a VoIP signalling protocol from ITU-T",
+    "children": []
+  }
+}

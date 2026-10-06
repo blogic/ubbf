@@ -1,0 +1,101 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FAST.Line.{i}.Stats.CurrentDay.",
+  "object": {
+    "path": "Device.FAST.Line.{i}.Stats.CurrentDay.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ErroredSecs",
+        "access": "readOnly",
+        "description": "Total number of errored {{units}} as defined in ITU-T Rec. {{bibref|G.997.2}}. An errored second (ES) is declared if, during a 1-second interval, there are one or more crc anomalies, or one or more los defects, or one or more lor defects, or one or more lpr primitives.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SeverelyErroredSecs",
+        "access": "readOnly",
+        "description": "Total number of severely errored {{units}} as defined in ITU-T Rec. {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LOSS",
+        "access": "readOnly",
+        "description": "Total number of loss of signal {{units}} (LOSS) as defined in ITU-T Rec. {{bibref|G.997.2}}. A LOSS is declared if, during a 1-second interval, there are one or more los defects.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LORS",
+        "access": "readOnly",
+        "description": "Total number of loss of RMC {{units}} (LORS) as defined in ITU-T Rec. {{bibref|G.997.2}}. A LORS is declared if, during a 1-second interval, there are one or more lor defects.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "UAS",
+        "access": "readOnly",
+        "description": "Total number of unavailable {{units}} (UAS) as defined in ITU-T Rec. {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "RTXUC",
+        "access": "readOnly",
+        "description": "This parameter reports a count of uncorrected DTU anomalies (rtx_uc). This parameter is defined in clause 7.8.5 of ITU-T Rec. {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "RTXTX",
+        "access": "readOnly",
+        "description": "This parameter reports a count of retransmitted DTU anomalies (rtx_tx). This parameter is defined in clause 7.8.6 of ITU-T Rec. {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SuccessBSW",
+        "access": "readOnly",
+        "description": "This parameter reports a count of the successful bit swap (BSW) primitives. This parameter is defined as success_BSW in clause 7.7.20 of ITU-T Rec. {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SuccessSRA",
+        "access": "readOnly",
+        "description": "This parameter reports a count of the successful autonomous SRA (seamless rate adaptation) primitives. This parameter is defined as success_SRA in clause 7.7.21 of ITU-T Rec. {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SuccessFRA",
+        "access": "readOnly",
+        "description": "This parameter reports a count of the successful FRA (fast rate adaptation) primitives. This parameter is defined as success_FRA in clause 7.7.22 of ITU-T Rec. {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SuccessRPA",
+        "access": "readOnly",
+        "description": "This parameter reports a count of the successful RPA (RMC parameter adjustment) primitives. This parameter is defined as success_RPA in clause 7.7.23 of ITU-T Rec. {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SuccessTIGA",
+        "access": "readOnly",
+        "description": "This parameter reports a count of the successful TIGA (transmitter initiated gain adjustment) primitives. This parameter is defined as success_TIGA in clause 7.7.24 of ITU-T Rec. {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "This object contains FAST line statistics accumulated during the current day. Note: The Total parameters SHOULD NOT be reset when the interface statistics are reset via an interface disable / enable cycle.",
+    "children": []
+  }
+}

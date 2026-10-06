@@ -1,0 +1,43 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.BulkData.Profile.{i}.Parameter.{i}.",
+  "object": {
+    "path": "Device.BulkData.Profile.{i}.Parameter.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ParameterNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "Name of the parameter in the report body. If the value of this parameter is {{empty}}, then the value of the {{param|Reference}} parameter is used as the name. When the value {{param|Reference}} parameter contains wildcards and/or partial parameter names, the rules for determining the value of this parameter are specified in {{template|BULK-DATA-WILD-REF}}.",
+        "type": "string",
+        "maxLength": 64,
+        "version": "2.12"
+      },
+      {
+        "name": "Reference",
+        "access": "readWrite",
+        "description": "Represents the parameter(s) that are part of this Bulk Data collection profile. The value MUST be a path name of a parameter or an object. When the {{param|##.ParameterWildCardSupported}} parameter has a value of {{true}}, patterns for instance identifiers are permitted with wildcards (an \"*\" character) in place of instance identifiers; any attempt to set the value otherwise MUST be rejected by the CPE. In the case where an Object Path is specified, the sub-objects of the resolved pattern and contained parameters will be part of the bulk data collected and reported. If the path name refers to an object then it MUST end with a '.'.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Exclude",
+        "access": "readWrite",
+        "description": "When {{true}}, the entry is to be excluded from the report.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.16"
+      }
+    ],
+    "description": "Bulk data parameter table. Each entry in this table represents a parameter (or set of parameters if a partial path is provided) to be either collected and reported, or omitted if {{param|Exclude}} is {{true}}.",
+    "children": []
+  }
+}

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+mkdir -p /tmp/ubbf/umdns
+rm -rf /etc/umdns
+ln -s /tmp/ubbf/umdns /etc/umdns

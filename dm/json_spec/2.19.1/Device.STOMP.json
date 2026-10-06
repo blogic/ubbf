@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.STOMP.",
+  "object": {
+    "path": "Device.STOMP.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ConnectionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The {{object}} represents the STOMP capabilities of the device as described in {{bibref|TR-369}}.",
+    "children": []
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XPON.ONU.{i}.SoftwareImage.{i}.",
+  "object": {
+    "path": "Device.XPON.ONU.{i}.SoftwareImage.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "2",
+    "enableParameter": "",
+    "numEntriesParameter": "SoftwareImageNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "ID",
+        "access": "readOnly",
+        "description": "The ID as assigned by the CPE to this {{object}} entry.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 1
+      },
+      {
+        "name": "Version",
+        "access": "readOnly",
+        "description": "A string identifying the software version. This parameter is based on ''Version'' from {{bibref|G.988|Section 9.1.4}}.",
+        "type": "string",
+        "maxLength": 14
+      },
+      {
+        "name": "IsCommitted",
+        "access": "readOnly",
+        "description": "This parameter indicates whether or not the associated software image is committed. This parameter is based on ''Is committed'' from {{bibref|G.988|Section 9.1.4}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "IsActive",
+        "access": "readOnly",
+        "description": "This parameter indicates whether the associated software image is active ({{true}}) or inactive ({{false}}). This parameter is based on ''Is active'' from {{bibref|G.988|Section 9.1.4}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "IsValid",
+        "access": "readOnly",
+        "description": "This parameter indicates whether the associated software image is valid ({{true}}) or invalid ({{false}}). This parameter is based on ''Is valid'' from {{bibref|G.988|Section 9.1.4}}.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This table models the software images stored in the ONU. It is expected this table has two entries: the ONU normally creates two instances of the Software Image ME to model the 2 software images in the ONU. This object is based on {{bibref|G.988|Section 9.1.4}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "ID"
+      ]
+    }
+  }
+}

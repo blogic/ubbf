@@ -1,0 +1,39 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.SSIDtoVIDMapping.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.SSIDtoVIDMapping.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "SSIDtoVIDMappingNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "SSID",
+        "access": "readOnly",
+        "description": "The SSID.",
+        "type": "string",
+        "maxLength": 64,
+        "version": "2.15"
+      },
+      {
+        "name": "VID",
+        "access": "readOnly",
+        "description": "The VLAN ID (VID).",
+        "type": "unsignedInt",
+        "maxInclusive": 4095,
+        "version": "2.15"
+      }
+    ],
+    "description": "The Service Set Identifier (SSID) to VLAN ID mapping for EasyMesh traffic separation {{bibref|EasyMesh}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "SSID"
+      ]
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.NetworkProperties.",
+  "object": {
+    "path": "Device.DeviceInfo.NetworkProperties.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "MaxTCPWindowSize",
+        "access": "readOnly",
+        "description": "The maximum number of {{units}} of outstanding data a sender can send on a particular connection prior to an acknowledgment {{bibref|RFC793}}. Any scaling factor SHOULD be included in this parameter {{bibref|RFC1323}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TCPImplementation",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the TCP congestion control mechanism(s) implemented. {{enum}} Tahoe, Reno, and New Reno are defined in {{bibref|RFC2582}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "Tahoe",
+          "Reno",
+          "New Reno",
+          "Vegas"
+        ]
+      }
+    ],
+    "description": "This object defines the parameters that describe how the device handles network traffic.",
+    "children": []
+  }
+}

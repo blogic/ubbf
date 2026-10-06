@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.ATM.",
+  "object": {
+    "path": "Device.ATM.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "LinkNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Asynchronous Transfer Mode (ATM) object that contains the {{object|Link}} interface and {{command|Diagnostics.F5Loopback()}} diagnostics.",
+    "children": []
+  }
+}

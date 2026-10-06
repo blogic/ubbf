@@ -1,0 +1,47 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Time.Client.{i}.Authentication.",
+  "object": {
+    "path": "Device.Time.Client.{i}.Authentication.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables authentication of the time client.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Certificate",
+        "access": "readWrite",
+        "description": "Points to the certificate that must be used by the NTS-KE client.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.Certificate.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "NTSPort",
+        "access": "readWrite",
+        "description": "On this port the NTS Key Establishment protocol is being provided.",
+        "default": "4460",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      }
+    ],
+    "description": "This object contains parameters relating to enabling security for the time client.",
+    "children": []
+  }
+}

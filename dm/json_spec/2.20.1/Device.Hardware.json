@@ -1,0 +1,16 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.Hardware.",
+  "object": {
+    "path": "Device.Hardware.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [],
+    "description": "Represents the hardware configuration of the device, including details about the CPU, memory, and other hardware components.",
+    "children": []
+  }
+}

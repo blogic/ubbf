@@ -1,0 +1,25 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LANConfigSecurity.",
+  "object": {
+    "path": "Device.LANConfigSecurity.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ConfigPassword",
+        "access": "readWrite",
+        "description": "A password to allow LAN access to protected auto-configuration services. If the CPE supports TR-064 (LAN-side DSL CPE Configuration Protocol), this parameter is to be used as the ''dslf-config'' password (as defined in TR-064). If the CPE has a user interface with password protection enabled, this parameter is also to be used as the user password for password-protected operations. However, this parameter MUST NOT be used to set the user password if the parameter {{param|#.UserInterface.PasswordUserSelectable}} is {{true}}.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 64
+      }
+    ],
+    "description": "This object contains generic device configuration information.",
+    "children": []
+  }
+}

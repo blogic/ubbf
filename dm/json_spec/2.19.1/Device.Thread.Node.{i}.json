@@ -1,0 +1,47 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Thread.Node.{i}.",
+  "object": {
+    "path": "Device.Thread.Node.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "NodeNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "ExtendedMAC",
+        "access": "readOnly",
+        "description": "Unique MacID of the node.",
+        "type": "hexBinary",
+        "minLength": 16,
+        "maxLength": 16
+      },
+      {
+        "name": "Connected",
+        "access": "readWrite",
+        "description": "The connectivity status. When {{true}} this {{object}} instance participates to the Thread network referenced by {{param|MLEReference}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "MLEReference",
+        "access": "readOnly",
+        "description": "Connect the node to the Thread network managed by the Mesh Link Established.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.MLE.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "The table of nodes hosted on the device.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "ExtendedMAC"
+      ]
+    }
+  }
+}

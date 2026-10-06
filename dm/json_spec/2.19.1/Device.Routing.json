@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Routing.",
+  "object": {
+    "path": "Device.Routing.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "RouterNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Routing object that contains the {{object|Router}} table, the received router advertisement information {{object|RouteInformation}}, {{object|Babel}}, and {{object|RIP}} protocol objects.",
+    "children": []
+  }
+}

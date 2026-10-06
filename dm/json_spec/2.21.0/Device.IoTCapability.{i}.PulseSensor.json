@@ -1,0 +1,71 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.IoTCapability.{i}.PulseSensor.",
+  "object": {
+    "path": "Device.IoTCapability.{i}.PulseSensor.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "enumerations": [
+          "PushButton",
+          "MagneticContact",
+          "ElectronicLock",
+          "MotionTrigger"
+        ],
+        "dataType": "IoTPulseType"
+      },
+      {
+        "name": "Description",
+        "access": "readOnly",
+        "description": "Human-readable description of the {{object}}. For example, a more detailed description of {{param|Type}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The date and time in UTC when {{param|Duration}} or {{param|Transition}}has been changed to the current value.",
+        "type": "dateTime"
+      },
+      {
+        "name": "LastContactTime",
+        "access": "readOnly",
+        "description": "The date and time in UTC when the {{object}} has received data.",
+        "type": "dateTime"
+      },
+      {
+        "name": "Duration",
+        "access": "readOnly",
+        "description": "Some {{object}} instances can provide a duration together with the latest state change. The duration is an indication of the time, measured in {{units}}, between the start of the state change and the end of the state change: i.e., returning to its original state. The original state can be a low state or high state.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Unit",
+        "access": "readOnly",
+        "description": "Unit in which {{param|Duration}} is expressed in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Transition",
+        "access": "readOnly",
+        "description": "Indicates the moment a pulse is generated. This can be a {{enum|RisingEdge}} transition: in case the sensor changes from low to high state. {{enum|FallingEdge}} transition: in case the sensor changes from high to low state.",
+        "type": "string",
+        "enumerations": [
+          "RisingEdge",
+          "FallingEdge"
+        ]
+      }
+    ],
+    "description": "A {{object}} is used to reflect the functionality of a sensor that changed state from low to high or high to low. A {{object}} provides a trigger on the rising edge of this state change, which is identified by {{param|Transition}}. Some {{object}} instances have the possibility to provide a pulse duration {{param|Duration}} together with the latest state change.",
+    "children": []
+  }
+}

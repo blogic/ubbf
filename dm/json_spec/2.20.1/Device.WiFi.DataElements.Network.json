@@ -1,0 +1,228 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "ID",
+        "access": "readOnly",
+        "description": "A unique identifier for this particular Wi-Fi network.",
+        "type": "string"
+      },
+      {
+        "name": "TimeStamp",
+        "access": "readOnly",
+        "description": "The time this group was collected. Formatted with the date-and-time string format as defined in {{bibref|RFC3339|Section 3}}.",
+        "type": "dateTime"
+      },
+      {
+        "name": "ControllerID",
+        "access": "readOnly",
+        "description": "A unique identifier for a Multi-AP controller. It is recommended that this be the same as the IEEE 1905 ALID of the EasyMesh controller.",
+        "type": "string"
+      },
+      {
+        "name": "DeviceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MSCSDisallowedStaList",
+        "access": "readOnly",
+        "description": "List of STAs for which Mirrored Stream Classification Service (MSCS) operation is disallowed.",
+        "list": true,
+        "type": "string",
+        "maxLength": 17,
+        "pattern": "",
+        "dataType": "MACAddress",
+        "version": "2.15"
+      },
+      {
+        "name": "SCSDisallowedStaList",
+        "access": "readOnly",
+        "description": "List of STAs for which Stream Classification Service (SCS) operation is disallowed.",
+        "list": true,
+        "type": "string",
+        "maxLength": 17,
+        "pattern": "",
+        "dataType": "MACAddress",
+        "version": "2.15"
+      },
+      {
+        "name": "ColocatedAgentID",
+        "access": "readOnly",
+        "description": "AL MAC address of the EasyMesh Agent that is co-located in the same device with the Wi-Fi EasyMesh Controller. Set to null if there is no such collocated agent.",
+        "type": "string",
+        "maxLength": 17,
+        "pattern": "",
+        "dataType": "MACAddress",
+        "version": "2.17"
+      },
+      {
+        "name": "SteeringMandates",
+        "access": "readOnly",
+        "description": "Count of number of EasyMesh controller-initiated requests for Steering Mandates. {{bibref|EasyMesh|Section 17.2.57, Profile-2 Steering Request TLV, with field Request_Mode set to one}}.",
+        "type": "unsignedLong",
+        "dataType": "StatsCounter64",
+        "version": "2.19"
+      },
+      {
+        "name": "SteeringOpportunities",
+        "access": "readOnly",
+        "description": "Count of number of EasyMesh controller-initiated requests for Steering Opportunities. {{bibref|EasyMesh|Section 17.2.57, Profile-2 Steering Request TLV, with field Request_Mode set to zero}}.",
+        "type": "unsignedLong",
+        "dataType": "StatsCounter64",
+        "version": "2.19"
+      },
+      {
+        "name": "SSIDNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.15"
+      },
+      {
+        "name": "STABlockNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "ProvisionedDPPNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.19"
+      },
+      {
+        "name": "PreferredBackhaulsNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.17"
+      }
+    ],
+    "description": "This object describes a Wi-Fi network containing 1 or more Access Point (AP) devices.",
+    "commands": [
+      {
+        "name": "SetTrafficSeparation()",
+        "version": "2.15",
+        "async": "true",
+        "input": [
+          "Enable",
+          null,
+          "SSID",
+          "VID"
+        ],
+        "output": [
+          "Status"
+        ]
+      },
+      {
+        "name": "SetServicePrioritization()",
+        "version": "2.15",
+        "async": "true",
+        "input": [
+          "Enable",
+          "DSCPMap",
+          null,
+          "ID",
+          "Precedence",
+          "Output",
+          "AlwaysMatch"
+        ],
+        "output": [
+          "Status"
+        ]
+      },
+      {
+        "name": "SetPreferredBackhauls()",
+        "version": "2.15",
+        "async": "true",
+        "input": [
+          null,
+          "BackhaulMACAddress",
+          "bSTAMACAddress"
+        ],
+        "output": [
+          "Status"
+        ]
+      },
+      {
+        "name": "SetSSID()",
+        "version": "2.15",
+        "async": "true",
+        "input": [
+          "SSID",
+          "Enable",
+          "AddRemoveChange",
+          "PassPhrase",
+          "Band",
+          "AKMsAllowed",
+          "SuiteSelector",
+          "AdvertisementEnabled",
+          "MFPConfig",
+          "MobilityDomain",
+          "HaulType",
+          "Type"
+        ],
+        "output": [
+          "Status"
+        ]
+      },
+      {
+        "name": "SetMSCSDisallowed()",
+        "version": "2.15",
+        "async": "true",
+        "input": [
+          "MSCSDisallowedStaList"
+        ],
+        "output": [
+          "Status"
+        ]
+      },
+      {
+        "name": "SetSCSDisallowed()",
+        "version": "2.15",
+        "async": "true",
+        "input": [
+          "SCSDisallowedStaList"
+        ],
+        "output": [
+          "Status"
+        ]
+      }
+    ],
+    "events": [
+      {
+        "name": "ControllerBTMSteer!",
+        "version": "2.19",
+        "arguments": [
+          "BSSID",
+          "STAMAC",
+          "BTMStatusCode"
+        ]
+      },
+      {
+        "name": "AgentOnboard!",
+        "version": "2.19",
+        "arguments": [
+          "DeviceID",
+          "BackhaulSta",
+          "BackhaulMACAddress",
+          "BackhaulALID"
+        ]
+      }
+    ],
+    "children": []
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.WiFi.AFC.Location.",
+  "object": {
+    "path": "Device.WiFi.AFC.Location.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "GPS",
+        "access": "readWrite",
+        "description": "{{reference}} The value MUST be the path name of a row in Device.DeviceInfo.Location Object, which has the GPS location details, either via GPS, External source or Manual. For example: ''Device.DeviceInfo.Location.1''.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": ".DeviceInfo.Location.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Barometer",
+        "access": "readWrite",
+        "description": "{{reference}} The value MUST be the path name of a row in Device.DeviceInfo.Location Object, which has the Barometer data details, either via Barometer, External source or Manual. For example: ''Device.DeviceInfo.Location.2''.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": ".DeviceInfo.Location.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "Object that contains references to the location of the AP or Fixed Client Device obtained from GPS, Barometer, External or Manual sources.",
+    "children": []
+  }
+}

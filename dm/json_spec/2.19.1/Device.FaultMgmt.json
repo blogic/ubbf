@@ -1,0 +1,53 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FaultMgmt.",
+  "object": {
+    "path": "Device.FaultMgmt.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "SupportedAlarmNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxCurrentAlarmEntries",
+        "access": "readOnly",
+        "description": "The maximum number of entries allowed in the {{object|CurrentAlarm}} table.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "CurrentAlarmNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "HistoryEventNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ExpeditedEventNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "QueuedEventNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object contains parameters relating to Fault/Alarm Management.",
+    "children": []
+  }
+}

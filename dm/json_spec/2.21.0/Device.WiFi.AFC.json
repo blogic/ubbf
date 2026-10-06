@@ -1,0 +1,138 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.WiFi.AFC.",
+  "object": {
+    "path": "Device.WiFi.AFC.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enable or disable the AFC client function. This parameter should be {{true}} if 6GHz AP Type is Standard Power. If the {{param|Device.WiFi.Radio.{i}.PowerType}} for 6GHz is not {{enum|StandardPower|Device.WiFi.Radio.{i}.PowerType}} , this should be set to {{false}}. To enable this parameter, the AFC server URL, {{param|ServerURL}} must be specified.",
+        "type": "boolean"
+      },
+      {
+        "name": "ServerURL",
+        "access": "readWrite",
+        "description": "The URL for the CPE to connect to the AFC server. This parameter MUST be in the form of a valid HTTP or HTTPS URL. The host portion of this URL is used by the CPE for validating the AFC certificate when using TLS.",
+        "type": "string",
+        "maxLength": 2048,
+        "dataType": "URI"
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "Specifies the TCP port on which the AFC server is listening for incoming requests from the AFC client.",
+        "default": "443",
+        "defaultType": "implementation",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "RequestVersion",
+        "access": "readWrite",
+        "description": "AFC protocol version as defined in {{bibref|AFCSDI|Section 4.1}}. This value MUST match the version used by the AFC server and specification. For example, \"1.4\".",
+        "type": "string",
+        "maxLength": 16
+      },
+      {
+        "name": "UseFrequencyRange",
+        "access": "readWrite",
+        "description": "Indicates whether {{param|FrequencyRange}} should be included in the Available Spectrum Inquiry Request. If {{true}}, it indicates that the AFC System is to provide Available Spectrum information on the basis of frequency and \"inquiredFrequencyRange\" field would be included in the Available Spectrum Inquiry Request message. If {{true}}, {{param|FrequencyRange}} should not be empty.",
+        "type": "boolean"
+      },
+      {
+        "name": "FrequencyRange",
+        "access": "readWrite",
+        "description": "Each entry in the list is a range of frequency for which the AFC request is made, in the form \"low:high\", for example \"5925:6425,6525:6875\". This parameter is conditionally required when {{param|UseFrequencyRange}} is {{true}}. This parameter contains one or more frequency ranges for which the AP or Fixed Client Device is requesting spectrum availability. If present, it indicates that the AFC System is to provide Available Spectrum information on the basis of frequency. This field would be included in the Available Spectrum Inquiry Request message.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "UseInquiredChannels",
+        "access": "readWrite",
+        "description": "Indicates whether {{param|OperatingClassList}} should be included in the Available Spectrum Inquiry Request. If {{true}}, it indicates that the AFC System is to provide Available Spectrum information on the basis of channels, and \"inquiredChannels\" field would be included in the Available Spectrum Inquiry Request message. If {{true}}, {{param|OperatingClassList}} should not be empty.",
+        "type": "boolean"
+      },
+      {
+        "name": "OperatingClassList",
+        "access": "readWrite",
+        "description": "Each entry in the list is the global operating classes used to define the channel center frequency indices and operating bandwidth. For example, \"131,132,133,134,136\". This parameter is conditionally required when {{param|UseInquiredChannels}} is {{true}}. This parameter contains one or more lists of channels for which the AP or Fixed Client Device is requesting spectrum availability. If present, it indicates that the AFC System is to provide Available Spectrum information on the basis of channels.",
+        "list": true,
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IndoorDeployment",
+        "access": "readOnly",
+        "description": "Indicates whether the deployment of the AP or Fixed Client Device is located indoors, outdoors, or is unknown.",
+        "type": "string",
+        "enumerations": [
+          "Unknown",
+          "Indoor",
+          "Outdoor"
+        ]
+      },
+      {
+        "name": "MinDesiredPower",
+        "access": "readWrite",
+        "description": "Indicates the minimum desired EIRP in {{units}}. This field is optionally present in a AFC query by inquiredChannels; otherwise, it is absent. If present, the AFC System shall provide all the inquired channels available for use at or above the defined minDesiredPower. If absent, the AFC System shall provide a response for all inquiredChannels which are available for use at any power.",
+        "type": "int"
+      },
+      {
+        "name": "TLSVersion",
+        "access": "readWrite",
+        "description": "Specifies the version of Transport Layer Security (TLS) to be used by AFC client for secure communication with the AFC server. The device must use TLS version 1.2, or a newer version as per {{bibref|AFCSDI|Section 3.4.2}}. The selected version must be supported by both the AFC client and server. If the CA certificate path is not located in the standard Path of the device, the {{param|CABundle}} parameter must be specified to provide the correct certificate path.",
+        "type": "string",
+        "enumerations": [
+          "TLS1_2_Or_Later",
+          "TLS1_3_Only",
+          "TLS1_3_Or_Later"
+        ]
+      },
+      {
+        "name": "OCSPEnable",
+        "access": "readWrite",
+        "description": "Enables or disables Online Certificate Status Protocol (OCSP) checking for certificate validation during TLS handshake. When enabled, the AFC client will verify the revocation status of the server certificate using OCSP before establishing a secure connection. As per {{bibref|AFCCTP|Section 2.3.1 AFC DUT Test Harness}}, AFC DUT should have OCSP enabled. If set to {{false}}, the client will skip OCSP validation, which may reduce security.",
+        "default": "true",
+        "defaultType": "implementation",
+        "type": "boolean"
+      },
+      {
+        "name": "Certificate",
+        "access": "readWrite",
+        "description": "Specifies the client certificate that must be presented to the remote server for mutual authentication. This certificate is used to authenticate the client by the remote server, ensuring that the remote server is communicating with a trusted client. The client certificate must be issued by a trusted Certificate Authority (CA) and should match the client's private key. This parameter is applicable only when a TLS session is being used.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.Certificate.",
+          "targetType": "row"
+        },
+        "version": "2.21"
+      },
+      {
+        "name": "CABundle",
+        "access": "readWrite",
+        "description": "Specifies the group of CA certificate(s) that the client must use to validate the certificate presented by the remote server. These CA certificates form a trust chain that the server certificate must match, ensuring that only servers with trusted certificates can establish a connection. This parameter supports multiple CA certificates to accommodate different server certificate issuers. This parameter is applicable only when a TLS session is being used.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.CABundle.",
+          "targetType": "row"
+        },
+        "version": "2.21"
+      },
+      {
+        "name": "MTLSEnable",
+        "access": "readWrite",
+        "description": "Enable or disable mutual TLS (mTLS). MTLSEnable is an optional parameter that enables mTLS when required by the AFC server. If {{true}}, {{param|Certificate}} should be specified.",
+        "type": "boolean"
+      }
+    ],
+    "description": "Object that contains all the information regarding Automated Frequency Coordination (AFC) configuration and status for 6 GHz operation. The object definition is based on specification {{bibref|AFCSDI}}, which defines the AFC system for communicating to the AFC server.",
+    "children": []
+  }
+}

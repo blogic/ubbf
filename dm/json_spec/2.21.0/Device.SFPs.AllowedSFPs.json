@@ -1,0 +1,31 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.SFPs.AllowedSFPs.",
+  "object": {
+    "path": "Device.SFPs.AllowedSFPs.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "AllowedSFPNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AllowAllSFPs",
+        "access": "readWrite",
+        "description": "When set to {{true}}, the CPE allows all SFPs and the configuration in {{object|AllowedSFP}} is ignored. When set to {{false}}, the CPE only allows SFPs which match with the classification criteria of at least one entry in {{object|AllowedSFP}}. The CPE blocks each SFP for which there is no match.",
+        "default": "true",
+        "defaultType": "implementation",
+        "type": "boolean"
+      }
+    ],
+    "description": "Object specifying which pluggable SFPs the CPE should block or allow. The object is not applicable for built-in modules/SFPs (the CPE should always allow built-in modules/SFPs). When blocking a PON SFP, i.e. an SFP of type \"G-PON\", \"XG-PON\", \"NG-PON2\" or \"XGS-PON\", it's expected that the ANI using the SFP does not reach O5, i.e. that {{param|##.XPON.ONU.{i}.ANI.{i}.TC.ONUActivation.ONUState}} will not become O5. When blocking a MoCA SFP, it's expected that the MoCA interface using the SFP does not become up, i.e. that {{param|##.MoCA.Interface.{i}.Status}} does not become Up. When blocking an Ethernet SFP, i.e. an SFP of type \"Optical Ethernet\" or \"Electrical Ethernet\", it's expected that the Ethernet interface using the SFP does not become up, i.e. that {{param|##.Ethernet.Interface.{i}.Status}} does not become Up.",
+    "children": []
+  }
+}

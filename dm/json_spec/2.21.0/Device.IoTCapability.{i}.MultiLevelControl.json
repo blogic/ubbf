@@ -1,0 +1,50 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.IoTCapability.{i}.MultiLevelControl.",
+  "object": {
+    "path": "Device.IoTCapability.{i}.MultiLevelControl.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "enumerations": [
+          "Location",
+          "HSV",
+          "MultiPhaseVoltage",
+          "MultiPhaseCurrent",
+          "MultiPhaseReactivePower",
+          "MultiPhaseApparentPower",
+          "MultiPhaseActivePower",
+          "MultiPhaseVoltageCurrentPower",
+          "MultiPhaseElectric",
+          "sRGB",
+          "Temperatures"
+        ],
+        "dataType": "MultiLevelType"
+      },
+      {
+        "name": "Description",
+        "access": "readOnly",
+        "description": "Human-readable description of the {{object}}. For example, a more detailed description of {{param|Type}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ControlNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "MultiLevelControl is used to model multi level controls.",
+    "children": []
+  }
+}

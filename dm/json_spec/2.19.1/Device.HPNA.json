@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.HPNA.",
+  "object": {
+    "path": "Device.HPNA.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "InterfaceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "HPNA object that contains the {{object|Interface}} and {{object|Diagnostics}} objects. The HPNA (also known as HomePNA) industry standard {{bibref|G.9954}} defines peer to peer communication for home networking over existing coax cables and telephone wiring within the home.",
+    "children": []
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MQTT.Capabilities.",
+  "object": {
+    "path": "Device.MQTT.Capabilities.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ProtocolVersionsSupported",
+        "access": "readOnly",
+        "description": "Indicates the supported protocol versions. {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "3.1",
+          "3.1.1",
+          "5.0"
+        ]
+      },
+      {
+        "name": "TransportProtocolSupported",
+        "access": "readOnly",
+        "description": "Indicates the supported transport protocols. {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "TCP/IP",
+          "TLS",
+          "WebSocket",
+          "WebSocketTLS"
+        ]
+      },
+      {
+        "name": "MaxNumberOfClientSubscriptions",
+        "access": "readOnly",
+        "description": "Indicates the maximum number of subscriptions per MQTT client, which can be stored in the {{object|#.Client.{i}.Subscription}} table. A value of 0 means no limit.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxNumberOfBrokerBridges",
+        "access": "readOnly",
+        "description": "Indicates the maximum number of bridges, which can be configured in the {{object|#.Broker.{i}.Bridge}} table. A value of 0 means no limit.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxNumberOfBrokerBridgeSubscriptions",
+        "access": "readOnly",
+        "description": "Indicates the maximum number of subscriptions, which can be stored per bridge instance in the {{object|#.Broker.{i}.Bridge.{i}.Subscription}} table. A value of 0 means no limit.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Indicates the MQTT capabilities of the device.",
+    "children": []
+  }
+}

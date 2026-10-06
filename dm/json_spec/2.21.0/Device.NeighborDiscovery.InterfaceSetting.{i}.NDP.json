@@ -1,0 +1,125 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.NeighborDiscovery.InterfaceSetting.{i}.NDP.",
+  "object": {
+    "path": "Device.NeighborDiscovery.InterfaceSetting.{i}.NDP.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables NDP functionality for this specific interface. This parameter works in conjunction with {{param|#.Enable}}. If {{param|#.Enable}} is {{false}}, then NDP is considered disabled for this interface regardless of this parameter's value.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this {{object}}. {{enum}} A value of {{enum|Error_Misconfigured}} indicates that the referenced {{param|#.Interface}} is not a valid reference to an IPv6-capable interface (that is attached to the IPv6 stack).",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured"
+        ]
+      },
+      {
+        "name": "DADTransmits",
+        "access": "readWrite",
+        "description": "The number of consecutive Neighbor Solicitation messages sent while performing Duplicate Address Detection on a tentative address (see{{bibref|RFC4862|5.1}}). A value of zero indicates that Duplicate Address Detection is not performed on tentative addresses. A value of one indicates a single transmission with no follow-up retransmissions. If the value is greater than 1, {{param|RetransTimer}} defines the delay between consecutive messages.",
+        "default": "1",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RetransTimer",
+        "access": "readWrite",
+        "description": "Retransmission interval in {{units}}, as defined in {{bibref|RFC4861}}. For auto-configuration purposes, {{param}} specifies the delay between consecutive Neighbor Solicitation transmissions performed during Duplicate Address Detection (DAD) {{bibref|RFC4862|Section 5.4}}, as well as the time a node waits after sending the last Neighbor Solicitation before ending the DAD process.",
+        "default": "1000",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "BaseReachableTime",
+        "access": "readWrite",
+        "description": "The base time in {{units}} for how long a neighbor is considered valid and reachable in the neighbor cache {{bibref|RFC4861|Section 6.3}}.",
+        "default": "30000",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RtrSolicitationInterval",
+        "access": "readWrite",
+        "description": "Retransmission interval in {{units}}, as defined in {{bibref|RFC4861|6.3.7}}. For auto-configuration purposes, {{param}} specifies the delay between consecutive Router Solicitation transmissions. If {{param|MaxRtrSolicitationInterval}} is configured, this parameter serves as the initial retransmission time (IRT), where IRT is set to RTR_SOLICITATION_INTERVAL, for the backoff algorithm, as described in {{bibref|RFC7559}}.",
+        "default": "4000",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxRtrSolicitationInterval",
+        "access": "readWrite",
+        "description": "The maximum retransmission time (MRT) in {{units}} between consecutive Router Solicitation transmissions when the device implements a back-off algorithm, as defined in {{bibref|RFC7559}}. It is used together with {{param|RtrSolicitationInterval}} to control back-off behavior.",
+        "default": "600000",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "UnlimitedMaxRtrSolicitations",
+        "access": "readWrite",
+        "description": "If {{true}}, the number of Router Solicitation transmissions is unlimited, overriding {{param|MaxRtrSolicitations}}. This corresponds to setting MAX_RTR_SOLICITATIONS to infinity, as allowed by {{bibref|RFC7559}}. If {{false}}, {{param|MaxRtrSolicitations}} is used.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "MaxRtrSolicitations",
+        "access": "readWrite",
+        "description": "Maximum Number of Router Solicitation Transmission messages, as defined in {{bibref|RFC4861}}. For auto-configuration purposes {{param}} specifies the Maximum Number of Router Solicitation Transmission messages to help the host to conclude that there are no routers on the link. If {{param|MaxRtrSolicitationInterval}} is configured, This parameter corresponds to the Max Retransmit Count (MRC), where MRC is set to MAX_RTR_SOLICITATIONS as defined in {{bibref|RFC7559}}. This parameter is ignored if {{param|UnlimitedMaxRtrSolicitations}} is {{true}}.",
+        "default": "3",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "NUDEnable",
+        "access": "readWrite",
+        "description": "Enables or disables Neighbor Unreachability Detection (NUD) {{bibref|RFC4861|Section 7}}.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "RSEnable",
+        "access": "readWrite",
+        "description": "Enables or disables Router Solicitation (RS) on {{param|#.Interface}} {{bibref|RFC4861|Section 4.1}}.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "MaxRtrSolicitationDelay",
+        "access": "readWrite",
+        "description": "The maximum delay in {{units}} before sending the first Router Solicitation message after the interface is brought up, as defined in {{bibref|RFC4861|Section 6.3.7}}. The actual delay is a random value between 0 and {{param}}. This random delay desynchronizes clients which start at the same time (for example, after a power outage). A value of 0 indicates no delay. Note: The random delay is not needed if Duplicate Address Detection (DAD) has already introduced sufficient randomization.",
+        "default": "1000",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxRtrSolicitationDuration",
+        "access": "readWrite",
+        "description": "The maximum duration in {{units}} during which the client is permitted to retransmit Router Solicitation messages, as defined in {{bibref|RFC7559}}. This parameter corresponds to the Maximum Retransmit Duration (MRD). When {{param|MaxRtrSolicitationInterval}} is configured, this parameter works together with the backoff algorithm to control the total time spent soliciting routers. A value of 0 indicates that no specific maximum duration is set. This parameter is ignored if {{param|UnlimitedMaxRtrSolicitations}} is {{false}} and {{param|MaxRtrSolicitations}} is reached before the duration expires.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Contains all parameters related to the Neighbor Discovery Protocol (NDP) for this interface, as defined in {{bibref|RFC4861}}.",
+    "children": []
+  }
+}

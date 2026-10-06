@@ -1,0 +1,85 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.MultiAPDevice.Backhaul.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.MultiAPDevice.Backhaul.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "LinkType",
+        "access": "readOnly",
+        "description": "The medium being used to backhaul this Access Point Device to the Backhaul Access Point Device. The {{enum|None}} value is reserved for the {{object}} instance that represents the Multi-AP Controller. {{enum}} {{deprecated|2.18|because it was essentially the same as {{param|##.BackhaulMediaType}}.}} {{obsoleted|2.20}}",
+        "type": "string",
+        "enumerations": [
+          "None",
+          "Wi-Fi",
+          "MoCA",
+          "Ethernet",
+          "G.hn",
+          "HPNA",
+          "HomePlug",
+          "UPA"
+        ],
+        "status": "obsoleted"
+      },
+      {
+        "name": "BackhaulMACAddress",
+        "access": "readOnly",
+        "description": "The MAC Address at the far end of the backhaul link of the interface on the network that is providing a backhaul for this Access Point Device. This along with {{param|BackhaulDeviceID|obsoleted}}, helps to identify the backhaul interface endpoint. {{empty}} is reserved for the {{object}} instance that represents the Multi-AP Controller. {{deprecated|2.18|because it was the same as {{param|##.BackhaulMACAddress}}.}} {{obsoleted|2.20}}",
+        "type": "string",
+        "maxLength": 17,
+        "pattern": "",
+        "dataType": "MACAddress",
+        "status": "obsoleted"
+      },
+      {
+        "name": "BackhaulDeviceID",
+        "access": "readOnly",
+        "description": "The Device's ID of the Device on the network that is providing a Backhaul Link for this Access Point Device. {{deprecated|2.18|because it was essentially the same as {{param|##.BackhaulALID}}.}} {{obsoleted|2.20}}",
+        "type": "string",
+        "maxLength": 17,
+        "pattern": "",
+        "dataType": "MACAddress",
+        "status": "obsoleted"
+      },
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "The MAC Address at the near end of the backhaul link of this Access Point Device's backhaul interface that is connecting via {{param|##.BackhaulMediaType}} to {{param|BackhaulMACAddress}} of the Backhaul Device identified by {{param|BackhaulDeviceID}}. {{deprecated|2.18|because it was the same as {{param|##.Radio.{i}.BackhaulSta.MACAddress}}.}} {{obsoleted|2.20}}",
+        "type": "string",
+        "maxLength": 17,
+        "pattern": "",
+        "dataType": "MACAddress",
+        "status": "obsoleted"
+      },
+      {
+        "name": "CurrentOperatingClassProfileNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object represents an individual Access Point device's Backhaul and unique aspects in the Wi-Fi network. The endpoints of the backhaul interface are represented by the (Device's ID and interface MAC Address). This object represents the upward view of the backhaul interface. The two endpoints of the backhaul interface are - ({{param|BackhaulDeviceID|obsoleted}}, {{param|BackhaulMACAddress|obsoleted}}) of the uplinked Backhaul Device - {{param|MACAddress|obsoleted}} of this Access Point Device. {{empty}} is reserved for the {{object}} instance that represents the Multi-AP Controller.",
+    "commands": [
+      {
+        "name": "SteerWiFiBackhaul()",
+        "version": "2.15",
+        "async": "true",
+        "input": [
+          "TargetBSS",
+          "Channel",
+          "TimeOut"
+        ],
+        "output": [
+          "Status"
+        ]
+      }
+    ],
+    "children": []
+  }
+}

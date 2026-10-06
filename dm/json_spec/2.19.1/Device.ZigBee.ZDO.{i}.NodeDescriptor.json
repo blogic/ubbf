@@ -1,0 +1,120 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.ZigBee.ZDO.{i}.NodeDescriptor.",
+  "object": {
+    "path": "Device.ZigBee.ZDO.{i}.NodeDescriptor.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "LogicalType",
+        "access": "readOnly",
+        "description": "The type of ZigBee device that is extracted from the Logical Type Field as defined in {{bibref|ZigBee2007|Table 2.29}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "ZC",
+          "ZR",
+          "ZED"
+        ]
+      },
+      {
+        "name": "ComplexDescriptorSupported",
+        "access": "readOnly",
+        "description": "When {{true}}, specifies that the {{object|#.ComplexDescriptor}} object is supported for this ZigBee device.",
+        "type": "boolean"
+      },
+      {
+        "name": "UserDescriptorSupported",
+        "access": "readOnly",
+        "description": "When {{true}}, specifies that the {{object|#.UserDescriptor}} object is supported for this ZigBee device.",
+        "type": "boolean"
+      },
+      {
+        "name": "FrequencyBand",
+        "access": "readOnly",
+        "description": "Specifies the frequency bands that are supported by the underlying IEEE 802.15.4 radio utilized by the ZigBee device. {{list}} {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "868-868.6",
+          "902-928",
+          "2400-2483.5"
+        ]
+      },
+      {
+        "name": "MACCapability",
+        "access": "readOnly",
+        "description": "Specifies the IEEE 802.15.4-2003 MAC sub-layer capabilities for this ZigBee device. {{list}} {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "AlternatePANCoordinator",
+          "FFD",
+          "MainsPowerSource",
+          "OnWhenIdle",
+          "SecureCommunication"
+        ]
+      },
+      {
+        "name": "ManufactureCode",
+        "access": "readOnly",
+        "description": "Specifies a manufacturer code that is allocated by the ZigBee Alliance, relating the manufacturer to the device.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "MaximumBufferSize",
+        "access": "readOnly",
+        "description": "Specifies the maximum buffer size, in {{units}}, of the network sub-layer data unit (NSDU) for this ZigBee device.",
+        "type": "unsignedInt",
+        "maxInclusive": 128
+      },
+      {
+        "name": "MaximumIncomingTransferSize",
+        "access": "readOnly",
+        "description": "Specifies the maximum size, in {{units}}, of the application sub-layer data unit (ASDU) that can be transferred to this ZigBee device in one single message transfer.",
+        "type": "unsignedInt",
+        "maxInclusive": 32768
+      },
+      {
+        "name": "MaximumOutgoingTransferSize",
+        "access": "readOnly",
+        "description": "Specifies the maximum size, in {{units}}, of the application sub-layer data unit (ASDU) that can be transferred from this ZigBee device in one single message transfer.",
+        "type": "unsignedInt",
+        "maxInclusive": 32768
+      },
+      {
+        "name": "ServerMask",
+        "access": "readOnly",
+        "description": "Specifies the system server capabilities of this ZigBee device. {{list}} {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "PrimaryTrustCenter",
+          "PrimaryBindingTableCache",
+          "BackupBindingTableCache",
+          "PrimaryDiscoveryCache",
+          "BackupDiscoveryCache",
+          "NetworkManager"
+        ]
+      },
+      {
+        "name": "DescriptorCapability",
+        "access": "readOnly",
+        "description": "Specifies the descriptor capabilities of this ZigBee device. {{list}} {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "ExtendedActiveEndpointListAvailable",
+          "ExtendedSimpleDescriptorListAvailable"
+        ]
+      }
+    ],
+    "description": "The {{object}} object describes the node capabilities of the ZigBee device as defined in {{bibref|ZigBee2007|section 2.3.2.3 Node Descriptor}}.",
+    "children": []
+  }
+}

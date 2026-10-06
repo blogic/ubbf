@@ -1,0 +1,47 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Ghn.Interface.{i}.SMMaskedBand.{i}.",
+  "object": {
+    "path": "Device.Ghn.Interface.{i}.SMMaskedBand.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "32",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "SMMaskedBandNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the {{object}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "BandNumber",
+        "access": "readWrite",
+        "description": "The masked band number.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "StartSubCarrier",
+        "access": "readWrite",
+        "description": "Index of the lowest frequency sub-carrier in the band to be masked as specified in {{bibref|G.9961|Table 8-79}}. This parameter is writable only on the interface which acts as the Domain Master.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "StopSubCarrier",
+        "access": "readWrite",
+        "description": "Index of the highest frequency sub-carrier in the band to be masked as specified in Table 8-79 in {{bibref|G.9961}}. This parameter is writable only on the interface which acts as the Domain Master.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Specifies the list of masked bands to be applied to the G.hn interface. This information is conveyed by the Domain Master in the SM descriptor as specified in {{bibref|G.9961|Table 8-77}}. Instances of this object are expected to exist only on G.hn interfaces that are currently the Domain Master, i.e. for which parameter {{param|#.IsDM}} is {{true}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "BandNumber"
+      ]
+    }
+  }
+}

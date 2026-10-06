@@ -1,0 +1,51 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.Hosts.",
+  "object": {
+    "path": "Device.Hosts.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "HostNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "CleanupHostsThreshold",
+        "access": "readWrite",
+        "description": "Specifies the threshold related to the number of Host entries that are retained in the {{object|Device.Hosts.Host.{i}.}} table. If this threshold is exceeded, the device removes the inactive Host entry with the oldest {{param|Host.{i}.ActiveLastChange}} timestamp that is, the Host entry for which {{param|Host.{i}.Active}} is {{false}} and the host entry for which has been inactive the longest. A value of '-1' disables this mechanism.",
+        "type": "int",
+        "minInclusive": -1,
+        "version": "2.20"
+      },
+      {
+        "name": "AccessControlNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.14"
+      }
+    ],
+    "description": "This object provides information about each of the hosts on the LAN, including those whose IP address was allocated by the CPE using DHCP as well as hosts with statically allocated IP addresses. It can also include non-IP hosts.",
+    "commands": [
+      {
+        "name": "RemoveInactiveHosts()",
+        "version": "2.20",
+        "async": "false",
+        "input": [
+          "MinimumInactiveTime"
+        ],
+        "output": [
+          "NumberOfRemovedHosts"
+        ]
+      }
+    ],
+    "children": []
+  }
+}

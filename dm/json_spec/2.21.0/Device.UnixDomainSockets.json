@@ -1,0 +1,30 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.UnixDomainSockets.",
+  "object": {
+    "path": "Device.UnixDomainSockets.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "UnixDomainSocketNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AuthenticationNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.20"
+      }
+    ],
+    "description": "This object contains information related to the Unix Domain Sockets used by USP Agent UDS MTP.",
+    "children": []
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "lldp": {
+    "interface": [
+      {
+        "lan1": {
+          "via": "LLDP", "rid": "2", "age": "0 day, 00:10:00",
+          "chassis": { "switch": {
+            "id": { "type": "mac", "value": "aa:bb:cc:dd:ee:02" },
+            "descr": "managed switch",
+            "capability": [ { "type": "Bridge", "enabled": true }, { "type": "Router", "enabled": false } ] } },
+          "port": { "id": { "type": "ifname", "value": "ge-0/0/1" }, "descr": "to gw lan1", "ttl": "120" }
+        }
+      },
+      {
+        "lan2": {
+          "via": "LLDP", "rid": "2", "age": "0 day, 00:09:00",
+          "chassis": { "switch": {
+            "id": { "type": "mac", "value": "aa:bb:cc:dd:ee:02" },
+            "descr": "managed switch",
+            "capability": [ { "type": "Bridge", "enabled": true }, { "type": "Router", "enabled": false } ] } },
+          "port": { "id": { "type": "ifname", "value": "ge-0/0/2" }, "descr": "to gw lan2", "ttl": "120" }
+        }
+      }
+    ]
+  }
+}

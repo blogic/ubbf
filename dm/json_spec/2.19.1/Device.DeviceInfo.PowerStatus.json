@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.PowerStatus.",
+  "object": {
+    "path": "Device.DeviceInfo.PowerStatus.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "PowerSensorNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Status of the power consumption of the device.",
+    "children": []
+  }
+}

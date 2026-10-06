@@ -1,0 +1,83 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.XPON.ONU.{i}.PowerManagement.",
+  "object": {
+    "path": "Device.XPON.ONU.{i}.PowerManagement.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "PowerReductionManagementCapability",
+        "access": "readOnly",
+        "description": "This parameter indicates the sleep mode capability of the {{object}}. This parameter is based on {{bibref|G.988|Section 9.1.14 ONU dynamic power management control}}. An {{empty}} string indicates that no capabilities are supported.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "WatchfulSleepMode",
+          "DozeMode",
+          "CyclicSleepMode"
+        ]
+      },
+      {
+        "name": "OLTSleepAllow",
+        "access": "readOnly",
+        "description": "This parameter indicates that the ONU is allowed, by the OLT, to apply the power reduction mode.",
+        "type": "boolean"
+      },
+      {
+        "name": "PowerReductionManagementStatus",
+        "access": "readOnly",
+        "description": "This parameter indicates the current power reduction management status of the ONU. The ONU can be in one of the following states: {{enum}}.",
+        "type": "string",
+        "enumerations": [
+          "Active",
+          "WatchfulSleepMode",
+          "DozeMode",
+          "CyclicSleepMode"
+        ]
+      },
+      {
+        "name": "ITransInit",
+        "access": "readOnly",
+        "description": "Optical Network Unit (ONU) vendor's statement of the complete transceiver initialization time: the worst-case time required for the ONU to regain full functionality when leaving the asleep state (i.e., turning on both the receiver and the transmitter and acquiring synchronization to the downstream flow), measured in units of {{units}}. The value zero indicates that the sleeping ONU can respond to a bandwidth grant without delay. Reference {{bibref|G.988|Section 9.1.14 ONU dynamic power management control}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ITxInit",
+        "access": "readOnly",
+        "description": "This parameter is the Optical Network Unit (ONU) vendor's statement of the transmitter initialization time: the time required for the ONU to regain full functionality when leaving the listen state (i.e., turning on the transmitter), measured in units of {{units}}. The value zero indicates that the dozing ONU can respond to a bandwidth grant without delay. Reference {{bibref|G.988|Section 9.1.14 ONU dynamic power management control}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxSleepInterval",
+        "access": "readOnly",
+        "description": "The Isleep/Ilowpower attribute specifies the maximum time the ONU spends in its asleep, listen, or low-power states, as a count of {{units}}. Local or remote events may truncate the ONU's sojourn in these states. The default value of this attribute is 0.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MinAwareInterval",
+        "access": "readOnly",
+        "description": "The Iaware attribute specifies the time the ONU spends in its aware state, as a count of {{units}}, before it re-enters asleep or listen states. Local or remote events may independently cause the ONU to enter an active state rather than returning to a sleep state. The default value of this attribute is 0. Reference {{bibref|G.988|Section 9.1.14 ONU dynamic power management control}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MinActiveHeldInterval",
+        "access": "readOnly",
+        "description": "The Ihold attribute specifies the minimum time during which the ONU remains in the active held state, as a count of {{units}}. Its initial value is zero. Reference {{bibref|G.988|Section 9.1.14 ONU dynamic power management control}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxSleepIntervalExtension",
+        "access": "readOnly",
+        "description": "This parameter designates maximum sleep interval values for doze mode and cyclic sleep mode separately. When it supports this attribute, the ONU ignores the value of the maximum sleep interval attribute. Maximum sleep interval for doze mode and cyclic sleep mode are both 4 bytes. Maximum sleep interval for doze mode specifies the maximum time the ONU spends in its listen state, as a count of {{units}}. Local or remote events may truncate the ONU's sojourn in these states. The default value is 0. Maximum sleep interval for cyclic sleep mode specifies the maximum time the ONU spends in its asleep state, as a count of {{units}}. Local or remote events may truncate the ONU's sojourn in these states. The default value is 0. If watchful sleep is enabled, the ONU ignores this attribute. Reference {{bibref|G.988|Section 9.1.14 ONU dynamic power management control}}",
+        "type": "unsignedLong"
+      }
+    ],
+    "description": "This object models the power reduction management capabilities of the ONU. It is based on {{bibref|G.988|Section 9.1.14 ONU dynamic power management control}}. When {{param|OLTSleepAllow}} is true then the ONU is allowed to enter a low power state. {{bibref|G.Sup45|Clause 7.5.2 Main power-saving methods}}. {{bibref|G.988|Section 9.1.14 ONU dynamic power management control}}.",
+    "children": []
+  }
+}

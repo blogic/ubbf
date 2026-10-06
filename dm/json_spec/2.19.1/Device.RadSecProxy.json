@@ -1,0 +1,70 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.RadSecProxy.",
+  "object": {
+    "path": "Device.RadSecProxy.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the RadSecProxy service.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Status of the RadSecProxy service. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "ListenConfigNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SourceConfigNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ClientNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RealmNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ServerNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TLSNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object contains configurations pertaining to the RadSecProxy service which implements the RadSec protocol for transporting RADIUS datagrams over TCP and TLS as detailed in {{bibref|RFC6614|Appendix B}}.",
+    "children": []
+  }
+}

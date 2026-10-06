@@ -1,0 +1,128 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FAP.GPS.ContinuousGPSStatus.",
+  "object": {
+    "path": "Device.FAP.GPS.ContinuousGPSStatus.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "CurrentFix",
+        "access": "readOnly",
+        "description": "The value is {{true}} if the location fix is currently valid (i.e. GPS receiver is currently tracking satellite signals), otherwise it is {{false}}. After a reboot the value is {{false}} until the GPS receivers has a valid current position.",
+        "type": "boolean",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "GotFix",
+        "access": "readOnly",
+        "description": "The value is {{true}} if {{param|CurrentFix}} has transitioned to {{true}} at least once since {{param|#.ContinuousGPS}} was enabled, otherwise it is {{false}}. After a reboot the value is {{false}} until {{param|CurrentFix}} has transitioned to {{true}} again. The GPS coordinates ({{param|Latitude}}, {{param|Longitude}}, and {{param|Elevation}}) are not valid until {{param}} has a value of {{true}}.",
+        "type": "boolean",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "TimingGood",
+        "access": "readOnly",
+        "description": "The value is {{true}} if the timing synchronization is good, otherwise it is {{false}}. After a reboot the value is {{false}} until the timing is synchronized again.",
+        "type": "boolean",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Latitude",
+        "access": "readOnly",
+        "description": "This parameter represents the most recent latitude reading for the device's position in degrees, multiplied by 1 million. The positive value signifies the direction, north of the equator. The negative value signifies the direction, south of the equator. Range is from: 90 deg 00.00' South (-90,000,000) to 90 deg 00.00' North (90,000,000). Example: A latitude of 13 deg 19.43' N would be represented as 13,323,833, derived as (13*1,000,000)+((19.43*1,000,000)/60). Latitude of 50 deg 00.00' S would be represented as value -50,000,000. {{param}} is not valid until {{param|GotFix}} is {{true}}. If the parameter has never been set before, the value 0 is reported. The value SHOULD be maintained over a reboot.",
+        "type": "int",
+        "minInclusive": -90000000,
+        "maxInclusive": 90000000,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Longitude",
+        "access": "readOnly",
+        "description": "This parameter represents the most recent longitude reading for the device's position in degrees, multiplied by 1 million. The positive value signifies the direction, east of the prime meridian. The negative value signifies the direction, west of the prime meridian. Range is from: 180d00.00' West (-180,000,000) to 180d00.00' East (180,000,000). Example: A longitude of 13d19.43' E would be represented as 13,323,833, derived as (13*1,000,000)+((19.43*1,000,000)/60). A longitude of 50d00.00' W would be represented as value -50,000,000. {{param}} is not valid until {{param|GotFix}} is {{true}}. If the parameter has never been set before, the value 0 is reported. The value SHOULD be maintained over a reboot.",
+        "type": "int",
+        "minInclusive": -180000000,
+        "maxInclusive": 180000000,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Elevation",
+        "access": "readOnly",
+        "description": "This parameter represents the most recent elevation reading for the device's position in {{units}}, relative to the WGS84 ellipsoid. The positive value signifies the direction, above sea level. The negative value signifies the direction, below sea level. Range is from: 5,000.000 meters below sea level (-5,000,000) to 25,000.000 meters above sea level (25,000,000). {{param}} is not valid until {{param|GotFix}} is {{true}}. If the parameter has never been set before, the value 0 is reported. The value SHOULD be maintained over a reboot.",
+        "type": "int",
+        "minInclusive": -5000000,
+        "maxInclusive": 25000000,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LastFixTime",
+        "access": "readOnly",
+        "description": "Represents the date and time when the last GPS Fix was acquired. The Unknown Time value defined in {{bibref|TR-106|Section 3.2}} is used when {{param|GotFix}} is {{false}}. This applies too after a reboot of the device until a valid location is determined and {{param|GotFix}} transsitions to {{true}}.",
+        "type": "dateTime",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LastFixDuration",
+        "access": "readOnly",
+        "description": "Number of {{units}} of continuous GPS fix time. After a reboot this value is reset to 0.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "FirstFixTimeout",
+        "access": "readWrite",
+        "description": "Number of {{units}} to wait for first GPS fix before declaring a GPS fault. A value of -1 means that there is no timeout and no fault logging.",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "SatellitesTracked",
+        "access": "readOnly",
+        "description": "The number of satellites the receiver is tracking.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SatelliteTrackingInterval",
+        "access": "readWrite",
+        "description": "The interval in {{units}} at which the GPS tracking information gets reported.",
+        "type": "unsignedInt",
+        "minInclusive": 60,
+        "maxInclusive": 3600
+      },
+      {
+        "name": "ReceiverStatus",
+        "access": "readOnly",
+        "description": "The output of the GPS receiver's status.",
+        "type": "string",
+        "maxLength": 256,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LocationType",
+        "access": "readOnly",
+        "description": "Indicates whether the {{param|Latitude}}, {{param|Longitude}}, and {{param|Elevation}} values are determined via a GPS Fix (where the value of this parameter would be {{enum|Real}}) or via some other means (where the value of this parameter would be {{enum|Reference}}).",
+        "type": "string",
+        "enumerations": [
+          "Real",
+          "Reference"
+        ],
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LockTimeOutDuration",
+        "access": "readWrite",
+        "description": "The timer duration, in {{units}}, for which the device waits for GPS to acquire lock.",
+        "type": "unsignedInt",
+        "minInclusive": 120,
+        "maxInclusive": 86400
+      }
+    ],
+    "description": "When {{param|#.ContinuousGPS}} is {{true}}, the parameters in this object contain the GPS status as it is continuously monitored. When {{param|#.ContinuousGPS}} is {{false}}, the parameters in this object are not being updated and their values are not accurate.",
+    "children": []
+  }
+}

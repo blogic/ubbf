@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Routing.RouteInformation.",
+  "object": {
+    "path": "Device.Routing.RouteInformation.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables receiving route information from the RA.",
+        "type": "boolean"
+      },
+      {
+        "name": "InterfaceSettingNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Received Router Advertisement (RA) route information {{bibref|RFC4191}}.",
+    "children": []
+  }
+}

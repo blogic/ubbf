@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.Hardware.CPUs.",
+  "object": {
+    "path": "Device.Hardware.CPUs.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "CPUNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Represents the system's CPU configuration, providing details about each individual processor core, its capabilities, and its current operating state.",
+    "children": []
+  }
+}

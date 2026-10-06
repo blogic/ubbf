@@ -1,0 +1,112 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.MQTT.BrokerSecurity.ACL.{i}.",
+  "object": {
+    "path": "Device.MQTT.BrokerSecurity.ACL.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ACLNumberOfEntries",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.21"
+      },
+      {
+        "name": "Order",
+        "access": "readWrite",
+        "description": "The order in which to evaluate this rule. Lower-ordered rules are evaluated first. Each rule MUST have a unique order value.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "dataType": "Order"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this ACL rule.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Description",
+        "access": "readWrite",
+        "description": "A human-readable description of this ACL rule.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "AllowAnonymous",
+        "access": "readWrite",
+        "description": "If {{true}}, this rule allows access to anonymous clients.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "ClientList",
+        "access": "readWrite",
+        "description": "The MQTT client identity entries to which this rule applies. If this list is {{empty}}, the rule can apply to any client. Whether this rule also applies to anonymous clients is determined by this rule's {{param|AllowAnonymous}} parameter.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "Device.MQTT.BrokerSecurity.Client.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Topics",
+        "access": "readWrite",
+        "description": "Each item specifies an MQTT topic filter to which this rule applies. The filter may include MQTT-standard wildcards (`+` for a single level, `#` for multiple levels). Some brokers may also support implementation-specific keywords. Refer to {{bibref|MQTT50|section 4.7}} for details on topic matching.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "Operations",
+        "access": "readWrite",
+        "description": "The MQTT operations that this rule controls. This parameter works in conjunction with {{param|Access}} to determine whether the specified operations are allowed or denied.",
+        "default": "[Publish,Subscribe]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "Publish",
+          "Subscribe"
+        ]
+      },
+      {
+        "name": "Access",
+        "access": "readWrite",
+        "description": "Whether to allow or deny the operations specified in {{param|Operations}} on the configured {{param|Topics}}.",
+        "default": "Deny",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Allow",
+          "Deny"
+        ]
+      }
+    ],
+    "description": "An entry in the Access Control List (ACL). Each entry specifies a single permission rule, defining which user or client can perform a specific operation (Publish or Subscribe) on a particular MQTT topic, and whether that action is allowed or denied.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

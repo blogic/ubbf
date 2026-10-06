@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.WireGuard.",
+  "object": {
+    "path": "Device.WireGuard.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "TunnelNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PeerNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object contains configuration and status for the WireGuard subsystem. The WireGuard subsystem is used to create secure tunnels between devices using the WireGuard protocol.",
+    "children": []
+  }
+}

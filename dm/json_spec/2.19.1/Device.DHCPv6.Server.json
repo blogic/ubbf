@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv6.Server.",
+  "object": {
+    "path": "Device.DHCPv6.Server.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the DHCPv6 server function.",
+        "type": "boolean"
+      },
+      {
+        "name": "PoolNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "DHCPv6 server configuration.",
+    "children": []
+  }
+}

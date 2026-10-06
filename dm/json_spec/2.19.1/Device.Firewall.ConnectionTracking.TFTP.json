@@ -1,0 +1,32 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Firewall.ConnectionTracking.TFTP.",
+  "object": {
+    "path": "Device.Firewall.ConnectionTracking.TFTP.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the connection tracking support for the TFTP protocol (TFTP ALG).",
+        "type": "boolean"
+      },
+      {
+        "name": "Ports",
+        "access": "readWrite",
+        "description": "Port numbers of the TFTP servers that need to be monitored.",
+        "list": true,
+        "type": "int",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      }
+    ],
+    "description": "TFTP Connection Tracking configuration object.",
+    "children": []
+  }
+}

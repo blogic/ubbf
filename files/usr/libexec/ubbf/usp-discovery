@@ -1,0 +1,223 @@
+#!/usr/bin/ucode --
+'use strict';
+
+import { cursor } from 'uci';
+import * as ubbf from 'ubbf';
+
+let s = ubbf.uci_value_sanitise;
+
+const BBF_ENTERPRISE_ID = 0x0DE9;
+
+const SUBOPTION_URL = 25;
+const SUBOPTION_PROVISIONING_CODE = 26;
+const SUBOPTION_NOTIF_RETRY_MIN_WAIT = 27;
+const SUBOPTION_NOTIF_RETRY_MULTIPLIER = 28;
+const SUBOPTION_ENDPOINT_ID = 29;
+
+/**
+ * @param {string} hex_str - Hex string
+ * @param {number} offset - Byte offset
+ * @param {number} len - Number of bytes
+ * @returns {number} Parsed unsigned integer
+ */
+function hex_read_uint(hex_str, offset, len) {
+	let s = substr(hex_str, offset * 2, len * 2);
+	return hex(s);
+}
+
+/**
+ * @param {string} hex_str - Hex string
+ * @param {number} offset - Byte offset
+ * @param {number} len - Number of bytes
+ * @returns {string} Decoded ASCII string
+ */
+function hex_read_string(hex_str, offset, len) {
+	let result = '';
+	for (let i = 0; i < len; i++) {
+		let byte_val = hex(substr(hex_str, (offset + i) * 2, 2));
+		if (byte_val == null)
+			return result;
+		result += chr(byte_val);
+	}
+	return result;
+}
+
+/**
+ * Decodes TLV sub-options from hex data.
+ *
+ * @param {string} hex_str - Hex-encoded sub-option data
+ * @param {number} tlv_size - TLV field size in bytes (1 for DHCPv4, 2 for DHCPv6)
+ * @returns {object} Decoded sub-options keyed by sub-option code
+ */
+function suboptions_decode(hex_str, tlv_size) {
+	let result = {};
+	let pos = 0;
+	let total_bytes = length(hex_str) / 2;
+
+	while (pos + (tlv_size * 2) <= total_bytes) {
+		let opt_code = hex_read_uint(hex_str, pos, tlv_size);
+		pos += tlv_size;
+
+		if (pos + tlv_size > total_bytes)
+			break;
+
+		let opt_len = hex_read_uint(hex_str, pos, tlv_size);
+		pos += tlv_size;
+
+		if (pos + opt_len > total_bytes)
+			break;
+
+		result[opt_code] = hex_read_string(hex_str, pos, opt_len);
+		pos += opt_len;
+	}
+
+	return result;
+}
+
+/**
+ * @param {string} hex_str - Raw hex-encoded Option 125 data
+ * @returns {object|null} Decoded sub-options or null on error
+ */
+function dhcpv4_option125_parse(hex_str) {
+	if (length(hex_str) < 10)
+		return null;
+
+	let enterprise_id = hex_read_uint(hex_str, 0, 4);
+	if (enterprise_id != BBF_ENTERPRISE_ID)
+		return null;
+
+	let data_len = hex_read_uint(hex_str, 4, 1);
+	let subopts_hex = substr(hex_str, 10, data_len * 2);
+
+	return suboptions_decode(subopts_hex, 1);
+}
+
+/**
+ * @param {string} hex_str - Raw hex-encoded Option 17 data
+ * @returns {object|null} Decoded sub-options or null on error
+ */
+function dhcpv6_option17_parse(hex_str) {
+	if (length(hex_str) < 8)
+		return null;
+
+	let enterprise_id = hex_read_uint(hex_str, 0, 4);
+	if (enterprise_id != BBF_ENTERPRISE_ID)
+		return null;
+
+	let subopts_hex = substr(hex_str, 8);
+
+	return suboptions_decode(subopts_hex, 2);
+}
+
+/**
+ * Parses an MQTT URL into broker address, port, and topic.
+ *
+ * @param {string} url - MQTT URL string
+ * @returns {object|null} Object with address, port, topic, or null
+ */
+function mqtt_url_parse(url) {
+	if (!url)
+		return null;
+
+	let m = match(url, /^(mqtts?):\/\/([^:\/]+)(:(\d+))?(\/.*)?$/);
+	if (!m)
+		return null;
+
+	let scheme = m[1];
+	let address = m[2];
+	let port = m[4] || (scheme == 'mqtts' ? '8883' : '1883');
+	let topic = m[5] ? substr(m[5], 1) : '';
+
+	return { address, port, topic };
+}
+
+/**
+ * Checks whether obuspa is already configured.
+ *
+ * @returns {boolean} true if obuspa.acs.enable is '1'
+ */
+function obuspa_configured() {
+	let uci = cursor();
+	let enable = uci.get('obuspa', 'acs', 'enable');
+	return enable == '1';
+}
+
+/**
+ * Writes discovered controller parameters to obuspa UCI and restarts the service.
+ *
+ * @param {object} subopts - Decoded sub-options from DHCP response
+ */
+function controller_apply(subopts) {
+	let url = subopts[SUBOPTION_URL];
+	if (!url) {
+		warn("usp-discovery: no controller URL in sub-option 25\n");
+		return;
+	}
+
+	let mqtt = mqtt_url_parse(url);
+	if (!mqtt) {
+		warn("usp-discovery: cannot parse controller URL: " + url + "\n");
+		return;
+	}
+
+	let endpoint_id = subopts[SUBOPTION_ENDPOINT_ID] || '';
+	if (endpoint_id == '') {
+		warn("usp-discovery: no endpoint ID in sub-option 29\n");
+		return;
+	}
+
+	warn(sprintf("usp-discovery: configuring controller %s at %s:%s\n",
+		endpoint_id, mqtt.address, mqtt.port));
+
+	let uci = cursor();
+	uci.load('obuspa');
+
+	uci.set('obuspa', 'acs', 'enable', '1');
+	uci.set('obuspa', 'acs', 'endpoint_id', s(endpoint_id));
+	uci.set('obuspa', 'acs', 'broker_address', s(mqtt.address));
+	uci.set('obuspa', 'acs', 'broker_port', s(mqtt.port));
+
+	if (mqtt.topic != '')
+		uci.set('obuspa', 'acs', 'topic', s(mqtt.topic));
+
+	uci.commit('obuspa');
+
+	system('/etc/init.d/obuspa restart');
+}
+
+function usage() {
+	warn("Usage: usp-discovery --dhcpv4 <hex> | --dhcpv6 <hex>\n");
+	exit(1);
+}
+
+function main() {
+	if (length(ARGV) < 2)
+		usage();
+
+	let mode = ARGV[0];
+	let hex_data = ARGV[1];
+
+	if (!hex_data || hex_data == '')
+		return;
+
+	if (obuspa_configured())
+		return;
+
+	let subopts;
+
+	if (mode == '--dhcpv4')
+		subopts = dhcpv4_option125_parse(hex_data);
+	else if (mode == '--dhcpv6')
+		subopts = dhcpv6_option17_parse(hex_data);
+	else
+		usage();
+
+	if (!subopts || length(subopts) == 0) {
+		warn("usp-discovery: no valid BBF sub-options found\n");
+		return;
+	}
+
+	controller_apply(subopts);
+}
+
+main();

@@ -1,0 +1,191 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DSL.Line.{i}.TestParams.",
+  "object": {
+    "path": "Device.DSL.Line.{i}.TestParams.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "HLOGGds",
+        "access": "readOnly",
+        "description": "Number of sub-carriers per sub-carrier group in the downstream direction for {{param|HLOGpsds}}. Valid values are 1, 2, 4, 8, and 16. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to 1.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "HLOGGus",
+        "access": "readOnly",
+        "description": "Number of sub-carriers per sub-carrier group in the upstream direction for {{param|HLOGpsus}}. Valid values are 1, 2, 4, and 8. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to 1.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "HLOGpsds",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the downstream logarithmic line characteristics per sub-carrier group. The maximum number of elements is 256 for G.992.3, and 512 for G.992.5. For G.993.2, the number of elements will depend on the value of {{param|HLOGGds}} but will not exceed 512. Interpretation of the values is as defined in ITU-T Rec. G.997.1. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to ''None''. Note: {{param}} is measured during initialization and is not updated during Showtime.",
+        "list": true,
+        "listMaxLength": 2559,
+        "type": "string",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "HLOGpsus",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the upstream logarithmic line characteristics per sub-carrier group. The maximum number of elements is 64 for G.992.3 and G.992.5. For G.993.2, the number of elements will depend on the value of {{param|HLOGGus}} but will not exceed 512. Interpretation of the values is as defined in ITU-T Rec. G.997.1. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to ''None''. Note: {{param}} is measured during initialization and is not updated during Showtime.",
+        "list": true,
+        "listMaxLength": 2559,
+        "type": "string",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "HLOGMTds",
+        "access": "readOnly",
+        "description": "Indicates the number of symbols over which {{param|HLOGpsds}} was measured. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to 0.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "HLOGMTus",
+        "access": "readOnly",
+        "description": "Indicates the number of symbols over which {{param|HLOGpsus}} was measured. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to 0.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "QLNGds",
+        "access": "readOnly",
+        "description": "Number of sub-carriers per sub-carrier group in the downstream direction for {{param|QLNpsds}}. Valid values are 1, 2, 4, 8, and 16. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to 1.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "QLNGus",
+        "access": "readOnly",
+        "description": "Number of sub-carriers per sub-carrier group in the upstream direction for {{param|QLNpsus}}. Valid values are 1, 2, 4, and 8. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to 1.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "QLNpsds",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the downstream quiet line noise per subcarrier group. The maximum number of elements is 256 for G.992.3 and G.992.5. For G.993.2, the number of elements will depend on the value of {{param|QLNGds}} but will not exceed 512. Interpretation of the values is as defined in ITU-T Rec. G.997.1. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to ''None''. Note: {{param}} is measured during initialization and is not updated during Showtime.",
+        "list": true,
+        "listMaxLength": 2047,
+        "type": "int",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "QLNpsus",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the upstream quiet line noise per subcarrier group. The maximum number of elements is 64 for G.992.3 and G.992.5. For G.993.2, the number of elements will depend on the value of {{param|QLNGus}} but will not exceed 512. Interpretation of the values is as defined in ITU-T Rec. G.997.1. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to ''None''. Note: {{param}} is measured during initialization and is not updated during Showtime.",
+        "list": true,
+        "listMaxLength": 2047,
+        "type": "string",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "QLNMTds",
+        "access": "readOnly",
+        "description": "Indicates the number of symbols over which {{param|QLNpsds}} was measured. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to 0.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "QLNMTus",
+        "access": "readOnly",
+        "description": "Indicates the number of symbols over which {{param|QLNpsus}} was measured. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to 0.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SNRGds",
+        "access": "readOnly",
+        "description": "Number of sub-carriers per sub-carrier group in the downstream direction for {{param|SNRpsds}}. Valid values are 1, 2, 4, 8, and 16. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to 1.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SNRGus",
+        "access": "readOnly",
+        "description": "Number of sub-carriers per sub-carrier group in the upstream direction for {{param|SNRpsus}}. Valid values are 1, 2, 4, and 8. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to 1.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SNRpsds",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the downstream SNR per subcarrier group. The maximum number of elements is 256 for G.992.3, and 512 for G.992.5. For G.993.2, the number of elements will depend on the value of {{param|SNRGds}} but will not exceed 512. Interpretation of the values is as defined in ITU-T Rec. G.997.1. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to ''None''. Note: {{param}} is first measured during initialization and is updated during Showtime.",
+        "list": true,
+        "listMaxLength": 2047,
+        "type": "int",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SNRpsus",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the upstream SNR per subcarrier group. The maximum number of elements is 64 for G.992.3 and G.992.5. For G.993.2, the number of elements will depend on the value of {{param|SNRGus}} but will not exceed 512. Interpretation of the values is as defined in ITU-T Rec. G.997.1. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to ''None''. Note: {{param}} is first measured during initialization and is updated during Showtime.",
+        "list": true,
+        "listMaxLength": 2047,
+        "type": "string",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SNRMTds",
+        "access": "readOnly",
+        "description": "Indicates the number of symbols over which {{param|SNRpsds}} was measured. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to 0.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SNRMTus",
+        "access": "readOnly",
+        "description": "Indicates the number of symbols over which {{param|SNRpsus}} was measured. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to 0.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LATNds",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the downstream line attenuation averaged across all sub-carriers in the frequency band, as computed during initialization. Number of elements is dependent on the number of downstream bands but will exceed one only for ITU-T G.993.2. Interpretation of {{param}} is as defined in ITU-T Rec. G.997.1. Note: See ITU-T Recommendation {{bibref|G.997.1}}.",
+        "list": true,
+        "listMaxLength": 35,
+        "type": "string",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LATNus",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the upstream line attenuation averaged across all sub-carriers in the frequency band, as computed during initialization. Number of elements is dependent on the number of upstream bands but will exceed one only for ITU-T G.993.2. Interpretation of {{param}} is as defined in ITU-T Rec. G.997.1. Note: See ITU-T Recommendation {{bibref|G.997.1}}.",
+        "list": true,
+        "listMaxLength": 35,
+        "type": "string",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SATNds",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the downstream signal attenuation averaged across all active sub-carriers in the frequency band, as computed during the L0 (i.e., Showtime) state. Number of elements is dependent on the number of downstream bands but will exceed one only for ITU-T G.993.2. Interpretation of {{param}} is as defined in ITU-T Rec. G.997.1. Note: See ITU-T Recommendation {{bibref|G.997.1}}.",
+        "list": true,
+        "listMaxLength": 35,
+        "type": "string",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SATNus",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the upstream signal attenuation averaged across all active sub-carriers in the frequency band, as computed during the L0 (i.e., Showtime) state. Number of elements is dependent on the number of downstream bands but will exceed one only for ITU-T G.993.2. Interpretation of {{param}} is as defined in ITU-T Rec. G.997.1. Note: See ITU-T Recommendation {{bibref|G.997.1}}.",
+        "list": true,
+        "listMaxLength": 35,
+        "type": "string",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "This object contains the DSL line test parameters that are available during the L0 (i.e., Showtime) state.",
+    "children": []
+  }
+}

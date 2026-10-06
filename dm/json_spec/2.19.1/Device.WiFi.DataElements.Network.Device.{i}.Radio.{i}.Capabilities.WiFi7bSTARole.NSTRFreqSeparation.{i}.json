@@ -1,0 +1,35 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7bSTARole.NSTRFreqSeparation.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7bSTARole.NSTRFreqSeparation.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "NSTRFreqSeparationNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "RUID",
+        "access": "readOnly",
+        "description": "The Radio unique identifier (RUID) of another radio to which the specified frequency separation gap applies.",
+        "type": "base64"
+      },
+      {
+        "name": "FreqSeparation",
+        "access": "readOnly",
+        "description": "Frequency separation to the specified radio for the particular MLO operation mode. A value of 0 indicates that no frequency separation information is provided. Set to a nonzero value to indicate the required frequency gap is ({{param}} - 1) x {{units}}.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object describes the required frequency separation from the specified radio {{param|RUID}} for MLO Non-Simultaneous Transmit and Receive (NSTR) operation. {{bibref|EasyMesh}} Source: Wi-Fi 7 Agent Capabilities TLV.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "RUID"
+      ]
+    }
+  }
+}

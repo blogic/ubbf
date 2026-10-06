@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.USB.",
+  "object": {
+    "path": "Device.USB.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "InterfaceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PortNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Universal Serial Bus ({{bibref|USB1.0}}, {{bibref|USB2.0}}, {{bibref|USB3.0}}). This object contains the {{object|Interface}}, {{object|Port}}, and {{object|USBHosts}} objects.",
+    "children": []
+  }
+}

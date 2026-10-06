@@ -1,0 +1,94 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.BulkData.",
+  "object": {
+    "path": "Device.BulkData.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables all collection profiles. If {{false}}, bulk data will not be collected or reported.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the status of the Bulk Data Collection mechanism.",
+        "type": "string",
+        "enumerations": [
+          "Enabled",
+          "Disabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "MinReportingInterval",
+        "access": "readOnly",
+        "description": "Minimum reporting interval in {{units}} that the CPE is capable of supporting. A value of 0 indicates no minimum reporting interval.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Protocols",
+        "access": "readOnly",
+        "description": "Represents the IPDR and transport protocols that this device is capable of supporting.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "Streaming",
+          "File",
+          "HTTP",
+          "MQTT",
+          "USPEventNotif"
+        ]
+      },
+      {
+        "name": "EncodingTypes",
+        "access": "readOnly",
+        "description": "Represents the Encoding Types for the protocols that this device is capable of supporting.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "XML",
+          "XDR",
+          "CSV",
+          "JSON"
+        ]
+      },
+      {
+        "name": "ParameterWildCardSupported",
+        "access": "readOnly",
+        "description": "When {{true}}, the Device supports the use of wildcards to determine the parameters that are reported using a Profile.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "MaxNumberOfProfiles",
+        "access": "readOnly",
+        "description": "The maximum number of profiles that can exist at any given time. Specifically, the maximum number of {{object|Profile.{i}.}} instances that the Controller can create. If the value of this parameter is -1, then it means that the CPE doesn't have a limit to the number of profiles that can exist.",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "MaxNumberOfParameterReferences",
+        "access": "readOnly",
+        "description": "The maximum number of parameters that can be referenced via the bulk data collection mechanism. Specifically, the maximum number of parameters that can be referenced via {{param|Profile.{i}.Parameter.{i}.Reference}} across all Profile and Parameter instances (including the expansion of partial paths within the Reference parameter). If the value of this parameter is -1, then it means that the CPE doesn't have a limit to the number of parameter that can be referenced via the bulk data collection mechanism.",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "ProfileNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object provides bulk data collection capabilities and global collection settings that affect the entire device. Bulk Data utilizes various solutions (e.g., IPDR, HTTP) to collect data from devices and transfer the data to a collection server. The IPDR solution is based on a service specification described in {{bibref|TR-232}}. The HTTP solution is based on transfer mechanisms described in {{template|BULK-DATA-HTTP-REF}}. {{template|BULK-DATA-OPT-SOLNS}} The Bulk Data Collection Profiles are measured over a reporting interval (which can be aligned with absolute time) and are made available to the collection server.",
+    "children": []
+  }
+}

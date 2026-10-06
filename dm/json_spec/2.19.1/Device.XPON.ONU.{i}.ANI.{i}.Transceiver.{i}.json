@@ -1,0 +1,130 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XPON.ONU.{i}.ANI.{i}.Transceiver.{i}.",
+  "object": {
+    "path": "Device.XPON.ONU.{i}.ANI.{i}.Transceiver.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "2",
+    "enableParameter": "",
+    "numEntriesParameter": "TransceiverNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "ID",
+        "access": "readOnly",
+        "description": "The ID as assigned by the CPE to this Transceiver entry.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 1
+      },
+      {
+        "name": "Identifier",
+        "access": "readOnly",
+        "description": "Transceiver type. Allowed values are given by {{bibref|SFF-8024|Table 4-1}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "VendorName",
+        "access": "readOnly",
+        "description": "Vendor name. See {{bibref|SFF-8472|Table 4-1}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "VendorPartNumber",
+        "access": "readOnly",
+        "description": "Vendor part number. See \"Vendor PN\" in {{bibref|SFF-8472|Table 4-1}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "VendorRevision",
+        "access": "readOnly",
+        "description": "Vendor revision. See \"Vendor rev\" in {{bibref|SFF-8472|Table 4-1}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "PONMode",
+        "access": "readOnly",
+        "description": "PON mode, reports the PON mode of the transceiver.",
+        "type": "string",
+        "enumerations": [
+          "Unknown",
+          "G-PON",
+          "XG-PON",
+          "NG-PON2",
+          "XGS-PON"
+        ]
+      },
+      {
+        "name": "Connector",
+        "access": "readOnly",
+        "description": "Connector type.",
+        "type": "string",
+        "enumerations": [
+          "Unknown",
+          "LC",
+          "SC",
+          "ST",
+          "FC",
+          "MT-RJ"
+        ]
+      },
+      {
+        "name": "NominalBitRateDownstream",
+        "access": "readOnly",
+        "description": "Nominal data rate downstream in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "NominalBitRateUpstream",
+        "access": "readOnly",
+        "description": "Nominal data rate upstream in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RxPower",
+        "access": "readOnly",
+        "description": "Measured RX power in {{units}}.",
+        "type": "int"
+      },
+      {
+        "name": "TxPower",
+        "access": "readOnly",
+        "description": "Measured TX power in {{units}}.",
+        "type": "int"
+      },
+      {
+        "name": "Voltage",
+        "access": "readOnly",
+        "description": "Measured supply voltage in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Bias",
+        "access": "readOnly",
+        "description": "Measured bias current in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Temperature",
+        "access": "readOnly",
+        "description": "Measured temperature in {{units}}. A value of -274 (which is below absolute zero) indicates a good reading has not been obtained.",
+        "type": "int",
+        "minInclusive": -274
+      }
+    ],
+    "description": "Transceiver table. Each entry models a PON transceiver.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "ID"
+      ]
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.TrustedElements.",
+  "object": {
+    "path": "Device.TrustedElements.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "SIMNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object models Trusted Elements, specialized components in home gateways that create secure environments for sensitive data, cryptographic keys, and trusted applications. Essential for securing SIM/eSIM data, managing IoT devices, and encrypting network traffic, Trusted Elements protect home networks by preventing unauthorized access and ensuring data integrity.",
+    "children": []
+  }
+}

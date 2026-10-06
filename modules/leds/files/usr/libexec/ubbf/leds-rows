@@ -1,0 +1,66 @@
+#!/usr/bin/ucode
+// Stores one Device.LEDs.LED.{i} row per LED of /sys/class/leds, named
+// after the LED, in the configuration and in each preset that has no LED
+// rows. The core stores a write only in a stored row, so LED.{i}.Enable
+// needs them. Runs after ubbf-default-config: on a new install it fills
+// the files default_config wrote, after an upgrade the kept ones.
+'use strict';
+
+import * as fs from 'fs';
+import * as ubbf from 'ubbf';
+
+const FILES = [
+	'/etc/ubbf/config.json',
+	'/etc/ubbf/test_config.json',
+	'/etc/ubbf/firewall_config.json',
+	'/etc/ubbf/config-router.json',
+	'/etc/ubbf/config-dumb-ap.json',
+	'/etc/ubbf/config-agent.json',
+	'/etc/ubbf/config-cellular.json'
+];
+
+/**
+ * Builds the LED rows, numbered in the order of the sorted LED names.
+ *
+ * @returns {object} Map of instance number to LED row
+ */
+function led_rows_build() {
+	let rows = {};
+	let i = 1;
+
+	for (let name in sort(fs.lsdir('/sys/class/leds') ?? []))
+		rows['' + i++] = { Name: name, Alias: ubbf.alias_from_name(name), Enable: 'true' };
+
+	return rows;
+}
+
+/**
+ * Adds the LED rows to one configuration file that has none.
+ *
+ * @param {string} path - Configuration file
+ * @param {object} rows - LED rows
+ */
+function config_file_fill(path, rows) {
+	let config;
+	try {
+		config = json(fs.readfile(path) ?? 'null');
+	}
+	catch (e) {
+		return;
+	}
+
+	if (!config?.Device || length(config.Device.LEDs?.LED ?? {}))
+		return;
+
+	config.Device.LEDs ??= {};
+	config.Device.LEDs.LED = rows;
+
+	fs.writefile(path, sprintf('%.J', config));
+}
+
+let rows = led_rows_build();
+if (length(rows))
+	for (let path in FILES)
+		config_file_fill(path, rows);
+
+exit(0);

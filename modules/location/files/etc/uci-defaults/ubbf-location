@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# ucode-gps ships disabled; this module being installed means a receiver
+# is expected, so the daemon runs. Device.Time owns the clock, so the
+# receiver does not set it.
+uci -q batch <<-EOF
+	set gps.@gps[0].disabled='0'
+	set gps.@gps[0].adjust_time='0'
+	commit gps
+EOF
+exit 0

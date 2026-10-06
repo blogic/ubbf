@@ -1,0 +1,47 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.bSTAMLD.bSTAMLDConfig.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.bSTAMLD.bSTAMLDConfig.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "EMLMREnabled",
+        "access": "readWrite",
+        "description": "Indicates if the Enhanced Multi-Link Multi-Radio (EMLMR) operation is enabled.",
+        "type": "boolean"
+      },
+      {
+        "name": "EMLSREnabled",
+        "access": "readWrite",
+        "description": "Indicates if Enhanced Multi-Link Single-Radio (EMLSR) operation is enabled.",
+        "type": "boolean"
+      },
+      {
+        "name": "STREnabled",
+        "access": "readWrite",
+        "description": "Indicates if Simultaneous Transmit and Receive (STR) operation is enabled.",
+        "type": "boolean"
+      },
+      {
+        "name": "NSTREnabled",
+        "access": "readWrite",
+        "description": "Indicates if Non-Simultaneous Transmit and Receive (NSTR) operation is enabled.",
+        "type": "boolean"
+      },
+      {
+        "name": "TIDLinkMapNegotiation",
+        "access": "readWrite",
+        "description": "Indicates if Traffic Identifier (TID) to Link Mapping Negotiation is enabled. {{bibref|EasyMesh}} source: TID-to-Link Mapping Policy TLV.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object describes the Multi-Link Operation (MLO) configuration of a Multi-Link Device (MLD) backhaul STA (bSTA). {{bibref|EasyMesh}} source: Backhaul STA MLD Configuration TLV.",
+    "children": []
+  }
+}

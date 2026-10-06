@@ -1,0 +1,65 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DSL.BondingGroup.{i}.BondedChannel.{i}.Ethernet.Stats.",
+  "object": {
+    "path": "Device.DSL.BondingGroup.{i}.BondedChannel.{i}.Ethernet.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "UnderflowErrorsSent",
+        "access": "readOnly",
+        "description": "Number of underflow errors sent, i.e. on the transmit side of the interface.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "CRCErrorsReceived",
+        "access": "readOnly",
+        "description": "Number of CRC errors received, i.e. on the receive side of the interface.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AlignmentErrorsReceived",
+        "access": "readOnly",
+        "description": "Number of alignment errors received, i.e. on the receive side of the interface.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ShortPacketsReceived",
+        "access": "readOnly",
+        "description": "Number of short packets received, i.e. on the receive side of the interface.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LongPacketsReceived",
+        "access": "readOnly",
+        "description": "Number of long packets received, i.e. on the receive side of the interface.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "OverflowErrorsReceived",
+        "access": "readOnly",
+        "description": "Number of overflow errors received, i.e. on the receive side of the interface.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PauseFramesReceived",
+        "access": "readOnly",
+        "description": "Number of pause frames received, i.e. on the receive side of the interface.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "FramesDropped",
+        "access": "readOnly",
+        "description": "Number of frames dropped, e.g. because the receive queue is full.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Per-channel {{bibref|G.998.2}} Ethernet-based bonding statistics. These relate to the {{bibref|G.998.2}} PME (Physical Medium Entity) Aggregation Function (PAF) lower layer (per-channel) interfaces. The CPE MUST reset the Stats parameters either when the interface becomes operationally down due to a previous administrative down (i.e. the interface's {{param|###.Status}} parameter transitions to a down state after the interface is disabled) or when the interface becomes administratively up (i.e. the interface's {{param|###.Enable}} parameter transitions from {{false}} to {{true}}). Administrative and operational interface status is discussed in {{bibref|TR-181i2|section 4.2.2}}.",
+    "children": []
+  }
+}

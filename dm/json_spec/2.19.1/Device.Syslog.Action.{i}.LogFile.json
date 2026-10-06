@@ -1,0 +1,39 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Syslog.Action.{i}.LogFile.",
+  "object": {
+    "path": "Device.Syslog.Action.{i}.LogFile.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the LogFile functionality.",
+        "type": "boolean"
+      },
+      {
+        "name": "VendorLogFileRef",
+        "access": "readOnly",
+        "description": "The reference to {{object|###.DeviceInfo.VendorLogFile}} is automatically constructed and the {{object|###.DeviceInfo.VendorLogFile}} is populated with the information based on {{param|FilePath}}. E.g. When {{param|FilePath}} = ''file:///var/log/messages''. The following entry is automatically added to {{object|###.DeviceInfo.VendorLogFile}}: ''file:///var/log/messages''.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".DeviceInfo.VendorLogFile.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "FilePath",
+        "access": "readWrite",
+        "description": "Destination path and filename of where to create and keep the logfiles. Which MUST use the uri scheme file {{bibref|RFC8089|The file URI Scheme}}.",
+        "type": "string"
+      }
+    ],
+    "description": "This object describes the configuration parameters for file logging. If file-archive limits are not supplied, it is assumed that the local implementation defined limits will be used.",
+    "children": []
+  }
+}

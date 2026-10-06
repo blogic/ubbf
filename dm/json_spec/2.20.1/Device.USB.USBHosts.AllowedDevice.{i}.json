@@ -1,0 +1,88 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.USB.USBHosts.AllowedDevice.{i}.",
+  "object": {
+    "path": "Device.USB.USBHosts.AllowedDevice.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "AllowedDeviceNumberOfEntries",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.20"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables whether the corresponding allowed USB device entry is active. If set to {{true}}, the device defined by this entry is permitted to connect to the system. If {{false}}, the device is ignored even if its identifiers match.",
+        "type": "boolean"
+      },
+      {
+        "name": "Description",
+        "access": "readWrite",
+        "description": "A user-friendly description of the allowed USB device entry.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "DeviceClass",
+        "access": "readWrite",
+        "description": "Classification criterion. Class Code assigned by USB-IF, which can be expressed as a two-digit hexadecimal string (e.g., `00`), but can also include a wildcard character. When `00`, the device specifies its own class code. When `FF`, the class code is vendor-specific. The `*` wildcard may be used to match any value, either fully (e.g., `*`) or partially (e.g., `F*` or `*3`). When empty, the device is not classified by Device Class.",
+        "type": "string",
+        "pattern": ""
+      },
+      {
+        "name": "DeviceSubClass",
+        "access": "readWrite",
+        "description": "Classification criterion. Subclass code assigned by USB-IF, expressed as a two-digit hexadecimal string (e.g., `01`), but can also include a wildcard character. The `*` wildcard may be used to match any value, either fully (e.g., `*`) or partially (e.g., `0*` or `*3`). When empty, the device is not classified by Device Subclass.",
+        "type": "string",
+        "pattern": ""
+      },
+      {
+        "name": "DeviceProtocol",
+        "access": "readWrite",
+        "description": "Classification criterion. Protocol code assigned by USB-IF, expressed as a two-digit hexadecimal string (e.g., `02`), but can also include a wildcard character. The `*` wildcard may be used to match any value, either fully (e.g., `*`) or partially (e.g., `0*` or `*2`). When empty, the device is not classified by Device Protocol.",
+        "type": "string",
+        "pattern": ""
+      },
+      {
+        "name": "ProductID",
+        "access": "readWrite",
+        "description": "Classification criterion. Product ID assigned by the manufacturer, expressed as a two- to four-digit hexadecimal string (e.g., `5678`), but can also include a wildcard character. The `*` wildcard may be used to match any value, either fully (e.g., `*`) or partially (e.g., `5*`). When empty, the device is not classified by Product ID.",
+        "type": "string",
+        "pattern": ""
+      },
+      {
+        "name": "VendorID",
+        "access": "readWrite",
+        "description": "Classification criterion. Vendor ID assigned by USB-IF, expressed as a two- to four-digit hexadecimal string (e.g., `1234`), but can also include a wildcard character. The `*` wildcard may be used to match any value, either fully (e.g., `*`) or partially (e.g., `1*`). When empty, the device is not classified by Vendor ID.",
+        "type": "string",
+        "pattern": ""
+      },
+      {
+        "name": "Interfaces",
+        "access": "readWrite",
+        "description": "Each item defines an allowed USB interface in the format 'InterfaceClass:InterfaceSubClass:InterfaceProtocol', using two-digit hexadecimal values (e.g., `FF`), but can also include a wildcard character. The `*` wildcard may be used to match any value, either fully (e.g., `*`) or partially (e.g., `F*`). A connected device is allowed only if all of its interfaces match entries in this list. * InterfaceClass: USB Class Code (`00` = per-interface class, `FF` = vendor-specific) * InterfaceSubClass: USB Subclass Code * InterfaceProtocol: USB Protocol Code Example: An USB Device might expose two interfaces: * `0xFF:0x02:0x01` for diagnostics * `0xFF:0x02:0x02` for data These can be allowed by listing both explicitly, or using patterns like `FF:02:*` or `F*:0*:0*`. When empty, the device is not classified by Interfaces.",
+        "list": true,
+        "type": "string",
+        "pattern": ""
+      }
+    ],
+    "description": "Table of USB devices permitted to connect to the Device USB Host controller(s). Each entry in this table defines an allowed device based on its e.g. USB Vendor ID and Product ID. Only USB devices listed here will be accepted by the Device; any USB device not explicitly listed will be rendered inactive. When a USB device is rendered inactive, the parameter value of {{param|#.Host.{i}.Device.{i}.IsAllowed}} is set to {{false}}, which prevents the {{param|#.Host.{i}.Device.{i}.DeviceState}} from reaching the {{enum|Configured|#.Host.{i}.Device.{i}.DeviceState}} status.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

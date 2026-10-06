@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.L2TPv3.",
+  "object": {
+    "path": "Device.L2TPv3.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "TunnelNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "FilterNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object contains parameters associated with the configuration and monitoring of stateless tunnels using the Layer Two Tunneling Protocol version 3 (L2TPv3) ({{bibref|RFC3931}}). This object also provides a means to treat packets that are encapsulated within a L2TPv3 Tunnel by using a set of {{object|Filter}} objects to determine the treatment of the packet.",
+    "children": []
+  }
+}

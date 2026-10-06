@@ -1,0 +1,70 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.WiFi.Templates.SecurityTemplate.{i}.RSNE.",
+  "object": {
+    "path": "Device.WiFi.Templates.SecurityTemplate.{i}.RSNE.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "GroupDataCipherSuite",
+        "access": "readWrite",
+        "description": "Cipher suite selector used to protect group addressed data frames. This is the name of a cipher suite, as defined in {{bibref|802.11-2020|Table 9-149}}. The following is an example value: \"CCMP-128\".",
+        "type": "string"
+      },
+      {
+        "name": "PairwiseCipherSuite",
+        "access": "readWrite",
+        "description": "{{list}} Each list item is a cipher suite selector used to protect individually addressed Data frames, as defined in {{bibref|802.11-2020|Table 9-149}}. The following is an example value: \"CCMP-128\".",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "AKMSuite",
+        "access": "readWrite",
+        "description": "Authentication and Key Management (AKM) suite {{bibref|802.11-2020|Table 9-151}}. {{list}}{{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "psk",
+          "dpp",
+          "sae",
+          "sae-ext-key",
+          "SuiteSelector"
+        ]
+      },
+      {
+        "name": "AKMSuiteSelector",
+        "access": "readWrite",
+        "description": "{{list}} AKM suite selector, the AKM suite selector (OUI and type) is encoded as a 4-octet hex-encoded value without internal delimiters, e.g. 506F9A02 {{bibref|802.11-2020|Table 9-151}}. {{param}} applies if {{param|AKMSuite}} includes value \"SuiteSelector\".",
+        "list": true,
+        "type": "hexBinary",
+        "minLength": 4,
+        "maxLength": 4
+      },
+      {
+        "name": "MFP",
+        "access": "readWrite",
+        "description": "Indicates the expected support for Management Frame Protection (MFP), aka Protected Management Frame (PMF). {{bibref|WPA3}} and see also the WPA3 and Wi-Fi Enhanced Open Deployment Guide v1.1.pdf, Table 3, row PMF.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Capable",
+          "Required"
+        ]
+      },
+      {
+        "name": "GroupManagementCipherSuite",
+        "access": "readWrite",
+        "description": "Cipher suite selector used to protect group addressed robust Management frames. This is the name of a cipher suite, as defined in {{bibref|802.11-2020|Table 9-149}}. The following is an example value: \"BIP-CMAC-128\".",
+        "type": "string"
+      }
+    ],
+    "description": "This object describes the Robust Security Network Element (RSNE). This object is only used by the Configuration Template Manager if the {{param|#.SecurityIEs}} is empty.",
+    "children": []
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.IEEE1905.Network.AL.{i}.Interface.{i}.",
+  "object": {
+    "path": "Device.IEEE1905.Network.AL.{i}.Interface.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "InterfaceNumberOfEntries",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "InterfaceId",
+        "access": "readOnly",
+        "description": "MAC Address of the interface. This comes from the Topology response message as defined in {{bibref|IEEE1905.1a|Table 6-10: 1905 device information type TLV}}.",
+        "type": "string",
+        "maxLength": 17,
+        "pattern": "",
+        "dataType": "MACAddress"
+      },
+      {
+        "name": "MediaType",
+        "access": "readOnly",
+        "description": "Media type of this {{object}}. This comes from the Topology response message as defined in {{bibref|IEEE1905.1a|Table 6-10: 1905 device information type TLV}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "IEEE 802.3u",
+          "IEEE 802.3ab",
+          "IEEE 802.11b",
+          "IEEE 802.11g",
+          "IEEE 802.11a",
+          "IEEE 802.11n 2.4",
+          "IEEE 802.11n 5.0",
+          "IEEE 802.11ac",
+          "IEEE 802.11ad",
+          "IEEE 802.11af",
+          "IEEE 802.11ax",
+          "IEEE 802.11be",
+          "IEEE 1901 Wavelet",
+          "IEEE 1901 FFT",
+          "MoCAv1.1",
+          "Generic Phy",
+          "IEEE 802.11ah"
+        ]
+      },
+      {
+        "name": "PowerState",
+        "access": "readOnly",
+        "description": "The Power State of this {{object}}. {{enum|Off}} is used for interfaces identified in a Power Off Interface TLV as defined in {{bibref|IEEE1905.1a|Table 6-38}}. {{enum|On}} is used for all other interfaces. {{enum|PowerSave}} and {{enum|Unsupported}} are not used at this time. Updated as a result of a received Interface Power Change response with values as 'request completed' or 'alternate change made' in Interface Power Change status parameter as defined in {{bibref|IEEE1905.1a|Table 6-40: Interface Power Change status TLV}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "On",
+          "PowerSave",
+          "Off",
+          "Unsupported"
+        ]
+      },
+      {
+        "name": "NetworkMembership",
+        "access": "readOnly",
+        "description": "MACAddress Field from Media specific information for an 802.11 interface provided in a Topology response message 1905 device information type TLV as defined in {{bibref|IEEE1905.1a|Table 6-13: IEEE 802.11 specific information}}.",
+        "type": "string",
+        "maxLength": 17,
+        "pattern": "",
+        "dataType": "MACAddress"
+      },
+      {
+        "name": "Role",
+        "access": "readOnly",
+        "description": "Field from Media specific information for an 802.11 interface provided in a Topology response message 1905 device information type TLV as defined in {{bibref|IEEE1905.1a|Table 6-13: IEEE 802.11 specific information}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "AP",
+          "non-AP/non-PCP STA",
+          "Wi-Fi P2P Client",
+          "Wi-Fi P2P Group Owner",
+          "802.11adPCP"
+        ]
+      },
+      {
+        "name": "APChannelBand",
+        "access": "readOnly",
+        "description": "Hexadecimal digit. Field from Media specific information for an 802.11 interface provided in a Topology response message 1905 device information type TLV as defined in {{bibref|IEEE1905.1a|Table 6-13: IEEE 802.11 specific information}}",
+        "type": "hexBinary",
+        "minLength": 1,
+        "maxLength": 1
+      },
+      {
+        "name": "FrequencyIndex1",
+        "access": "readOnly",
+        "description": "Field from Media specific information for an 802.11 interface provided in a Topology response message 1905 device information type TLV as defined in {{bibref|IEEE1905.1a|Table 6-13: IEEE 802.11 specific information}}",
+        "type": "hexBinary",
+        "minLength": 1,
+        "maxLength": 1
+      },
+      {
+        "name": "FrequencyIndex2",
+        "access": "readOnly",
+        "description": "Field from Media specific information for an 802.11 interface provided in a Topology response message 1905 device information type TLV as defined in {{bibref|IEEE1905.1a|Table 6-13: IEEE 802.11 specific information}}",
+        "type": "hexBinary",
+        "minLength": 1,
+        "maxLength": 1
+      },
+      {
+        "name": "LinkNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "NonIEEE1905NeighborNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IEEE1905NeighborNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "L2NeighborNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object represents an instance of an interface for the IEEE1905Device.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "InterfaceId"
+      ]
+    }
+  }
+}

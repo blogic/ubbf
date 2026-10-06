@@ -1,0 +1,41 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SSH.Server.{i}.Stats.",
+  "object": {
+    "path": "Device.SSH.Server.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "NumberOfFailedAttempts",
+        "access": "readOnly",
+        "description": "The total number of failed SSH login attempts since the device's last upgrade or initial boot.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "NumberOfFailedAttemptsSinceActivation",
+        "access": "readOnly",
+        "description": "The number of failed SSH login attempts since the SSH server instance was last activated.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "NumberOfSuccessfulAttempts",
+        "access": "readOnly",
+        "description": "The total number of successful SSH login attempts since the device's last upgrade or initial boot.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "NumberOfSuccessfulAttemptsSinceActivation",
+        "access": "readOnly",
+        "description": "The number of successful SSH login attempts since the SSH server instance was last activated.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This table provides statistical data on SSH login attempts for the server instance.",
+    "children": []
+  }
+}

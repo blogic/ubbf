@@ -1,0 +1,156 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.SessionManagement.Session.{i}.",
+  "object": {
+    "path": "Device.SessionManagement.Session.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "SessionNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the interface. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean",
+        "version": "2.20"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ],
+        "version": "2.20"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the interface as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64,
+        "version": "2.20"
+      },
+      {
+        "name": "Description",
+        "access": "readWrite",
+        "description": "A user-friendly description of the interface.",
+        "type": "string",
+        "maxLength": 256,
+        "version": "2.21"
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "version": "2.20",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        },
+        "version": "2.20"
+      },
+      {
+        "name": "Interface",
+        "access": "readOnly",
+        "description": "{{reference}} The IP Interface associated with the ''Session'' entry.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "SessionID",
+        "access": "readOnly",
+        "description": "3GPP session identity. For 3G and 4G, this will be the cid as defined in TS27.007 10.1.1. For 5G see {{bibref|3GPP-TS.24.501|Clause 9.4}}.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 15
+      },
+      {
+        "name": "SessionType",
+        "access": "readOnly",
+        "description": "The data session type indicating the protocol the session is capable of carrying. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.11}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "IPv4",
+          "IPv6",
+          "IPv4v6",
+          "Unstructured",
+          "Ethernet"
+        ]
+      },
+      {
+        "name": "APN",
+        "access": "readOnly",
+        "description": "The Access Point Name terminating the data session. For 3G and 4G it will be an APN, whilst 5G uses DNN. For all 3GPP generations, the APN can be specified at the time of session establishment or assigned by the network based on subscription. The format is defined in {{bibref|3GPP-TS.24.501|clause 9.11.2.1A}}.",
+        "type": "string",
+        "maxLength": 100
+      },
+      {
+        "name": "Reference",
+        "access": "readOnly",
+        "description": "Indicates the data session type. When the {{param}} is {{empty}} the data session is unknown.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "                   #.PDP.                   #.PDN.                   #.PDU.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "IPv4AddressNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.20"
+      },
+      {
+        "name": "IPv6AddressNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.20"
+      }
+    ],
+    "description": "Contains all the properties of a 3GPP session instance common to all generations. This object contains the {{object}} table.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

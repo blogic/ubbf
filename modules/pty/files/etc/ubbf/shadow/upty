@@ -1,0 +1,28 @@
+config upty 'agent'
+	# Master switch. ubbf renders it from Device.X_UBBF.UPTY.Enable. The
+	# daemon still runs and answers ubus status calls when disabled, but
+	# refuses to open a session.
+	option enabled '1'
+
+	# The shell an operator gets. Chosen here and never by the server.
+	# -l makes it a login shell, so /etc/profile supplies the prompt and PATH.
+	option shell '/bin/sh'
+	list shell_args '-l'
+	option term 'xterm-256color'
+
+	# CA certificate file used to verify the session server when the
+	# controller supplies none. Leave empty to verify against the system
+	# trust store instead.
+	option ca_cert ''
+	option verify_peer '1'
+
+	# Permit plaintext ws:// session URLs. A controller can ask for plaintext
+	# per session (AllowInsecure), but only while this is on. Off by default:
+	# plaintext exposes the token and the whole shell session on the wire.
+	option allow_insecure '0'
+
+	# Session limits, in seconds. 0 disables a limit.
+	option max_session '3600'
+	option idle_timeout '900'
+
+	option debug '0'

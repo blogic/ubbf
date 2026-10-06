@@ -1,0 +1,43 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.MeasurementAgent.{i}.TaskCapability.{i}.",
+  "object": {
+    "path": "Device.LMAP.MeasurementAgent.{i}.TaskCapability.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "TaskCapabilityNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "Name of the supported task.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Version",
+        "access": "readOnly",
+        "description": "Version of the task.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "TaskCapabilityRegistryNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object represents a capabilities, in the context of a task, that are supported by the measurement agent. Types of capabilities include: Report tasks, Configuration Tasks and Instruction Tasks.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Name"
+      ]
+    }
+  }
+}

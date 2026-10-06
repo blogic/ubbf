@@ -1,0 +1,47 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.SetQoSManagementInput.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.SetQoSManagementInput.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "QosMapEnable",
+        "access": "readOnly",
+        "description": "Indicates whether QoS Map is enabled on this BSS.",
+        "type": "boolean"
+      },
+      {
+        "name": "MSCSEnable",
+        "access": "readOnly",
+        "description": "Indicates whether Mirrored Stream Classification Service (MSCS) is enabled on this BSS.",
+        "type": "boolean"
+      },
+      {
+        "name": "SCSEnable",
+        "access": "readOnly",
+        "description": "Indicates whether Stream Classification Service (SCS) is enabled on this BSS.",
+        "type": "boolean"
+      },
+      {
+        "name": "DSCPPolicyEnable",
+        "access": "readOnly",
+        "description": "Indicates whether DSCP Policy is enabled on this BSS.",
+        "type": "boolean"
+      },
+      {
+        "name": "SCSTrafficDescriptionEnable",
+        "access": "readOnly",
+        "description": "Indicates whether the extensions to SCS using Traffic Descriptions is enabled on this BSS.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object records inputs for setting QoS Management {{bibref|EasyMesh|Section 20}}.",
+    "children": []
+  }
+}

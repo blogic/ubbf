@@ -1,0 +1,1 @@
+[ "$ACTION" = "add" ] && [ "$DEVTYPE" = "usb_device" ] && /usr/libexec/ubbf/usb-allow device "/sys$DEVPATH"

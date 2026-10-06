@@ -1,0 +1,63 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.SessionManagement.Session.{i}.IPv6Address.{i}.",
+  "object": {
+    "path": "Device.SessionManagement.Session.{i}.IPv6Address.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "IPv6AddressNumberOfEntries",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.20"
+      },
+      {
+        "name": "IPAddress",
+        "access": "readOnly",
+        "description": "IPv6 address.",
+        "type": "string",
+        "maxLength": 45,
+        "dataType": "IPv6Address"
+      },
+      {
+        "name": "IPPrefix",
+        "access": "readOnly",
+        "description": "IPv6 prefix. {{empty}} indicates that it matches all destination prefixes (i.e. equivalent to \"::/0\"). All bits to the right of the prefix MUST be zero, e.g. 2001:edff:fe6a:f76::/64. Routes with a 128-bit prefix length (/128) are host routes for a specific IPv6 destination, e.g. 2001:db8:28:2:713e:a426:d167:37ab/128.",
+        "type": "string",
+        "maxLength": 49,
+        "dataType": "IPv6Prefix"
+      },
+      {
+        "name": "NextHop",
+        "access": "readOnly",
+        "description": "IPv6 address of the next hop.",
+        "type": "string",
+        "maxLength": 45,
+        "dataType": "IPv6Address"
+      },
+      {
+        "name": "MTU",
+        "access": "readOnly",
+        "description": "Maximum Transmission Unit for this link (expressed in {{units}}). {{range}}",
+        "type": "unsignedInt",
+        "minInclusive": 1280
+      }
+    ],
+    "description": "This object models IPv6 network information that the Cellular modem received from the network.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

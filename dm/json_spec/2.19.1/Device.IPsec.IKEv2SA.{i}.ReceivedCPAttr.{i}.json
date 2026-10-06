@@ -1,0 +1,32 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IPsec.IKEv2SA.{i}.ReceivedCPAttr.{i}.",
+  "object": {
+    "path": "Device.IPsec.IKEv2SA.{i}.ReceivedCPAttr.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ReceivedCPAttrNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "CP Attribute Type as described in {{bibref|RFC5996|Section 3.15.1}} and defined in {{bibref|IKEv2-params|IKEv2 Configuration Payload Attribute Types}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 32767
+      },
+      {
+        "name": "Value",
+        "access": "readOnly",
+        "description": "A hexbinary encoded CP Attribute Value as described in {{bibref|RFC5996|Section 3.15.1}} and defined in {{bibref|IKEv2-params|IKEv2 Configuration Payload Attribute Types}}.",
+        "type": "hexBinary",
+        "maxLength": 65535
+      }
+    ],
+    "description": "This is a transitory table that lists all the IKEv2 Configuration Payload (CP) {{bibref|RFC5996|Section 3.15}} Attributes that have been received via CFG_REPLY messages. Table entries are automatically created to correspond with received Attributes. However, it is a local matter to the CPE when to delete old table entries. If the same Attribute is received multiple times, it is up to the CPE to decide which entries to include (i.e. whether the same Attribute will be present multiple times). In order to allow for the same Attribute to be present multiple times within the table, this table has no unique key defined.",
+    "children": []
+  }
+}

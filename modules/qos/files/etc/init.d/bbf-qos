@@ -1,0 +1,36 @@
+#!/bin/sh /etc/rc.common
+
+# After network (START=20): a shaper needs the device of its interface.
+START=25
+USE_PROCD=1
+
+QOS_TRIGGERED=" "
+
+qos_interface_trigger() {
+	local iface
+
+	config_get iface "$1" interface
+	[ -n "$iface" ] || return 0
+
+	case "$QOS_TRIGGERED" in
+	*" $iface "*) return 0 ;;
+	esac
+	QOS_TRIGGERED="$QOS_TRIGGERED$iface "
+
+	procd_add_reload_interface_trigger "$iface"
+}
+
+start_service() {
+	/usr/sbin/bbf-qos-apply
+}
+
+# No reload_service: rc.common then reloads through start, which also
+# registers the interface triggers of the new config again.
+service_triggers() {
+	procd_add_reload_trigger bbf-qos
+
+	config_load bbf-qos
+	config_foreach qos_interface_trigger shaper
+	config_foreach qos_interface_trigger queue
+	config_foreach qos_interface_trigger classify
+}

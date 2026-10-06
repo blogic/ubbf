@@ -1,0 +1,6 @@
+case "$ACTION" in
+	step|stratum|periodic) ;;
+	*) exit 0 ;;
+esac
+[ -f /etc/ubbf/first_use_date ] && exit 0
+date +%s > /etc/ubbf/first_use_date

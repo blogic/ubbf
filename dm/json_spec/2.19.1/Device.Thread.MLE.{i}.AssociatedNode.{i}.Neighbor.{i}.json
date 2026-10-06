@@ -1,0 +1,39 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Thread.MLE.{i}.AssociatedNode.{i}.Neighbor.{i}.",
+  "object": {
+    "path": "Device.Thread.MLE.{i}.AssociatedNode.{i}.Neighbor.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "NeighborNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "NodeReference",
+        "access": "readOnly",
+        "description": "References the Thread node that is an immediate neighbor of the {{object|##.AssociatedNode}}. By construction the {{param|#.RoutingRole}} of {{object|##.AssociatedNode}} MUST be {{enum|Router|#.RoutingRole}} or {{enum|Leader|#.RoutingRole}}.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.AssociatedNode.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "AvgRSSI",
+        "access": "readOnly",
+        "description": "The average Received Signal Strength Indicator (RSSI) is the average measurement of the signal strength received by the parent router node from the neighbor node.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Entries in this table reference nodes that are immediate neighbors of the associated node instance. This table is empty if the {{param|#.RoutingRole}} is not a {{enum|Router|#.RoutingRole}} or {{enum|Leader|#.RoutingRole}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "NodeReference"
+      ]
+    }
+  }
+}

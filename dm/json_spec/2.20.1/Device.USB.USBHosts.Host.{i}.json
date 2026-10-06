@@ -1,0 +1,84 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.USB.USBHosts.Host.{i}.",
+  "object": {
+    "path": "Device.USB.USBHosts.Host.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "HostNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the USB Host controller.",
+        "type": "boolean"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "User-readable host controller name.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "Type of USB Host",
+        "type": "string",
+        "enumerations": [
+          "Unknown",
+          "OHCI",
+          "EHCI",
+          "UHCI",
+          "xHCI"
+        ]
+      },
+      {
+        "name": "PowerManagementEnable",
+        "access": "readWrite",
+        "description": "When set to {{true}}, {{param}} enables the Host Controller to invoke Power Management policy, i.e. controlled Suspend (see {{bibref|USB2.0}}, Chapters 4.3.2, 7.1.7.6, and 11.9). When set to {{false}} {{param}} immediately disables the Host controller Power Management policy.",
+        "type": "boolean"
+      },
+      {
+        "name": "USBVersion",
+        "access": "readOnly",
+        "description": "USB specification version with which the controller complies. Example: \"1.1\"",
+        "type": "string",
+        "maxLength": 4
+      },
+      {
+        "name": "DeviceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Table of CPE USB Host controllers.",
+    "commands": [
+      {
+        "name": "Reset()",
+        "version": "2.12",
+        "async": "false"
+      }
+    ],
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Name"
+      ]
+    }
+  }
+}

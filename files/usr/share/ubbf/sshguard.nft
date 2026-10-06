@@ -1,0 +1,17 @@
+table inet ubbf-sshguard {
+	set blocklist_v4 {
+		type ipv4_addr
+		flags timeout
+	}
+
+	set blocklist_v6 {
+		type ipv6_addr
+		flags timeout
+	}
+
+	chain input {
+		type filter hook input priority -250; policy accept;
+		ip  saddr @blocklist_v4 drop
+		ip6 saddr @blocklist_v6 drop
+	}
+}

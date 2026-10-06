@@ -1,0 +1,68 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.NeighborDiscovery.InterfaceSetting.{i}.ARP.",
+  "object": {
+    "path": "Device.NeighborDiscovery.InterfaceSetting.{i}.ARP.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables ARP functionality for this specific interface. This parameter works in conjunction with {{param|#.Enable}}. If {{param|#.Enable}} is {{false}}, then ARP is considered disabled for this interface regardless of this parameter's value.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this {{object}}. {{enum}} A value of {{enum|Error_Misconfigured}} indicates that the referenced {{param|#.Interface}} is not a valid reference to an IPv4-capable interface.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured"
+        ]
+      },
+      {
+        "name": "BaseReachableTime",
+        "access": "readWrite",
+        "description": "The base time in {{units}} for how long a dynamically learned entry in the ARP cache is considered valid and reachable. This corresponds to the ARP cache aging time discussed in {{bibref|RFC1122}}.",
+        "default": "60000",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxRetries",
+        "access": "readWrite",
+        "description": "The maximum number of ARP requests to send before considering an address unreachable, as discussed in {{bibref|RFC1122}}.",
+        "default": "3",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RetryInterval",
+        "access": "readWrite",
+        "description": "The interval in {{units}} between consecutive ARP requests, as discussed in {{bibref|RFC1122}}.",
+        "default": "1000",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ProxyARPEnable",
+        "access": "readWrite",
+        "description": "Enables or disables Proxy ARP, as defined in {{bibref|RFC1027}}, on this interface.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      }
+    ],
+    "description": "Contains all parameters related to the Address Resolution Protocol (ARP) {{bibref|RFC826}} for this interface.",
+    "children": []
+  }
+}

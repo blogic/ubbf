@@ -1,0 +1,176 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.WiFi.Templates.BSSTemplate.{i}.",
+  "object": {
+    "path": "Device.WiFi.Templates.BSSTemplate.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "BSSTemplateNumberOfEntries",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.20"
+      },
+      {
+        "name": "BSSTemplateID",
+        "access": "writeOnceReadOnly",
+        "description": "Static and persistent ID element. At most one {{object}} instance can exist with a given value for {{param}}.",
+        "type": "string"
+      },
+      {
+        "name": "Priority",
+        "access": "readWrite",
+        "description": "This value indicates in which order the {{object}} are to be matched for a reported radio. 255 is the highest priority, 0 is the lowest priority.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "RadioTemplateReference",
+        "access": "readWrite",
+        "description": "This {{object}} is linked to {{param}}.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.RadioTemplate.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "SSCTemplateReference",
+        "access": "readWrite",
+        "description": "This {{object}} is linked to {{param}}.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.SSCTemplate.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "APMLDTemplateReference",
+        "access": "readWrite",
+        "description": "This {{object}} is linked to {{param}}.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.APMLDTemplate.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "SecurityGroupReference",
+        "access": "readWrite",
+        "description": "This {{object}} is linked to {{param}}.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.SecurityGroup.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "LinkedRadioTemplateID",
+        "access": "readOnly",
+        "description": "Indicates the {{param|#.RadioTemplate.{i}.RadioTemplateID}} that is linked with this {{object}}.",
+        "type": "string"
+      },
+      {
+        "name": "LinkedSSCTemplateID",
+        "access": "readOnly",
+        "description": "Indicates the {{param|#.SSCTemplate.{i}.SSCTemplateID}} that is linked with this {{object}}.",
+        "type": "string"
+      },
+      {
+        "name": "LinkedAPMLDTemplateID",
+        "access": "readOnly",
+        "description": "Indicates the {{param|#.APMLDTemplate.{i}.APMLDTemplateID}} that is linked with this {{object}}.",
+        "type": "string"
+      },
+      {
+        "name": "LinkedSecurityGroupID",
+        "access": "readOnly",
+        "description": "Indicates the {{param|#.SecurityGroup.{i}.SecurityGroupID}} of the {{object|#.SecurityGroup.{i}}} in which a matching {{object|#.SecurityTemplate}} is searched.",
+        "type": "string"
+      },
+      {
+        "name": "TopologyFlag",
+        "access": "readWrite",
+        "description": "The topology flag is used to specify a list of EasyMesh Agents for which this {{object}} is considered by the Configuration Template Manager during the matching process. If an Agent does not match any value in the list, then no BSS matching this BSSTemplate is deployed on the EasyMesh Agent. These values refer to the network topology point of the EasyMesh Agent as determined by the EasyMesh Controller. This flag matches if any of the list items match (logical OR). {{list}}{{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "Root",
+          "Repeater",
+          "Wired_Repeater",
+          "Wireless_Repeater",
+          "ALID"
+        ]
+      },
+      {
+        "name": "IEEE1905ALID",
+        "access": "readWrite",
+        "description": "{{list}} IEEE 1905 {{bibref|IEEE1905.1a}} Abstraction-Layer ID (ALID). This flag matches if any of the list items match (logical OR). This should match an entry in {{param|##.DataElements.Network.Device.{i}.ID}}.",
+        "list": true,
+        "type": "string",
+        "maxLength": 17,
+        "pattern": "",
+        "dataType": "MACAddress"
+      },
+      {
+        "name": "MaxWLANHopLimitFlag",
+        "access": "readWrite",
+        "description": "Indicates the maximum number of wireless hops (consecutive or not) allowed between the EasyMesh Controller and the EasyMesh Agent. In single-AP deployment, this flag is ignored.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "SecureEquipmentFlag",
+        "access": "readWrite",
+        "description": "Indicates the 1905 Security of the EasyMesh Agent {{bibref|EasyMesh|Section 17.2.77}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "true",
+          "false",
+          "null"
+        ]
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Determines if this template is considered by the Configuration Template Manager in the template matching process.",
+        "type": "boolean"
+      },
+      {
+        "name": "SSID",
+        "access": "readWrite",
+        "description": "The Service Set Identifier (SSID) used as an identifier by all deployed BSSs linked to this {{object}}.",
+        "type": "string"
+      },
+      {
+        "name": "KeyPassphrase",
+        "access": "readWrite",
+        "description": "The KeyPassphrase to be used by all deployed BSSs linked to this {{object}}.",
+        "secured": true,
+        "type": "string"
+      },
+      {
+        "name": "AdvertisementEnable",
+        "access": "readWrite",
+        "description": "Indicates if the {{param|SSID}} is advertised in beacons : {{true}}: this {{param|SSID}} is to be advertised in beacons. : {{false}}: this {{param|SSID}} is not to be advertised in beacons.",
+        "type": "boolean"
+      }
+    ],
+    "description": "Table of Basic Service Set (BSS) templates for Wi-Fi configuration.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "BSSTemplateID"
+      ]
+    }
+  }
+}

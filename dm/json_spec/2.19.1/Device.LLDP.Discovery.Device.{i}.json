@@ -1,0 +1,68 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LLDP.Discovery.Device.{i}.",
+  "object": {
+    "path": "Device.LLDP.Discovery.Device.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "DeviceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Interface",
+        "access": "readOnly",
+        "description": "{{reference|the interface via which the LLDP device was discovered}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ChassisIDSubtype",
+        "access": "readOnly",
+        "description": "The chassis identifier subtype, which is included in the value of the ''LLDPDU's'' Chassis ID TLV (TLV Type = 1). The following subtype values are defined: * ''0'' (Reserved) * ''1'' (Chassis component) * ''2'' (Interface alias) * ''3'' (Port component) * ''4'' (MAC address) * ''5'' (Network address) * ''6'' (Interface name) * ''7'' (Locally assigned) * ''8-255'' (Reserved) Note: It is assumed that this integer might be used for HTIP (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and {{bibref|G.9973}}. In this case, the Chassis ID is set to the representative MAC address (chassis ID subtype = 4) for ''HTIP-Ethernet Bridge''.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "ChassisID",
+        "access": "readOnly",
+        "description": "The chassis identifier, which is included in the value of the ''LLDPDU's'' Chassis ID TLV (TLV Type = 1). Note: It is assumed that this string might be used for HTIP (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and {{bibref|G.9973}}. In this case, the Chassis ID is set to the representative MAC address. If ''LLDPDU''s are sent and received from two or more LLDP agents of the same ''HTIP-Ethernet Bridge'', this value is same in all ''LLDPDU''s.",
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 255
+      },
+      {
+        "name": "Host",
+        "access": "readOnly",
+        "description": "{{list}}Indicates the full path names of all Host table entries, whether active or inactive, that correspond to this device. When the entries are added to or removed from the Host tables, the value of this parameter MUST be updated accordingly.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "###.Hosts.Host.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "PortNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This table contains information about discovered LLDP devices.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "ChassisIDSubtype",
+        "ChassisID"
+      ]
+    }
+  }
+}

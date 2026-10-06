@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DSLite.",
+  "object": {
+    "path": "Device.DSLite.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables DSLite.",
+        "type": "boolean"
+      },
+      {
+        "name": "InterfaceSettingNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Settings allowing a CPE to configure and route IPv6 Dual-Stack Lite (DSLite) as specified in {{bibref|DSLite}}. The DS-Lite mechanism is intended to be implemented only on gateway devices that support IPv4 on the LAN side and only have IPv6 connectivity on the WAN side. See the Dual-Stack Lite Theory of Operation {{bibref|TR-181i2|Appendix VII}} for a description of the working of this DS-Lite data model.",
+    "children": []
+  }
+}

@@ -1,0 +1,234 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.MQTT.Broker.{i}.",
+  "object": {
+    "path": "Device.MQTT.Broker.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "BrokerNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "The textual name of the MQTT broker.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Allows to enable or disable the MQTT broker.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the status of the MQTT broker. {{enum}} The \"{{enum|Error_Misconfigured}}\" value indicates that a necessary configuration value is undefined or invalid. The \"{{enum|Error}}\" value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "ACLList",
+        "access": "readWrite",
+        "description": "Each item represents an Access Control List (ACL) rule that defines the permissions for clients connected to this broker instance. These rules are evaluated to determine if a client is authorized to publish to or subscribe from specific topics.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "Device.MQTT.BrokerSecurity.ACL.",
+          "targetType": "row"
+        },
+        "version": "2.21"
+      },
+      {
+        "name": "AuthenticationMethod",
+        "access": "readWrite",
+        "description": "The authentication method used by the broker to verify client identity.",
+        "default": "UsernamePassword",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "UsernamePassword",
+          "CertViaCN",
+          "CertViaSubject"
+        ],
+        "version": "2.21"
+      },
+      {
+        "name": "AllowAnonymous",
+        "access": "readWrite",
+        "description": "If {{true}}, the broker will allow clients to connect without providing a username and password. If {{false}}, all clients must provide credentials. These anonymous clients can still be subject to ACL rules.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.21"
+      },
+      {
+        "name": "IPVersion",
+        "access": "readWrite",
+        "description": "Specifies the IP protocol version, following the definitions in {{bibref|IANA-ipversionnumbers}}. Valid values are: {{range}}.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "ranges": [
+          [
+            4,
+            4
+          ],
+          [
+            6,
+            6
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "version": "2.20"
+      },
+      {
+        "name": "TransportProtocol",
+        "access": "readWrite",
+        "description": "Indicates the transport protocol to be used for the MQTT broker connection.",
+        "default": "TLS",
+        "defaultType": "object",
+        "type": "string",
+        "enumerationRef": "#.Capabilities.TransportProtocolSupported",
+        "version": "2.20"
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "Port used by the MQTT Broker.",
+        "default": "1883",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "If {{empty}} is specified, the CPE MUST bind the MQTT broker to all available interfaces, which depends on the value of the {{param|IPVersion}} parameter. Meaning that the broker will bind to an IPv4 address, an IPv6 address, or both.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Username",
+        "access": "readWrite",
+        "description": "User name used to authenticate the MQTT clients, which connect to the MQTT broker. Note: If this parameter is {{empty}}, then {{param|AllowAnonymous}} MUST also be set to {{true}}, or the Client will not be authorized via this mechanism. Instead of using a single username and password across multiple devices, it is RECOMMENDED to use the per-client identity and access control lists defined within the {{object|Device.MQTT.BrokerSecurity}} object. Both mechanisms should not be used simultaneously.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Password",
+        "access": "readWrite",
+        "description": "Password used to authenticate the MQTT clients, which connect to the MQTT broker. This password is only used if {{param|Username}} is not {{empty}}. Note: If {{param|Username}} is {{empty}}, then {{param|AllowAnonymous}} MUST also be set to {{true}}, or the Client will not be authorized via this mechanism. Instead of using a single username and password across multiple devices, it is RECOMMENDED to use the per-client identity and access control lists defined within the {{object|Device.MQTT.BrokerSecurity}} object. Both mechanisms should not be used simultaneously.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Certificate",
+        "access": "readWrite",
+        "description": "Specifies the server certificate to be presented by the server during the TLS handshake. This certificate is used to authenticate the server to remote clients, ensuring that the clients are connecting to a legitimate server. The server certificate must be issued by a trusted Certificate Authority (CA) and should match the server's private key. This parameter is applicable only when a TLS session is being used.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.Certificate.",
+          "targetType": "row"
+        },
+        "version": "2.20"
+      },
+      {
+        "name": "CABundle",
+        "access": "readWrite",
+        "description": "Specifies the group of CA certificate(s) that the server must use to validate the certificate presented by the remote client. These CA certificates form a trust chain that the client certificate must match, ensuring that only clients with trusted certificates can establish a connection. This parameter supports multiple CA certificates to accommodate different client certificate issuers. This parameter is applicable only when a TLS session is being used.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.CABundle.",
+          "targetType": "row"
+        },
+        "version": "2.20"
+      },
+      {
+        "name": "CipherList",
+        "access": "readOnly",
+        "description": "Each item in this list specifies a cipher that the TLS server is allowed to use. When {{empty}} the system defaults are used.",
+        "list": true,
+        "type": "string",
+        "version": "2.21"
+      },
+      {
+        "name": "Process",
+        "access": "readOnly",
+        "description": "{{reference}} This parameter identifies the row representing the running process associated with this MQTT broker instance. The referenced row contains process details, including the PID.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "Device.DeviceInfo.ProcessStatus.Process.",
+          "targetType": "row"
+        },
+        "version": "2.21"
+      },
+      {
+        "name": "BrokerID",
+        "access": "readWrite",
+        "description": "{{param}} is an identifier used to group multiple broker instances (listeners) under a single broker process. Instances with the same {{param}} value share the process; instances with a new {{param}} value result in a new process being created.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "maxInclusive": 65535,
+        "version": "2.21"
+      },
+      {
+        "name": "ConfFile",
+        "access": "readOnly",
+        "description": "{{reference}} This parameter identifies the row in the table that represents the configuration file used by the MQTT broker instance.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "Device.DeviceInfo.VendorConfigFile.",
+          "targetType": "row"
+        },
+        "version": "2.21"
+      },
+      {
+        "name": "BridgeNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Each entry in this table configures a single listener for the local MQTT broker. This allows the device to accept incoming MQTT client connections on different ports or with different security protocols (e.g., separate listeners for encrypted (e.g., TLS) and unencrypted connections).",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

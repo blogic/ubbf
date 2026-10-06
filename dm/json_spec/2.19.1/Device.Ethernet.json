@@ -1,0 +1,63 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Ethernet.",
+  "object": {
+    "path": "Device.Ethernet.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "WoLSupported",
+        "access": "readOnly",
+        "description": "Indicates that WoL (Wake on LAN) over Ethernet is supported.",
+        "type": "boolean",
+        "version": "2.13"
+      },
+      {
+        "name": "FlowControlSupported",
+        "access": "readOnly",
+        "description": "Indicates that Flow Control over Ethernet is supported, as per {{bibref|802.3-2015}}.",
+        "type": "boolean",
+        "version": "2.14"
+      },
+      {
+        "name": "InterfaceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LinkNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "VLANTerminationNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LAGNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "RMONStatsNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.12"
+      }
+    ],
+    "description": "Ethernet object. This object models several Ethernet interface objects, each representing a different stack layer, including: {{object|Interface}}, {{object|Link}}, and {{object|VLANTermination}}. {{object|Interface}} is media-specific and models a port, the PHY layer, and the Channel Access Method (CAM) part of the MAC layer. {{object|Link}} is media-independent and models the Logical Link Control (LLC) layer. An \"outer\" {{object|VLANTermination}}, when present, is expected to be stacked on top of {{object|Link}} objects to receive and send frames with a configured VLANID.",
+    "children": []
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DSL.",
+  "object": {
+    "path": "Device.DSL.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "LineNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ChannelNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "BondingGroupNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object models DSL lines, DSL channels, DSL bonding, and DSL diagnostics. The specific interface objects defined here are {{object|Line}}, {{object|Channel}}, and {{object|BondingGroup}}. Each {{object|Line}} models a layer 1 DSL Line interface, and each {{object|Channel}} models a layer 1 DSL Channel interface where multiple channels can run over a DSL line. In the case where bonding is configured, it is expected that {{object|BondingGroup}} is stacked above the {{object|Channel}} instances within its group.",
+    "children": []
+  }
+}

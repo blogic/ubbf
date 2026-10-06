@@ -1,0 +1,46 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SSH.",
+  "object": {
+    "path": "Device.SSH.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the SSH service.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of the SSH service. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "ServerNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AuthorizedKeyNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object contains global parameters relating to the Secure Shell clients and or servers implementations that are active in the CPE.",
+    "children": []
+  }
+}

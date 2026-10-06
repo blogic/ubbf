@@ -1,0 +1,43 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MoCA.Interface.{i}.Reset.",
+  "object": {
+    "path": "Device.MoCA.Interface.{i}.Reset.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "NodeMask",
+        "access": "readWrite",
+        "description": "The MoCA Nodes that must respond to the MR transaction L2ME request sent by the NC except for the MR Entry Node (LSB corresponds to Node ID 0x0). See {{bibref|MoCAv2.0|Section 6.2.1}}",
+        "type": "hexBinary",
+        "minLength": 2,
+        "maxLength": 2
+      },
+      {
+        "name": "StartTime",
+        "access": "readWrite",
+        "description": "Time in seconds after this parameter is written that a MoCA Node must initiate a MoCA Reset (MR). See {{bibref|MoCAv2.0|Section 7.15}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "StatusTrapEnable",
+        "access": "readWrite",
+        "description": "Used to enable {{event|#.MrRstSuccessTrap!}} and {{event|#.MrRstFailTrap!}} that the network reset was completed successfully or failed for MR transaction status trap.",
+        "type": "boolean"
+      },
+      {
+        "name": "NetworkTrapEnable",
+        "access": "readWrite",
+        "description": "Used to enable {{event|#.MrNetworkSuccessTrap!}} and {{event|#.MrNetworkFailTrap!}} that the network was reformed or not reformed successfully following the MR transaction.",
+        "type": "boolean"
+      }
+    ],
+    "description": "Used by the managed MoCA Node to initiate MoCA Reset Transaction.",
+    "children": []
+  }
+}

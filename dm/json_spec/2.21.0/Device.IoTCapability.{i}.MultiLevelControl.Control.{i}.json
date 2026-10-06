@@ -1,0 +1,198 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.IoTCapability.{i}.MultiLevelControl.Control.{i}.",
+  "object": {
+    "path": "Device.IoTCapability.{i}.MultiLevelControl.Control.{i}.",
+    "access": "readOnly",
+    "minEntries": "2",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ControlNumberOfEntries",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.21"
+      },
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "enumerations": [
+          "Acceleration",
+          "Area",
+          "Battery",
+          "Brightness",
+          "Concentration",
+          "Conductivity",
+          "Distance",
+          "Energy",
+          "Flow",
+          "Humidity",
+          "Intensity",
+          "Luminance",
+          "Meter",
+          "Motion",
+          "Position",
+          "Power",
+          "Pressure",
+          "Radiation",
+          "Speed",
+          "Temperature",
+          "Volume",
+          "Weight",
+          "Depth",
+          "Counter",
+          "Duration",
+          "Longitude",
+          "Latitude",
+          "Altitude",
+          "Voltage",
+          "Current",
+          "Color",
+          "ActivePower",
+          "ReactivePower",
+          "ApparentPower",
+          "Hue",
+          "ColorSaturation",
+          "ColorBrightness",
+          "Frequency"
+        ],
+        "dataType": "IoTLevelType"
+      },
+      {
+        "name": "Description",
+        "access": "readOnly",
+        "description": "Human-readable description of the {{object}}. For example, a more detailed description of {{param|Type}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Value",
+        "access": "readWrite",
+        "description": "The current value reading of this {{object}} in units defined in {{param|Unit}}.",
+        "type": "decimal"
+      },
+      {
+        "name": "ValueName",
+        "access": "readOnly",
+        "description": "The name of the value expressed in {{param|Value}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Unit",
+        "access": "readOnly",
+        "description": "{{datatype|expand}} Unit in which {{param|Value}} is expressed.",
+        "type": "string",
+        "enumerations": [
+          "-",
+          "%",
+          "deg",
+          "degC",
+          "degF",
+          "K",
+          "km",
+          "m",
+          "cm",
+          "mm",
+          "h",
+          "min",
+          "s",
+          "ms",
+          "sq-km",
+          "sq-m",
+          "sq-cm",
+          "cu-m",
+          "l",
+          "cl",
+          "ml",
+          "kg",
+          "g",
+          "mg",
+          "Wh",
+          "kWh",
+          "W",
+          "A",
+          "Hz",
+          "V",
+          "N",
+          "Pa",
+          "C",
+          "F",
+          "ohm",
+          "S",
+          "Wb",
+          "T",
+          "H",
+          "lm",
+          "lx",
+          "byte",
+          "mps",
+          "cd",
+          "mol",
+          "UV",
+          "RGB",
+          "ppm",
+          "Sv",
+          "J",
+          "rpm",
+          "pps",
+          "cu-m/s",
+          "liter/s",
+          "dB",
+          "dBm",
+          "eV",
+          "var",
+          "VA",
+          "PF",
+          "dateTime",
+          "bps"
+        ],
+        "dataType": "IoTUnitType"
+      },
+      {
+        "name": "MinValue",
+        "access": "readOnly",
+        "description": "Minimum allowed value for {{param|Value}}.",
+        "type": "decimal"
+      },
+      {
+        "name": "MaxValue",
+        "access": "readOnly",
+        "description": "Maximum allowed value for {{param|Value}}.",
+        "type": "decimal"
+      },
+      {
+        "name": "StepValue",
+        "access": "readWrite",
+        "description": "Number of {{param|Unit}} changes of each {{command|StepUp()}} and {{command|StepDown()}} command.",
+        "type": "decimal"
+      }
+    ],
+    "description": "{{object}} represents an IoTLevelType. At least two {{object}} will be present.",
+    "commands": [
+      {
+        "name": "StepUp()",
+        "async": "true"
+      },
+      {
+        "name": "StepDown()",
+        "async": "true"
+      }
+    ],
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

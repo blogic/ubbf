@@ -1,0 +1,297 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.",
+  "object": {
+    "path": "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Connector",
+        "access": "readOnly",
+        "description": "The connector value as per {{bibref|SFF-8024|Table 4-3}} indicates the external optical or electrical cable connector provided as the media interface.",
+        "type": "hexBinary",
+        "minLength": 1,
+        "maxLength": 1
+      },
+      {
+        "name": "Transceiver",
+        "access": "readOnly",
+        "description": "This field contains code for electronic or optical compatibility as per {{bibref|SFF-8472|Table 5-3}} and {{bibref|SFF-8024|Table 4-4}}. It corresponds to the values of DMM address 0xA0, bytes 3-10 and 36. The associated bit significant indicators (as identified in the above referenced tables) define the electronic or optical interfaces that are supported by the transceiver. At least one bit will be set in this field.",
+        "type": "hexBinary",
+        "minLength": 9,
+        "maxLength": 9
+      },
+      {
+        "name": "Encoding",
+        "access": "readOnly",
+        "description": "This contains the code for high speed serial encoding algorithm as per {{bibref|SFF-8024|Table 4-2}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "BRNominal",
+        "access": "readOnly",
+        "description": "This field contains the Nominal bit signaling rate, in units of {{units}} as per {{bibref|SFF-8472|Section 5-6}}. The bit rate includes those bits necessary to encode and delimit the signal as well as those bits carrying data information. A value of 0 indicates that the bit rate is not specified and must be determined from the transceiver technology. If the value is 255 (indicating 25.4GBd) then {{param|BRMax}} contains rate in units of 250MBd.",
+        "type": "int"
+      },
+      {
+        "name": "RateIdentifier",
+        "access": "readOnly",
+        "description": "The rate identifier byte as per {{bibref|SFF-8472|Table 5-6}} refers to several (optional) industry standard definitions of Rate_Select or Application_Select control behaviors, intended to manage transceiver optimization for multiple operating rates.",
+        "type": "hexBinary",
+        "minLength": 1,
+        "maxLength": 1
+      },
+      {
+        "name": "VendorName",
+        "access": "readOnly",
+        "description": "The vendor name is a string contains ASCII characters that contain the full name of the corporation, a commonly accepted abbreviation of the name of the corporation, the SCSI company code for the corporation, or the stock exchange code for the corporation. At least one of VendorName or VendorOUT shall contain valid data.",
+        "type": "string",
+        "maxLength": 16
+      },
+      {
+        "name": "VendorOUI",
+        "access": "readOnly",
+        "description": "The vendor organizationally unique identifier field (vendor OUI) is a string that contains the IEEE Company Identifier for the vendor. An empty value indicates that the vendor OUI is unspecified.",
+        "type": "hexBinary",
+        "minLength": 3,
+        "maxLength": 3
+      },
+      {
+        "name": "VendorPN",
+        "access": "readOnly",
+        "description": "The vendor part number provided by Transceiver vendor is a string of maximum 16 ASCII characters. An empty string indicates that the vendor PN is unspecified.",
+        "type": "string",
+        "maxLength": 16
+      },
+      {
+        "name": "VendorRev",
+        "access": "readOnly",
+        "description": "The vendor revision number provided by Transceiver vendor is a string of maximum 4 ASCII characters. An empty string indicates that the vendor revision is unspecified.",
+        "type": "string",
+        "maxLength": 4
+      },
+      {
+        "name": "BRMax",
+        "access": "readOnly",
+        "description": "This is the upper bit rate margin in units of 1%, within which the transceiver will still meet its specifications (BR, max) is specified in units of 1% above the nominal bit rate. A value of zero indicates that this field is not specified. However this field may contain the nominal bit rate in units of 250MBd if the value in {{param|BRNominal}} is 255. See {{bibref|SFF-8472|Section 8.4}}} - Address 0xA0, Byte 66.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "BRMin",
+        "access": "readOnly",
+        "description": "This is the lower bit rate margin in units of {{units}}, within which the transceiver will still meet its specifications (BR, min) is specified in units of 1{{units}} below the nominal bit rate. A value of zero indicates that this field is not specified. However this field may also specify range of signaling rates specified in units of +/- 1{{units}} around the nominal signaling rate. See {{bibref|SFF-8472|Section 8.5}}} - Address 0xA0, Byte 67.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 100
+      },
+      {
+        "name": "VendorSN",
+        "access": "readOnly",
+        "description": "The serial number provided by the Transceiver vendor is a string of maximum 16 ASCII characters. An empty string indicates that the vendor SN is unspecified.",
+        "type": "string",
+        "maxLength": 16
+      },
+      {
+        "name": "DateCode",
+        "access": "readOnly",
+        "description": "The transceiver vendor date code. The format is YYMMDDLL where YY - year (00 = 2000), MM - month (01 = January), DD - day (01 to 31), LL - optional vendor lot code.",
+        "type": "string",
+        "maxLength": 8,
+        "pattern": "\\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01])[A-Za-z0-9]{0,2}"
+      },
+      {
+        "name": "LengthSMFkm",
+        "access": "readOnly",
+        "description": "This value specifies the link length in {{units}} that is supported by the transceiver while operating in compliance with the applicable standards using single mode fiber. The value is in units of kilometers. A value of 255 means that the transceiver supports a link length greater than 254 km. A value of zero means that the transceiver does not support single mode fiber or that the length information must be determined from the transceiver technology.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "LengthSMF",
+        "access": "readOnly",
+        "description": "This value specifies link length that is supported by the transceiver while operating in compliance with applicable standards using 50 micron multimode OM2 [500MHz*km at 850nm] fiber. The value is in units of {{units}}. A value of 255 means that the transceiver supports a link length greater than 2.54 km A value of zero means that the transceiver does not support 50 micron multimode fiber or that the length information must be determined from the transceiver technology.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "LengthOM2",
+        "access": "readOnly",
+        "description": "This value specifies link length that is supported by the transceiver while operating in compliance with applicable standards using 50 micron multimode OM2 [500MHz*km at 850nm,] fiber. The value is in units of {{units}}. A value of 255 means that the transceiver supports a link length greater than 2.54 km A value of zero means that the transceiver does not support 50 micron multimode fiber or that the length information must be determined from the transceiver technology.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "LengthOM1",
+        "access": "readOnly",
+        "description": "This value specifies link length that is supported by the transceiver while operating in compliance with applicable standards using 62.5 micron multimode OM1 [200 MHzkm at 850nm, 500 MHzkm at 1310nm] fiber. The value is in units of {{units}} . A value of 255 means that the transceiver supports a link length greater than 2.54 km. A value of zero means that the transceiver does not support 62.5 micron multimode fiber or that the length information must be determined from the transceiver technology.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "LengthOM3",
+        "access": "readOnly",
+        "description": "This value specifies link length that is supported by the transceiver while operating in compliance with applicable standards using 50 micron multimode OM3 [2000 MHz*km] fiber. The value is in units of {{units}}. A value of 255 means that the transceiver supports a link length greater than 2.54 km. A value of zero means that the transceiver does not support 50 micron multimode fiber or that the length information must be determined from the transceiver Technology.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "Wavelength",
+        "access": "readOnly",
+        "description": "This value denotes the nominal transmitter output wavelength at room temperature measured in {{units}}. This field allows the user to read the laser wavelength directly, so it is not necessary to infer it from the transceiver \u201cCode for Electronic Compatibility\u201d. This also allows specification of wavelengths not covered in those fields, such as those used in coarse WDM systems.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "VerCompliance",
+        "access": "readOnly",
+        "description": "The value indicates which revision of SFF requirements the transceiver complies with. See {{bibref|SFF-8472|Table 8-8}}.",
+        "type": "hexBinary",
+        "minLength": 1,
+        "maxLength": 1
+      },
+      {
+        "name": "OptCooledTrans",
+        "access": "readOnly",
+        "description": "A value of {{false}} identifies a conventional uncooled (or unspecified) laser implementation. A value of {{true}} identifies a cooled laser transmitter implementation. See {{bibref|SFF-8472|Table 8-3}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "OptPowerlvl",
+        "access": "readOnly",
+        "description": "A value of {{false}} identifies Power Level 1 (or unspecified) requirements. A value of {{true}} identifies Power Level 2 requirement. See {{bibref|SFF-8472|Table 8-3}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "OptLinearRcvr",
+        "access": "readOnly",
+        "description": "A value of {{false}} identifies a conventional limiting (or unspecified) receiver output. A value of {{true}} identifies a linear receiver output. See {{bibref|SFF-8472|Table 8-3}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "OptRateSelect",
+        "access": "readOnly",
+        "description": "A value of {{true}} indicates that the optional RATE_SELECT functionality is implemented. See {{bibref|SFF-8472|Table 8-3}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "OptTxDisable",
+        "access": "readOnly",
+        "description": "A value of {{true}} indicates that the optional TX_DISABLE functionality is implemented. See {{bibref|SFF-8472|Table 8-3}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "OptTxFault",
+        "access": "readOnly",
+        "description": "A value of {{true}} indicates that the optional Tx Fault monitoring is implemented. See {{bibref|SFF-8472|Table 8-3}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "OptInvertedLOS",
+        "access": "readOnly",
+        "description": "A value of {{true}} indicates that Loss of Signal implemented with signal inverted from standard definition in SFP MSA (called \u201cSignal Detect\u201d) as per {{bibref|SFF-8472|Table 8-3}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "OptLOS",
+        "access": "readOnly",
+        "description": "A value of {{true}} indicates that this optional transceiver signal for Loss of signal is implemented. See {{bibref|SFF-8472|Table 8-3}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "DMCtypeImplemented",
+        "access": "readOnly",
+        "description": "A value of {{true}} indicates that Digital Diagnostic monitoring is implemented. See {{bibref|SFF-8472| Section 8-8}}. If set to {{true}}, received power monitoring, transmitted power monitoring, bias current monitoring, supply voltage monitoring and temperature monitoring are all implemented.",
+        "type": "boolean"
+      },
+      {
+        "name": "DMCtypeInternalCal",
+        "access": "readOnly",
+        "description": "A value of {{true}} indicates that transceiver is Internally calibrated. The transceiver directly reports calibrated values in units of current, power etc.",
+        "type": "boolean"
+      },
+      {
+        "name": "DMCtypeExternalCal",
+        "access": "readOnly",
+        "description": "A value of {{true}} indicates that transceiver is Externally calibrated. The reported values are A/D counts which must be converted to real world units using calibration values read using additional information from the SFP memory.",
+        "type": "boolean"
+      },
+      {
+        "name": "DMCtypeRxAvgPwr",
+        "access": "readOnly",
+        "description": "This value indicates the Received power measurement type. If {{true}}, average received power is monitored. If {{false}}, OMA is monitored.",
+        "type": "boolean"
+      },
+      {
+        "name": "EOCalarmsImplemented",
+        "access": "readOnly",
+        "description": "A value of {{true}} indicates that Alarms/Warnings flags for monitored quantities are implemented in the transceiver. See {{bibref|SFF-8472|Table 8-6}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "EOCSoftTxDisable",
+        "access": "readOnly",
+        "description": "A value of {{true}} indicates that Soft TX_DISABLE control and monitoring is implemented in the transceiver. See {{bibref|SFF-8472|Table 8-6}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "EOCSoftTxFault",
+        "access": "readOnly",
+        "description": "A value of {{true}} indicates that soft TX_FAULT monitoring is implemented in the transceiver. See {{bibref|SFF-8472|Table 8-6}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "EOCSoftRxLOS",
+        "access": "readOnly",
+        "description": "A value of {{true}} indicates that soft RX_LOS is implemented in the transceiver. See {{bibref|SFF-8472|Table 8-6}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "EOCSoftRateSelect",
+        "access": "readOnly",
+        "description": "A value of {{true}} indicates that this soft Rate Select and Control is implemented in the transceiver. See {{bibref|SFF-8472|Table 8-6}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "SFF8079AppSelect",
+        "access": "readOnly",
+        "description": "A value of {{true}} indicates that application rate select feature is implemented in the transceiver. See {{bibref|SFF-8472|Table 8-6}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "SFF8431SoftRateSelect",
+        "access": "readOnly",
+        "description": "A value of {{true}} indicates that Soft Rate Select as per SFF-8431 is implemented in the transceiver. See {{bibref|SFF-8472|Table 8-6}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "EMCSPowerLvlOp",
+        "access": "readOnly",
+        "description": "A value of {{true}} indicates Power Level Operation control and status is implemented in transceiver. See {{bibref|SFF-8472|Table 10-1}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "EMCSPowerLvlSelect",
+        "access": "readOnly",
+        "description": "A value of {{true}} enables selection of power level to transmit. See {{bibref|SFF-8472|Table 10-1}}.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object describes the Transceiver present in the SFP. The Transceiver object here models the electrical interface to the SFP from the host and the function that enables transmission and reception of electrical or optical signals over the link connected. The Transceiver object is agnostic of the underlying protocol used in the transmission.",
+    "children": []
+  }
+}

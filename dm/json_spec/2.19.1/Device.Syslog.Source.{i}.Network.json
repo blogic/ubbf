@@ -1,0 +1,94 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Syslog.Source.{i}.Network.",
+  "object": {
+    "path": "Device.Syslog.Source.{i}.Network.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the functionality to receive syslog information on a network socket.",
+        "type": "boolean"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "The IP or Logical Interface on which the syslog information will be received. When {{empty}} is specified the syslog service will listen to all available network interfaces. Example: * ''Device.IP.Interface.1'' * ''Device.Logical.Interface.1'' {{template|INTERFACE-ROUTING}}",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "Specifies the port number on which the syslog information will be received.",
+        "default": "1099",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "The protocol to be used for receiving syslog information.",
+        "default": "UDP",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "TCP",
+          "UDP",
+          "TLS"
+        ]
+      },
+      {
+        "name": "Certificate",
+        "access": "readWrite",
+        "description": "Specifies the server certificate to be presented by the server during the TLS handshake. This certificate is used to authenticate the server to remote clients, ensuring that the clients are connecting to a legitimate server. The server certificate must be issued by a trusted Certificate Authority (CA) and should match the server's private key. This parameter is applicable only when a TLS session is being used.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.Certificate.",
+          "targetType": "row"
+        },
+        "version": "2.19"
+      },
+      {
+        "name": "CABundle",
+        "access": "readWrite",
+        "description": "Specifies the group of CA certificate(s) that the server must use to validate the certificate presented by the remote client. These CA certificates form a trust chain that the client certificate must match, ensuring that only clients with trusted certificates can establish a connection. This parameter supports multiple CA certificates to accommodate different client certificate issuers. This parameter is applicable only when a TLS session is being used.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.CABundle.",
+          "targetType": "row"
+        },
+        "version": "2.19"
+      },
+      {
+        "name": "PeerVerify",
+        "access": "readWrite",
+        "description": "Ensures authentic and secure connections by validating entity credentials such as certificates or tokens. Only applicable when {{param|Protocol}} is set to {{enum|TLS|Protocol}}. In order to validate a certificate, the entire certificate chain, including the CA certificate, must be valid. If any certificate in the chain is found to be invalid, the syslog service must reject the connection.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.19"
+      }
+    ],
+    "description": "This object describes the configuration parameters for receiving syslog information on a network socket.",
+    "children": []
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LLDP.Discovery.Device.{i}.DeviceInformation.VendorSpecific.{i}.",
+  "object": {
+    "path": "Device.LLDP.Discovery.Device.{i}.DeviceInformation.VendorSpecific.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "VendorSpecificNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "OrganizationCode",
+        "access": "readOnly",
+        "description": "The vendor-specific organization code, which is included in the value of the ''LLDPDU's'' Organizationally Specific TLV (TLV Type = 127).",
+        "type": "string",
+        "minLength": 6,
+        "maxLength": 6,
+        "pattern": "[0-9A-F]{6}"
+      },
+      {
+        "name": "InformationType",
+        "access": "readOnly",
+        "description": "The vendor-specific device information type, which is included in the value of the ''LLDPDU's'' Organizationally Specific TLV (TLV Type = 127).",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "Information",
+        "access": "readOnly",
+        "description": "The vendor-specific device information, which is included in the value of the ''LLDPDU's'' Organizationally Specific TLV (TLV Type = 127).",
+        "type": "string",
+        "maxLength": 248
+      }
+    ],
+    "description": "The vendor-specific device information, which is included in the value of the ''LLDPDU's'' Organizationally Specific TLV (TLV Type = 127). {{keys}} Note: It is assumed that this object might be used for HTIP (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and {{bibref|G.9973}}. In this case, this table contains the Organizationally Specific TLV (TLV Type = 127) of ''LLDPDU'', in which the {{bibref|OUI}} in the third octet is E0271A (''TTC-OUI''), the organizationally defined subtype in the sixth octet is 1 (''Device Information''), and the device information ID in the seventh octet is 255 (''Vendor-specific extension field'').",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "OrganizationCode",
+        "InformationType"
+      ]
+    }
+  }
+}

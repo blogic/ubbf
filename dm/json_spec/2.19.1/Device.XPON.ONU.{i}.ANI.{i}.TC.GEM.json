@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.GEM.",
+  "object": {
+    "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.GEM.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "PortNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Info about the GEM ports of this ANI.",
+    "children": []
+  }
+}

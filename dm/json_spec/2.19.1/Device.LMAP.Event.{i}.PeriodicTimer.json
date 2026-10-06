@@ -1,0 +1,35 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.Event.{i}.PeriodicTimer.",
+  "object": {
+    "path": "Device.LMAP.Event.{i}.PeriodicTimer.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "StartTime",
+        "access": "readWrite",
+        "description": "Date and time, based on {{bibref|RFC3339}}, that the {{object}} instance is to begin operation.",
+        "type": "dateTime"
+      },
+      {
+        "name": "EndTime",
+        "access": "readWrite",
+        "description": "Date and time, based on {{bibref|RFC3339}}, that the {{object}} instance is to end operation.",
+        "type": "dateTime"
+      },
+      {
+        "name": "Interval",
+        "access": "readWrite",
+        "description": "The tolerable duration, in {{units}}, of the interval for this {{object}} instance.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object defines a periodic timer instance. The periodic timer instance has attributes for when the timer is to begin ({{param|StartTime}}) and end ({{param|EndTime}}) as well as the interval to use.",
+    "children": []
+  }
+}

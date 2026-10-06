@@ -1,0 +1,163 @@
+#!/usr/bin/env ucode
+'use strict';
+
+import * as socket from 'socket';
+
+let config = {
+	host: null,
+	port: 7,
+	count: 1,
+	timeout: 1000,
+	size: 24,
+	dscp: 0,
+	interval: 1000,
+	proto: 'Any',
+	iface: null
+};
+
+function args_parse() {
+	for (let i = 0; i < length(ARGV); i++) {
+		let arg = ARGV[i];
+		if (arg == '-h' && i + 1 < length(ARGV))
+			config.host = ARGV[++i];
+		else if (arg == '-p' && i + 1 < length(ARGV))
+			config.port = int(ARGV[++i]);
+		else if (arg == '-c' && i + 1 < length(ARGV))
+			config.count = int(ARGV[++i]);
+		else if (arg == '-t' && i + 1 < length(ARGV))
+			config.timeout = int(ARGV[++i]);
+		else if (arg == '-s' && i + 1 < length(ARGV))
+			config.size = int(ARGV[++i]);
+		else if (arg == '-d' && i + 1 < length(ARGV))
+			config.dscp = int(ARGV[++i]);
+		else if (arg == '-i' && i + 1 < length(ARGV))
+			config.interval = int(ARGV[++i]);
+		else if (arg == '-I' && i + 1 < length(ARGV))
+			config.iface = ARGV[++i];
+		else if (arg == '-4')
+			config.proto = 'IPv4';
+		else if (arg == '-6')
+			config.proto = 'IPv6';
+	}
+}
+
+function payload_generate(size) {
+	let data = '';
+	for (let i = 0; i < size; i++)
+		data += chr(ord('A') + (i % 26));
+	return data;
+}
+
+function test_run() {
+	let family = null;
+	if (config.proto == 'IPv4')
+		family = socket.AF_INET;
+	else if (config.proto == 'IPv6')
+		family = socket.AF_INET6;
+
+	let hints = { socktype: socket.SOCK_DGRAM };
+	if (family)
+		hints.family = family;
+
+	let addrs = socket.addrinfo(config.host, config.port, hints);
+
+	if (!addrs || length(addrs) == 0)
+		return { error: 'DNS resolution failed' };
+
+	let addr = addrs[0];
+	family = addr.family;
+
+	let sock = socket.create(family, socket.SOCK_DGRAM);
+	if (!sock)
+		return { error: 'Socket creation failed' };
+
+	if (config.iface)
+		sock.setopt(socket.SOL_SOCKET, socket.SO_BINDTODEVICE, config.iface);
+
+	if (config.dscp > 0) {
+		let tos = config.dscp << 2;
+		if (family == socket.AF_INET)
+			sock.setopt(socket.IPPROTO_IP, socket.IP_TOS, tos);
+		else
+			sock.setopt(socket.IPPROTO_IPV6, socket.IPV6_TCLASS, tos);
+	}
+
+	let payload = payload_generate(config.size);
+	let rtts = [];
+	let success = 0;
+	let failure = 0;
+	let ip_used = addr.addr.address;
+
+	for (let i = 0; i < config.count; i++) {
+		if (i > 0)
+			sleep(config.interval);
+
+		let start = clock(true);
+		let sent = sock.send(payload, 0, addr.addr);
+
+		if (!sent || sent < 0) {
+			failure++;
+			continue;
+		}
+
+		let events = socket.poll(config.timeout, [sock, socket.POLLIN]);
+		if (!events || !(events[0]?.[1] & socket.POLLIN)) {
+			failure++;
+			continue;
+		}
+
+		let response = sock.recv(config.size + 100, 0);
+		let end = clock(true);
+
+		if (!response) {
+			failure++;
+			continue;
+		}
+
+		let rtt_us = (end[0] - start[0]) * 1000000 + (end[1] - start[1]) / 1000;
+		push(rtts, rtt_us);
+		success++;
+	}
+
+	sock.close();
+
+	let result = {
+		Status: success > 0 ? 'Complete' : 'Error_Other',
+		IPAddressUsed: ip_used,
+		SuccessCount: sprintf('%d', success),
+		FailureCount: sprintf('%d', failure),
+		AverageResponseTime: '0',
+		MinimumResponseTime: '0',
+		MaximumResponseTime: '0'
+	};
+
+	if (length(rtts) > 0) {
+		let total = 0;
+		let min_rtt = rtts[0];
+		let max_rtt = rtts[0];
+
+		for (let rtt in rtts) {
+			total += rtt;
+			if (rtt < min_rtt)
+				min_rtt = rtt;
+			if (rtt > max_rtt)
+				max_rtt = rtt;
+		}
+
+		result.AverageResponseTime = sprintf('%d', total / length(rtts));
+		result.MinimumResponseTime = sprintf('%d', min_rtt);
+		result.MaximumResponseTime = sprintf('%d', max_rtt);
+	}
+
+	return result;
+}
+
+args_parse();
+
+if (!config.host) {
+	print('{"error": "Host required"}\n');
+	exit(1);
+}
+
+let result = test_run();
+print(sprintf('%J\n', result));

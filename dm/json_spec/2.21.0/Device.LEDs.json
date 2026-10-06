@@ -1,0 +1,32 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.LEDs.",
+  "object": {
+    "path": "Device.LEDs.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "BrightnessLimiter",
+        "access": "readWrite",
+        "description": "The maximum allowed brightness level for all LEDs, expressed as a {{units}}. This value is relative to the maximum allowed brightness value of each LED, which is specified in {{param|LED.{i}.MaxBrightness}}. Valid values are: {{range}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 100,
+        "version": "2.20"
+      },
+      {
+        "name": "LEDNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object describes the LEDs on the device.",
+    "children": []
+  }
+}

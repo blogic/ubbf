@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.NeighborDiscovery.",
+  "object": {
+    "path": "Device.NeighborDiscovery.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables Neighbor Discovery.",
+        "type": "boolean"
+      },
+      {
+        "name": "InterfaceSettingNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The Neighbor Discovery Protocol (NDP) object {{bibref|RFC4861}}. This object applies only to IPv6. It contains an {{object|InterfaceSetting}} table that defines the NDP configuration for individual IP interfaces.",
+    "children": []
+  }
+}

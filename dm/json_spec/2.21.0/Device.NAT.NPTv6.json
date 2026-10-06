@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.NAT.NPTv6.",
+  "object": {
+    "path": "Device.NAT.NPTv6.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "InterfaceSettingNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Properties for IPv6-to-IPv6 Network Prefix Translation (NPTv6). NPTv6 is defined in {{bibref|RFC6296}}. The entire {{object}} object only applies to IPv6.",
+    "children": []
+  }
+}

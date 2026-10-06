@@ -1,0 +1,34 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.Logical.TAP.",
+  "object": {
+    "path": "Device.Logical.TAP.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "InterfaceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "TAP (network tap) virtual interface container object. TAP interfaces are Layer 2 virtual network devices that operate at the Ethernet frame level. They simulate a complete Ethernet adapter and are commonly used for network bridging, virtual machine networking, and scenarios where applications need full access to Ethernet frames including Layer 2 protocols.",
+    "commands": [
+      {
+        "name": "CreateInterface()",
+        "version": "2.21",
+        "async": "false",
+        "output": [
+          "FileDescriptor",
+          "Interface"
+        ]
+      }
+    ],
+    "children": []
+  }
+}

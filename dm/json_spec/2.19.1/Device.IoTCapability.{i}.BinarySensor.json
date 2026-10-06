@@ -1,0 +1,77 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IoTCapability.{i}.BinarySensor.",
+  "object": {
+    "path": "Device.IoTCapability.{i}.BinarySensor.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "Describes the type of functionality that {{object}} is representing.",
+        "type": "string",
+        "enumerations": [
+          "CarbonDioxideDetected",
+          "CarbonMonoxideDetected",
+          "DoorOpen",
+          "MotionDetected",
+          "SmokeDetected",
+          "WindowOpen",
+          "WaterDetected"
+        ]
+      },
+      {
+        "name": "Description",
+        "access": "readOnly",
+        "description": "Human-readable description of the {{object}}. e.g. a more detailed description of {{param|Type}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Value",
+        "access": "readOnly",
+        "description": "If the {{object}} has been recently activated, the value would be true. For how long the state attribute remain true after being activated depends on the underlying sensor reports.",
+        "type": "boolean"
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The date and time in UTC when {{param|Value}} has been changed to the current value.",
+        "type": "dateTime"
+      },
+      {
+        "name": "LastContactTime",
+        "access": "readOnly",
+        "description": "The date and time in UTC when the {{object}} has received data.",
+        "type": "dateTime",
+        "version": "2.18"
+      },
+      {
+        "name": "Sensitivity",
+        "access": "readWrite",
+        "description": "A 0 to 100 value indicating how reactive to changes the {{object}} should be, 0 being not sensible / disabled and 100 max sensitivity.",
+        "type": "unsignedInt",
+        "maxInclusive": 100
+      },
+      {
+        "name": "HoldTime",
+        "access": "readWrite",
+        "description": "After activation has been detected and the sensing attribute set to true, how soon, in {{units}} should the {{param|Value}} be reset to {{false}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RestTime",
+        "access": "readWrite",
+        "description": "After activation has been detected and the {{param|Value}} set to {{true}}, how soon, in {{units}} should affected again per subsequent event.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "BinarySensor is used to reflect the functionality of a sensor that reports a {{param|Value}}. The {{param|Sensitivity}} configures the degree of sensitivity that the sensor uses for detection. Timed BinarySensor profile - To provide the ability to add time based control over the {{param|Value}} attribute. How long the {{param|Value}} remains true is controlled by the {{param|HoldTime}}. {{param|RestTime}} controls how soon, after being activated, the sensor will respond to continuous events.",
+    "children": []
+  }
+}

@@ -1,0 +1,59 @@
+#!/usr/bin/ucode
+// uPTY agent: gives a controller an interactive shell on this device by
+// dialling out to a session server over WebSocket.
+//
+// The daemon holds no connection until something calls upty.start over ubus,
+// so an idle device carries an idle process and nothing else.
+
+'use strict';
+
+import * as ubus from 'ubus';
+import * as uloop from 'uloop';
+
+import * as config from 'upty.config';
+import * as session from 'upty.session';
+import { log_err, log_init, log_info, log_debug_set } from 'upty.log';
+
+log_init('upty');
+config.load();
+
+let cfg = config.get();
+
+log_debug_set(cfg.debug);
+uloop.init();
+
+log_info('started, shell %s, %s', cfg.shell,
+         cfg.enabled ? 'enabled' : 'disabled in configuration');
+
+let bus = ubus.connect();
+
+if (!bus) {
+	log_err('cannot connect to ubus: %s', ubus.error());
+	exit(1);
+}
+
+bus.publish('upty', session.ubus_methods());
+
+function cleanup_on_exit() {
+	session.shutdown();
+	uloop.end();
+}
+
+/**
+ * Re-reads the config. New limits apply to a live session at its next
+ * check; a session ends at once when the agent is disabled.
+ */
+function config_reload() {
+	config.load();
+	log_debug_set(config.get().debug);
+	session.config_changed();
+}
+
+uloop.signal('SIGTERM', cleanup_on_exit);
+uloop.signal('SIGINT', cleanup_on_exit);
+uloop.signal('SIGHUP', config_reload);
+
+uloop.run();
+
+session.shutdown();
+uloop.done();

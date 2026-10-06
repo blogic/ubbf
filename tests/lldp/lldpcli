@@ -1,0 +1,3 @@
+#!/bin/sh
+# Stand-in for lldpcli in tests/lldp.uc: prints the sample the test chose.
+exec cat "${LLDP_TEST_SAMPLE:-/tmp/ubbf-lldp-test-sample.json}"

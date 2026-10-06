@@ -1,0 +1,37 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.USB.USBHosts.",
+  "object": {
+    "path": "Device.USB.USBHosts.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "HostNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AllowedDeviceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.20"
+      },
+      {
+        "name": "AllowAllDevices",
+        "access": "readWrite",
+        "description": "When set to {{true}}, all USB devices are allowed to connect to the Device and the configuration mentioned in {{object|.USB.USBHosts.AllowedDevice.}} is ignored. When set to {{false}}, only USB devices listed in {{object|.USB.USBHosts.AllowedDevice.}} are allowed to connect to the Device. Any USB device not explicitly listed will be rendered inactive.",
+        "type": "boolean",
+        "version": "2.20"
+      }
+    ],
+    "description": "This object models the CPE's USB Host controllers. See {{bibref|TR-181i2|Appendix XVII}} for Theory of Operation.",
+    "children": []
+  }
+}

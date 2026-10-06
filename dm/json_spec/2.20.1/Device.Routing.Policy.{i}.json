@@ -1,0 +1,200 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.Routing.Policy.{i}.",
+  "object": {
+    "path": "Device.Routing.Policy.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "PolicyNumberOfEntries",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} table entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.20"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this {{object}} table entry.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured"
+        ]
+      },
+      {
+        "name": "RouterRef",
+        "access": "readWrite",
+        "description": "{{reference}} Specify the routing table to use for traffic matching criterion. Example: Device.Routing.Router.1.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.Router.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Priority",
+        "access": "readWrite",
+        "description": "The priority of this {{object}} table entry, determining the order in which rules are processed. A lower numerical value indicates higher precedence, meaning rules are evaluated in increasing order of priority. A value of 0 represents the highest precedence.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IPVersion",
+        "access": "readWrite",
+        "description": "Specifies the IP protocol version, following the definitions in {{bibref|IANA-ipversionnumbers}}. Valid values are: {{range}}.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "ranges": [
+          [
+            4,
+            4
+          ],
+          [
+            6,
+            6
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "version": "2.20"
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "{{object}} criterion. Protocol number. A value of -1 indicates this criterion is not used for matching.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 255
+      },
+      {
+        "name": "SourceInterface",
+        "access": "readWrite",
+        "description": "{{object}} criterion. {{reference}} Specify the ingress interface the packet is coming from. Example: Device.IP.Interface.1.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "DestInterface",
+        "access": "readWrite",
+        "description": "{{object}} criterion. {{reference}} Specify the egress interface the packet is sent to. Example: Device.IP.Interface.1.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "SourceIPPrefix",
+        "access": "readWrite",
+        "description": "{{object}} criterion. Source IP address prefix, represented as an IP routing prefix using CIDR notation (defined in {{bibref|RFC4632}}). The IP version of {{param|IPVersion}} determines whether {{param}} is interpreted as an IPv4 or IPv6 prefix. An {{empty}} indicates this criterion is not used for matching.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 49,
+        "dataType": "IPPrefix"
+      },
+      {
+        "name": "DestIPPrefix",
+        "access": "readWrite",
+        "description": "{{object}} criterion. Destination IP address prefix, represented as an IP routing prefix using CIDR notation (defined in {{bibref|RFC4632}}). The IP version of {{param|IPVersion}} determines whether {{param}} is interpreted as an IPv4 or IPv6 prefix. An {{empty}} indicates this criterion is not used for matching.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 49,
+        "dataType": "IPPrefix"
+      },
+      {
+        "name": "SourcePort",
+        "access": "readWrite",
+        "description": "{{object}} criterion. Source port number. A value of -1 indicates this criterion is not used for matching.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "SourcePortRangeMax",
+        "access": "readWrite",
+        "description": "{{object}} criterion. If specified, indicates the {{object}} criterion is to include the port range from {{param|SourcePort}} through {{param}} (inclusive). If specified, {{param}} MUST be greater than or equal to {{param|SourcePort}}. A value of -1 indicates that no port range is specified.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "DestPort",
+        "access": "readWrite",
+        "description": "{{object}} criterion. Destination port number. A value of ''-1'' indicates this criterion is not used for matching.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "DestPortRangeMax",
+        "access": "readWrite",
+        "description": "{{object}} criterion. If specified, indicates the {{object}} criterion is to include the port range from {{param|DestPort}} through {{param}} (inclusive). If specified, {{param}} MUST be greater than or equal to {{param|DestPort}}. A value of -1 indicates that no port range is specified.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "ForwardingPolicy",
+        "access": "readWrite",
+        "description": "Identifier of a set of classes or flows that have the corresponding {{param}} value as defined in the {{object|.QoS}} object. A value of -1 indicates no {{param}} is specified. If specified, this {{object}} entry is to apply only to traffic associated with the specified classes and flows.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1
+      }
+    ],
+    "description": "Routing policy table.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

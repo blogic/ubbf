@@ -1,0 +1,134 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.PeriodicFileTransfer.Transfer.{i}.",
+  "object": {
+    "path": "Device.PeriodicFileTransfer.Transfer.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "TransferNumberOfEntries",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this specific file transfer task. If this entry is disabled then the transfer is not performed.",
+        "default": "false",
+        "defaultType": "implementation",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.20"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the current status of this file transfer task.",
+        "type": "string",
+        "enumerations": [
+          "Idle",
+          "Creating",
+          "Uploading",
+          "Success",
+          "Error"
+        ]
+      },
+      {
+        "name": "Origin",
+        "access": "readOnly",
+        "description": "Indicates the Origin of the {{object}} instance.",
+        "default": "Controller",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "User",
+          "System",
+          "Controller"
+        ]
+      },
+      {
+        "name": "Type",
+        "access": "readWrite",
+        "description": "Specifies the type of file to be uploaded. The actual file path and any pre- or post-processing scripts associated with this file type are implementation-specific on the Device.",
+        "type": "string",
+        "enumerationRef": "#.TypesSupported"
+      },
+      {
+        "name": "FileReference",
+        "access": "readWrite",
+        "description": "The path reference to the object that contains the file(s) to be uploaded. Only applicable when {{param|Type}} matches values of {{enum|VendorLogFile|Type}} or {{enum|LogRotate|Type}}. For other {{param|Type}} values, this parameter is not applicable, because all files of the selected type will be uploaded, e.g. when {{param|Type}} equals {{enum|ProcessFaults|Type}} all process faults will be uploaded. When {{param}} is {{empty}}, depending on the {{param|Type}} all references will be uploaded.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "                   .DeviceInfo.VendorLogFile.                   .DeviceInfo.LogRotate.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ProfileReference",
+        "access": "readWrite",
+        "description": "Reference to profile instance to be used to perform the transfer.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".PeriodicFileTransfer.Profile.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "UploadInterval",
+        "access": "readWrite",
+        "description": "The file upload interval in {{units}}. Each file upload is tried based on this interval and {{param|TimeReference}}. File upload intervals MUST begin every {{param}} {{units}}. If {{param}} is changed while Periodic File Upload is enabled, the first file upload interval begins immediately. For example, if {{param}} is 86400 (a day) and if {{param|TimeReference}} is set to UTC midnight on some day (in the past, present, or future) then the Device will upload its file(s) at midnight every 24 hours.",
+        "default": "86400",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "TimeReference",
+        "access": "readWrite",
+        "description": "An absolute time reference in UTC to determine when the file will be transmitted. Each file upload interval MUST complete at this reference time plus or minus an integer multiple of {{param|UploadInterval}}, unless unable to due to higher prioritized operations. {{param}} is used only to set the \"phase\" of the file upload intervals. The actual value of {{param}} can be arbitrarily far into the past or future. If {{param}} is changed while periodic file upload is enabled, the first file upload interval begins immediately. The Unknown Time value as defined in {{bibref|TR-106}} indicates that no particular time reference is specified. That is, the Device MAY locally choose the time reference, and is required only to adhere to the specified file upload intervals. If absolute time is not available to the Device, its file upload interval behavior MUST be the same as if the {{param}} parameter was set to the Unknown Time value. For example, if {{param|UploadInterval}} is 86400 (a day) and if {{param}} is set to UTC midnight on some day (in the past, present, or future) then the Device will upload its file(s) at midnight every 24 hours. Note that, if {{param}} is set to a time other than the Unknown Time, the first file upload interval (which has to begin immediately) will almost certainly be shorter than {{param|UploadInterval}}). This is why {{param}} is defined in terms of when file upload intervals complete rather than start.",
+        "default": "0001-01-01T00:00:00Z",
+        "defaultType": "object",
+        "type": "dateTime"
+      },
+      {
+        "name": "NextTransferDate",
+        "access": "readOnly",
+        "description": "The UTC date and time of the next scheduled file upload for this periodic transfer task.",
+        "default": "0001-01-01T00:00:00Z",
+        "defaultType": "object",
+        "type": "dateTime"
+      }
+    ],
+    "description": "This object specifies the parameters for an individual file transfer task. Each instance specifies a file to be transferred, the method of transfer (periodic or on-demand), and a reference to a {{object|#.Profile.{i}.}} object containing the server connection details. The {{param|Status}} parameter reflects the current state of the transfer process, which can transition through the following sequences: * Idle \u2192 Uploading \u2192 Success \u2192 Idle * Idle \u2192 Uploading \u2192 Error \u2192 Idle * Idle \u2192 Creating \u2192 Error \u2192 Idle * Idle \u2192 Creating \u2192 Uploading \u2192 Success \u2192 Idle * Idle \u2192 Creating \u2192 Uploading \u2192 Error \u2192 Idle",
+    "commands": [
+      {
+        "name": "ForceTransfer()",
+        "async": "true"
+      }
+    ],
+    "events": [
+      {
+        "name": "Push!",
+        "arguments": [
+          "Data"
+        ]
+      }
+    ],
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

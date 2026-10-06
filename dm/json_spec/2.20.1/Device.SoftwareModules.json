@@ -1,0 +1,112 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.SoftwareModules.",
+  "object": {
+    "path": "Device.SoftwareModules.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ExecEnvClassNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.16"
+      },
+      {
+        "name": "ExecEnvNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DeploymentUnitNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ExecutionUnitNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Top level object for dynamically managed applications.",
+    "commands": [
+      {
+        "name": "InstallDU()",
+        "version": "2.12",
+        "async": "true",
+        "input": [
+          "URL",
+          "UUID",
+          "Username",
+          "Password",
+          "Privileged",
+          "NumRequiredUIDs",
+          "ExecutionEnvRef",
+          "Signature",
+          "ShutdownDelay",
+          "RequiredRoles",
+          "OptionalRoles",
+          "RequiredUserRoles",
+          "RegisterTrustPaths",
+          "ModuleVersion",
+          "Enable",
+          "RetryMinimumWaitInterval",
+          "RetryMaximumWaitInterval",
+          "RetryIntervalMultiplier",
+          "MaximumRetryCount",
+          "ResetPeriod",
+          "AllocatedDiskSpace",
+          "AllocatedMemory",
+          "AllocatedCPUPercent",
+          "Name",
+          "Capacity",
+          "Encrypted",
+          "Retain",
+          "AccessPath",
+          "Source",
+          "Destination",
+          "Options",
+          "Key",
+          "Value",
+          "ShareParentNetwork",
+          "AccessInterfaces",
+          "Interface",
+          "ExternalPort",
+          "InternalPort",
+          "Protocol"
+        ],
+        "output": [
+          "UUID",
+          "Version",
+          "ExecEnvRef"
+        ]
+      }
+    ],
+    "events": [
+      {
+        "name": "DUStateChange!",
+        "version": "2.12",
+        "arguments": [
+          "UUID",
+          "DeploymentUnitRef",
+          "Version",
+          "CurrentState",
+          "Resolved",
+          "ExecutionUnitRefList",
+          "StartTime",
+          "CompleteTime",
+          "OperationPerformed"
+        ]
+      }
+    ],
+    "children": []
+  }
+}

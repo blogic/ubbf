@@ -1,0 +1,78 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.NAT.NPTv6.InterfaceSetting.{i}.",
+  "object": {
+    "path": "Device.NAT.NPTv6.InterfaceSetting.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "InterfaceSettingNumberOfEntries",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the {{object}} entry, indicating if NPTv6 is enabled for the referenced IP Interface instance. On creation, an {{object}} entry is disabled by default.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this {{object}} instance. The status of this entry.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.21"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "The associated egress IP interface on which NPTv6 is to be enabled.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ExternalPrefix",
+        "access": "readWrite",
+        "description": "The IPv6 prefix to be used as the external prefix. This is the prefix that is translated to the {{param|InternalPrefix}} and MUST refer to a prefix that is part of the {{param|Interface}} IP Interface instance. {{empty}} is not allowed.",
+        "type": "string",
+        "maxLength": 49,
+        "dataType": "IPv6Prefix"
+      },
+      {
+        "name": "InternalPrefix",
+        "access": "readWrite",
+        "description": "The IPv6 prefix to be used as the internal prefix. This is the prefix that the {{param|ExternalPrefix}} is translated to. {{empty}} is not allowed.",
+        "type": "string",
+        "maxLength": 49,
+        "dataType": "IPv6Prefix"
+      }
+    ],
+    "description": "NPTv6 settings for an associated IP Interface on which NPTv6 is enabled. For enabled table entries, if {{param|Interface}} is not a valid reference, or if {{param|ExternalPrefix}} or {{param|InternalPrefix}} are not configured, then the table entry is inoperable and the device MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

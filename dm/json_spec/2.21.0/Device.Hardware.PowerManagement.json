@@ -1,0 +1,16 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.Hardware.PowerManagement.",
+  "object": {
+    "path": "Device.Hardware.PowerManagement.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [],
+    "description": "This object describes the overall power management capabilities and status of the device, typically referring to the main gateway's power states and features.",
+    "children": []
+  }
+}

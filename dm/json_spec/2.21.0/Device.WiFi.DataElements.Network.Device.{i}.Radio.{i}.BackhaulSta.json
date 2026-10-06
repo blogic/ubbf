@@ -1,0 +1,26 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BackhaulSta.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BackhaulSta.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "The MAC address of the logical STA sharing the radio for Wi-Fi backhaul.",
+        "type": "string",
+        "maxLength": 17,
+        "pattern": "",
+        "dataType": "MACAddress"
+      }
+    ],
+    "description": "Contains the Medium Access Control (MAC) address of the STA on this radio providing Wi-Fi backhaul to this device.",
+    "children": []
+  }
+}

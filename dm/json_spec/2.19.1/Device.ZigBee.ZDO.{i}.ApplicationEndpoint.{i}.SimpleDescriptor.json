@@ -1,0 +1,54 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.ZigBee.ZDO.{i}.ApplicationEndpoint.{i}.SimpleDescriptor.",
+  "object": {
+    "path": "Device.ZigBee.ZDO.{i}.ApplicationEndpoint.{i}.SimpleDescriptor.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ProfileId",
+        "access": "readWrite",
+        "description": "Specifies the application profile that is supported on this endpoint. Application profiles are agreements for messages, message formats, andprocessing actions that enable developers to create an interoperable, distributed application employing application entities that reside on separate ZigBee devices. These application profiles enable applications to send commands, request data, and process commands and requests as defined in {{bibref|ZigBee2007|section 2.1.2.1 Application Profiles}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "DeviceId",
+        "access": "readOnly",
+        "description": "Application device identifier, as defined in {{bibref|ZigBee2007|section 2.3.2.5.3 Application Device Identifier Field}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "DeviceVersion",
+        "access": "readOnly",
+        "description": "Application device version, as defined in {{bibref|ZigBee2007|section 2.3.2.5.4 Application Device Version Field}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 15
+      },
+      {
+        "name": "InputClusterList",
+        "access": "readWrite",
+        "description": "{{list}} Specifies the input cluster identifiers to be matched by the ZigBee coordinator by remote Zigbee device's output cluster list for this {{object}} object.",
+        "list": true,
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "OutputClusterList",
+        "access": "readWrite",
+        "description": "{{list}} Specifies the output cluster identifiers to be matched by the ZigBee coordinator by remote Zigbee device's input cluster list for this {{object}} object.",
+        "list": true,
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      }
+    ],
+    "description": "The {{object}} object contains the attributes of the Simple Descriptor of an application endpoint, as defined in {{bibref|ZigBee2007|section 2.3.2.5 Simple Descriptor}}.",
+    "children": []
+  }
+}

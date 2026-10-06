@@ -1,0 +1,38 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PPP.Interface.{i}.PPPoE.",
+  "object": {
+    "path": "Device.PPP.Interface.{i}.PPPoE.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "SessionID",
+        "access": "readOnly",
+        "description": "Represents the PPPoE Session ID.",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "ACName",
+        "access": "readWrite",
+        "description": "PPPoE Access Concentrator.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ServiceName",
+        "access": "readWrite",
+        "description": "PPPoE Service Name.",
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "PPPoE object that functionally groups PPPoE related parameters. PPPoE is only applicable when the lower layer provides Ethernet frames, e.g. ATM with EoA, PTM, or anything else that supports an Ethernet MAC.",
+    "children": []
+  }
+}

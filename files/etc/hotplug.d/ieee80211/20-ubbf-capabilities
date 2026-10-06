@@ -1,0 +1,19 @@
+#!/bin/sh
+# 10-wifi-detect adds the radios of a new wiphy to /etc/config/wireless. A
+# wiphy can appear after ubbf-apply rendered the wireless config at boot, for
+# example when the driver probes late, so render again if the radios changed.
+
+[ "$ACTION" = "add" ] || exit 0
+
+CAPABILITIES=/tmp/ubbf/capabilities.json
+
+radios_old="$(jsonfilter -q -i "$CAPABILITIES" -e '@.radios')"
+/usr/libexec/ubbf/capabilities || exit 0
+radios_new="$(jsonfilter -q -i "$CAPABILITIES" -e '@.radios')"
+
+[ "$radios_old" = "$radios_new" ] && exit 0
+
+# Before the boot apply ran, ubbf-apply renders with these capabilities anyway.
+[ -f /tmp/ubbf/uci.batch ] || exit 0
+
+/usr/libexec/ubbf/apply /etc/ubbf/config.json

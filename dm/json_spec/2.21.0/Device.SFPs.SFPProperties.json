@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.SFPs.SFPProperties.",
+  "object": {
+    "path": "Device.SFPs.SFPProperties.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "SFPNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Object to help implementations to determine the SFP type. See {{object|SFP}} for more info. In the future the object can be expanded to show other properties of SFPs, e.g., the polarity of certain pins.",
+    "children": []
+  }
+}

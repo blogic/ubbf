@@ -1,0 +1,31 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+STOP=10
+
+USE_PROCD=1
+PROG=/usr/sbin/ubbf-bulkdata
+
+bulkdata_enabled() {
+	local enabled
+	config_load bulkdata
+	config_get enabled global enable 0
+	[ "$enabled" = "1" ]
+}
+
+start_service() {
+	bulkdata_enabled || return 0
+
+	procd_open_instance
+	procd_set_param command "$PROG"
+	procd_set_param respawn
+	procd_close_instance
+}
+
+reload_service() {
+	ubus call ubbf-bulkdata reload 2>/dev/null || restart
+}
+
+service_triggers() {
+	procd_add_reload_trigger "bulkdata"
+}

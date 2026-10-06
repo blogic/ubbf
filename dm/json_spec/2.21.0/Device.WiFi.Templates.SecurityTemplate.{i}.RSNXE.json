@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.WiFi.Templates.SecurityTemplate.{i}.RSNXE.",
+  "object": {
+    "path": "Device.WiFi.Templates.SecurityTemplate.{i}.RSNXE.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "SAEH2E",
+        "access": "readWrite",
+        "description": "Indicates if the BSS will support Simultaneous Authentication of Equals (SAE) hash-to-element {{true}}, or not {{false}}. {{true}}: BSS sets SAE hash-to-element to 1. {{false}}: BSS sets SAE hash-to-element to 0.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object indicates the value the BSS transmits in the RSNXE element. This object is only used by the Configuration Template Manager if the {{param|#.SecurityIEs}} is empty.",
+    "children": []
+  }
+}

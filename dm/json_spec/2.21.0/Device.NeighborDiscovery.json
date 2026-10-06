@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.NeighborDiscovery.",
+  "object": {
+    "path": "Device.NeighborDiscovery.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables Neighbor Discovery.",
+        "type": "boolean"
+      },
+      {
+        "name": "InterfaceSettingNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object describes a unified approach for Layer 3 to Layer 2 address resolution protocols, managing both the Neighbor Discovery Protocol (NDP) for IPv6 {{bibref|RFC4861}} and the Address Resolution Protocol (ARP) for IPv4. It contains an {{object|InterfaceSetting}} table that defines the configuration for individual IP interfaces.",
+    "children": []
+  }
+}

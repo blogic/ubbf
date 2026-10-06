@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FWE.",
+  "object": {
+    "path": "Device.FWE.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.14",
+    "parameters": [
+      {
+        "name": "LinkNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "5G Wireline wireless Encapsulation transport for data plane. See {{bibref|RFC8822}}.",
+    "children": []
+  }
+}

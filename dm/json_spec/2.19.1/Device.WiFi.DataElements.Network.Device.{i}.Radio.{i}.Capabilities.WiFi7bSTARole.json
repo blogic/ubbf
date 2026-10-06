@@ -1,0 +1,71 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7bSTARole.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7bSTARole.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "EMLMRSupport",
+        "access": "readOnly",
+        "description": "Indicates if the Enhanced Multi-Link Multi-Radio (EMLMR) operation is supported.",
+        "type": "boolean"
+      },
+      {
+        "name": "EMLSRSupport",
+        "access": "readOnly",
+        "description": "Indicates if Enhanced Multi-Link Single-Radio (EMLSR) operation is supported.",
+        "type": "boolean"
+      },
+      {
+        "name": "STRSupport",
+        "access": "readOnly",
+        "description": "Indicates if Simultaneous Transmit and Receive (STR) operation is supported.",
+        "type": "boolean"
+      },
+      {
+        "name": "NSTRSupport",
+        "access": "readOnly",
+        "description": "Indicates if Non-Simultaneous Transmit and Receive (NSTR) operation is supported.",
+        "type": "boolean"
+      },
+      {
+        "name": "TIDLinkMapNegotiation",
+        "access": "readOnly",
+        "description": "Indicates if Traffic Identifier (TID) to Link Mapping Negotiation is supported.",
+        "type": "boolean"
+      },
+      {
+        "name": "EMLMRFreqSeparationNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "EMLSRFreqSeparationNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "STRFreqSeparationNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "NSTRFreqSeparationNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object describes the Wi-Fi 7 capabilities for the backhaul Station (bSTA) role including Multi-Link Operation (MLO) capabilities. {{bibref|EasyMesh}} Source: Wi-Fi 7 Agent Capabilities TLV.",
+    "children": []
+  }
+}

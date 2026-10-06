@@ -1,0 +1,39 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SoftwareModules.ExecutionUnit.{i}.NetworkConfig.",
+  "object": {
+    "path": "Device.SoftwareModules.ExecutionUnit.{i}.NetworkConfig.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "AccessInterfaceRefList",
+        "access": "readOnly",
+        "description": "Represents the network interface through which the traffic from the EU will be allowed.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "PortMappingRefList",
+        "access": "readOnly",
+        "description": "Represents the list of Port mappings associated with this EU.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".NAT.PortMapping.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "Parameters of the network configuration for this ExecutionUnit. When no network configuration is provided, the EU will not have any network access.",
+    "children": []
+  }
+}

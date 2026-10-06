@@ -1,0 +1,30 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+USE_PROCD=1
+PORT=7548
+
+. /lib/functions/uwsd.sh
+
+start_service() {
+	# apply-config answers only once the network has settled, which takes
+	# longer than the 10 s uwsd allows a script backend by default.
+	uwsd_conf_set ubbf-testbed <<EOF
+backend testbed {
+	run-script /usr/share/ucode/ubbf/testbed/uwsd-handler.uc;
+}
+
+listen :$PORT {
+	match-path /rpc {
+		use-backend testbed;
+	}
+
+	idle-timeout 600000;
+	transfer-timeout 120000;
+}
+EOF
+}
+
+stop_service() {
+	uwsd_conf_del ubbf-testbed
+}

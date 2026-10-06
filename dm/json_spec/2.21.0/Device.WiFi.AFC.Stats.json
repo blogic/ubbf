@@ -1,0 +1,61 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.WiFi.AFC.Stats.",
+  "object": {
+    "path": "Device.WiFi.AFC.Stats.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "AvailableSpectrumRequest",
+        "access": "readOnly",
+        "description": "Represents the full JSON Available Spectrum Inquiry request payload sent by the AFC client to the AFC server.",
+        "type": "string",
+        "dataType": "JSONObject"
+      },
+      {
+        "name": "AvailableSpectrumResponse",
+        "access": "readOnly",
+        "description": "Contains the JSON response payload received from the AFC server corresponding to the {{param|AvailableSpectrumRequest}} parameter.",
+        "type": "string",
+        "dataType": "JSONObject"
+      },
+      {
+        "name": "GrantExpiryTime",
+        "access": "readOnly",
+        "description": "This parameter contains the time when the spectrum availability specified in the response expires. This field SHALL be included if and only if the response code indicates SUCCESS as per {{bibref|AFCSDI|Table 19. AvailableSpectrumInquiryResponse object}}. The string value SHALL be represented in UTC and conform to the following format: \"YYYY-MM-DDThh:mm:ssZ\".",
+        "type": "dateTime"
+      },
+      {
+        "name": "GrantStatus",
+        "access": "readOnly",
+        "description": "Indicates the status of the AFC grant request. It indicates the Response Name associated with the Response Code received in the latest Available Inquiry Spectrum Response as defined in {{bibref|AFCSDI|Table 25. Response Code definitions}}.",
+        "type": "string",
+        "enumerations": [
+          "GeneralFailure",
+          "Success",
+          "VersionNotSupported",
+          "DeviceDisallowed",
+          "MissingParam",
+          "InvalidValue",
+          "UnexpectedParam",
+          "UnsupportedSpectrum",
+          "UnsupportedBasis"
+        ]
+      },
+      {
+        "name": "GrantResponse",
+        "access": "readOnly",
+        "description": "Human-readable interpretation of the grant status as defined in {{bibref|AFCSDI|Table 25. Response Code definitions}}. For example, \"Incompatible interface version number\" for response code 100.",
+        "type": "string",
+        "maxLength": 1024
+      }
+    ],
+    "description": "Object that contains information about AFC requests and responses.",
+    "children": []
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.HomePlug.",
+  "object": {
+    "path": "Device.HomePlug.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "InterfaceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "HomePlug object that contains the {{object|Interface}} table. The HomePlug industry standard {{bibref|HPAV1.1}} defines peer to peer communication over powerline medium.",
+    "children": []
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.Hardware.CPUs.CPU.{i}.",
+  "object": {
+    "path": "Device.Hardware.CPUs.CPU.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "CPUNumberOfEntries",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.20"
+      }
+    ],
+    "description": "Represents a single CPU instance with configurable parameters related to its operational settings.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

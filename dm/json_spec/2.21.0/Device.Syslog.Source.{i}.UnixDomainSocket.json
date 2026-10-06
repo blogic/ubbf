@@ -1,0 +1,31 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.Syslog.Source.{i}.UnixDomainSocket.",
+  "object": {
+    "path": "Device.Syslog.Source.{i}.UnixDomainSocket.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the functionality to receive syslog information on a UDS.",
+        "type": "boolean"
+      },
+      {
+        "name": "Path",
+        "access": "readWrite",
+        "description": "File path of the Unix Domain Socket. Which MUST use the URI scheme file {{bibref|RFC8089|The file URI Scheme}}. Example: 'file:///tmp/syslog.sock'",
+        "type": "string",
+        "maxLength": 2048,
+        "dataType": "FileURI"
+      }
+    ],
+    "description": "This object describes the configuration parameters for receiving syslog information on a Unix Domain Socket (UDS).",
+    "children": []
+  }
+}

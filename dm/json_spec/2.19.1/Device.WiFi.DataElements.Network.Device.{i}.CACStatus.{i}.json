@@ -1,0 +1,47 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.CACStatus.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.CACStatus.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "CACStatusNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "TimeStamp",
+        "access": "readOnly",
+        "description": "The time this group was collected.",
+        "type": "dateTime"
+      },
+      {
+        "name": "CACAvailableChannelNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "CACNonOccupancyChannelNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "CACActiveChannelNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Latest Channel Availability Check (CAC) Status Report from the device.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "TimeStamp"
+      ]
+    }
+  }
+}

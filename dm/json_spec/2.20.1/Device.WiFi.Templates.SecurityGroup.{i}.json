@@ -1,0 +1,47 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.WiFi.Templates.SecurityGroup.{i}.",
+  "object": {
+    "path": "Device.WiFi.Templates.SecurityGroup.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "SecurityGroupNumberOfEntries",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "SecurityGroupID",
+        "access": "readWrite",
+        "description": "This is the friendly name of this {{object}} which may be advertised to the end user in a graphical interface.",
+        "type": "string"
+      },
+      {
+        "name": "SecurityTemplateReferences",
+        "access": "readWrite",
+        "description": "Indicates the list of {{object|#.SecurityTemplate}} for this {{object}}.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.SecurityTemplate.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "LinkedSecurityTemplateID",
+        "access": "readOnly",
+        "description": "Indicates the {{param|#.SecurityTemplate.{i}.SecurityTemplateID}} in this entry of this {{object}}.",
+        "list": true,
+        "type": "string"
+      }
+    ],
+    "description": "Table of SecurityGroups for Wi-Fi configuration {{bibref|WPA3v3.0}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "SecurityGroupID"
+      ]
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.MQTT.BrokerSecurity.",
+  "object": {
+    "path": "Device.MQTT.BrokerSecurity.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "ACLNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ClientNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "MQTT security configuration, including an Access Control List (ACL) to manage access to MQTT topics.",
+    "children": []
+  }
+}

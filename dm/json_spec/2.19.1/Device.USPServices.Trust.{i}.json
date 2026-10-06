@@ -1,0 +1,36 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.USPServices.Trust.{i}.",
+  "object": {
+    "path": "Device.USPServices.Trust.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "TrustNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "EndpointID",
+        "access": "readWrite",
+        "description": "The unique USP identifier for the USP Agent associated with these permissions.",
+        "type": "string"
+      },
+      {
+        "name": "TargetPaths",
+        "access": "readWrite",
+        "description": "Each entry in the list is an Object Path, Command Path, Event Path, or Parameter Path that determines the element(s) of the data model that the USP Service has permission to register. {{empty}} indicates that the USP Agent has no permissions.",
+        "list": true,
+        "type": "string"
+      }
+    ],
+    "description": "This object contains permissions associated with the set of data model paths that a USP Agent within a USP Service is allowed to Register. If a USP Service's USP Agent is not present in this table then there are no permissions associated for that USP Service and it is not allowed to register any data model paths.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "EndpointID"
+      ]
+    }
+  }
+}

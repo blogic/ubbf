@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.RouterAdvertisement.",
+  "object": {
+    "path": "Device.RouterAdvertisement.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables Router Advertisement.",
+        "type": "boolean"
+      },
+      {
+        "name": "InterfaceSettingNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The Router Advertisement (RA) object {{bibref|RFC4861}}. This object applies only to IPv6. It contains an {{object|InterfaceSetting}} table that defines the RA configuration for individual IP interfaces. Information received via router advertisement messages is automatically propagated to the relevant {{object|#.IP.Interface}} sub-objects, e.g. to the {{object|#.IP.Interface.{i}.IPv6Address}} and {{object|#.IP.Interface.{i}.IPv6Prefix}} tables.",
+    "children": []
+  }
+}

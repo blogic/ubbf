@@ -1,0 +1,72 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.ConnectionMonitoring.Connection.{i}.Action.{i}.",
+  "object": {
+    "path": "Device.ConnectionMonitoring.Connection.{i}.Action.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ActionNumberOfEntries",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.20"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the {{object}} entry.",
+        "type": "boolean"
+      },
+      {
+        "name": "AttemptCount",
+        "access": "readWrite",
+        "description": "Indicates the action to be taken when the connection's {{param|#.NumberOfAttempts}} is equal to the value of this parameter.",
+        "default": "5",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 100
+      },
+      {
+        "name": "Action",
+        "access": "readWrite",
+        "description": "This parameter indicates the action taken by the Device when a connection failure is detected. It can be used to trigger specific actions such as restarting the DHCP client or Interface.",
+        "type": "string",
+        "enumerations": [
+          "None",
+          "RestartDHCP",
+          "RestartInterface",
+          "Reboot"
+        ]
+      },
+      {
+        "name": "Reference",
+        "access": "readWrite",
+        "description": "This parameter specifies the object path to which the {{param|Action}} applies. When {{param|Action}} is set to {{enum|RestartDHCP|Action}}, this parameter specifies the path to the DHCPv4 Client instance (e.g., `Device.DHCPv4.Client.1`) that should be restarted. If this parameter is {{empty}}, the Device will attempt to restart the DHCP client associated with the {{param|#.Interface}} of the parent {{object|#.}} object. When {{param|Action}} is set to {{enum|RestartInterface|Action}}, this parameter specifies the path to the Interface instance (e.g., `Device.IP.Interface.2` or `Device.Logical.Interface.3`) that should be restarted. If this parameter is {{empty}}, the Device will restart the {{param|#.Interface}} of the parent {{object|#.}} object. When {{param|Action}} is set to {{enum|Reboot|Action}} or {{enum|None|Action}}, this parameter is not applicable and its value will be ignored.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "                   .IP.Interface.                   .Logical.Interface.                   .DHCPv4.Client.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "This object contains parameters for actions to be taken when a connection failure is detected. Each action can be configured independently and can be enabled or disabled. The Device will perform the specified action when the value of {{param|#.NumberOfAttempts}} equals the value of {{param|AttemptCount}} parameter. Multiple actions can be defined for a connection. As failures persist, the {{param|#.NumberOfAttempts}} will continue to increment, which can trigger subsequent actions with higher {{param|AttemptCount}} values. The {{param|#.NumberOfAttempts}} counter is reset to zero only after the last action has been executed or when a connectivity test succeeds.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FAP.ApplicationPlatform.Control.FemtoAwareness.",
+  "object": {
+    "path": "Device.FAP.ApplicationPlatform.Control.FemtoAwareness.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "APIEnable",
+        "access": "readWrite",
+        "description": "Enable or disable FemtoAwareness API exposure on FAP",
+        "type": "boolean"
+      },
+      {
+        "name": "QueueEnable",
+        "access": "readWrite",
+        "description": "Enable or disable Request queueing for the API",
+        "type": "boolean"
+      },
+      {
+        "name": "Queueing",
+        "access": "readWrite",
+        "description": "Determines how FAP handles simultaneous requests from different Applications to Femto Awareness API.",
+        "type": "string",
+        "enumerations": [
+          "FiFo",
+          "Priority"
+        ]
+      },
+      {
+        "name": "MaxAPIUsersNumber",
+        "access": "readWrite",
+        "description": "Determines the Max Number of different Applications that can send Requests to Femto Awareness API.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "FemtozoneID",
+        "access": "readWrite",
+        "description": "Specifies Identifier of the Femtozone.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "NotificationsUserIdentifierMSISDN",
+        "access": "readWrite",
+        "description": "Specifies whether the Mobile Station International Subscriber Directory Number (MSISDN) has to be used as UserIdentifier in Femto Awareness Notifications. A value of {{true}} means that the MSISDN is send as user identifier, a value of {{false}} means that an anonymous reference is used.",
+        "type": "boolean"
+      },
+      {
+        "name": "SubscribeToNotificationsResponseCallbackData",
+        "access": "readWrite",
+        "description": "Specifies whether the OPTIONAL Argument \"Callback Data\" has to be used in Responses to Requests to \"Subscribe To Femto Awareness Notifications\".",
+        "type": "boolean"
+      },
+      {
+        "name": "QueryFemtocellResponseTimezone",
+        "access": "readWrite",
+        "description": "Specifies whether the OPTIONAL Argument \"Timezone\" has to be used in Responses to Requests to \"Query Femtocell Status\".",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object contains parameters related to the Femto Awareness API.",
+    "children": []
+  }
+}

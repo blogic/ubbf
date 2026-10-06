@@ -1,0 +1,24 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.CWMPManagementServer.",
+  "object": {
+    "path": "Device.CWMPManagementServer.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "EnableCWMP",
+        "access": "readWrite",
+        "description": "Enables and disables the CPE's support for CWMP. {{false}} means that CWMP support in the CPE is disabled, in which case the device MUST NOT send any Inform messages to the ACS or accept any Connection Request notifications from the ACS. {{true}} means that CWMP support on the CPE is enabled. The subscriber can re-enable the CPE's CWMP support either by performing a factory reset or by using a LAN-side protocol to change the value of this parameter back to {{true}}.",
+        "default": "true",
+        "defaultType": "factory",
+        "type": "boolean"
+      }
+    ],
+    "children": []
+  }
+}

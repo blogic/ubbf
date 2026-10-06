@@ -1,0 +1,187 @@
+#!/usr/bin/ucode
+'use strict';
+
+import * as ubus from 'ubus';
+import { log_init, log_err } from 'ubbf.utils.logging';
+
+log_init('bbf-cli');
+
+const usage = `Usage: bbf-cli <command> [args...]
+
+Commands:
+  show [path]           Show datamodel tree (default: Device.)
+  get <path> [path...]  Get parameter value(s)
+  set <path> <value>    Set parameter value
+  add <path>            Add instance to multi-instance object
+  del <path>            Delete instance from multi-instance object
+  operate [path] [input...] Run operation (without path: list operations)
+  batch <json>            Batch operations (JSON array of {op,path,value})
+  apply [options] [file] Apply configuration (default: /etc/ubbf/config.json)
+  reboot                Reboot the device
+  factory               Factory reset the device
+  upgrade <file>        Upgrade firmware from file path
+
+Apply options:
+  -n, --dry-run         Validate only, do not apply
+  -v, --verbose         Show dry-run output
+
+Operate input formats:
+  JSON string:   operate 'Device.Path()' '{"key":"value"}'
+  key=value:     operate 'Device.Path()' key=value key2=value2
+`;
+
+function die(msg) {
+	log_err('%s', msg);
+	exit(1);
+}
+
+let cmd = shift(ARGV);
+if (!cmd || cmd == '-h' || cmd == '--help') {
+	print(usage);
+	exit(cmd ? 0 : 1);
+}
+
+let result;
+
+switch (cmd) {
+case 'show':
+	let show_path = shift(ARGV) ?? 'Device.';
+	result = ubus.call('bbf-dm', 'show', { path: show_path });
+	break;
+
+case 'get':
+	if (!length(ARGV))
+		die("get requires at least one path");
+	result = ubus.call('bbf-dm', 'get', { paths: ARGV });
+	break;
+
+case 'set':
+	let set_path = shift(ARGV);
+	let set_value = shift(ARGV);
+	if (!set_path || set_value == null)
+		die("set requires path and value");
+	result = ubus.call('bbf-dm', 'set', { path: set_path, value: set_value });
+	break;
+
+case 'add':
+	let add_path = shift(ARGV);
+	if (!add_path)
+		die("add requires path");
+	result = ubus.call('bbf-dm', 'add', { path: add_path });
+	break;
+
+case 'del':
+	let del_path = shift(ARGV);
+	if (!del_path)
+		die("del requires path");
+	result = ubus.call('bbf-dm', 'del', { path: del_path });
+	break;
+
+case 'operate':
+	let op_path = shift(ARGV);
+	if (!op_path) {
+		result = ubus.call('bbf-dm', 'operate', {});
+		break;
+	}
+
+	let op_input = {};
+	if (length(ARGV)) {
+		let first_arg = ARGV[0];
+		if (substr(first_arg, 0, 1) == '{') {
+			try {
+				op_input = json(first_arg);
+			} catch (e) {
+				die("Invalid JSON input: " + e);
+			}
+		} else {
+			for (let arg in ARGV) {
+				let eq = index(arg, '=');
+				if (eq < 0)
+					die("Invalid input format: " + arg);
+				op_input[substr(arg, 0, eq)] = substr(arg, eq + 1);
+			}
+		}
+	}
+
+	result = ubus.call('bbf-dm', 'operate', { path: op_path, input: op_input });
+	break;
+
+case 'apply':
+	let dry_run = false;
+	let verbose = false;
+	let apply_file;
+
+	for (let arg in ARGV) {
+		if (arg == '-n' || arg == '--dry-run')
+			dry_run = true;
+		else if (arg == '-v' || arg == '--verbose')
+			verbose = true;
+		else if (substr(arg, 0, 1) != '-')
+			apply_file = arg;
+	}
+
+	let apply_args = {};
+	if (apply_file)
+		apply_args.file = apply_file;
+
+	if (dry_run) {
+		apply_args.apply = false;
+		result = ubus.call('bbf-device', 'apply', apply_args);
+	} else {
+		result = ubus.call('bbf-dm', 'apply', apply_args);
+	}
+
+	if (!result?.success)
+		die((dry_run ? 'Dry-run' : 'Apply') + ' failed: ' + (result?.error ?? 'unknown error'));
+
+	if (verbose && result) {
+		if (length(result.logs)) {
+			print("=== Logs ===\n");
+			for (let entry in result.logs)
+				printf("[%s] %s\n", uc(entry.level), entry.msg);
+			print("\n");
+		}
+		if (result.output) {
+			print("=== UCI Commands ===\n");
+			print(result.output, "\n");
+		}
+	}
+
+	break;
+
+case 'reboot':
+	result = ubus.call('bbf-device', 'reboot', { local: true });
+	break;
+
+case 'factory':
+	result = ubus.call('bbf-device', 'factory_reset', { local: true });
+	break;
+
+case 'upgrade':
+	let upgrade_path = shift(ARGV);
+	if (!upgrade_path)
+		die("upgrade requires file path");
+	result = ubus.call('bbf-device', 'sysupgrade', { url: upgrade_path, local: true });
+	break;
+
+case 'batch':
+	let batch_arg = shift(ARGV);
+	if (!batch_arg)
+		die("batch requires JSON operations array");
+	let batch_ops;
+	try {
+		batch_ops = json(batch_arg);
+	} catch (e) {
+		die("Invalid JSON: " + e);
+	}
+	if (type(batch_ops) != 'array')
+		die("operations must be a JSON array");
+	result = ubus.call('bbf-dm', 'batch', { operations: batch_ops });
+	break;
+
+default:
+	die("Unknown command: " + cmd);
+}
+
+if (result)
+	printf("%.J\n", result);

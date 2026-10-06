@@ -1,0 +1,80 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.Ghn.Diagnostics.",
+  "object": {
+    "path": "Device.Ghn.Diagnostics.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [],
+    "description": "The G.hn Diagnostics object.",
+    "commands": [
+      {
+        "name": "PHYThroughput()",
+        "version": "2.12",
+        "async": "true",
+        "input": [
+          "Interface",
+          "DiagnoseMACAddress"
+        ],
+        "output": [
+          "Status",
+          null,
+          "DestinationMACAddress",
+          "LinkState",
+          "TxPhyRate",
+          "RxPhyRate"
+        ]
+      },
+      {
+        "name": "PerformanceMonitoring()",
+        "version": "2.12",
+        "async": "true",
+        "input": [
+          "Interface",
+          "DiagnoseMACAddress",
+          "SampleInterval",
+          "SNRGroupLength"
+        ],
+        "output": [
+          "Status",
+          "CurrentStart",
+          "CurrentEnd",
+          null,
+          "DestinationMACAddress",
+          "BytesSent",
+          "BytesReceived",
+          "PacketsSent",
+          "PacketsReceived",
+          "ErrorsSent",
+          "ErrorsReceived",
+          "UnicastPacketsSent",
+          "UnicastPacketsReceived",
+          "DiscardPacketsSent",
+          "DiscardPacketsReceived",
+          "MulticastPacketsSent",
+          "MulticastPacketsReceived",
+          "BroadcastPacketsSent",
+          "BroadcastPacketsReceived",
+          "UnknownProtoPacketsReceived",
+          "MgmtBytesSent",
+          "MgmtBytesReceived",
+          "MgmtPacketsSent",
+          "MgmtPacketsReceived",
+          "BlocksSent",
+          "BlocksReceived",
+          "BlocksResent",
+          "BlocksErrorsReceived",
+          "TimeStamp",
+          null,
+          "DestinationMACAddress",
+          "SNR"
+        ]
+      }
+    ],
+    "children": []
+  }
+}

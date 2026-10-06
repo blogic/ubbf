@@ -1,0 +1,8 @@
+#!/usr/bin/ucode --
+'use strict';
+
+import { cr_url_compose } from 'ubbf.utils.cr_url';
+
+let url = cr_url_compose();
+if (url)
+	print(url, '\n');

@@ -1,0 +1,147 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.PeriodicFileTransfer.Profile.{i}.HTTP.",
+  "object": {
+    "path": "Device.PeriodicFileTransfer.Profile.{i}.HTTP.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "URL",
+        "access": "readWrite",
+        "description": "The URL of the server receiving the periodic file uploads.",
+        "type": "string",
+        "maxLength": 2048,
+        "dataType": "URL"
+      },
+      {
+        "name": "Username",
+        "access": "readWrite",
+        "description": "Username used to authenticate the Device when making a connection to the file upload server. {{empty}} indicates that the username will not be used during the authentication process.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Password",
+        "access": "readWrite",
+        "description": "Password used to authenticate the Device when making a connection to the file upload server. {{empty}} indicates that the password will not be used during the authentication process.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Certificate",
+        "access": "readWrite",
+        "description": "Specifies the client certificate that must be presented to the remote server for mutual authentication. This certificate is used to authenticate the client by the remote server, ensuring that the remote server is communicating with a trusted client. The client certificate must be issued by a trusted Certificate Authority (CA) and should match the client's private key. This parameter is applicable only when a TLS session is being used.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.Certificate.",
+          "targetType": "row"
+        },
+        "version": "2.20"
+      },
+      {
+        "name": "CABundle",
+        "access": "readWrite",
+        "description": "Specifies the group of CA certificate(s) that the client must use to validate the certificate presented by the remote server. These CA certificates form a trust chain that the server certificate must match, ensuring that only servers with trusted certificates can establish a connection. This parameter supports multiple CA certificates to accommodate different server certificate issuers. This parameter is applicable only when a TLS session is being used.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.CABundle.",
+          "targetType": "row"
+        },
+        "version": "2.20"
+      },
+      {
+        "name": "IPVersion",
+        "access": "readWrite",
+        "description": "Specifies the IP protocol version, following the definitions in {{bibref|IANA-ipversionnumbers}}. Valid values are: {{range}}.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "ranges": [
+          [
+            4,
+            4
+          ],
+          [
+            6,
+            6
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "version": "2.20"
+      },
+      {
+        "name": "Compression",
+        "access": "readWrite",
+        "description": "The value of this parameter represents the HTTP Compression mechanism to be used by the Device when transferring data to the file upload server.",
+        "type": "string",
+        "enumerationRef": "##.HTTPCompressionsSupported"
+      },
+      {
+        "name": "Method",
+        "access": "readWrite",
+        "description": "The value of this parameter represents the HTTP method to be used by the Device when transferring data to the file upload server.",
+        "type": "string",
+        "enumerationRef": "##.HTTPMethodsSupported"
+      },
+      {
+        "name": "RetryEnable",
+        "access": "readWrite",
+        "description": "When {{true}}, the Device retries unsuccessful attempts to transfer the remaining files.",
+        "type": "boolean"
+      },
+      {
+        "name": "RetryMinimumWaitInterval",
+        "access": "readWrite",
+        "description": "Configures the data transfer retry wait interval, in {{units}}. The device MUST use a random value between {{param}} and ({{param}} * {{param|RetryIntervalMultiplier}} / 1000) as the first retry wait interval. Other values in the retry pattern MUST be calculated using this value as a starting point.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "RetryMaximumWaitInterval",
+        "access": "readWrite",
+        "description": "Configures the data transfer retry maximum wait interval, in {{units}}. If the calculated interval is higher than the specified {{param}} value then {{param}} value should be used.",
+        "default": "4294967295",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 4294967295
+      },
+      {
+        "name": "RetryIntervalMultiplier",
+        "access": "readWrite",
+        "description": "Configures the retry interval multiplier. This value is expressed in units of 0.001. Hence the values of the multiplier range between 1.000 and 65.535. The device MUST use a random value between {{param|RetryMinimumWaitInterval}} and ({{param|RetryMinimumWaitInterval}} * {{param}} / 1000) as the first retry wait interval. Other values in the retry pattern MUST be calculated using this value as a starting point.",
+        "type": "unsignedInt",
+        "minInclusive": 1000,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "RequestURIParameterNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RequestHeaderParameterNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object defines the HTTP/HTTPS transport properties for a transfer file upload profile. This object is used when the {{param|#.Protocol}} parameter has a value of {{enum|HTTP|##.ProtocolsSupported}}. For authentication purposes the Device MUST support HTTP Basic and Digest Access Authentication as defined in {{bibref|RFC7617}} and {{bibref|RFC7616}}.",
+    "children": []
+  }
+}

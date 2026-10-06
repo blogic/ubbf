@@ -1,0 +1,74 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.WiFi.Templates.APMLDTemplate.{i}.",
+  "object": {
+    "path": "Device.WiFi.Templates.APMLDTemplate.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "MLOEnable",
+    "numEntriesParameter": "APMLDTemplateNumberOfEntries",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.20"
+      },
+      {
+        "name": "APMLDTemplateID",
+        "access": "writeOnceReadOnly",
+        "description": "Static and persistent ID element. At most one {{object}} instance can exist with a given value for {{param}}.",
+        "type": "string"
+      },
+      {
+        "name": "MLOEnable",
+        "access": "readWrite",
+        "description": "Indicates whether or not Multi-Link Operation (MLO) is enabled. If set to {{false}}, then MLO support is disabled and each deployment of a BSSTemplate related to this {{object}} results in an AP MLD with a single affiliated AP. However, this does not disable the BSSs that are in the {{object|#.BSSTemplate.{i}}} linked to this {{object}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "STREnable",
+        "access": "readWrite",
+        "description": "Indicates whether or not Simultaneous Transmit and Receive (STR) mode is to be enabled on the AP MLD.",
+        "type": "boolean"
+      },
+      {
+        "name": "NSTREnable",
+        "access": "readWrite",
+        "description": "Indicates whether or not Non-Simultaneous Transmit and Receive (NSTR) mode is to be enabled on the AP MLD.",
+        "type": "boolean"
+      },
+      {
+        "name": "EMLSREnable",
+        "access": "readWrite",
+        "description": "Indicates whether or not Enhanced Multi-Link Single-Radio (EMLSR) mode is to be enabled on the AP MLD.",
+        "type": "boolean"
+      },
+      {
+        "name": "EMLMREnable",
+        "access": "readWrite",
+        "description": "Indicates whether or not Enhanced Multi-Link Multi-Radio (EMLMR) mode is to be enabled on the AP MLD.",
+        "type": "boolean"
+      },
+      {
+        "name": "TIDToLinkMapNegotiation",
+        "access": "readWrite",
+        "description": "Indicates whether the TID-to-link Mapping Negotiation Support subfield in the MLD Capabilities and Operations field of the Basic Multi-Link element is (to be) enabled by any deployed AP MLD linked to this {{object}}.",
+        "type": "boolean"
+      }
+    ],
+    "description": "Table of AP Multi-Link Device (MLD) templates (APMLDTemplate) for Wi-Fi configuration {{bibref|EasyMesh|Section 17.2.96, Agent AP MLD Configuration TLV}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "APMLDTemplateID"
+      ]
+    }
+  }
+}

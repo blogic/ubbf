@@ -1,0 +1,59 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DSL.Channel.{i}.Stats.CurrentDay.",
+  "object": {
+    "path": "Device.DSL.Channel.{i}.Stats.CurrentDay.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "XTURFECErrors",
+        "access": "readOnly",
+        "description": "Number of FEC errors detected since the second most recent DSL Showtime (FEC-C as defined in ITU-T Rec. {{bibref|G.997.1}}). Note: If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "XTUCFECErrors",
+        "access": "readOnly",
+        "description": "Number of FEC errors detected by the ATU-C since the second most recent DSL Showtime (FEC-CFE as defined in ITU-T Rec. {{bibref|G.997.1}}). Note: If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "XTURHECErrors",
+        "access": "readOnly",
+        "description": "Number of HEC errors detected since the second most recent DSL Showtime (HEC-P as defined in ITU-T Rec. {{bibref|G.997.1}}). Note: If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "XTUCHECErrors",
+        "access": "readOnly",
+        "description": "Number of HEC errors detected by the ATU-C since the second most recent DSL Showtime (HEC-PFE as defined in ITU-T Rec. {{bibref|G.997.1}}). Note: If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "XTURCRCErrors",
+        "access": "readOnly",
+        "description": "Number of CRC errors detected since the second most recent DSL Showtime (CV-C as defined in ITU-T Rec. {{bibref|G.997.1}}). Note: If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "XTUCCRCErrors",
+        "access": "readOnly",
+        "description": "Number of CRC errors detected by the ATU-C since the second most recent DSL Showtime (CV-CFE as defined in ITU-T Rec. {{bibref|G.997.1}}). Note: If the parameter is implemented but no value is available, its value MUST be 4294967295 (the maximum for its data type).",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "This object contains DSL channel statistics accumulated during the current day {{bibref|G.997.1}}. Note: The {{object}} parameters SHOULD NOT be reset when the interface statistics are reset via an interface disable / enable cycle.",
+    "children": []
+  }
+}

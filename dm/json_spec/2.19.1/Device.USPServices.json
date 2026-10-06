@@ -1,0 +1,30 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.USPServices.",
+  "object": {
+    "path": "Device.USPServices.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "TrustNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.19"
+      },
+      {
+        "name": "USPServiceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object contains information related to installed USP Services.",
+    "children": []
+  }
+}

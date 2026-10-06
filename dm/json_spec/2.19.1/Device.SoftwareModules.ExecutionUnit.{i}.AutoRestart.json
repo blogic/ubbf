@@ -1,0 +1,73 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SoftwareModules.ExecutionUnit.{i}.AutoRestart.",
+  "object": {
+    "path": "Device.SoftwareModules.ExecutionUnit.{i}.AutoRestart.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enable the auto-restart feature for this EU.",
+        "default": "false",
+        "defaultType": "implementation",
+        "type": "boolean"
+      },
+      {
+        "name": "RetryMinimumWaitInterval",
+        "access": "readWrite",
+        "description": "Configures the initial delay in {{units}} between detecting that the EU has terminated abnormally and re-starting it.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RetryMaximumWaitInterval",
+        "access": "readWrite",
+        "description": "Configures the maximum delay in {{units}} between detecting that the EU has terminated abnormally and re-starting it.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RetryIntervalMultiplier",
+        "access": "readWrite",
+        "description": "Configures the retry interval multiplier. This value is expressed in units of 0.001, so for example a value of 2000 will result in the retry interval being doubled each time.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaximumRetryCount",
+        "access": "readWrite",
+        "description": "Configures the maximum number of consecutive restarts (as shown in {{param|RetryCount}}) after which no more attempts will be performed. A value of zero means that the number of attempts is unlimited.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ResetPeriod",
+        "access": "readWrite",
+        "description": "If the EU runs for this number of {{units}} without terminating abnormally the Agent MAY reset the {{param|RetryCount}} to zero, thereby resetting the exponential backoff algorithm. A value of zero disables this behavior.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RetryCount",
+        "access": "readWrite",
+        "description": "The number times the EU has terminated abnormally and a restart has been attempted. Resetting this parameter to zero has the effect of re-initialising the exponential back-off algorithm. Invoking the {{command|#.Restart()}} command also has the effect of resetting this parameter to zero.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LastRestarted",
+        "access": "readOnly",
+        "description": "The time at which the {{object|#}} was last re-started. Initially this parameter is set to the Unknown Time (0001-01-01T00:00:00Z).",
+        "type": "dateTime"
+      },
+      {
+        "name": "NextRestart",
+        "access": "readOnly",
+        "description": "The time at which the next restart of the {{object|#}} is scheduled to occur. The Infinite Time (9999-12-31T23:59:59Z) is used to indicate that no restart is currently scheduled.",
+        "type": "dateTime"
+      }
+    ],
+    "description": "Configures the parameters of the auto-restart algorithm for this EU. An auto-restart may be triggered if the Agent determines that the EU has terminated abnormally. An exponential backoff algorithm is applied (increasing each time the delay before the EU is re-launched) in order to prevent continual re-starting of the EU. The retry interval range is controlled by two Parameters, {{param|RetryMinimumWaitInterval}} and {{param|RetryIntervalMultiplier}}. Let ''m'' be the value of {{param|RetryMinimumWaitInterval}}, ''k'' the value of {{param|RetryIntervalMultiplier}}, and ''n'' the current value of {{param|RetryCount}}. Then on the next occasion that the Agent determines that the EU has terminated abnormally, the delay before re-starting the EU must lie between ''m * (k/1000)^n^'' and ''m * (k/1000)^(n+1)^'' seconds, so long as ''m * (k/1000)^n^'' evaluates to a value less than {{param|RetryMaximumWaitInterval}}. Once this point has been reached, on all subsequent occasion that the Agent determines that the EU has terminated abnormally the delay before re-starting the EU must lie between {{param|RetryMaximumWaitInterval}}'' * (1000/k)'' and {{param|RetryMaximumWaitInterval}} seconds.",
+    "children": []
+  }
+}

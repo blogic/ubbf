@@ -1,0 +1,33 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.ConnectionMonitoring.Connection.{i}.Stats.",
+  "object": {
+    "path": "Device.ConnectionMonitoring.Connection.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "TotalNumberOfAttempts",
+        "access": "readOnly",
+        "description": "The total number of failed attempts when no reply is obtained, since the last boot.",
+        "type": "unsignedLong",
+        "dataType": "StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "TotalTriggeredActions",
+        "access": "readOnly",
+        "description": "Total amount of triggered actions since last boot.",
+        "type": "unsignedLong",
+        "dataType": "StatsCounter64",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "This object contains statistics for the connection monitoring entry. It provides counters for connection test failures, total triggered actions.",
+    "children": []
+  }
+}

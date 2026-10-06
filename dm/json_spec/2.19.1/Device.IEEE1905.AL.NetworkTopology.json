@@ -1,0 +1,64 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.AL.NetworkTopology.",
+  "object": {
+    "path": "Device.IEEE1905.AL.NetworkTopology.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the 1905 Network Topology reporting (via a Controller). When {{true}}, the device clears and (re)populates the {{object|IEEE1905Device}} and {{object|ChangeLog}} tables. When {{false}}, the contents of the {{object|IEEE1905Device}} and {{object|ChangeLog}} tables have no meaning.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "When {{param|Enable}} is set to {{true}}, this parameter indicates the transient phase of the discovery of the {{object}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Incomplete",
+          "Available",
+          "Error_Misconfigured"
+        ]
+      },
+      {
+        "name": "MaxChangeLogEntries",
+        "access": "readWrite",
+        "description": "The maximum number of entries allowed in the {{object|ChangeLog}} table.",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "{{reference}} If the {{object|ChangeLog}} is modified the parameter is modified to reflect the last entry added to the {{object|ChangeLog}}.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "ChangeLog.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "IEEE1905DeviceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ChangeLogNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object represents the 1905 Network Topology capabilities of this device.",
+    "children": []
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.VendorProperties.{i}.",
+  "object": {
+    "path": "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.VendorProperties.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "VendorPropertiesNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "MessageType",
+        "access": "readOnly",
+        "description": "The Message type of a message received from this IEEE1905Device that contained a Vendor specific TLV, as defined in {{bibref|IEEE1905.1a|Table 6-4: Message type}}.",
+        "type": "hexBinary",
+        "minLength": 1,
+        "maxLength": 1
+      },
+      {
+        "name": "OUI",
+        "access": "readOnly",
+        "description": "This is the value of the Vendor specific OUI defined in {{bibref|IEEE1905.1a|Table 6-7: Vendor specific TLV}}. {{pattern}}",
+        "type": "string",
+        "minLength": 6,
+        "maxLength": 6,
+        "pattern": "[0-9A-F]{6}"
+      },
+      {
+        "name": "Information",
+        "access": "readOnly",
+        "description": "A hexbinary string used to provide vendor specific information. This is the value of the Vendor specific information parameter defined in {{bibref|IEEE1905.1a|Table 6-7: Vendor specific TLV}}.",
+        "type": "hexBinary",
+        "minLength": 0,
+        "maxLength": 65535
+      }
+    ],
+    "description": "This object represents vendor specific information received in a message with a Vendor specific TLV (as defined in in {{bibref|IEEE1905.1a|Table 6-7: Vendor specific TLV}}).",
+    "children": []
+  }
+}

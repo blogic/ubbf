@@ -1,0 +1,41 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CACCapability.CACMethod.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CACCapability.CACMethod.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "4",
+    "enableParameter": "",
+    "numEntriesParameter": "CACMethodNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Method",
+        "access": "readOnly",
+        "description": "CAC method supported; : 0: Continuous CAC, : 1: Continuous with dedicated radio, : 2: Multi-Input Multi-Output (MIMO) dimension reduced, : 3: Time sliced CAC.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "NumberOfSeconds",
+        "access": "readOnly",
+        "description": "Number of {{units}} required to complete this method of CAC.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "OpClassChannelsNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "List of Channel Availability Check (CAC) method information for each type of CAC that the radio can perform. Each type is defined by a method and time to complete. For each type, the classes and channels allowed are enumerated.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Method"
+      ]
+    }
+  }
+}

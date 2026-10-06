@@ -1,0 +1,98 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.Hardware.Buttons.Button.{i}.TriggerCondition.{i}.",
+  "object": {
+    "path": "Device.Hardware.Buttons.Button.{i}.TriggerCondition.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "TriggerConditionNumberOfEntries",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.21"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "The name of the TriggerCondition.",
+        "type": "string"
+      },
+      {
+        "name": "Type",
+        "access": "readWrite",
+        "description": "The type of trigger condition, which determines when this {{object}} is activated.",
+        "type": "string",
+        "enumerations": [
+          "Pressed",
+          "Released",
+          "LongPressed"
+        ]
+      },
+      {
+        "name": "Min",
+        "access": "readWrite",
+        "description": "{{param}} and {{param|Max}} have to be set together. Both values MUST be expressed in {{units}}. If the button gets released between {{param}} and {{param|Max}}, this {{object}} is activated. This parameter will only be used when {{param|Type}} is set to {{enum|Released|Type}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Max",
+        "access": "readWrite",
+        "description": "{{param|Min}} and {{param}} have to be set together. Both values MUST be expressed in {{units}}. If the button gets released between {{param|Min}} and {{param}}, this {{object}} is activated. This parameter will only be used when {{param|Type}} is set to {{enum|Released|Type}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Timeout",
+        "access": "readWrite",
+        "description": "This value MUST be expressed in {{units}}. If the button gets pressed for longer than {{param}}, this {{object}} is activated. This parameter will only be used when {{param|Type}} is set to {{enum|LongPressed|Type}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Active",
+        "access": "readOnly",
+        "description": "This {{param}} indicates the activation status of the condition. It is set to {{true}} when this {{object}} is activated and will automatically reset to {{false}} after a duration defined by the {{param|ActiveTime}} parameter.",
+        "type": "boolean"
+      },
+      {
+        "name": "ActiveTime",
+        "access": "readWrite",
+        "description": "This {{param}} specifies the duration for which the {{param|Active}} parameter will remain {{true}} after this {{object}} is activated, expressed in {{units}}.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object defines the conditions for interpreting physical button presses into specific button events, such as a short press, long press, or release.",
+    "events": [
+      {
+        "name": "Triggered!",
+        "arguments": [
+          "Name",
+          "ButtonName",
+          "Type",
+          "Interval"
+        ]
+      }
+    ],
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

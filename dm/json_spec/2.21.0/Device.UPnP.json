@@ -1,0 +1,16 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.UPnP.",
+  "object": {
+    "path": "Device.UPnP.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [],
+    "description": "This object contains all UPnP related objects and parameters including Device and Discovery related objects and parameters.",
+    "children": []
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "lldp": {
+    "interface": {
+      "lan2": {
+        "via": "LLDP", "rid": "5", "age": "0 day, 00:00:05",
+        "chassis": {
+          "printer-with-a-very-long-system-name-01": {
+            "id": { "type": "mac", "value": "00:11:22:33:44:55" },
+            "descr": "printer",
+            "capability": [ { "type": "Station", "enabled": true }, { "type": "Other", "enabled": true } ]
+          }
+        },
+        "port": { "id": { "type": "local", "value": "p\u001b[2Jx" }, "descr": "eth\u00070", "ttl": "60" }
+      }
+    }
+  }
+}

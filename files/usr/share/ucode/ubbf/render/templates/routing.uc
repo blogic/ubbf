@@ -1,0 +1,142 @@
+function render_config() {
+	// Router.1 is the main table, which a route reaches without a table
+	// option.
+	const MAIN_TABLE = 254;
+
+	/**
+	 * Generates a UCI network route section.
+	 *
+	 * @param {object} route_data - Route data model object
+	 * @param {boolean} is_ipv6 - True for IPv6 route, false for IPv4
+	 * @param {number} table - Routing table of the Router row
+	 */
+	function generate_route(route_data, is_ipv6, table) {
+		if (forwarding_policy_set(route_data))
+			return;
+
+		let section = is_ipv6 ? 'route6' : 'route';
+		let iface_name = interface_to_name(config, route_data.Interface);
+
+		uci_section(output, `network ${section}`);
+
+		if (iface_name)
+			uci_set_string(output, `network.@${section}[-1].interface`, iface_name);
+
+		let target = is_ipv6 ? route_data.DestIPPrefix : route_data.DestIPAddress;
+		if (target)
+			uci_set_string(output, `network.@${section}[-1].target`, target);
+
+		if (!is_ipv6 && route_data.DestSubnetMask)
+			uci_set_string(output, `network.@${section}[-1].netmask`, route_data.DestSubnetMask);
+
+		let gateway = is_ipv6 ? route_data.NextHop : route_data.GatewayIPAddress;
+		if (gateway)
+			uci_set_string(output, `network.@${section}[-1].gateway`, gateway);
+
+		let metric = ubbf_to_int(route_data.ForwardingMetric);
+		if (metric != null && metric >= 0)
+			uci_set_number(output, `network.@${section}[-1].metric`, metric);
+
+		if (table != MAIN_TABLE)
+			uci_set_number(output, `network.@${section}[-1].table`, table);
+
+		let mtu = ubbf_to_int(route_data.MTU);
+		if (mtu != null && mtu > 0)
+			uci_set_number(output, `network.@${section}[-1].mtu`, mtu);
+
+		// For an IPv6 route netifd makes source a source-specific match
+		// (RTA_SRC); for IPv4 it would be the preferred source address.
+		if (is_ipv6 && route_data.SourceIPPrefix)
+			uci_set_string(output, `network.@${section}[-1].source`, route_data.SourceIPPrefix);
+
+		uci_set_boolean(output, `network.@${section}[-1].disabled`, !ubbf_to_bool(route_data.Enable));
+	}
+
+	/**
+	 * Generates one netifd rule or rule6 section.
+	 *
+	 * @param {number} family - 4 or 6
+	 * @param {object} rule - { priority, src, dest, in, out, proto, sport,
+	 *                        dport, table }; empty fields are left out
+	 */
+	function generate_rule(family, rule) {
+		let section = (family == 6) ? 'rule6' : 'rule';
+		let base = `network.@${section}[-1]`;
+
+		uci_section(output, `network ${section}`);
+		uci_set_number(output, `${base}.priority`, rule.priority);
+		if (rule.src)
+			uci_set_string(output, `${base}.src`, rule.src);
+		if (rule.dest)
+			uci_set_string(output, `${base}.dest`, rule.dest);
+		if (rule.in)
+			uci_set_string(output, `${base}.in`, rule.in);
+		if (rule.out)
+			uci_set_string(output, `${base}.out`, rule.out);
+		if (rule.proto != null && rule.proto >= 0)
+			uci_set_string(output, `${base}.ipproto`, sprintf('%d', rule.proto));
+		if (rule.sport)
+			uci_set_string(output, `${base}.sport`, rule.sport);
+		if (rule.dport)
+			uci_set_string(output, `${base}.dport`, rule.dport);
+		uci_set_string(output, `${base}.lookup`, sprintf('%d', rule.table));
+	}
+
+	/**
+	 * Generates the netifd rule sections of a Device.Routing.Policy.{i} row
+	 * (TR-181 2.20): one per IP version it applies to, and before its IPv4
+	 * rule one for each source table of its router, the most specific source
+	 * first, so that the source routes of the router apply to the policy too.
+	 *
+	 * @param {object} policy - Policy row
+	 * @param {object} tables - Result of source_tables()
+	 */
+	function generate_policy(policy, tables) {
+		if (!ubbf_to_bool(policy.Enable))
+			return;
+
+		let rule = policy_resolve(config, policy['.instance']);
+		if (rule.error) {
+			warn('routing: Policy %s not written: %s', policy['.instance'], rule.error);
+			return;
+		}
+
+		let priority = rule.source_priority;
+		for (let source in (index(rule.families, 4) >= 0) ? source_rules(tables, rule.router) : []) {
+			let src = prefix_intersect(rule.src, source.src);
+			if (src != null)
+				generate_rule(4, { ...rule, src, table: source.table, priority: priority++ });
+		}
+
+		for (let family in rule.families)
+			generate_rule(family, rule);
+	}
+
+	let tables = source_tables(config);
+
+	for (let router in ubbf_instances(config, 'Device.Routing.Router') ?? []) {
+		let inst = router['.instance'];
+		let table = router_table_id(inst);
+		if (table == null)
+			continue;
+
+		for (let route in ubbf_instances(config, `Device.Routing.Router.${inst}.IPv4Forwarding`) ?? [])
+			if (source_prefix(route) == '')
+				generate_route(route, false, table);
+
+		for (let route in ubbf_instances(config, `Device.Routing.Router.${inst}.IPv6Forwarding`) ?? [])
+			generate_route(route, true, table);
+	}
+
+	for (let contents in source_table_contents(config))
+		for (let route in contents.routes)
+			generate_route(route, false, contents.table);
+
+	for (let rule in main_source_rules(tables))
+		generate_rule(4, rule);
+
+	for (let policy in ubbf_instances(config, 'Device.Routing.Policy') ?? [])
+		generate_policy(policy, tables);
+}
+uci_comment(output, '# generated by routing.uc');
+render_config();

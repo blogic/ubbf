@@ -1,0 +1,39 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanCapability.OpClassChannels.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanCapability.OpClassChannels.{i}.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "OpClassChannelsNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "OpClass",
+        "access": "readOnly",
+        "description": "The Operating Class per {{bibref|802.11ax|Table E-4}} For 2.4GHz and 5GHz bands, only 20MHz Operating Classes are valid. Note that the operating class identifies the band and channel width.",
+        "type": "unsignedInt",
+        "maxInclusive": 255,
+        "version": "2.15"
+      },
+      {
+        "name": "ChannelList",
+        "access": "readOnly",
+        "description": "{{list}} The channel numbers in this Operating Class which the radio is capable of scanning.",
+        "list": true,
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      }
+    ],
+    "description": "Table of the operating classes (selected from {{bibref|802.11ax|Table E-4}}) and channel numbers in each operating class that the radio is capable of scanning.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "OpClass"
+      ]
+    }
+  }
+}

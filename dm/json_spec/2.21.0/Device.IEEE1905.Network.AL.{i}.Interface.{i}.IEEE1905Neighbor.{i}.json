@@ -1,0 +1,49 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.IEEE1905.Network.AL.{i}.Interface.{i}.IEEE1905Neighbor.{i}.",
+  "object": {
+    "path": "Device.IEEE1905.Network.AL.{i}.Interface.{i}.IEEE1905Neighbor.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "IEEE1905NeighborNumberOfEntries",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "NeighborDeviceId",
+        "access": "readOnly",
+        "description": "1905 AL MAC Address of the Neighbor.",
+        "type": "string",
+        "maxLength": 17,
+        "pattern": "",
+        "dataType": "MACAddress"
+      },
+      {
+        "name": "IEEE1905DeviceRef",
+        "access": "readOnly",
+        "description": "The value in this parameter is a reference to the 1905 device in the {{object|###.AL}} table, provided backhaul connectivity by this device. This can be used to construct a network topology from this 1905 device. Since the IEEE 1905.1 protocol forms a tree topology, there is one and only one path to the gateway for each 1905 Device, but each parent can support multiple child connections. {{reference}}",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": ".IEEE1905.Network.AL.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "IEEE802dot1Bridge",
+        "access": "readOnly",
+        "description": "Indicates whether or not there is at least one IEEE 802.1 bridge between this device and the neighbor. If {{false}}, no IEEE 802.1 bridge exists between this device and the neighbor. If {{true}}, there is at least one IEEE 802.1 bridge exists between this device and the neighbor.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object represents an instance of an {{object}} for the {{object|###.AL}}. These values are from the Topology response message as defined in {{bibref|IEEE1905.1a|Table 6-15: 1905 neighbor device TLV}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "NeighborDeviceId"
+      ]
+    }
+  }
+}

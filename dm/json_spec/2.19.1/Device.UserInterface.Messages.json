@@ -1,0 +1,104 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.UserInterface.Messages.",
+  "object": {
+    "path": "Device.UserInterface.Messages.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables and displays the user information message.",
+        "default": "true",
+        "defaultType": "factory",
+        "type": "boolean"
+      },
+      {
+        "name": "Title",
+        "access": "readWrite",
+        "description": "Message title to be displayed.",
+        "type": "string",
+        "maxLength": 128
+      },
+      {
+        "name": "SubTitle",
+        "access": "readWrite",
+        "description": "Message sub title to be displayed.",
+        "type": "string",
+        "maxLength": 128
+      },
+      {
+        "name": "Text",
+        "access": "readWrite",
+        "description": "Message text.",
+        "type": "string"
+      },
+      {
+        "name": "IconType",
+        "access": "readWrite",
+        "description": "Icon to be displayed.",
+        "type": "string",
+        "enumerations": [
+          "None",
+          "Greeting",
+          "Information",
+          "Warning",
+          "Important",
+          "Urgent",
+          "Advertisement"
+        ]
+      },
+      {
+        "name": "MessageColor",
+        "access": "readWrite",
+        "description": "The color of message text in RGB hexadecimal notation (e.g., FF0088).",
+        "type": "hexBinary",
+        "minLength": 3,
+        "maxLength": 3
+      },
+      {
+        "name": "BackgroundColor",
+        "access": "readWrite",
+        "description": "The color of the message screen background in RGB hexadecimal notation (e.g., FF0088).",
+        "type": "hexBinary",
+        "minLength": 3,
+        "maxLength": 3
+      },
+      {
+        "name": "TitleColor",
+        "access": "readWrite",
+        "description": "The color of the message title in RGB hexadecimal notation (e.g., FF0088).",
+        "type": "hexBinary",
+        "minLength": 3,
+        "maxLength": 3
+      },
+      {
+        "name": "SubTitleColor",
+        "access": "readWrite",
+        "description": "The color of the sub title in RGB hexadecimal notation (e.g., FF0088).",
+        "type": "hexBinary",
+        "minLength": 3,
+        "maxLength": 3
+      },
+      {
+        "name": "RequestedNumberOfRepetitions",
+        "access": "readWrite",
+        "description": "The number of times the device SHOULD repeat the message.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ExecutedNumberOfRepetitions",
+        "access": "readOnly",
+        "description": "The number of times the device repeated the message.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Definition of user information message displays.",
+    "children": []
+  }
+}

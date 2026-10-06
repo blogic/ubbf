@@ -1,0 +1,84 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Security.Certificate.{i}.",
+  "object": {
+    "path": "Device.Security.Certificate.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "CertificateNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this certificate.",
+        "type": "boolean"
+      },
+      {
+        "name": "LastModif",
+        "access": "readOnly",
+        "description": "The last modification time of this certificate.",
+        "type": "dateTime"
+      },
+      {
+        "name": "SerialNumber",
+        "access": "readOnly",
+        "description": "The Serial Number field in an X.509 certificate, see {{bibref|RFC5280}}.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Issuer",
+        "access": "readOnly",
+        "description": "The Issuer field in an X.509 certificate, see {{bibref|RFC5280}}; i.e. the Distinguished Name (DN) of the entity who has signed the certificate.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "NotBefore",
+        "access": "readOnly",
+        "description": "The beginning of the certificate validity period; i.e. the Not Before field in an X.509 certificate, see {{bibref|RFC5280}}.",
+        "type": "dateTime"
+      },
+      {
+        "name": "NotAfter",
+        "access": "readOnly",
+        "description": "The end of the certificate validity period; i.e., the Not After field in an X.509 certificate, see {{bibref|RFC5280}}.",
+        "type": "dateTime"
+      },
+      {
+        "name": "Subject",
+        "access": "readOnly",
+        "description": "The Distinguished Name (DN) of the entity associated with the Public Key; i.e., the Subject field in an X.509 certificate, see {{bibref|RFC5280}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "SubjectAlt",
+        "access": "readOnly",
+        "description": "{{list}} Each item specifies an identity that is bound to the certificate's subject, and thus bound to the Public Key. The Subject Alternative Names extension field in an X.509 certificate, see {{bibref|RFC5280}}.",
+        "list": true,
+        "listMaxLength": 256,
+        "type": "string"
+      },
+      {
+        "name": "SignatureAlgorithm",
+        "access": "readOnly",
+        "description": "The algorithm used in signing the certificate; i.e. the Signature Algorithm field in an X.509 certificate, see {{bibref|RFC5280}}.",
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "This table provides information about all types of public key-based credentials, such as X.509 certificates, see {{bibref|RFC5280}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "SerialNumber",
+        "Issuer"
+      ]
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DNS.",
+  "object": {
+    "path": "Device.DNS.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "SupportedRecordTypes",
+        "access": "readOnly",
+        "description": "The DNS record types that are supported by the device. {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "A",
+          "AAAA",
+          "SRV",
+          "PTR"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "ZoneNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.17"
+      }
+    ],
+    "description": "Properties for Domain Name Service (DNS).",
+    "children": []
+  }
+}

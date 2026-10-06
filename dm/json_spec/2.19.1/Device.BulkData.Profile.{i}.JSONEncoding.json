@@ -1,0 +1,42 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.BulkData.Profile.{i}.JSONEncoding.",
+  "object": {
+    "path": "Device.BulkData.Profile.{i}.JSONEncoding.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ReportFormat",
+        "access": "readWrite",
+        "description": "This parameter describes the formatting used for the report as described in {{template|BULK-DATA-JSON-REF}}. Note: This parameter is encoded as a token in the BBF-Report-Format header field and MUST NOT include spaces or other characters excluded from token characters defined in {{bibref|RFC2616}}.",
+        "default": "ObjectHierarchy",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "ObjectHierarchy",
+          "NameValuePair"
+        ]
+      },
+      {
+        "name": "ReportTimestamp",
+        "access": "readWrite",
+        "description": "The format of timestamp to use for the JSON Object named \"CollectionTime\" as described in {{template|BULK-DATA-JSON-REF}}.",
+        "default": "Unix-Epoch",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Unix-Epoch",
+          "ISO-8601",
+          "None"
+        ]
+      }
+    ],
+    "description": "This object defines the properties to be used when the {{object|##.Profile}} object's {{param|#.EncodingType}} parameter value is {{enum|JSON|##.EncodingTypes}}.",
+    "children": []
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Firewall.",
+  "object": {
+    "path": "Device.Firewall.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the Firewall. Firewalls often implement additional Denial of Service and other vulnerability protections, such as those described in {{bibref|ICSA-Baseline}}. If a {{enum|Stateful|Type}} Firewall is enabled, then it is assumed that all implemented stateful protections are enabled, unless they are overridden by some other part of the data model.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "Config",
+        "access": "readWrite",
+        "description": "How this firewall is configured. {{enum}} Vendors can extend the enumerated values with vendor specific extensions, in which case the rules outlined in {{bibref|TR-106|Section 3.3}} MUST be adhered to.",
+        "type": "string",
+        "enumerations": [
+          "High",
+          "Low",
+          "Off",
+          "Advanced",
+          "Policy"
+        ]
+      },
+      {
+        "name": "AdvancedLevel",
+        "access": "readWrite",
+        "description": "Selects the currently active Firewall Level. {{param}} only applies when {{param|Config}} is {{enum|Advanced|Config}}.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "Level.",
+          "targetType": "row"
+        },
+        "version": "2.12"
+      },
+      {
+        "name": "PolicyLevel",
+        "access": "readWrite",
+        "description": "Selects the currently active Firewall Policy Level. {{param}} only applies when {{param|Config}} is {{enum|Policy|Config}}.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "Level.",
+          "targetType": "row"
+        },
+        "version": "2.16"
+      },
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "Firewall Type. {{enum}} A {{enum|Stateless}} Firewall treats each packet individually and thus has no concept of sessions. Therefore a {{enum|Stateless}} Firewall cannot distinguish between unsolicited downstream traffic and downstream traffic in response to outbound messages. This means that it has to accept all incoming downstream traffic. Furthermore, because a {{enum|Stateless}} Firewall treats each packet individually, it does not provide any DoS or vulnerability protections. A {{enum|Stateful}} Firewall maintains state about previous packets and thus supports sessions. Therefore a {{enum|Stateful}} Firewall can distinguish between solicited and unsolicited downstream traffic. In a {{enum|Stateful}} Firewall, explicitly configured rules only apply to unsolicited traffic, and can not cause packets received in response to an upstream request to be dropped. Furthermore, because a {{enum|Stateful}} Firewall maintains state, it can provide DoS and vulnerability protections. A device that has a {{enum|Stateless}} Firewall depends on the NAT to provide protection against unsolicited downstream IPv4 traffic. This is because, as noted above, a {{enum|Stateless}} Firewall has to be configured to accept all incoming downstream traffic. For IPv6 there is no NAT, so a {{enum|Stateless}} Firewall can not provide simple security protections against unsolicited downstream IPv6 traffic.",
+        "type": "string",
+        "enumerations": [
+          "Stateless",
+          "Stateful"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "Version",
+        "access": "readOnly",
+        "description": "A string identifying the firewall settings version currently used in the CPE, or {{empty}} if the firewall settings are not associated with a version.",
+        "type": "string",
+        "maxLength": 16
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The time at which the firewall settings most recently changed.",
+        "type": "dateTime"
+      },
+      {
+        "name": "LevelNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "ChainNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "DMZNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.16"
+      },
+      {
+        "name": "ServiceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.16"
+      },
+      {
+        "name": "PinholeNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.16"
+      },
+      {
+        "name": "PolicyNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.16"
+      },
+      {
+        "name": "InterfaceSettingNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "SetNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.18"
+      },
+      {
+        "name": "LogNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.19"
+      }
+    ],
+    "description": "Firewall configuration object. The {{param|Config}} parameter enables and disables the Firewall, and can select either a predefined configuration ({{enum|High|Config}} or {{enum|Low|Config}}) or an explicitly-defined {{enum|Advanced|Config}} configuration. For an {{enum|Advanced|Config}} configuration, {{param|AdvancedLevel}} controls the currently active Firewall Level, and the Firewall Levels are defined in the {{object|Level}}, {{object|Chain}} and {{object|Chain.{i}.Rule}} tables. For an {{enum|Policy|Config}} configuration, {{param|PolicyLevel}} controls the currently active Firewall Level, and the Firewall Levels are defined in the {{object|Policy}}, {{object|Level}}, {{object|Chain}} and {{object|Chain.{i}.Rule}} tables. The Firewall rules modeled by {{object|Chain}}, {{object|DMZ}} and {{object|Pinhole}} operate only on the forwarding path. This means that they affect only routed traffic, and do not affect traffic that is destined for or generated by the device itself. Traffic destined for or generated by the device itself can use the {{object|Service}} object to model the appropriate Firewall rules. Note that any {{object|#.NAT}} processing on the ingress packet occurs before Firewall rules are applied so, for example, the Firewall rules will see the translated destination IP address and port in a downstream packet that has passed through the NAT. See {{bibref|TR-181i2|Appendix VIII}} for an example {{enum|Advanced|Config}} configuration.",
+    "children": []
+  }
+}

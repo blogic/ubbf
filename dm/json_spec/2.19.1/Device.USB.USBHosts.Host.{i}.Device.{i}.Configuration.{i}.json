@@ -1,0 +1,35 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.USB.USBHosts.Host.{i}.Device.{i}.Configuration.{i}.",
+  "object": {
+    "path": "Device.USB.USBHosts.Host.{i}.Device.{i}.Configuration.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ConfigurationNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ConfigurationNumber",
+        "access": "readOnly",
+        "description": "The identifier for each Device Configuration.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "InterfaceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Table of device configurations.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "ConfigurationNumber"
+      ]
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.BulkData.Profile.{i}.CSVEncoding.",
+  "object": {
+    "path": "Device.BulkData.Profile.{i}.CSVEncoding.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "FieldSeparator",
+        "access": "readWrite",
+        "description": "Field separator to use when encoding CSV data.",
+        "default": ",",
+        "defaultType": "object",
+        "type": "string"
+      },
+      {
+        "name": "RowSeparator",
+        "access": "readWrite",
+        "description": "Row separator to use when encoding CSV data.",
+        "default": " ",
+        "defaultType": "object",
+        "type": "string"
+      },
+      {
+        "name": "EscapeCharacter",
+        "access": "readWrite",
+        "description": "Escape character to use when encoding CSV data.",
+        "default": "\"",
+        "defaultType": "object",
+        "type": "string"
+      },
+      {
+        "name": "ReportFormat",
+        "access": "readWrite",
+        "description": "This parameter describes the formatting used for reports defined by this profile as described in {{template|BULK-DATA-CSV-REF}}. Note: This parameter is encoded as a token in the BBF-Report-Format header field and MUST NOT include spaces or other characters excluded from token characters defined in {{bibref|RFC2616}}.",
+        "default": "ParameterPerColumn",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "ParameterPerRow",
+          "ParameterPerColumn"
+        ]
+      },
+      {
+        "name": "RowTimestamp",
+        "access": "readWrite",
+        "description": "The format of the timestamp to use for data inserted into the row.",
+        "default": "Unix-Epoch",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Unix-Epoch",
+          "ISO-8601",
+          "None"
+        ]
+      }
+    ],
+    "description": "This object defines the properties to be used when the {{object|##.Profile}} object's {{param|#.EncodingType}} parameter value is {{enum|CSV|##.EncodingTypes}}.",
+    "children": []
+  }
+}

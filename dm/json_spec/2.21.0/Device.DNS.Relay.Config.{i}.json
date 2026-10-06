@@ -1,0 +1,140 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.DNS.Relay.Config.{i}.",
+  "object": {
+    "path": "Device.DNS.Relay.Config.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ConfigNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.17"
+      },
+      {
+        "name": "Forwarders",
+        "access": "readWrite",
+        "description": "Specifies the list of the DNS forwarders to be used.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.Forwarding.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "{{reference}} Specifies the IP interface over which the DNS query is received. This is usually the LAN interface. {{template|INTERFACE-ROUTING}}",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "###.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "MaxRetries",
+        "access": "readWrite",
+        "description": "Maximum number of retries per DNS server in case of non-response in a period of time defined by {{param|ResponseTimeout}} (not considering error responses). A value of 0 means no retries after a failure to respond to a request.",
+        "default": "5",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "version": "2.21"
+      },
+      {
+        "name": "ResponseTimeout",
+        "access": "readWrite",
+        "description": "The timeout, in {{units}}, for a response from DNS servers. If set to 0, the timeout for DNS queries may be incremented over time (e.g., based on an implementation-specific policy such as exponential backoff).",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "version": "2.21"
+      },
+      {
+        "name": "ForwardingMode",
+        "access": "readWrite",
+        "description": "The strategy mode applied for sending DNS queries considering the DNS server list provided by {{param|Forwarders}}. {{enum}}",
+        "default": "Optimal",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "StrictOrder",
+          "Parallel",
+          "Optimal"
+        ],
+        "version": "2.21"
+      },
+      {
+        "name": "FailbackMinTimer",
+        "access": "readWrite",
+        "description": "This parameter applies only when {{param|ForwardingMode}} is set to {{enum|StrictOrder|ForwardingMode}}. In this case the entry in the {{param|Forwarders}} list is identified as the primary DNS server. The parameter {{param}} is the minimum value for the timer, in {{units}}, before reverting to the primary DNS server. If both {{param}} and {{param|FailbackMaxTimer}} are set to 0, then no failback is performed.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "version": "2.21"
+      },
+      {
+        "name": "FailbackMaxTimer",
+        "access": "readWrite",
+        "description": "This parameter applies only when {{param|ForwardingMode}} is set to {{enum|StrictOrder|ForwardingMode}}. In this case the entry in the {{param|Forwarders}} list is identify as the primary DNS server. The parameter {{param}} is the maximum value for the timer, in {{units}}, to automatically revert to the primary DNS server. If both {{param|FailbackMinTimer}} and {{param}} are set to 0 then no failback is performed.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "version": "2.21"
+      },
+      {
+        "name": "CacheSize",
+        "access": "readOnly",
+        "description": "Specifies the size of cache in kilobytes. When '0' is specified, no DNS results will be cached.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "CacheMinTTL",
+        "access": "readOnly",
+        "description": "Specifies the minimum TTL amount of time, in {{units}}, that an entry MUST be kept in the cache regardless of what has been specified by the domain owner. When '0' is specified, then the TTL chosen by the domain owner will be applied.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "CacheMaxTTL",
+        "access": "readOnly",
+        "description": "Specifies the maximum TTL amount of time, in {{units}}, than an entry MUST be kept in the cache regardless of what has been specified by the domain owner. When '0' is specified, then the TTL chosen by the domain owner will be applied.",
+        "default": "86400",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object is used to specify the forwarding strategy ({{param|ForwardingMode}}) among {{param|Forwarders}}, and cache configuration for each Forwarding relay.",
+    "commands": [
+      {
+        "name": "FlushCache()",
+        "version": "2.17",
+        "async": "false"
+      }
+    ],
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

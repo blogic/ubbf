@@ -1,0 +1,40 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.ConnectionMonitoring.",
+  "object": {
+    "path": "Device.ConnectionMonitoring.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the connection monitor.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the monitor.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "ConnectionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object contains parameters for monitoring the connection status of interfaces. It allows the Device to monitor interfaces using ARP (Address Resolution Protocol) or ND (Neighbor Discovery) packets, depending on the IP version used by the interface. The CPE can enable or disable the connection monitor and configure individual entries for each interface. Each entry can be enabled or disabled independently, allowing for flexible monitoring configurations.",
+    "children": []
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.AccessPoint.{i}.Passpoint.OSU.",
+  "object": {
+    "path": "Device.WiFi.AccessPoint.{i}.Passpoint.OSU.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or Disables Online Sign Up feature on the access point.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SSID",
+        "access": "readWrite",
+        "description": "The SSID that the mobile device uses for Online Sign Up with all the Online Sign Up providers listed in {{param|FriendlyNames}}",
+        "type": "string"
+      },
+      {
+        "name": "Method",
+        "access": "readWrite",
+        "description": "Specifies the list of protocols supported by the Online Sign Up provider as described in {{bibref|Passpoint|Table 13-OSU Method values}}.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "Reserved",
+          "SOAP_XML_SPP"
+        ]
+      },
+      {
+        "name": "FriendlyNames",
+        "access": "readWrite",
+        "description": "Specifies the list of Online Sign Up Provider names as described in {{bibref|Passpoint|Section 4.8.1.1}}.",
+        "list": true,
+        "type": "string",
+        "maxLength": 252
+      },
+      {
+        "name": "ServerURIs",
+        "access": "readWrite",
+        "description": "Specifies the list of Online Sign Up Server URI as described in {{bibref|Passpoint|Section 4.8.1.2}}.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "ServiceDescriptions",
+        "access": "readWrite",
+        "description": "Specifies the list of Online Sign Up service description as described in {{bibref|Passpoint|Section 4.8.1.6}}.",
+        "list": true,
+        "type": "string",
+        "maxLength": 252
+      },
+      {
+        "name": "ProviderNAIs",
+        "access": "readWrite",
+        "description": "Specifies the list of the Network Access Identifiers that is used for Online Sign Up as described in {{bibref|Passpoint|Section 4.13}}.",
+        "list": true,
+        "type": "string"
+      }
+    ],
+    "description": "This object implements Passpoint Online Sign Up as described in {{bibref|Passpoint|Section 4.3}}.",
+    "children": []
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Bridging.",
+  "object": {
+    "path": "Device.Bridging.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "MaxBridgeEntries",
+        "access": "readOnly",
+        "description": "The maximum number of entries available in the {{object|Bridge}} table.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxDBridgeEntries",
+        "access": "readOnly",
+        "description": "The maximum number of 802.1D {{bibref|802.1D-2004}} entries available in the {{object|Bridge}} table. A positive value for this parameter implies support for 802.1D. There is no guarantee that this many 802.1D Bridges can be configured. For example, the CPE might not be able simultaneously to support both 802.1D and 802.1Q Bridges.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxQBridgeEntries",
+        "access": "readOnly",
+        "description": "The maximum number of 802.1Q {{bibref|802.1Q-2011}} entries available in the {{object|Bridge}} table. A non-zero value for this parameter implies support for 802.1Q. There is no guarantee that this many 802.1Q Bridges can be configured. For example, the CPE might not be able simultaneously to support both 802.1D and 802.1Q Bridges.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxVLANEntries",
+        "access": "readOnly",
+        "description": "The maximum number of 802.1Q {{bibref|802.1Q-2011}} VLANs supported per {{object|Bridge}} table entry.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxProviderBridgeEntries",
+        "access": "readOnly",
+        "description": "The maximum number of entries available in the {{object|ProviderBridge}} table. A non-zero value for this parameter implies support for 802.1Q Provider Bridges.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "ProviderBridgeNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "MaxFilterEntries",
+        "access": "readOnly",
+        "description": "The maximum number of entries available in the {{object|Filter}} table.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "BridgeNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "FilterNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Layer 2 bridging configuration. Specifies bridges between different layer 2 interfaces. Bridges can be defined to include layer 2 filter criteria to selectively bridge traffic between interfaces. This object can be used to configure both 802.1D {{bibref|802.1D-2004}} and 802.1Q {{bibref|802.1Q-2011}} bridges. Not all 802.1D and 802.1Q features are modeled, and some additional features not present in either 802.1D or 802.1Q are modeled. 802.1Q {{bibref|802.1Q-2011}} bridges incorporate 802.1Q {{bibref|802.1Q-2005}} customer and 802.1ad {{bibref|802.1ad-2005}} provider bridges.",
+    "children": []
+  }
+}

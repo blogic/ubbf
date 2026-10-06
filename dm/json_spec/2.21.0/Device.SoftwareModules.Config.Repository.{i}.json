@@ -1,0 +1,90 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.SoftwareModules.Config.Repository.{i}.",
+  "object": {
+    "path": "Device.SoftwareModules.Config.Repository.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "RepositoryNumberOfEntries",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.21"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this repository entry.",
+        "type": "boolean",
+        "version": "2.21"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The name of the repository.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "BaseURL",
+        "access": "readWrite",
+        "description": "Specifies the base URL or server address of the repository. When processing an InstallDU or Update request, the system will attempt to match this {{param}} against the schema (protocol), hostname, and port components of the requested URL (for a Deployment Unit or its signature). The matching process proceeds from most specific to least specific: 1. Match schema, hostname, and port. 2. If no match, match schema and hostname. 3. If still no match, match hostname only. 4. If no match is found, the system falls back to the default configuration. **Example:** - If {{param}} is set to `docker://myservice.com:8080` - And the InstallDU URL is `docker://myservice.com:8080/path/module:version` - Then this parameter will be considered a match. This parameter MUST be a valid URL as defined by the {{bibref|RFC3986}} and MUST NOT include the \"userinfo\" component.",
+        "type": "string",
+        "maxLength": 2048,
+        "dataType": "URL"
+      },
+      {
+        "name": "Certificate",
+        "access": "readWrite",
+        "description": "Specifies the client certificate that must be presented to the remote server for mutual authentication. This certificate is used to authenticate the client by the remote server, ensuring that the remote server is communicating with a trusted client. The client certificate must be issued by a trusted Certificate Authority (CA) and should match the client's private key. This parameter is applicable only when a TLS session is being used. This parameter overrides the global {{param|#.Certificate}} setting.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.Certificate.",
+          "targetType": "row"
+        },
+        "version": "2.21"
+      },
+      {
+        "name": "CABundle",
+        "access": "readWrite",
+        "description": "Specifies the group of CA certificate(s) that the client must use to validate the certificate presented by the remote server. These CA certificates form a trust chain that the server certificate must match, ensuring that only servers with trusted certificates can establish a connection. This parameter supports multiple CA certificates to accommodate different server certificate issuers. This parameter is applicable only when a TLS session is being used. This parameter overrides the global {{param|#.CABundle}} setting.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.CABundle.",
+          "targetType": "row"
+        },
+        "version": "2.21"
+      },
+      {
+        "name": "Type",
+        "access": "readWrite",
+        "description": "Indicates the type of the repository entry.",
+        "type": "string",
+        "enumerations": [
+          "Repository",
+          "Signature"
+        ]
+      }
+    ],
+    "description": "This table contains information about a dedicated configuration for a repository, overriding the the default configuration.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

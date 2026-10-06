@@ -1,0 +1,21 @@
+{
+  "lldp": {
+    "interface": {
+      "lan1": {
+        "via": "LLDP",
+        "rid": "1",
+        "age": "0 day, 00:00:00",
+        "chassis": {
+          "id": { "type": "mac", "value": "aa:bb:cc:dd:ee:01" },
+          "descr": "IP camera",
+          "capability": { "type": "Station", "enabled": true }
+        },
+        "port": {
+          "id": { "type": "ifalias", "value": "cam-uplink" },
+          "descr": "eth0",
+          "ttl": "120"
+        }
+      }
+    }
+  }
+}

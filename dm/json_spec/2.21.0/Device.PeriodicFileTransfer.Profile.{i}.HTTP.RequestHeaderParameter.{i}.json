@@ -1,0 +1,40 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.PeriodicFileTransfer.Profile.{i}.HTTP.RequestHeaderParameter.{i}.",
+  "object": {
+    "path": "Device.PeriodicFileTransfer.Profile.{i}.HTTP.RequestHeaderParameter.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "RequestHeaderParameterNumberOfEntries",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "The name of the custom HTTP header field to be added to the request. Either {{param|Value}} or {{param|Reference}} MUST be specified. If both are specified, the value of {{param|Value}} will be used. If both are {{empty}}, this object is not included in the HTTP request.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Value",
+        "access": "readWrite",
+        "description": "The static value of the HTTP header field. If this parameter is {{empty}}, the value of the header field will be the current value of the device parameter specified in {{param|Reference}}.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Reference",
+        "access": "readWrite",
+        "description": "The path name of a device parameter whose current value will be used as the value of this HTTP header field.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "This object allows defining custom HTTP request header fields to be included in the outbound HTTP requests to the remote server when using this profile. As defined in {{bibref|RFC2616|Section 5.3 Request Header Fields}}. Each instance can specify either a static value or dynamically reference a device parameter.",
+    "children": []
+  }
+}

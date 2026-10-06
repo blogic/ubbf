@@ -1,0 +1,63 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.ZigBee.ZDO.{i}.PowerDescriptor.",
+  "object": {
+    "path": "Device.ZigBee.ZDO.{i}.PowerDescriptor.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "CurrentPowerMode",
+        "access": "readOnly",
+        "description": "Specifies the current sleep/power-saving mode of the ZigBee device. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Synchronized",
+          "Periodic",
+          "Manual"
+        ]
+      },
+      {
+        "name": "AvailablePowerSource",
+        "access": "readOnly",
+        "description": "Specifies the power sources available on this ZigBee device. {{list}} {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "Constant",
+          "Rechargeable",
+          "Disposable"
+        ]
+      },
+      {
+        "name": "CurrentPowerSource",
+        "access": "readOnly",
+        "description": "The current power source field specifies the current power source being utilized by the node. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Constant",
+          "Rechargeable",
+          "Disposable"
+        ]
+      },
+      {
+        "name": "CurrentPowerSourceLevel",
+        "access": "readOnly",
+        "description": "Specifies the level of charge of the current power source. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Critical",
+          "33",
+          "66",
+          "100"
+        ]
+      }
+    ],
+    "description": "The {{object}} object describes the power capabilities of the ZigBee device as defined in {{bibref|ZigBee2007|section 2.3.2.4 Node Power Descriptor}}.",
+    "children": []
+  }
+}

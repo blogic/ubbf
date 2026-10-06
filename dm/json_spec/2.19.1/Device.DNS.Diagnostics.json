@@ -1,0 +1,40 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DNS.Diagnostics.",
+  "object": {
+    "path": "Device.DNS.Diagnostics.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [],
+    "description": "The DNS Diagnostics object containing the {{command|NSLookupDiagnostics()}} test.",
+    "commands": [
+      {
+        "name": "NSLookupDiagnostics()",
+        "version": "2.12",
+        "async": "true",
+        "input": [
+          "Interface",
+          "HostName",
+          "DNSServer",
+          "Timeout",
+          "NumberOfRepetitions"
+        ],
+        "output": [
+          "Status",
+          "SuccessCount",
+          "Status",
+          "AnswerType",
+          "HostNameReturned",
+          "IPAddresses",
+          "DNSServerIP",
+          "ResponseTime"
+        ]
+      }
+    ],
+    "children": []
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FAP.ApplicationPlatform.Monitoring.",
+  "object": {
+    "path": "Device.FAP.ApplicationPlatform.Monitoring.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables and disables this entry.",
+        "type": "boolean"
+      },
+      {
+        "name": "MonitoringInterval",
+        "access": "readWrite",
+        "description": "Specifies the interval in {{units}} used to collect the monitoring measurements.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AuthenticationRequestsReceived",
+        "access": "readOnly",
+        "description": "Specifies the total number of authentication requests received by the Femto Application Platform. The counter will be reset whenever the device reboots or the {{param|Enable}} parameter is set to {{true}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AuthenticationRequestsRejected",
+        "access": "readOnly",
+        "description": "Specifies the number of authentication requests received by the Femto Application Platform that were rejected. The counter will be reset whenever the device reboots or the {{param|Enable}} parameter is set to {{true}}.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object contains parameters related to the monitoring of the Femtozone Application Platform and the Femtozone APIs.",
+    "children": []
+  }
+}

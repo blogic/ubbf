@@ -1,0 +1,31 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Schedules.",
+  "object": {
+    "path": "Device.Schedules.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.18",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the scheduling. If the scheduling is disabled then the status of any enabled {{object|Schedule}} entries will change to {{enum|StackDisabled|Schedule.{i}.Status}}.",
+        "default": "true",
+        "defaultType": "implementation",
+        "type": "boolean"
+      },
+      {
+        "name": "ScheduleNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object is responsible for managing the schedules that are embedded within the Device.",
+    "children": []
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Stats.",
+  "object": {
+    "path": "Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Invocations",
+        "access": "readOnly",
+        "description": "Number of invocations of this schedule. This counter does not include suppressed invocations or invocations that were prevented due to an overlap with a previous invocation of this schedule.",
+        "type": "unsignedLong",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Suppressions",
+        "access": "readOnly",
+        "description": "Number of suppressed executions of this schedule.",
+        "type": "unsignedLong",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Overlaps",
+        "access": "readOnly",
+        "description": "Number of executions prevented due to overlaps with a previous invocation of this schedule.",
+        "type": "unsignedLong",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Failures",
+        "access": "readOnly",
+        "description": "Number of failed executions of this schedule. A failed execution is an execution where at least one action failed.",
+        "type": "unsignedLong",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "This object represents the statistics associated with this object.",
+    "children": []
+  }
+}

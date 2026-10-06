@@ -1,0 +1,16 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DSL.BondingGroup.{i}.BondedChannel.{i}.Ethernet.",
+  "object": {
+    "path": "Device.DSL.BondingGroup.{i}.BondedChannel.{i}.Ethernet.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [],
+    "description": "Per-channel {{bibref|G.998.2}} Ethernet-based bonding parameters.",
+    "children": []
+  }
+}

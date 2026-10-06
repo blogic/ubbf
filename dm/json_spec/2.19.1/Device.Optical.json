@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Optical.",
+  "object": {
+    "path": "Device.Optical.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "InterfaceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object models a generic optical interface. It defines an {{object|Interface}} object that models a layer 1 optical interface that is capable of transporting Ethernet packets. For historical reasons, the data model definition is based on parts of {{bibref|G.988}}. However, it is not intended to model anything specific to IEEE PON or ITU-T PON technologies. Note that this object is not intended to model the optical transceiver either.",
+    "children": []
+  }
+}

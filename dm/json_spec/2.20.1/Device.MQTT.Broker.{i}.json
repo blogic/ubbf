@@ -1,0 +1,158 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.MQTT.Broker.{i}.",
+  "object": {
+    "path": "Device.MQTT.Broker.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "BrokerNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "The textual name of the MQTT broker.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Allows to enable or disable the MQTT broker.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the status of the MQTT broker. {{enum}} The \"{{enum|Error_Misconfigured}}\" value indicates that a necessary configuration value is undefined or invalid. The \"{{enum|Error}}\" value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "IPVersion",
+        "access": "readWrite",
+        "description": "Specifies the IP protocol version, following the definitions in {{bibref|IANA-ipversionnumbers}}. Valid values are: {{range}}.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "ranges": [
+          [
+            4,
+            4
+          ],
+          [
+            6,
+            6
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "version": "2.20"
+      },
+      {
+        "name": "TransportProtocol",
+        "access": "readWrite",
+        "description": "Indicates the transport protocol to be used for the MQTT broker connection.",
+        "default": "TLS",
+        "defaultType": "object",
+        "type": "string",
+        "enumerationRef": "#.Capabilities.TransportProtocolSupported",
+        "version": "2.20"
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "Port used by the MQTT Broker.",
+        "default": "1883",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "If {{empty}} is specified, the CPE MUST bind the MQTT broker to all available interfaces, which depends on the value of the {{param|IPVersion}} parameter. Meaning that the broker will bind to an IPv4 address, an IPv6 address, or both.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Username",
+        "access": "readWrite",
+        "description": "User name used to authenticate the MQTT clients, which connect to the MQTT broker. If this parameter is {{empty}} no authentication is used.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Password",
+        "access": "readWrite",
+        "description": "Password used used to authenticate the MQTT clients, which connect to the MQTT broker. This password is only used if {{param|Username}} is not {{empty}}.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Certificate",
+        "access": "readWrite",
+        "description": "Specifies the server certificate to be presented by the server during the TLS handshake. This certificate is used to authenticate the server to remote clients, ensuring that the clients are connecting to a legitimate server. The server certificate must be issued by a trusted Certificate Authority (CA) and should match the server's private key. This parameter is applicable only when a TLS session is being used.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.Certificate.",
+          "targetType": "row"
+        },
+        "version": "2.20"
+      },
+      {
+        "name": "CABundle",
+        "access": "readWrite",
+        "description": "Specifies the group of CA certificate(s) that the server must use to validate the certificate presented by the remote client. These CA certificates form a trust chain that the client certificate must match, ensuring that only clients with trusted certificates can establish a connection. This parameter supports multiple CA certificates to accommodate different client certificate issuers. This parameter is applicable only when a TLS session is being used.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.CABundle.",
+          "targetType": "row"
+        },
+        "version": "2.20"
+      },
+      {
+        "name": "BridgeNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "MQTT broker table. Contains a list of configured MQTT brokers.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

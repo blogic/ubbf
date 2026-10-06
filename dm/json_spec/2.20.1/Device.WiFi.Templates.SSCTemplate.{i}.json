@@ -1,0 +1,62 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.WiFi.Templates.SSCTemplate.{i}.",
+  "object": {
+    "path": "Device.WiFi.Templates.SSCTemplate.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "SSCEnable",
+    "numEntriesParameter": "SSCTemplateNumberOfEntries",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.20"
+      },
+      {
+        "name": "SSCTemplateID",
+        "access": "writeOnceReadOnly",
+        "description": "Static and persistent ID element. At most one {{object}} instance can exist with a given value for {{param}}.",
+        "type": "string"
+      },
+      {
+        "name": "SSCEnable",
+        "access": "readWrite",
+        "description": "If set to {{false}}, then all BSSs that are linked with this {{object}} are disabled, which means that these BSSs cease to offer service.",
+        "type": "boolean"
+      },
+      {
+        "name": "VID",
+        "access": "readWrite",
+        "description": "The VLAN ID (VID) for all BSSs that are part of this {{object}}. A value of 0 indicates that no VLAN shall be configured on the BSSs belonging to this {{object}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 4095
+      },
+      {
+        "name": "HaulType",
+        "access": "readWrite",
+        "description": "Indicates the use of the BSSs that are part of this {{object}}. {{list}}{{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "Fronthaul",
+          "Backhaul"
+        ]
+      }
+    ],
+    "description": "Table of Service Set Collection (SSC) templates (SSCTemplate) for Wi-Fi configuration.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "SSCTemplateID"
+      ]
+    }
+  }
+}

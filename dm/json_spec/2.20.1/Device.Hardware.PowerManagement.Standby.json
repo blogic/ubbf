@@ -1,0 +1,79 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.Hardware.PowerManagement.Standby.",
+  "object": {
+    "path": "Device.Hardware.PowerManagement.Standby.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Capability",
+        "access": "readOnly",
+        "description": "Describes the possible standby states of the Device.",
+        "type": "string",
+        "enumerations": [
+          "DeepSleep"
+        ]
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the current operational status of the standby feature.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Scheduled",
+          "Error",
+          "Error_Misconfigured"
+        ]
+      },
+      {
+        "name": "ScheduleRef",
+        "access": "readWrite",
+        "description": "Each reference provides a specific schedule entry that triggers the device to enter and exit standby mode. The referenced schedule defines when the standby transition should occur and when the device should wake up. Overlapping schedules are not allowed.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Schedules.Schedule.",
+          "targetType": "row"
+        },
+        "version": "2.20"
+      },
+      {
+        "name": "StandbyOccurred",
+        "access": "readOnly",
+        "description": "Indicates that the current boot cycle was a result of exiting standby mode. The parameter value is only set during the device boot process.",
+        "type": "boolean",
+        "version": "2.20"
+      },
+      {
+        "name": "NetworkAware",
+        "access": "readOnly",
+        "description": "Indicates that the device is capable of maintaining a network connection and responding to communications via the network connection while in a standby state.",
+        "type": "boolean"
+      },
+      {
+        "name": "TimerAware",
+        "access": "readOnly",
+        "description": "Indicates that the device is capable of maintaining and responding to timers while in a standby state.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object provides the capability for the Device to enter and exit standby. This functionality allows the Device to operate in a low-power condition.",
+    "commands": [
+      {
+        "name": "EnterStandbyMode()",
+        "version": "2.20",
+        "async": "false",
+        "input": [
+          "Mode"
+        ]
+      }
+    ],
+    "children": []
+  }
+}

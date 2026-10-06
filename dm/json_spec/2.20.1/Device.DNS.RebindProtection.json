@@ -1,0 +1,39 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.DNS.RebindProtection.",
+  "object": {
+    "path": "Device.DNS.RebindProtection.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or Disables protection against DNS rebind attacks",
+        "type": "boolean"
+      },
+      {
+        "name": "IPExceptions",
+        "access": "readWrite",
+        "description": "Each item of the list represents an IP address or a CIDR notation that should not be protected against rebind attacks.",
+        "list": true,
+        "type": "string",
+        "maxLength": 45,
+        "dataType": "IPAddress"
+      },
+      {
+        "name": "DomainExceptions",
+        "access": "readWrite",
+        "description": "Each item of the list represents a domain name and its subdomain names that should not be protected against rebind attacks.",
+        "list": true,
+        "type": "string"
+      }
+    ],
+    "description": "The DNS Rebind Protection object contains parameters to enable or disable protection against DNS rebind attacks. It prevents DNS-based malicious software that tries to bypass the browser\u2019s policies, by filtering or refusing DNS answers that point to private or local IP addresses, it stops external sites from reaching LAN devices.",
+    "children": []
+  }
+}

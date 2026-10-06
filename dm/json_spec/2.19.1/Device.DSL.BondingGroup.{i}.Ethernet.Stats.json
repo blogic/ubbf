@@ -1,0 +1,113 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DSL.BondingGroup.{i}.Ethernet.Stats.",
+  "object": {
+    "path": "Device.DSL.BondingGroup.{i}.Ethernet.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "PAFErrors",
+        "access": "readOnly",
+        "description": "Number of PAF errors. Corresponds to {{bibref|TR-159}} ''oBondETH.aEthRxErrors''.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PAFSmallFragments",
+        "access": "readOnly",
+        "description": "Number of PAF Small Fragment events. Corresponds to {{bibref|TR-159}} ''oBondETH.aEthRxSmallFragments''.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PAFLargeFragments",
+        "access": "readOnly",
+        "description": "Number of PAF Large Fragment events. Corresponds to {{bibref|TR-159}} ''oBondETH.aEthRxLargeFragments''.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PAFBadFragments",
+        "access": "readOnly",
+        "description": "Number of PAF Bad Fragment events. Corresponds to {{bibref|TR-159}} ''oBondETH.aEthRxBadFragments''.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PAFLostFragments",
+        "access": "readOnly",
+        "description": "Number of PAF Lost Fragment events. Corresponds to {{bibref|TR-159}} ''oBondETH.aEthRxLostFragments''.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PAFLateFragments",
+        "access": "readOnly",
+        "description": "Number of PAF Late Fragment events.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PAFLostStarts",
+        "access": "readOnly",
+        "description": "Number of PAF Lost Start events. Corresponds to {{bibref|TR-159}} ''oBondETH.aEthRxLostStarts''.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PAFLostEnds",
+        "access": "readOnly",
+        "description": "Number of PAF Lost End events. Corresponds to {{bibref|TR-159}} ''oBondETH.aEthRxLostEnds''.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PAFOverflows",
+        "access": "readOnly",
+        "description": "Number of PAF Overflow events. Corresponds to {{bibref|TR-159}} ''oBondETH.aEthRxOverflows''.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PauseFramesSent",
+        "access": "readOnly",
+        "description": "Number of pause frames sent, i.e. on the transmit side of the interface.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "CRCErrorsReceived",
+        "access": "readOnly",
+        "description": "Number of CRC errors received, i.e. on the receive side of the interface.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AlignmentErrorsReceived",
+        "access": "readOnly",
+        "description": "Number of alignment errors received, i.e. on the receive side of the interface.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ShortPacketsReceived",
+        "access": "readOnly",
+        "description": "Number of short packets received, i.e. on the receive side of the interface.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LongPacketsReceived",
+        "access": "readOnly",
+        "description": "Number of long packets received, i.e. on the receive side of the interface.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "OverflowErrorsReceived",
+        "access": "readOnly",
+        "description": "Number of overflow errors received, i.e. on the receive side of the interface.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "FramesDropped",
+        "access": "readOnly",
+        "description": "Number of frames dropped, e.g. because the receive queue is full.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "{{bibref|G.998.2}} Ethernet-based bonding statistics. These relate to the {{bibref|G.998.2}} PME (Physical Medium Entity) Aggregation Function (PAF) and to its upper layer interface. PAF lower layer interface statistics are in the {{object|##.BondedChannel.{i}.Ethernet.Stats}} objects. The CPE MUST reset the Stats parameters either when the interface becomes operationally down due to a previous administrative down (i.e. the interface's {{param|##.Status}} parameter transitions to a down state after the interface is disabled) or when the interface becomes administratively up (i.e. the interface's {{param|##.Enable}} parameter transitions from {{false}} to {{true}}). Administrative and operational interface status is discussed in {{bibref|TR-181i2|section 4.2.2}}.",
+    "children": []
+  }
+}

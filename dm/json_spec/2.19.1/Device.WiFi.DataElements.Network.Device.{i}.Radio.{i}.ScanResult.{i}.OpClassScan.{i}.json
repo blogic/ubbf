@@ -1,0 +1,36 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanResult.{i}.OpClassScan.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanResult.{i}.OpClassScan.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "OpClassScanNumberOfEntries",
+    "version": "2.14",
+    "parameters": [
+      {
+        "name": "OperatingClass",
+        "access": "readOnly",
+        "description": "The Operating Class per {{bibref|802.11ax|Table E-4}} of the OpClass and Channel tuple scanned by the Radio. For 2.4GHz and 5GHz bands, only 20MHz Operating Classes are valid. Note that the Operating Class identifies the band and channel width.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "ChannelScanNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The Operating Class of neighboring Access Points discovered by a Radio during a channel scan.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "OperatingClass"
+      ]
+    }
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DSL.Diagnostics.",
+  "object": {
+    "path": "Device.DSL.Diagnostics.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [],
+    "description": "The DSL Diagnostics object.",
+    "commands": [
+      {
+        "name": "ADSLLineTest()",
+        "version": "2.12",
+        "async": "true",
+        "input": [
+          "Interface"
+        ],
+        "output": [
+          "Status",
+          "ACTPSDds",
+          "ACTPSDus",
+          "ACTATPds",
+          "ACTATPus",
+          "HLINSCds",
+          "HLINSCus",
+          "HLINGds",
+          "HLINGus",
+          "HLOGGds",
+          "HLOGGus",
+          "HLOGpsds",
+          "HLOGpsus",
+          "HLOGMTds",
+          "HLOGMTus",
+          "LATNpbds",
+          "LATNpbus",
+          "SATNds",
+          "SATNus",
+          "HLINpsds",
+          "HLINpsus",
+          "QLNGds",
+          "QLNGus",
+          "QLNpsds",
+          "QLNpsus",
+          "QLNMTds",
+          "QLNMTus",
+          "SNRGds",
+          "SNRGus",
+          "SNRpsds",
+          "SNRpsus",
+          "SNRMTds",
+          "SNRMTus",
+          "BITSpsds",
+          "BITSpsus"
+        ]
+      },
+      {
+        "name": "SELTUER()",
+        "version": "2.13",
+        "async": "true",
+        "input": [
+          "Interface",
+          "UERMaxMeasurementDuration"
+        ],
+        "output": [
+          "Status",
+          "ExtendedBandwidthOperation",
+          "UER",
+          "UERScaleFactor",
+          "UERGroupSize",
+          "UERVar"
+        ]
+      },
+      {
+        "name": "SELTQLN()",
+        "version": "2.13",
+        "async": "true",
+        "input": [
+          "Interface",
+          "QLNMaxMeasurementDuration"
+        ],
+        "output": [
+          "Status",
+          "ExtendedBandwidthOperation",
+          "QLN",
+          "QLNGroupSize"
+        ]
+      },
+      {
+        "name": "SELTP()",
+        "version": "2.13",
+        "async": "true",
+        "input": [
+          "Interface",
+          "CapacityEstimateEnabling",
+          "CapacitySignalPSD",
+          "CapacityNoisePSD",
+          "CapacityTargetMargin"
+        ],
+        "output": [
+          "Status",
+          "LoopTermination",
+          "LoopLength",
+          "LoopTopology",
+          "AttenuationCharacteristics",
+          "TFlogGroupSize",
+          "MissingFilter",
+          "CapacityEstimate"
+        ]
+      }
+    ],
+    "children": []
+  }
+}

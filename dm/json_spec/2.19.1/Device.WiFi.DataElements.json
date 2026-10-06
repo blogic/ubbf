@@ -1,0 +1,16 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.",
+  "object": {
+    "path": "Device.WiFi.DataElements.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.13",
+    "parameters": [],
+    "description": "This object represents the Wi-Fi Alliance Data Elements as defined in {{bibref|DataElements}} with extended capabilities in additional objects whose names begin with MultiAP.",
+    "children": []
+  }
+}

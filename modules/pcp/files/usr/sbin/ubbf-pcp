@@ -1,0 +1,428 @@
+#!/usr/bin/ucode
+'use strict';
+
+import * as uloop from 'uloop';
+import * as uci from 'uci';
+import * as ubus from 'ubus';
+import * as socket from 'socket';
+import * as fs from 'fs';
+import * as pcp from 'pcp';
+import { log_init, log_info, log_warn, log_err } from 'ubbf.utils.logging';
+
+log_init('ubbf-pcp');
+
+// Read by the get handlers of modules/pcp/handler.uc.
+const STATUS_DIR = '/tmp/ubbf';
+const STATUS_PATH = `${STATUS_DIR}/pcp-status.json`;
+
+const RETRY_MS = 30000;
+const HEARTBEAT_MS = 30000;
+const EVENT_DELAY_MS = 2000;
+
+// PCP result codes, RFC 6887 section 7.4
+const RESULT_UNSUPP_VERSION = 1;
+const RESULT_NOT_AUTHORIZED = 2;
+const RESULT_UNSUPP_OPCODE = 4;
+const RESULT_UNSUPP_OPTION = 5;
+
+let servers = {};
+let mappings = {};
+let server_results = {};
+let mapping_results = {};
+let status_written;
+let event_timer;
+let server_restart;
+
+function status_write() {
+	let text = sprintf('%J\n', { servers: server_results, mappings: mapping_results });
+	if (text == status_written)
+		return;
+
+	fs.mkdir(STATUS_DIR, 0755);
+	if (!fs.writefile(`${STATUS_PATH}.tmp`, text) || !fs.rename(`${STATUS_PATH}.tmp`, STATUS_PATH)) {
+		log_err('cannot write %s', STATUS_PATH);
+		return;
+	}
+	status_written = text;
+}
+
+/**
+ * Returns the source address the kernel picks to reach an address.
+ *
+ * @param {string} addr - Numeric address of the PCP server
+ * @returns {string|null} Source address
+ */
+function route_source(addr) {
+	let family = (length(iptoarr(addr) ?? []) == 4) ? socket.AF_INET : socket.AF_INET6;
+	let sock = socket.create(family, socket.SOCK_DGRAM);
+	if (!sock)
+		return null;
+
+	let src = null;
+	if (sock.connect(socket.sockaddr({ address: addr, port: 5351 })))
+		src = sock.sockname()?.address;
+
+	sock.close();
+	return src;
+}
+
+/**
+ * Returns the netifd interface that holds an address, for
+ * Client.WANInterface.
+ *
+ * @param {string} addr - Local address
+ * @returns {string|null} Interface name
+ */
+function interface_by_address(addr) {
+	let dump = ubus.call({ object: 'network.interface', method: 'dump', data: {} });
+
+	for (let iface in dump?.interface ?? []) {
+		for (let a in [ ...(iface['ipv4-address'] ?? []), ...(iface['ipv6-address'] ?? []) ])
+			if (a.address == addr)
+				return iface.interface;
+	}
+
+	return null;
+}
+
+function mapping_result_set(m, result) {
+	mapping_results[m.path] = result;
+
+	if (result.status != 'Enabled')
+		log_warn('mapping %s: %s%s', m.path, result.status,
+			result.reason ? ` (${result.reason})` : '');
+}
+
+/**
+ * Maps a flow state of pcp.so to the TR-181 mapping Status.
+ *
+ * @param {object} info - Flow info from the flow change callback
+ * @returns {object} Result for the status file
+ */
+function flow_result(info) {
+	if (info.state == 'succeeded' || info.state == 'partial')
+		return {
+			status: 'Enabled',
+			external_ip: info.external_ip ?? '',
+			external_port: info.external_port ?? 0
+		};
+
+	if (info.state == 'processing')
+		return { status: 'Error', reason: 'no answer from the server yet' };
+
+	if (info.result_code > 0)
+		return { status: 'Error_PCPErrorCodeReceived', error_code: info.result_code };
+
+	return { status: 'Error', reason: info.state };
+}
+
+/**
+ * Derives the TR-181 Server.Status from the library state and the
+ * result codes of its mappings.
+ *
+ * @param {object} entry - Server entry
+ * @returns {string} Status
+ */
+function server_status(entry) {
+	for (let name, flow in entry.flows) {
+		let code = mapping_results[flow.path]?.error_code;
+		if (code == RESULT_NOT_AUTHORIZED)
+			return 'Error_NotAuthorized';
+		if (code == RESULT_UNSUPP_VERSION || code == RESULT_UNSUPP_OPCODE || code == RESULT_UNSUPP_OPTION)
+			return 'Error_Unsupported';
+	}
+
+	let state = entry.ctx?.server_status(entry.id);
+	if (state?.state == 'working')
+		return 'Enabled';
+	if (state?.state == 'not_working')
+		return 'Error_Timeout';
+	return 'Connecting';
+}
+
+function server_result_update(entry) {
+	let result = server_results[entry.config.path] ?? {};
+
+	if (entry.ctx) {
+		let state = entry.ctx.server_status(entry.id);
+		result.status = server_status(entry);
+		result.version = state?.version ?? 0;
+	}
+
+	for (let name, flow in entry.flows) {
+		let ext = mapping_results[flow.path]?.external_ip;
+		if (ext && ext != '::' && ext != '0.0.0.0')
+			result.external_ip = ext;
+	}
+
+	server_results[entry.config.path] = result;
+}
+
+function timer_arm(entry, timeout_ms) {
+	if (!entry.timer)
+		return;
+
+	// pulse() returns 0 when nothing is pending; the heartbeat keeps the
+	// server state current without waking the daemon ten times a second
+	entry.timer.set(timeout_ms > 0 ? min(max(timeout_ms, 10), HEARTBEAT_MS) : HEARTBEAT_MS);
+}
+
+function entry_pulse(entry) {
+	timer_arm(entry, entry.ctx.pulse());
+	server_result_update(entry);
+	status_write();
+}
+
+/**
+ * Builds the request of one mapping section.
+ *
+ * @param {object} m - UCI section of a mapping or peer
+ * @param {object} server - UCI section of its server
+ * @returns {object} Options for ctx.new_flow()
+ */
+function flow_options(m, server) {
+	let lifetime = +(m.lifetime ?? 0);
+
+	// TR-181 Lifetime 0 is a permanent mapping; PreferredLifetime of the
+	// server is then the lease the client requests and renews
+	if (lifetime == 0)
+		lifetime = +(server.preferred_lifetime ?? 0);
+
+	let opts = {
+		internal_port: +m.internal_port,
+		protocol: +m.protocol,
+		lifetime,
+		third_party: m.third_party,
+		suggested_ip: m.suggested_ip,
+		suggested_port: (m.suggested_port != null) ? +m.suggested_port : null,
+		filters: []
+	};
+
+	if (m['.type'] == 'peer') {
+		opts.remote_ip = m.remote_ip;
+		opts.remote_port = +m.remote_port;
+	}
+
+	for (let f in (type(m.filter) == 'array') ? m.filter : []) {
+		let parts = split(f, '/');
+		push(opts.filters, { ip: parts[0], prefix: +parts[1], port: +parts[2] });
+	}
+
+	return opts;
+}
+
+function flow_start(entry, name, m) {
+	if (m.invalid)
+		return mapping_result_set(m, { status: 'Error', reason: m.invalid });
+
+	let flow = entry.ctx.new_flow(flow_options(m, entry.config));
+	if (!flow)
+		return mapping_result_set(m, { status: 'Error', reason: 'the request cannot be built' });
+
+	entry.flows[name] = { flow, path: m.path };
+	entry.by_id[flow.id()] = name;
+	mapping_results[m.path] = { status: 'Error', reason: 'no answer from the server yet' };
+	log_info('mapping %s: %s port %s protocol %s', m.path, m['.type'], m.internal_port, m.protocol);
+}
+
+function flow_stop(entry, name) {
+	let flow = entry.flows[name];
+	if (!flow)
+		return;
+
+	delete entry.by_id[flow.flow.id()];
+	flow.flow.close();
+	delete entry.flows[name];
+}
+
+function server_mappings_start(entry) {
+	for (let name, m in mappings)
+		if (m.server == entry.name)
+			flow_start(entry, name, m);
+}
+
+function server_stop(entry) {
+	if (entry.timer)
+		entry.timer.cancel();
+	if (entry.retry)
+		entry.retry.cancel();
+	if (entry.fd_handle)
+		entry.fd_handle.delete();
+	if (entry.ctx)
+		entry.ctx.close(true);
+
+	entry.timer = entry.retry = entry.fd_handle = entry.ctx = null;
+	entry.flows = {};
+	entry.by_id = {};
+}
+
+/**
+ * Creates the PCP context of a server and requests its mappings. A
+ * server that cannot be added is tried again later: at boot the WAN is
+ * often not up when the daemon starts.
+ *
+ * @param {object} entry - Server entry
+ */
+function server_start(entry) {
+	let server = entry.config;
+	let ctx = pcp.create();
+	if (!ctx) {
+		log_err('server %s: cannot create a PCP context', server.path);
+		return;
+	}
+
+	let added = ctx.add_server(server.address, +(server.version ?? 2));
+	if (added?.id == null) {
+		ctx.close(false);
+		let status = (added?.error == 'resolve') ? 'Error_HostNameNotResolved' : 'Error_NetworkFailure';
+		server_results[server.path] = { status };
+		for (let name, m in mappings)
+			if (m.server == entry.name)
+				mapping_result_set(m, { status: 'Error', reason: `server ${status}` });
+		log_warn('server %s: %s %s, trying again in %d s', server.path, server.address,
+			status, RETRY_MS / 1000);
+		entry.retry = uloop.timer(RETRY_MS, () => server_restart(entry));
+		status_write();
+		return;
+	}
+
+	entry.ctx = ctx;
+	entry.id = added.id;
+	entry.src = route_source(added.address);
+
+	server_results[server.path] = {
+		status: 'Connecting',
+		address: added.address,
+		additional: join(',', added.additional ?? []),
+		wan_interface: entry.src ? interface_by_address(entry.src) : null
+	};
+
+	ctx.set_flow_change_cb((id, info) => {
+		let name = entry.by_id[id];
+		let m = mappings[name];
+		if (m)
+			mapping_result_set(m, flow_result(info));
+	});
+
+	entry.fd_handle = uloop.handle(ctx.socket(), () => entry_pulse(entry), uloop.ULOOP_READ);
+	entry.timer = uloop.timer(10, () => entry_pulse(entry));
+
+	log_info('server %s: %s (source %s)', server.path, added.address, entry.src ?? 'unknown');
+	server_mappings_start(entry);
+	status_write();
+}
+
+server_restart = function(entry) {
+	server_stop(entry);
+	server_start(entry);
+};
+
+/**
+ * Checks each server after an interface event: one that failed is tried
+ * again, one whose route now uses another source address is rebuilt,
+ * because the library fixes the source address when the server is added.
+ */
+function interfaces_changed() {
+	event_timer = null;
+
+	for (let name, entry in servers) {
+		let address = server_results[entry.config.path]?.address;
+		if (!entry.ctx || (address && route_source(address) != entry.src)) {
+			log_info('server %s: network changed, requesting the mappings again', entry.config.path);
+			server_restart(entry);
+		}
+	}
+}
+
+function config_read() {
+	let cursor = uci.cursor('/var/run/uci');
+	let cfg = { servers: {}, mappings: {} };
+
+	cursor?.foreach('pcp', null, (s) => {
+		if (s['.type'] == 'server')
+			cfg.servers[s['.name']] = s;
+		else if (s['.type'] == 'mapping' || s['.type'] == 'peer')
+			cfg.mappings[s['.name']] = s;
+	});
+
+	return cfg;
+}
+
+function same(a, b) {
+	return sprintf('%J', a) == sprintf('%J', b);
+}
+
+/**
+ * Applies the UCI configuration: only servers and mappings whose sections
+ * changed are requested again, so a change to one row leaves the other
+ * mappings on the server untouched.
+ */
+function config_apply() {
+	let cfg = config_read();
+
+	for (let name, entry in servers) {
+		if (same(cfg.servers[name], entry.config))
+			continue;
+
+		server_stop(entry);
+		delete server_results[entry.config.path];
+		delete servers[name];
+	}
+
+	for (let name, m in mappings) {
+		if (same(cfg.mappings[name], m))
+			continue;
+
+		if (servers[m.server])
+			flow_stop(servers[m.server], name);
+		delete mapping_results[m.path];
+	}
+
+	let old_mappings = mappings;
+	mappings = cfg.mappings;
+
+	for (let name, server in cfg.servers) {
+		if (servers[name])
+			continue;
+
+		servers[name] = { name, config: server, flows: {}, by_id: {} };
+		server_start(servers[name]);
+	}
+
+	for (let name, m in mappings) {
+		let entry = servers[m.server];
+		if (!entry?.ctx || entry.flows[name] || same(old_mappings[name], m))
+			continue;
+		flow_start(entry, name, m);
+	}
+
+	status_write();
+}
+
+function cleanup() {
+	for (let name, entry in servers)
+		server_stop(entry);
+
+	fs.unlink(STATUS_PATH);
+}
+
+uloop.init();
+
+uloop.signal('SIGHUP', () => {
+	log_info('reloading the configuration');
+	config_apply();
+});
+
+ubus.listener('network.interface', () => {
+	if (event_timer)
+		event_timer.set(EVENT_DELAY_MS);
+	else
+		event_timer = uloop.timer(EVENT_DELAY_MS, interfaces_changed);
+});
+
+config_apply();
+log_info('started with %d server(s)', length(servers));
+
+uloop.run();
+
+cleanup();

@@ -1,0 +1,38 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.WiFi.AFC.DeviceDescriptor.",
+  "object": {
+    "path": "Device.WiFi.AFC.DeviceDescriptor.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "SerialNumber",
+        "access": "readOnly",
+        "description": "Device serial number for this AP or Fixed Client Device.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "CertificationID",
+        "access": "readWrite",
+        "description": "Specifies the certification ID of the AP or Fixed Client Device, as defined in {{bibref|AFCSDI|Table 8. CertificationId object}}.",
+        "type": "string",
+        "maxLength": 128
+      },
+      {
+        "name": "RulesetID",
+        "access": "readWrite",
+        "description": "Identifier for the regulatory ruleset applicable to this device. For example, US_47_CFR_PART_15_SUBPART_E for US, CA_RES_DBS-06 for CA as per {{bibref|AFCSDI|Table 8. CertificationId object}}.",
+        "type": "string",
+        "maxLength": 128
+      }
+    ],
+    "description": "This object contains the information of an AP or Fixed Client Device used by the AFC system.",
+    "children": []
+  }
+}

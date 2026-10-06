@@ -1,0 +1,45 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.MemoryStatus.",
+  "object": {
+    "path": "Device.DeviceInfo.MemoryStatus.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Total",
+        "access": "readOnly",
+        "description": "The total physical volatile RAM, in {{units}}, installed on the device.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Free",
+        "access": "readOnly",
+        "description": "The free physical volatile RAM, in {{units}}, currently available on the device.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "TotalPersistent",
+        "access": "readOnly",
+        "description": "The sum total physical Non-Volatile Memory (NVM), in {{units}}, installed on the device. This memory persists across reboots and can be used by the system, applications, or users.",
+        "type": "unsignedInt",
+        "version": "2.15"
+      },
+      {
+        "name": "FreePersistent",
+        "access": "readOnly",
+        "description": "The sum total free physical Non-Volatile Memory (NVM), in {{units}}, currently available on the device. This memory persists across reboots and is available for use by the system, applications, or users.",
+        "type": "unsignedInt",
+        "version": "2.15",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "Status of the device's physical memory.",
+    "children": []
+  }
+}

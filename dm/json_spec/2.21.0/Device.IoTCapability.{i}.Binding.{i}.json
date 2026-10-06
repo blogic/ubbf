@@ -1,0 +1,62 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.IoTCapability.{i}.Binding.{i}.",
+  "object": {
+    "path": "Device.IoTCapability.{i}.Binding.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "BindingNumberOfEntries",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.20"
+      },
+      {
+        "name": "FriendlyName",
+        "access": "readWrite",
+        "description": "Friendly name for this binding.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Description",
+        "access": "readWrite",
+        "description": "Description of the binding's intent and function.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "When {{true}}, the binding is active; otherwise, no data flow occurs and the Value parameter of {{param|ControlIoTCapability}} is not updated.",
+        "type": "boolean"
+      },
+      {
+        "name": "ControlIoTCapability",
+        "access": "readWrite",
+        "description": "A valid {{param}} is a reference to a Control IoTCapability in the {{object|##.IoTCapability}} table. Setting {{param}} to a Sensor IoTCapability MUST fail. It references the Control IoTCapability to use as the binding destination on which the Agent updates the Value parameter. As a mountable object {{object|##.IoTCapability}} may also be mounted on one of the following mountpoints: * {{object|##.Node.{i}.}}, * {{object|##.ProxiedDevice.{i}.}}, * {{object|##.ProxiedDevice.{i}.Node.{i}.}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.IoTCapability.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "This {{object}} only exists in a Sensor IoTCapability. Adding a {{object}} instance to a Control IoTCapability MUST fail. Each entry in this table describes the link between this Sensor IoTCapability and a specific Control IoTCapability. When a Sensor IoT Capability is bound to a Control IoT Capability, then for each Value parameter updates of the Sensor IoTCapability, the Agent evaluates the needs to update the Value parameter of the bound Control IoTCapability.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

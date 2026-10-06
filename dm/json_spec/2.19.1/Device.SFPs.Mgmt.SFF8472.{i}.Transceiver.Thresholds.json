@@ -1,0 +1,149 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Thresholds.",
+  "object": {
+    "path": "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Thresholds.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "HighTempAlarm",
+        "access": "readOnly",
+        "description": "Temperature, measured in {{units}}, at which a high temperature alarm will be triggered.",
+        "type": "int",
+        "minInclusive": -274
+      },
+      {
+        "name": "HighTempWarning",
+        "access": "readOnly",
+        "description": "Temperature, measured in {{units}}, at which a high temperature warning will be triggered.",
+        "type": "int",
+        "minInclusive": -274
+      },
+      {
+        "name": "LowTempWarning",
+        "access": "readOnly",
+        "description": "Temperature, measured in {{units}}, below which a low temperature warning will be triggered.",
+        "type": "int",
+        "minInclusive": -274
+      },
+      {
+        "name": "LowTempAlarm",
+        "access": "readOnly",
+        "description": "Temperature, measured in {{units}}, below which a low temperature alarm will be triggered.",
+        "type": "int",
+        "minInclusive": -274
+      },
+      {
+        "name": "HighVccAlarm",
+        "access": "readOnly",
+        "description": "Voltage, measured in {{units}}, above which a high Vcc alarm will be triggered.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "HighVccWarning",
+        "access": "readOnly",
+        "description": "Voltage, measured in {{units}}, above which a high Vcc warning will be triggered.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "LowVccWarning",
+        "access": "readOnly",
+        "description": "Voltage, measured in {{units}}, below which a low Vcc warning will be triggered.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "LowVccAlarm",
+        "access": "readOnly",
+        "description": "Voltage, measured in {{units}}, below which a low Vcc alarm will be triggered.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "HighTxBiasAlarm",
+        "access": "readOnly",
+        "description": "Tx Bias, current measured in {{units}}, above which a High Tx Bias alarm will be triggered.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "HighTxBiasWarning",
+        "access": "readOnly",
+        "description": "Tx Bias, current measured in {{units}}, above which a High Tx Bias warning will be triggered.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LowTxBiasWarning",
+        "access": "readOnly",
+        "description": "Tx Bias, current measured in {{units}}, below which a Low Tx Bias warning will be triggered.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LowTxBiasAlarm",
+        "access": "readOnly",
+        "description": "Tx Bias, current measured in {{units}}, below which a Low Tx Bias alarm will be triggered.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "HighTxPowerAlarm",
+        "access": "readOnly",
+        "description": "Tx Power, measured in {{units}}, above which a High Tx Power alarm will be triggered.",
+        "type": "int"
+      },
+      {
+        "name": "HighTxPowerWarning",
+        "access": "readOnly",
+        "description": "Tx Power, measured in {{units}}, above which a High Tx Power warning will be triggered.",
+        "type": "int"
+      },
+      {
+        "name": "LowTxPowerWarning",
+        "access": "readOnly",
+        "description": "Tx Power, measured in {{units}}, below which a Low Tx Power warning will be triggered.",
+        "type": "int"
+      },
+      {
+        "name": "LowTxPowerAlarm",
+        "access": "readOnly",
+        "description": "Tx Power, measured in {{units}}, below which a Low Tx Power alarm will be triggered.",
+        "type": "int"
+      },
+      {
+        "name": "HighRxPowerAlarm",
+        "access": "readOnly",
+        "description": "Rx Power, measured in {{units}}, above which a High Rx Power alarm will be triggered.",
+        "type": "int"
+      },
+      {
+        "name": "HighRxPowerWarning",
+        "access": "readOnly",
+        "description": "Rx Power, measured in {{units}}, above which a High Rx Power warning will be triggered.",
+        "type": "int"
+      },
+      {
+        "name": "LowRxPowerWarning",
+        "access": "readOnly",
+        "description": "Rx Power, measured in {{units}}, below which a Low Rx Power warning will be triggered.",
+        "type": "int"
+      },
+      {
+        "name": "LowRxPowerAlarm",
+        "access": "readOnly",
+        "description": "Rx Power, measured in {{units}}, below which a Low Rx Power alarm will be triggered.",
+        "type": "int"
+      }
+    ],
+    "description": "Each alarm and warning quantity has a corresponding high alarm, low alarm, high warning and low warning threshold. These factory preset values allows the determination of when a particular value is outside of \u201cnormal\u201d limits as determined by the transceiver manufacturer. It is assumed that these values will vary with different technologies and different implementations and are vendor specific. The values here represent the values after any required calibration. See {{bibref|SFF-8472|Table 9-5}}.",
+    "children": []
+  }
+}

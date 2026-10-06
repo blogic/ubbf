@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.BASAPM.",
+  "object": {
+    "path": "Device.BASAPM.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "MeasurementEndpointNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object represents the objects necessary to manage and control the functionality for tests that utilize the Broadband Access Service Attributes and Performance Metrics measurement test framework as defined in by {{bibref|TR-304}}.",
+    "children": []
+  }
+}

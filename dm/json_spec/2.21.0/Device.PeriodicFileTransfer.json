@@ -1,0 +1,82 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.PeriodicFileTransfer.",
+  "object": {
+    "path": "Device.PeriodicFileTransfer.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Globally enables or disables the entire file transfer service managed by this object. When disabled, no file transfers will occur, regardless of individual profile or transfer configurations.",
+        "type": "boolean"
+      },
+      {
+        "name": "ProtocolsSupported",
+        "access": "readOnly",
+        "description": "Indicates the protocols that are supported.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "HTTP",
+          "USPEventNotif"
+        ]
+      },
+      {
+        "name": "TypesSupported",
+        "access": "readWrite",
+        "description": "Indicates the file types that are supported for upload.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "VendorLogFile",
+          "ProcessFaults",
+          "KernelFaults",
+          "LogRotate"
+        ]
+      },
+      {
+        "name": "HTTPCompressionsSupported",
+        "access": "readOnly",
+        "description": "Indicates the HTTP Compression mechanism(s) supported by this Device for the purposes of transferring the data.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "GZIP",
+          "Compress",
+          "Deflate"
+        ]
+      },
+      {
+        "name": "HTTPMethodsSupported",
+        "access": "readOnly",
+        "description": "Indicates the HTTP method(s) supported by this Device for the purposes of transferring data.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "POST",
+          "PUT"
+        ]
+      },
+      {
+        "name": "ProfileNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TransferNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object serves as the central control for managing file uploads to a remote server. It allows for periodic transfers of various file types, such as logs, crash dumps, and kernel oopses. Individual upload configurations are defined within instances of the {{object|Profile}} object.",
+    "children": []
+  }
+}

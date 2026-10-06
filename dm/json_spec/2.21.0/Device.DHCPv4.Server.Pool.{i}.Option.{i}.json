@@ -1,0 +1,67 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.DHCPv4.Server.Pool.{i}.Option.{i}.",
+  "object": {
+    "path": "Device.DHCPv4.Server.Pool.{i}.Option.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "OptionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this Option table entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Tag",
+        "access": "readWrite",
+        "description": "Option tag as defined in {{bibref|RFC2132}}.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 254
+      },
+      {
+        "name": "Value",
+        "access": "readWrite",
+        "description": "A hexbinary encoded option value.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "minLength": 0,
+        "maxLength": 255
+      },
+      {
+        "name": "Force",
+        "access": "readWrite",
+        "description": "When set to {{true}}, the DHCP server will include this option in a DHCP offer, regardless of whether the client requested it in the Parameter Request List (DHCP Option 55). This can be used to ensure that clients receive certain options, even if not explicitly requested.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.21"
+      }
+    ],
+    "description": "This object specifies the DHCP options that, if enabled, can be returned to clients whose DHCP requests are associated with this pool. The {{param|Force}} parameter determines if the option is always sent or only when requested by the client.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.PeriodicFileTransfer.Stats.",
+  "object": {
+    "path": "Device.PeriodicFileTransfer.Stats.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "UploadSuccessful",
+        "access": "readOnly",
+        "description": "A counter representing the total number of successful file uploads across all transfer tasks since the last system reset or counter reset.",
+        "type": "unsignedLong",
+        "dataType": "StatsCounter64"
+      },
+      {
+        "name": "UploadFailed",
+        "access": "readOnly",
+        "description": "A counter representing the total number of failed file uploads across all transfer tasks since the last system reset or counter reset.",
+        "type": "unsignedLong",
+        "dataType": "StatsCounter64"
+      }
+    ],
+    "description": "This object provides aggregated statistical information about all file upload activities managed by the {{object|Device.PeriodicFileTransfer.}} object.",
+    "children": []
+  }
+}

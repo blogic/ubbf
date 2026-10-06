@@ -1,0 +1,79 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.DeviceInfo.KernelFaults.Stats.{i}.",
+  "object": {
+    "path": "Device.DeviceInfo.KernelFaults.Stats.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "StatsNumberOfEntries",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.21"
+      },
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "The type of the Kernel fault for which this table entry contains the statistics.",
+        "type": "string",
+        "enumerations": [
+          "Unknown",
+          "PageFault",
+          "GeneralProtectionFault",
+          "InvalidOpcode",
+          "DivideError",
+          "DeviceNotAvailable",
+          "DoubleFault",
+          "StackSegmentFault",
+          "AlignmentCheck",
+          "MachineCheck",
+          "MathFault",
+          "Breakpoint",
+          "DebugException",
+          "NMI",
+          "SecurityException",
+          "Oops",
+          "Panic"
+        ],
+        "version": "2.21"
+      },
+      {
+        "name": "LastUpgradeCount",
+        "access": "readOnly",
+        "description": "Total number of Kernel faults, of this type, which occurred since last firmware upgrade.",
+        "type": "unsignedInt",
+        "version": "2.21"
+      },
+      {
+        "name": "PreviousBootCount",
+        "access": "readOnly",
+        "description": "The number of Kernel faults, of this type, which occurred during the previous boot cycle.",
+        "type": "unsignedInt",
+        "version": "2.21"
+      },
+      {
+        "name": "CurrentBootCount",
+        "access": "readOnly",
+        "description": "The number of Kernel faults, of this type, which have occurred during the current boot cycle.",
+        "type": "unsignedInt",
+        "version": "2.21"
+      }
+    ],
+    "description": "Each table entry represents statistics for a particular recorded Kernel Fault Type.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

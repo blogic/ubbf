@@ -1,0 +1,33 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.BulkData.Profile.{i}.HTTP.RequestURIParameter.{i}.",
+  "object": {
+    "path": "Device.BulkData.Profile.{i}.HTTP.RequestURIParameter.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "RequestURIParameterNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "Name of the Request-URI parameter. If {{param}} is {{empty}}, the name of the Request-URI parameter is the value of {{param|Reference}}.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Reference",
+        "access": "readWrite",
+        "description": "The value MUST be the path name of a parameter to be used as the Request-URI parameter. If the value of this parameter is empty, then this object is not encoded in the report header.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "This object represents an instance of a parameter to be used in the report header used as part of the HTTP Request-URI transmitted by the CPE to the collection server using the Request-URI in addition to the parameters required by {{template|BULK-DATA-HTTP-QUERY-REF}}.",
+    "children": []
+  }
+}

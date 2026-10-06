@@ -1,0 +1,91 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.SoftwareModules.LocalManagement.Action.{i}.",
+  "object": {
+    "path": "Device.SoftwareModules.LocalManagement.Action.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ActionNumberOfEntries",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.21"
+      },
+      {
+        "name": "Action",
+        "access": "readOnly",
+        "description": "Indicates the type of action performed by the local management system. If the system fails to identify a valid action (i.e., the action or its required information is missing or invalid), the value \"Invalid\" is used. Supported actions are the same as those defined for a Deployment Unit.",
+        "type": "string",
+        "enumerations": [
+          "Invalid",
+          "Install",
+          "Update",
+          "Uninstall"
+        ]
+      },
+      {
+        "name": "UUID",
+        "access": "readOnly",
+        "description": "The unique identifier of the {{object|##.DeploymentUnit.{i}}} targeted by the action, corresponding to {{param|##.DeploymentUnit.{i}.UUID}}. The value is set to {{empty}} if the {{param|Action}} is {{enum|Invalid|Device.SoftwareModules.LocalManagement.Action.{i}.Action}} and the system is unable to retrieve the {{param}} value from the configuration. Note: The referenced {{object|##.DeploymentUnit.{i}}} may no longer be present on the system if the action was {{enum|Uninstall|Device.SoftwareModules.LocalManagement.Action.{i}.Action}}.",
+        "type": "string",
+        "maxLength": 36
+      },
+      {
+        "name": "ExecEnvName",
+        "access": "readOnly",
+        "description": "The name of the execution environment ({{param|##.ExecEnv.{i}.Name}}) on which the action was performed. The value is set to {{empty}} if the {{param|Action}} is {{enum|Invalid|Device.SoftwareModules.LocalManagement.Action.{i}.Action}} and the system is unable to retrieve the {{param}} value from the configuration. Note: The referenced {{object|##.ExecEnv.{i}}} may no longer be present on the system if the action was {{enum|Uninstall|Device.SoftwareModules.LocalManagement.Action.{i}.Action}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "PreviousModuleVersion",
+        "access": "readOnly",
+        "description": "The version of the {{object|##.DeploymentUnit.{i}}} on which the action was performed. The value is set to {{empty}} if the {{param|Action}} is {{enum|Invalid|Device.SoftwareModules.LocalManagement.Action.{i}.Action}} and the system is unable to retrieve the {{param}} value from the configuration. Note: The referenced {{object|##.DeploymentUnit.{i}}} may no longer be present on the system if the action was {{enum|Uninstall|Device.SoftwareModules.LocalManagement.Action.{i}.Action}}.",
+        "type": "string",
+        "maxLength": 32
+      },
+      {
+        "name": "CurrentModuleVersion",
+        "access": "readOnly",
+        "description": "The new version of the {{object|##.DeploymentUnit.{i}}} after an Update action. The value is set to {{empty}} if the {{param|Action}} is {{enum|Invalid|Device.SoftwareModules.LocalManagement.Action.{i}.Action}} and the system is unable to retrieve the {{param}} value from the configuration. This parameter MUST be an empty string if the {{param|Action}} is {{enum|Uninstall|Device.SoftwareModules.LocalManagement.Action.{i}.Action}}.",
+        "type": "string",
+        "maxLength": 32
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the current status of the specified {{param|Action}}.",
+        "type": "string",
+        "enumerations": [
+          "InProgress",
+          "ValidationError",
+          "Success",
+          "Error"
+        ]
+      },
+      {
+        "name": "FaultMessage",
+        "access": "readOnly",
+        "description": "A human-readable, detailed description of the fault detected by the local management system. This parameter provides additional information to assist in understanding and diagnosing the reported fault.",
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "This table lists actions processed by the local management system. Each entry represents either a valid action that was recognized and executed by the local management system, or an unknown action resulting from issues such as invalid or corrupted local management configuration at the firmware level. This table facilitates tracking and diagnosis of problems that may affect the execution of locally managed actions on the device.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

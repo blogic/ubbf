@@ -1,0 +1,37 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.MeasurementAgent.{i}.TaskCapability.{i}.Registry.{i}.",
+  "object": {
+    "path": "Device.LMAP.MeasurementAgent.{i}.TaskCapability.{i}.Registry.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "TaskCapabilityRegistryNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "RegistryEntry",
+        "access": "readOnly",
+        "description": "A URI ({{bibref|RFC3986}}) that is the value of the task registry entry as defined in {{bibref|LMAPREG}} or a value for a task that is understood by the measurement agent, measurement controller and measurement collector.",
+        "type": "string"
+      },
+      {
+        "name": "Roles",
+        "access": "readOnly",
+        "description": "{{list| representing the roles of the function}}",
+        "list": true,
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "This object represents a registry function and an associated list of roles supported by this measurement agent",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "RegistryEntry"
+      ]
+    }
+  }
+}

@@ -1,0 +1,68 @@
+#!/bin/sh
+
+PSTORE_PATH="/sys/fs/pstore/pmsg-ramoops-0"
+SHUTDOWN_PATH="/etc/ubbf/shutdown.json"
+UPGRADE_MARKER="/tmp/ubbf/upgrade"
+OUTPUT_DIR="/tmp/ubbf"
+OUTPUT_FILE="$OUTPUT_DIR/boot-cause.json"
+CYCLE_FILE="$OUTPUT_DIR/boot-cycle"
+
+json_str() {
+	printf '%s' "$1" | tr -d '\000-\037\177' | sed 's/\\/\\\\/g;s/"/\\"/g'
+}
+
+mkdir -p "$OUTPUT_DIR"
+
+cause="LocalReboot"
+tr_reason="Unknown"
+command_key=""
+
+# A ramoops record lives in RAM that only a warm reset keeps. Without one the
+# boot may still be warm (no record written, ramoops absent), so it is
+# Unknown, never Cold.
+cycle="Unknown"
+for f in /sys/fs/pstore/*-ramoops-*; do
+	[ -e "$f" ] && cycle="Warm"
+	break
+done
+echo "$cycle" > "$CYCLE_FILE"
+
+if [ -f "$SHUTDOWN_PATH" ]; then
+	cause=$(jsonfilter -i "$SHUTDOWN_PATH" -e '@.cause' 2>/dev/null)
+	tr_reason=$(jsonfilter -i "$SHUTDOWN_PATH" -e '@.reason' 2>/dev/null)
+	command_key=$(jsonfilter -i "$SHUTDOWN_PATH" -e '@.command_key' 2>/dev/null)
+	[ -n "$cause" ] || cause="RemoteShutdown"
+	[ -n "$tr_reason" ] || tr_reason="Unknown"
+	rm -f "$SHUTDOWN_PATH" "$PSTORE_PATH"
+elif [ -f "$PSTORE_PATH" ]; then
+	pstore_data=$(grep -m1 '^{' "$PSTORE_PATH" 2>/dev/null)
+	if [ -n "$pstore_data" ]; then
+		reason=$(echo "$pstore_data" | jsonfilter -e '@.reason' 2>/dev/null)
+		local=$(echo "$pstore_data" | jsonfilter -e '@.local' 2>/dev/null)
+		command_key=$(echo "$pstore_data" | jsonfilter -e '@.command_key' 2>/dev/null)
+
+		case "$reason" in
+			factoryreset)
+				[ "$local" = "true" ] && cause="LocalFactoryReset" || cause="RemoteFactoryReset"
+				tr_reason="FactoryReset"
+				;;
+			sysupgrade)
+				[ "$local" = "true" ] && cause="LocalSysupgrade" || cause="RemoteSysupgrade"
+				tr_reason="FirmwareUpgrade"
+				;;
+			reboot)
+				[ "$local" = "true" ] && cause="LocalReboot" || cause="RemoteReboot"
+				tr_reason="UserReboot"
+				;;
+		esac
+
+		rm -f "$PSTORE_PATH"
+	fi
+elif [ -f "$UPGRADE_MARKER" ]; then
+	cause="LocalSysupgrade"
+	tr_reason="FirmwareUpgrade"
+	rm -f "$UPGRADE_MARKER"
+fi
+
+printf '{\n\t"cause": "%s",\n\t"reason": "%s",\n\t"command_key": "%s"\n}\n' \
+	"$(json_str "$cause")" "$(json_str "$tr_reason")" "$(json_str "$command_key")" > "$OUTPUT_FILE"

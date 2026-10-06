@@ -1,0 +1,42 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.IEEE1905.Network.AL.{i}.Interface.{i}.GenericPhy.",
+  "object": {
+    "path": "Device.IEEE1905.Network.AL.{i}.Interface.{i}.GenericPhy.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "OUI",
+        "access": "readOnly",
+        "description": "The OUI of the Generic Phy networking technology of the Neighbor's interface. This value is from a Generic Phy response message field as defined in {{bibref|IEEE1905.1a|Table 6-29: Generic Phy Device Information type TLV}}.",
+        "type": "string",
+        "minLength": 6,
+        "maxLength": 6,
+        "pattern": "[0-9A-F]{6}"
+      },
+      {
+        "name": "Variant",
+        "access": "readOnly",
+        "description": "The Variant Index of the Generic Phy networking technology of the Neighbor's interface. This value is from a Generic Phy response message variant index field as defined in {{bibref|IEEE1905.1a|Table 6-29: Generic Phy Device Information type TLV}}.",
+        "type": "hexBinary",
+        "minLength": 1,
+        "maxLength": 1
+      },
+      {
+        "name": "URL",
+        "access": "readOnly",
+        "description": "{{datatype}} to the Generic Phy XML Description of the Generic Phy networking technology of the Neighbor's interface. This value is from a Generic Phy response message URL to Generic Phy field as defined in {{bibref|IEEE1905.1a|Table 6-29: Generic Phy device information type TLV}}.",
+        "type": "string",
+        "maxLength": 2048,
+        "dataType": "URL"
+      }
+    ],
+    "description": "This object represents the GenericPhy for this {{object|##.Interface}} as defined in {{bibref|IEEE1905.1a|Table 6-29: Generic Phy device information type TLV}}.",
+    "children": []
+  }
+}

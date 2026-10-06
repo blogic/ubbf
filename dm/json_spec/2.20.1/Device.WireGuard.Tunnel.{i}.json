@@ -1,0 +1,87 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.WireGuard.Tunnel.{i}.",
+  "object": {
+    "path": "Device.WireGuard.Tunnel.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "TunnelNumberOfEntries",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the tunnel.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the tunnel.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.20"
+      },
+      {
+        "name": "PrivateKey",
+        "access": "readWrite",
+        "description": "The private key for this WireGuard tunnel.",
+        "secured": true,
+        "type": "base64"
+      },
+      {
+        "name": "PublicKey",
+        "access": "readOnly",
+        "description": "The public key for this WireGuard tunnel, corresponding to the {{param|PrivateKey}}.",
+        "type": "base64"
+      },
+      {
+        "name": "ListenPort",
+        "access": "readWrite",
+        "description": "The port on which this WireGuard tunnel will listen for incoming connections. If set to 0, a random port will be chosen by the device.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "PeerReferences",
+        "access": "readWrite",
+        "description": "Each element represents a reference to the peers associated with this {{object}} entry.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Peer.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "InterfaceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "WireGuard Tunnel table, models the WireGuard Tunnel instance and represents the entry point and exit point of the tunnel in relation to the WAN interface. A {{object}} object has one or more {{object|Interface}} objects that further define the sessions or flows within the tunnel.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

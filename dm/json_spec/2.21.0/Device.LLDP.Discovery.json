@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.LLDP.Discovery.",
+  "object": {
+    "path": "Device.LLDP.Discovery.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "DeviceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object is used for managing the discovery of LLDP devices. The CPE MAY, but need not, retain some or all of the information in this object across reboot.",
+    "children": []
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Bridging.Bridge.{i}.STP.",
+  "object": {
+    "path": "Device.Bridging.Bridge.{i}.STP.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables STP on this bridge",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of the STP for this Bridge. The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "Protocol to use.",
+        "type": "string",
+        "enumerations": [
+          "STP",
+          "RSTP"
+        ]
+      },
+      {
+        "name": "BridgePriority",
+        "access": "readWrite",
+        "description": "Value of the priority part of the Bridge Identifier as described in {{bibref|802.1D-2004|Section 17.18.3 Bridge priority}}.",
+        "default": "32768",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 61440
+      },
+      {
+        "name": "HelloTime",
+        "access": "readWrite",
+        "description": "The interval in {{units}} between periodic transmissions of Configuration Messages by Designated Ports as described in {{bibref|802.1D-2004|Section 17.13.6}}.",
+        "default": "200",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 100,
+        "maxInclusive": 1000
+      },
+      {
+        "name": "MaxAge",
+        "access": "readWrite",
+        "description": "The maximum age in {{units}} of the information transmitted by the Bridge when it is the Root Bridge as described in {{bibref|802.1D-2004|Section 17.13.8}}.",
+        "default": "2000",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 600,
+        "maxInclusive": 4000
+      },
+      {
+        "name": "ForwardingDelay",
+        "access": "readWrite",
+        "description": "The minimum delay in {{units}} a port should be listening before entering Forwarding PortState as defined in {{bibref|802.1D-2004|Section 17.29.2}}.",
+        "default": "15",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 4,
+        "maxInclusive": 30
+      }
+    ],
+    "description": "STP (Spanning Tree Algorithm and Protocol) / RSTP (Rapid Spanning Tree Algorithm and Protocol) bridge configuration as defined in {{bibref|802.1D-2004}} and {{bibref|802.1Q-2011}}.",
+    "children": []
+  }
+}

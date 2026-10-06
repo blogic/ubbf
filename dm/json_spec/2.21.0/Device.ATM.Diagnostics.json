@@ -1,0 +1,36 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.ATM.Diagnostics.",
+  "object": {
+    "path": "Device.ATM.Diagnostics.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [],
+    "description": "The ATM Diagnostics object.",
+    "commands": [
+      {
+        "name": "F5Loopback()",
+        "version": "2.12",
+        "async": "true",
+        "input": [
+          "Interface",
+          "NumberOfRepetitions",
+          "Timeout"
+        ],
+        "output": [
+          "Status",
+          "SuccessCount",
+          "FailureCount",
+          "AverageResponseTime",
+          "MinimumResponseTime",
+          "MaximumResponseTime"
+        ]
+      }
+    ],
+    "children": []
+  }
+}

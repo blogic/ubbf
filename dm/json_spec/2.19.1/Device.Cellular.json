@@ -1,0 +1,45 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Cellular.",
+  "object": {
+    "path": "Device.Cellular.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "RoamingEnabled",
+        "access": "readWrite",
+        "description": "Enables or disables roaming.",
+        "type": "boolean"
+      },
+      {
+        "name": "RoamingStatus",
+        "access": "readOnly",
+        "description": "Current roaming status.",
+        "type": "string",
+        "enumerations": [
+          "Home",
+          "Roaming"
+        ]
+      },
+      {
+        "name": "InterfaceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AccessPointNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object models cellular interfaces and access points.",
+    "children": []
+  }
+}

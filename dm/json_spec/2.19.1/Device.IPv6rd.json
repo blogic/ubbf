@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IPv6rd.",
+  "object": {
+    "path": "Device.IPv6rd.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables IPv6rd.",
+        "type": "boolean"
+      },
+      {
+        "name": "InterfaceSettingNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Settings allowing a CPE to derive and route IPv6 Rapid Deployment (6rd) delegated prefixes as specified in {{bibref|RFC5969}}. The 6rd mechanism is intended to be implemented only on what {{bibref|RFC5969}} refers to as ''Customer Edge Routers'', i.e. on gateway devices, that support IPv6 on the LAN side and only have IPv4 connectivity on the WAN side. See the 6rd Theory of Operation {{bibref|TR-181i2|Appendix VI}} for a description of the working of this 6rd data model.",
+    "children": []
+  }
+}

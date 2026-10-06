@@ -1,0 +1,57 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.ONUActivation.",
+  "object": {
+    "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.ONUActivation.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "ONUState",
+        "access": "readOnly",
+        "description": "ONU activation state. {{enum}} See: * {{bibref|G.9807.1|Section C.12}} * {{bibref|G.984.3|Section 10}} * {{bibref|G.987.3|Section 12}} * {{bibref|G.989.3|Section 12}}",
+        "type": "string",
+        "enumerations": [
+          "O1",
+          "O2",
+          "O3",
+          "O2-3",
+          "O4",
+          "O5",
+          "O6",
+          "O7",
+          "O8",
+          "O9"
+        ]
+      },
+      {
+        "name": "VendorID",
+        "access": "readOnly",
+        "description": "Identifies the vendor of the ONU. See {{bibref|G.988|Section 9.1.1}}.",
+        "type": "string",
+        "maxLength": 4
+      },
+      {
+        "name": "SerialNumber",
+        "access": "readOnly",
+        "description": "Represents the combination of the Vendor-ID and the Vendor-specific serial number (VSSN). The parameter shows the serial number in a human readable format. Example: if the vendor ID is ABCD and the VSSN encodes the number 1234568, the value of this parameter is ABCD12345678. See {{bibref|G.988|Section 9.1.1}}.",
+        "type": "string",
+        "maxLength": 12
+      },
+      {
+        "name": "ONUID",
+        "access": "readOnly",
+        "description": "Identifier that the OLT assigns to this ANI during the activation. See: * {{bibref|G.9807.1|Section C.6.1.5.6}} * {{bibref|G.984.3|Section 5.5.2}} * {{bibref|G.987.3|Section 6.4.2}} * {{bibref|G.989.3|Section 6.1.5.6}}",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 1022
+      }
+    ],
+    "description": "This object shows info related to the activation of this ANI by an OLT.",
+    "children": []
+  }
+}

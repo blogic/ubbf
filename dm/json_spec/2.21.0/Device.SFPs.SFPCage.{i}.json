@@ -1,0 +1,86 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.SFPs.SFPCage.{i}.",
+  "object": {
+    "path": "Device.SFPs.SFPCage.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "SFPCageNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The internal name used to identify the SFP Cage instance.",
+        "type": "string"
+      },
+      {
+        "name": "SFPPresent",
+        "access": "readOnly",
+        "description": "The value {{true}} indicates the presence of an SFP in the SFP Cage instance. The value is always {{true}} for a SFF. Note: A value of 0x02 in {{param|SFF8024Identifier}} will also indicate the presence of an SFF.",
+        "type": "boolean"
+      },
+      {
+        "name": "SFF8024Identifier",
+        "access": "readOnly",
+        "description": "This identifier describes the type of SFP and the management protocol as per \"Identifier Value\" listed in {{bibref|SFF-8024|Table 4-1}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "MgmtInterface",
+        "access": "readOnly",
+        "description": "This parameter indicates the management interface used by the SFP. Refer {{bibref|SFF-8024|Table 4-1}} and {{bibref|SFF-8472}}.",
+        "type": "string",
+        "enumerations": [
+          "SFF-8472",
+          "Unknown"
+        ]
+      },
+      {
+        "name": "SFPType",
+        "access": "readOnly",
+        "description": "This value is applicable only when {{param|SFPPresent}} is {{true}}. If the SFP Type cannot be classified, the value is reported as \"Unsupported\".",
+        "type": "string",
+        "enumerationRef": "#.SupportedSFPTypes"
+      },
+      {
+        "name": "SFPReference",
+        "access": "readOnly",
+        "description": "The path to the SFP management object associated with this interface.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.SFPs.Mgmt.SFF8472.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "IsAllowed",
+        "access": "readOnly",
+        "description": "{{true}} if the CPE allows the SFP, {{false}} if the CPE blocks the SFP. See {{object|#.AllowedSFPs}} for what it means for an SFP to be blocked or allowed. The CPE sets this parameter to {{true}} or {{false}} based on the configuration in: - {{param|#.AllowedSFPs.AllowAllSFPs}} - {{object|#.AllowedSFPs.AllowedSFP}} This parameter is only applicable for pluggable SFPs; it's not applicable for built-in modules/SFPs (the CPE should always allow built-in modules/SFPs). This parameter is also only applicable if {{param|SFPPresent}} is {{true}}.",
+        "type": "boolean",
+        "version": "2.21"
+      }
+    ],
+    "description": "This object describes a cage into which an SFP is inserted. This object can also describe an instance of Small Form Factor (SFF) units soldered on to the platform.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

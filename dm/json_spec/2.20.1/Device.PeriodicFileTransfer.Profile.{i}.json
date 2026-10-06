@@ -1,0 +1,57 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.PeriodicFileTransfer.Profile.{i}.",
+  "object": {
+    "path": "Device.PeriodicFileTransfer.Profile.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ProfileNumberOfEntries",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.20"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "The textual name of the profile as assigned by the Device.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Controller",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|.LocalAgent.Controller}} instance that created {{object}}|delete}} The value of this parameter is automatically populated by the USP Agent upon {{object}} creation using the reference to the USP Controller that created the instance. Only the USP Controller referenced by {{param}} parameter will receive a {{event|#.Transfer.{i}.Push!}} Event (assuming it has an associated Subscription) when the Profile has {{param|Protocol}} configured to {{enum|USPEventNotif|Protocol}}, even if another USP Controller has an associated Subscription.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".LocalAgent.Controller.",
+          "targetType": "row"
+        },
+        "version": "2.20"
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "Protocol being used.",
+        "type": "string",
+        "enumerationRef": "#.ProtocolsSupported"
+      }
+    ],
+    "description": "This object defines a reusable profile for configuring file uploads. Each profile specifies the common parameters for transferring files to a remote server, such as the protocol to be used. Multiple transfer tasks ({{object|#.Transfer}}) can reference the same profile.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

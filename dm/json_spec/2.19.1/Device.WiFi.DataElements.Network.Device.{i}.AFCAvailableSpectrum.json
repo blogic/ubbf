@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.AFCAvailableSpectrum.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.AFCAvailableSpectrum.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "AFCAvailableSpectrumInquiryRequest",
+        "access": "readOnly",
+        "description": "One JSON encoded AvailableSpectrumInquiryRequestMessage object as defined in {{bibref|EasyMesh|Section 8.2.5 and Section 17.2.104 Available Spectrum Inquiry Request TLV}}.",
+        "type": "string"
+      },
+      {
+        "name": "AFCAvailableSpectrumInquiryResponse",
+        "access": "readOnly",
+        "description": "One JSON encoded AvailableSpectrumInquiryResponseMessage object as defined in {{bibref|EasyMesh|Section 8.2.5 and Section 17.2.105 Available Spectrum Inquiry Response TLV}}.",
+        "type": "string"
+      }
+    ],
+    "description": "This object contains the Available Spectrum Inquiry request and response message defined by {{bibref|EasyMesh|Section 8.2.5}}. This provides information of 6 GHz spectrum availability as determined by an Automated Frequency Coordination (AFC) system {{bibref|AFCSDI}}.",
+    "children": []
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.Event.{i}.OneOff.",
+  "object": {
+    "path": "Device.LMAP.Event.{i}.OneOff.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "StartTime",
+        "access": "readWrite",
+        "description": "Date and time, based on {{bibref|RFC3339}}, that the {{object}} instance is to begin operation.",
+        "type": "dateTime"
+      }
+    ],
+    "description": "This object defines a one off timer instance.",
+    "children": []
+  }
+}

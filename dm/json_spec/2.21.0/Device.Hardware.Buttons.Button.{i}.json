@@ -1,0 +1,99 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.Hardware.Buttons.Button.{i}.",
+  "object": {
+    "path": "Device.Hardware.Buttons.Button.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ButtonNumberOfEntries",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.21"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "Name of the button.",
+        "type": "string"
+      },
+      {
+        "name": "Label",
+        "access": "readOnly",
+        "description": "The system-defined label for the button, often referencing its DeviceTree label.",
+        "type": "string"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational status of the button.",
+        "type": "string",
+        "enumerations": [
+          "Pressed",
+          "Released",
+          "Error_Misconfigured"
+        ]
+      },
+      {
+        "name": "Location",
+        "access": "readOnly",
+        "description": "The location of the button as the user looks at the front of the device in its typical orientation.",
+        "type": "string",
+        "enumerations": [
+          "Front",
+          "Back",
+          "Left",
+          "Right",
+          "Top",
+          "Bottom"
+        ]
+      },
+      {
+        "name": "InputFile",
+        "access": "readOnly",
+        "description": "Specifies the full path of the input device for the button. (Eg: ''file:///dev/input/event0'') Which MUST use the uri scheme file {{bibref|RFC8089|The file URI Scheme}}.",
+        "type": "string",
+        "maxLength": 2048,
+        "dataType": "FileURI"
+      },
+      {
+        "name": "TriggerConditionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object represents an individual physical button of the device. The button is typically discovered automatically from the system (e.g., via DeviceTree).",
+    "commands": [
+      {
+        "name": "Push()",
+        "async": "true",
+        "input": [
+          "Duration"
+        ]
+      },
+      {
+        "name": "Release()",
+        "async": "true",
+        "input": [
+          "Duration"
+        ]
+      }
+    ],
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Label"
+      ]
+    }
+  }
+}

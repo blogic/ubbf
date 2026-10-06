@@ -1,0 +1,73 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv4.Client.{i}.Retransmission.",
+  "object": {
+    "path": "Device.DHCPv4.Client.{i}.Retransmission.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.18",
+    "parameters": [
+      {
+        "name": "DiscoverInitialTimeout",
+        "access": "readWrite",
+        "description": "Initial delay, expressed in {{units}}, before initiating the first DCHCPDISCOVER message.",
+        "default": "4",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DiscoverMaxTimeout",
+        "access": "readWrite",
+        "description": "Maximum duration, expressed in {{units}}, between two DHCPDISCOVER message retransmission. According to {{bibref|RFC2131|Chapter 4.1}}, the recommended value for this parameter is 64 {{units}}.",
+        "default": "64",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DiscoverMaxDuration",
+        "access": "readWrite",
+        "description": "Maximum duration, expressed in {{units}}, during which the DHCPv4 client is permitted to retransmit DHCPDISCOVER message A value of '0' indicates that no specific maximum duration is set.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RequestInitialTimeout",
+        "access": "readWrite",
+        "description": "Initial delay, expressed in {{units}}, before initiating the first DHCPREQUEST message.",
+        "default": "4",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RequestMaxTimeout",
+        "access": "readWrite",
+        "description": "Maximum duration, expressed in {{units}}, between two DHCPREQUEST message retransmission. According to {{bibref|RFC2131|Chapter 4.1}}, the recommended value for this parameter is 64 {{units}}.",
+        "default": "64",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RequestMaxDuration",
+        "access": "readWrite",
+        "description": "Maximum duration, expressed in {{units}}, during which the DHCPv4 client is permitted to retransmit DHCPREQUEST message. A value of '0' indicates that no specific maximum duration is set.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TimeoutRandomize",
+        "access": "readWrite",
+        "description": "The Randomization factor for the retransmission timeout, in {{units}}, as defined in {{bibref|RFC2131|4.1 Constructing and sending DHCP messages}}. E.g. a timeout of 2000ms with a randomization of 1000 will end up between 1000 and 3000 ms.",
+        "default": "1000",
+        "defaultType": "object",
+        "type": "int"
+      }
+    ],
+    "description": "This object enables the configurion of the DHCPv4 retransmission behavior according to the guidelines described in {{bibref|RFC2131|Chapter 4.1}}.",
+    "children": []
+  }
+}

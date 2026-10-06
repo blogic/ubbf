@@ -1,0 +1,40 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.AnticipatedChannels.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.AnticipatedChannels.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "AnticipatedChannelsNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "OpClass",
+        "access": "readOnly",
+        "description": "The Operating Class per {{bibref|802.11ax|Table E-4}}. Note that the operating class identifies the band and channel width.",
+        "type": "unsignedInt",
+        "maxInclusive": 255,
+        "version": "2.15"
+      },
+      {
+        "name": "ChannelList",
+        "access": "readOnly",
+        "description": "{{list}} The channel numbers in this Operating Class which have anticipated channel preference.",
+        "list": true,
+        "type": "unsignedInt",
+        "maxInclusive": 255,
+        "version": "2.15"
+      }
+    ],
+    "description": "This object contains a table of Wi-Fi 6 {{bibref|802.11ax}} operating classes, and channels within those operating classes, which have anticipated channel preference. Operating Class contains an enumerated value from {{bibref|802.11ax|Table E-4}}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "OpClass"
+      ]
+    }
+  }
+}

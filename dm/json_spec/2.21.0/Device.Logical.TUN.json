@@ -1,0 +1,34 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.Logical.TUN.",
+  "object": {
+    "path": "Device.Logical.TUN.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "InterfaceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "TUN (network TUNnel) virtual interface container object. TUN interfaces are Layer 3 virtual network devices that operate at the IP packet level. They are commonly used for VPN implementations, IP tunneling, and network virtualization scenarios where applications need to handle IP packets directly without dealing with Layer 2 Ethernet framing.",
+    "commands": [
+      {
+        "name": "CreateInterface()",
+        "version": "2.21",
+        "async": "false",
+        "output": [
+          "FileDescriptor",
+          "Interface"
+        ]
+      }
+    ],
+    "children": []
+  }
+}

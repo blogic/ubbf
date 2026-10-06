@@ -1,0 +1,31 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE8021x.Supplicant.{i}.EAPMD5.",
+  "object": {
+    "path": "Device.IEEE8021x.Supplicant.{i}.EAPMD5.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "This parameter enables or disables the supplicant's support for EAP-MD5.",
+        "type": "boolean"
+      },
+      {
+        "name": "SharedSecret",
+        "access": "readWrite",
+        "description": "The shared secret to be exchanged between the supplicant and authenticator.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "802.1x Authentication Supplicant provisioning information used for MD5 shared secret exchange. This object will not exist if EAP-MD5 is not a supported authentication type.",
+    "children": []
+  }
+}

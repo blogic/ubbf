@@ -1,0 +1,30 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.SoftwareModules.LocalManagement.",
+  "object": {
+    "path": "Device.SoftwareModules.LocalManagement.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "SystemName",
+        "access": "readOnly",
+        "description": "A descriptive name for this {{object}}, providing information about the local management system used by the device. This parameter is for informational purposes only.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "ActionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object records actions on SoftwareModules that are managed locally by the device. Locally managed actions are defined and executed by the device firmware, typically during system upgrade or factory reset procedures. These local actions are performed prior to the device accepting any remote action requests on {{object|Device.SoftwareModules}}. As such, they are designed to avoid interference or conflict with remote management operations. After the device firmware has completed its boot process following an upgrade or factory reset, no further locally managed actions are performed by the device.",
+    "children": []
+  }
+}

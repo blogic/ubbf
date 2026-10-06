@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.ZigBee.ZDO.{i}.NodeManager.",
+  "object": {
+    "path": "Device.ZigBee.ZDO.{i}.NodeManager.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "RoutingTableNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The {{object}} object describes the configuration capabilities related for remote management of the ZigBee Area Network as defined in {{bibref|ZigBee2007|section 2.5.2.6 Node Manager}}.",
+    "children": []
+  }
+}

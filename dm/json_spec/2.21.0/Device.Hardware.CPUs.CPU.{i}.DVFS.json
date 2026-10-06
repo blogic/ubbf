@@ -1,0 +1,99 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.Hardware.CPUs.CPU.{i}.DVFS.",
+  "object": {
+    "path": "Device.Hardware.CPUs.CPU.{i}.DVFS.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables Dynamic Voltage and Frequency Scaling (DVFS) for this CPU. This parameter is only applicable if {{param|Supported}} is {{true}}. If {{param|Supported}} is {{false}} and this parameter is {{true}} the {{param|Status}} will be set to {{enum|Unsupported|Status}}. When this parameter is set to {{false}}, the {{param|Status}} will be set to {{enum|Disabled|Status}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the status of Dynamic Voltage and Frequency Scaling (DVFS) for this CPU.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Unsupported"
+        ]
+      },
+      {
+        "name": "Supported",
+        "access": "readOnly",
+        "description": "Indicates whether this CPU supports DVFS.",
+        "type": "boolean"
+      },
+      {
+        "name": "CurrentFrequency",
+        "access": "readOnly",
+        "description": "The current operating frequency of the CPU in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MinFrequency",
+        "access": "readOnly",
+        "description": "The minimum frequency that the CPU hardware is capable of operating at, in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxFrequency",
+        "access": "readOnly",
+        "description": "The maximum frequency that the CPU hardware is capable of operating at, in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ScalingMinFrequency",
+        "access": "readWrite",
+        "description": "The minimum operating frequency allowed for the CPU in {{units}}. This value must be between {{param|MinFrequency}} and {{param|MaxFrequency}}, and part of the {{param|ScalingAvailableFrequencies}} list. This value must be less than {{param|ScalingMaxFrequency}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ScalingMaxFrequency",
+        "access": "readWrite",
+        "description": "The maximum operating frequency allowed for the CPU in {{units}}. This value must be between {{param|MinFrequency}} and {{param|MaxFrequency}}, and part of the {{param|ScalingAvailableFrequencies}} list. This value must be greater than {{param|ScalingMinFrequency}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ScalingAvailableFrequencies",
+        "access": "readOnly",
+        "description": "The available frequencies for CPU scaling in {{units}}.",
+        "list": true,
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ScalingGovernor",
+        "access": "readWrite",
+        "description": "Indicates the CPU frequency governor to be used.",
+        "type": "string",
+        "enumerationRef": "ScalingAvailableGovernors"
+      },
+      {
+        "name": "ScalingAvailableGovernors",
+        "access": "readOnly",
+        "description": "A list of available CPU frequency governors for this CPU.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "conservative",
+          "userspace",
+          "powersave",
+          "ondemand",
+          "performance",
+          "schedutil"
+        ]
+      }
+    ],
+    "description": "Represents the CPU's Dynamic Voltage and Frequency Scaling (DVFS) configuration. DVFS allows the operating voltage and frequency of the CPU to be dynamically adjusted to optimize power consumption and performance based on workload demands.",
+    "children": []
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.MQTT.",
+  "object": {
+    "path": "Device.MQTT.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ClientNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "BrokerNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LogConnectionMessages",
+        "access": "readWrite",
+        "description": "If set to {{true}}, the log will include entries when any MQTT client connects or disconnects. These entries are written to the platform\u2019s default system log facility. This parameter only controls logging of client connection lifecycle events and does not affect logging of other broker activities such as publish, subscribe, or authentication events.",
+        "type": "boolean",
+        "version": "2.21"
+      }
+    ],
+    "description": "MQTT Base object describing all MQTT related parameters and objects.",
+    "children": []
+  }
+}

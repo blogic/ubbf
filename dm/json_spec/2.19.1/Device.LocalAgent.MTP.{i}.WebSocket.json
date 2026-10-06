@@ -1,0 +1,63 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LocalAgent.MTP.{i}.WebSocket.",
+  "object": {
+    "path": "Device.LocalAgent.MTP.{i}.WebSocket.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Interfaces",
+        "access": "readWrite",
+        "description": "{{reference|the {{object|###.IP.Interface}} object instance that this server will use as its host address to receive USP messages}} {{empty}} will bind this server to all interfaces for this device.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "###.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "The port number used by the WebSocket Server to receive USP messages.",
+        "default": "8443",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Path",
+        "access": "readWrite",
+        "description": "The service path that is provided by the WebSocket Server in order to exchange USP messages. The value MUST be used as defined in {{bibref|RFC3986|Section 3.3}}.",
+        "type": "string"
+      },
+      {
+        "name": "EnableEncryption",
+        "access": "readWrite",
+        "description": "When {{true}}, encryption MUST be used for all connections to this MTP instance.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.14"
+      },
+      {
+        "name": "KeepAliveInterval",
+        "access": "readWrite",
+        "description": "The duration in {{units}} between when WebSocket ping control frames are transmitted by the Agent's WebSocket server to the Controller's WebSocket client.",
+        "default": "60",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "version": "2.15"
+      }
+    ],
+    "description": "If the USP Endpoint uses the WebSocket Message Transfer Protocol (MTP) as a WebSocket server, then this object contains WebSocket specific configuration parameters.",
+    "children": []
+  }
+}

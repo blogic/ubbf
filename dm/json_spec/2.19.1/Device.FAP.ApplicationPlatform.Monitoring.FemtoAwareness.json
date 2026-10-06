@@ -1,0 +1,62 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.",
+  "object": {
+    "path": "Device.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "APIAvailable",
+        "access": "readOnly",
+        "description": "Specifies whether the FemtoAwareness API is currently available on this device (the API could be disabled or could have exhausted its resources)",
+        "type": "boolean"
+      },
+      {
+        "name": "APIUsers",
+        "access": "readOnly",
+        "description": "Specifies the current number of Applications using the Femto Awareness API.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "QueueState",
+        "access": "readOnly",
+        "description": "Specifies the state of the Femto Awareness API Queue.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Ready",
+          "Flushed"
+        ]
+      },
+      {
+        "name": "QueueNum",
+        "access": "readOnly",
+        "description": "Specifies the current number of requests waiting in the Femto Awareness API Queue.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "QueueReceived",
+        "access": "readOnly",
+        "description": "Specifies the number of requests in the Femto Awareness API Queue that have been received. The counter will be reset whenever the device reboots or the {{param|#.Enable}} parameter is set to {{true}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "QueueDiscarded",
+        "access": "readOnly",
+        "description": "Specifies the number of requests in the Femto Awareness API Queue that have been discarded. The counter will be reset whenever the device reboots or the {{param|#.Enable}} parameter is set to {{true}}.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object contains parameters related to the Monitoring of the FemtoAwareness API.",
+    "children": []
+  }
+}

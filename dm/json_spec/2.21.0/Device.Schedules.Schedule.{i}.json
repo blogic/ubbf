@@ -1,0 +1,105 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.Schedules.Schedule.{i}.",
+  "object": {
+    "path": "Device.Schedules.Schedule.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ScheduleNumberOfEntries",
+    "version": "2.18",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.18"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Status of the schedule.",
+        "type": "string",
+        "enumerations": [
+          "Active",
+          "Inactive",
+          "StackDisabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "Description",
+        "access": "readWrite",
+        "description": "A description of the schedule (human readable string).",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Day",
+        "access": "readWrite",
+        "description": "{{list|the days on which the schedule is active}} {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ]
+      },
+      {
+        "name": "StartTime",
+        "access": "readWrite",
+        "description": "Start time of the enable schedule in hh:mm format. [hh] refers to a zero-padded hour between 00 and 23. [mm] refers to a zero-padded minute between 00 and 59. Start time is in local time zone.",
+        "type": "string",
+        "maxLength": 5,
+        "pattern": ""
+      },
+      {
+        "name": "Duration",
+        "access": "readWrite",
+        "description": "The duration, in {{units}}, for which the associated schedule is active. If {{param|StartTime}} is not defined, this duration represents the total time the schedule is active during a calendar day. If {{param|StartTime}} is defined, the schedule is active for the specified duration starting from {{param|StartTime}}.",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "InverseMode",
+        "access": "readWrite",
+        "description": "When enabled, this parameter inverts the behavior of the associated schedule. Actions that would normally be active during the defined schedule are instead inactive, and actions that would normally be inactive are instead active. For example: If a schedule defines Internet access on Monday from 16:00 to 17:00: * With {{param}} = {{false}}, Internet access is permitted only between 16:00 and 17:00 on Monday. * With {{param}} = {{true}}, Internet access is permitted at all times except between 16:00 and 17:00 on Monday.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "TimeLeft",
+        "access": "readOnly",
+        "description": "The number of {{units}} remaining before the next state change will occur. ''0'' means that schedule is disabled.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "Represents a schedule that can be applied to a feature or resource.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

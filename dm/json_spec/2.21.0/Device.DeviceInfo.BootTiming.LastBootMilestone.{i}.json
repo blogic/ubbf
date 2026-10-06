@@ -1,0 +1,54 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.DeviceInfo.BootTiming.LastBootMilestone.{i}.",
+  "object": {
+    "path": "Device.DeviceInfo.BootTiming.LastBootMilestone.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "LastBootMilestoneNumberOfEntries",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.21"
+      },
+      {
+        "name": "BootStage",
+        "access": "readOnly",
+        "description": "The operational state of the device middleware during its boot sequence. Represents the possible milestones during the boot process, providing clear indicators of the device's current state and readiness for communication. These stages are used both for real-time operational state tracking and for historical boot performance analysis. The transitions between stages provide clear triggers for internal management agents to know exactly when the device is ready for specific operations. E.g., the CWMP/USP agents can use these stages to determine communication readiness.",
+        "type": "string",
+        "enumerations": [
+          "Started",
+          "PowerOn",
+          "KernelReady",
+          "NetworkReady",
+          "ManagementReady",
+          "Completed",
+          "Stopping"
+        ],
+        "version": "2.21"
+      },
+      {
+        "name": "TimeStamp",
+        "access": "readOnly",
+        "description": "The timestamp when this boot milestone was reached.",
+        "type": "dateTime"
+      }
+    ],
+    "description": "Each table entry represents a milestone reached during the boot process referenced by {{param|##.LastRebootRef}}. This table is cleared and repopulated on each new boot.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

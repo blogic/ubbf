@@ -1,0 +1,44 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Firewall.ConnectionTracking.IRC.",
+  "object": {
+    "path": "Device.Firewall.ConnectionTracking.IRC.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the connection tracking support for the IRC protocol (IRC ALG).",
+        "type": "boolean"
+      },
+      {
+        "name": "Ports",
+        "access": "readWrite",
+        "description": "Port numbers of the IRC servers that need to be monitored.",
+        "list": true,
+        "type": "int",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "MAXDCCChannels",
+        "access": "readWrite",
+        "description": "Maximum number of Direct Client-to-Client (DCC) channels allowed per IRC session.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DCCTimeout",
+        "access": "readWrite",
+        "description": "Timeout duration for unestablished Direct Client-to-Client (DCC) channels.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "IRC Connection Tracking configuration object.",
+    "children": []
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv6.Server.Pool.{i}.Client.{i}.Option.{i}.",
+  "object": {
+    "path": "Device.DHCPv6.Server.Pool.{i}.Client.{i}.Option.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "OptionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Tag",
+        "access": "readOnly",
+        "description": "Option tag (code) {{bibref|RFC8415|Section 21.1}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Value",
+        "access": "readOnly",
+        "description": "A hexbinary encoded option value.",
+        "type": "hexBinary",
+        "minLength": 0,
+        "maxLength": 65535
+      }
+    ],
+    "description": "DHCPv6 options supplied by this client, e.g. ''DUID'' (Option 1), ''UserClassID'' (Option 15) or ''VendorClassID'' (option 16).",
+    "children": []
+  }
+}

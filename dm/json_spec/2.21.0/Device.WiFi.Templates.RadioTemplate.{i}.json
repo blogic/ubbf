@@ -1,0 +1,126 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.WiFi.Templates.RadioTemplate.{i}.",
+  "object": {
+    "path": "Device.WiFi.Templates.RadioTemplate.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "RadioTemplateNumberOfEntries",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.20"
+      },
+      {
+        "name": "RadioTemplateID",
+        "access": "writeOnceReadOnly",
+        "description": "Static and persistent ID element. At most one {{object}} instance can exist with a given value for {{param}}. Note that {{param}} is not the same as {{param|##.DataElements.Network.Device.{i}.Radio.{i}.ID}}.",
+        "type": "string"
+      },
+      {
+        "name": "Priority",
+        "access": "readWrite",
+        "description": "This value indicates in which order the {{object}} are to be matched for a radio under configuration. 255 is the highest priority, 0 is the lowest priority.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Determines if this {{object}} is considered by the Configuration Template Manager (CTM) in the template matching process. This value is independent from the value of any {{param|##.Radio.{i}.Enable}}. This value is also independent from the value of any {{param|##.DataElements.Network.Device.{i}.Radio.{i}.Enabled}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "OpClassFlag",
+        "access": "readWrite",
+        "description": "{{list}} Each list item is a global valid operating class as defined in {{bibref|802.11ax|Table E-4}}). Indicates the Operating Classes the Radio can operate on. Exactly one of {{param}} or {{param|BandFlag}} must be empty and exactly one must be filled in. A Radio must be able to operate on at least one channel of each Operating Class specified in this list to satisfy this condition.",
+        "list": true,
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "BandFlag",
+        "access": "readWrite",
+        "description": "Indicates frequency bands the Radio can operate on. All listed UNII bands are to be in the same 2.4, 5 or 6 GHz band. Exactly one of {{param|OpClassFlag}} or {{param}} must be empty. {{list}}{{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "2.4",
+          "5",
+          "6",
+          "5_UNII_1",
+          "5_UNII_2",
+          "5_UNII_3",
+          "5_UNII_4",
+          "6_UNII_5",
+          "6_UNII_6",
+          "6_UNII_7",
+          "6_UNII_8",
+          "Sub_1GHz"
+        ]
+      },
+      {
+        "name": "SupportedGenerationFlag",
+        "access": "readWrite",
+        "description": "{{list}} Each list item indicates a supported Wi-Fi Generation. Each list item indicates a Supported Generation of Generational Capabilities Indication attribute. For example {{param}} could be \"5,6,7\".",
+        "list": true,
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 255
+      },
+      {
+        "name": "DFSSupportFlag",
+        "access": "readWrite",
+        "description": "Indicates Dynamic Frequency Selection (DFS) support. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "true",
+          "false",
+          "null"
+        ]
+      },
+      {
+        "name": "AFCSupportFlag",
+        "access": "readWrite",
+        "description": "Indicates Automated Frequency Coordination (AFC) support. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "true",
+          "false",
+          "null"
+        ]
+      },
+      {
+        "name": "TransmitPowerLimit",
+        "access": "readWrite",
+        "description": "This is the upper limit on nominal transmit Equivalent Isotropically Radiated Power (EIRP) that this radio is allowed to use for the current operating class. In units of decibels relative to 1 mW {{units}}.",
+        "type": "int",
+        "minInclusive": -128,
+        "maxInclusive": 127
+      },
+      {
+        "name": "OperatingGeneration",
+        "access": "readWrite",
+        "description": "{{list}} Each list item indicates a Wi-Fi Generation deployed on this EasyMesh Agent or this device. The last list item may be followed by a \"+\" to indicate the inclusion of any existing Wi-Fi Generation above it. If an EasyMesh agent or device supports a Wi-Fi Generation not in the list, then that Wi-Fi Generation is disabled on the EasyMesh agent or device. For example, \"6,7+\" means Wi-Fi 6, Wi-Fi 7 and any newer Wi-Fi Generation. Note: {{param}} may include Wi-Fi Generations not supported by a radio to which this {{object}} is deployed.",
+        "list": true,
+        "type": "string"
+      }
+    ],
+    "description": "Table of RadioTemplates for Wi-Fi configuration.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "RadioTemplateID"
+      ]
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.PeriodicFileTransfer.Transfer.{i}.Stats.",
+  "object": {
+    "path": "Device.PeriodicFileTransfer.Transfer.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "LastSuccess",
+        "access": "readOnly",
+        "description": "The date and time at which of the last successful transfer.",
+        "type": "dateTime"
+      },
+      {
+        "name": "LastFailed",
+        "access": "readOnly",
+        "description": "The date and time at which of the last failed transfer.",
+        "type": "dateTime"
+      },
+      {
+        "name": "LastErrorCode",
+        "access": "readOnly",
+        "description": "Error code of the last failed transfer as described in https://tr369.org/tr-369-usp-error-code-details/.",
+        "type": "unsignedLong",
+        "dataType": "StatsCounter64"
+      },
+      {
+        "name": "SuccessCount",
+        "access": "readOnly",
+        "description": "Counter of successful transfer.",
+        "type": "unsignedLong",
+        "dataType": "StatsCounter64"
+      },
+      {
+        "name": "FailedCount",
+        "access": "readOnly",
+        "description": "Counter of failed transfer.",
+        "type": "unsignedLong",
+        "dataType": "StatsCounter64"
+      }
+    ],
+    "description": "This object provides statistical information about the success and failure of individual file transfer tasks.",
+    "children": []
+  }
+}

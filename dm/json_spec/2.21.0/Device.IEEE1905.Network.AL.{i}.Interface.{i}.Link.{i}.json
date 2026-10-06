@@ -1,0 +1,67 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.IEEE1905.Network.AL.{i}.Interface.{i}.Link.{i}.",
+  "object": {
+    "path": "Device.IEEE1905.Network.AL.{i}.Interface.{i}.Link.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "LinkNumberOfEntries",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "InterfaceId",
+        "access": "readOnly",
+        "description": "MAC Address of the interface of the Neighbor for this {{object}}. This value comes from the neighbor\u2019s Topology discovery message as defined in {{bibref|IEEE1905.1a|Table 6-9: MAC address type TLV}}.",
+        "type": "string",
+        "maxLength": 17,
+        "pattern": "",
+        "dataType": "MACAddress"
+      },
+      {
+        "name": "IEEE1905Id",
+        "access": "readOnly",
+        "description": "MAC Address of the 1905 AL entity of the Neighbor device on this {{object}}. This value comes from the neighbor\u2019s Topology discovery message as defined in {{bibref|IEEE1905.1a|Table 6-8: AL MAC address type TLV}}.",
+        "type": "string",
+        "maxLength": 17,
+        "pattern": "",
+        "dataType": "MACAddress"
+      },
+      {
+        "name": "MediaType",
+        "access": "readOnly",
+        "description": "Media type of this {{object}}. This value is derived from the neighbor\u2019s Topology response message 1905 device information type TLV Media Type field as defined in {{bibref|IEEE1905.1a|Table 6-12: Media type}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "IEEE 802.3u",
+          "IEEE 802.3ab",
+          "IEEE 802.11b",
+          "IEEE 802.11g",
+          "IEEE 802.11a",
+          "IEEE 802.11n 2.4",
+          "IEEE 802.11n 5.0",
+          "IEEE 802.11ac",
+          "IEEE 802.11ad",
+          "IEEE 802.11af",
+          "IEEE 802.11ax",
+          "IEEE 802.11be",
+          "IEEE 1901 Wavelet",
+          "IEEE 1901 FFT",
+          "MoCAv1.1",
+          "Generic Phy",
+          "IEEE 802.11ah"
+        ]
+      }
+    ],
+    "description": "This object defines the 1905 neighbors and link properties.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "InterfaceId",
+        "IEEE1905Id"
+      ]
+    }
+  }
+}

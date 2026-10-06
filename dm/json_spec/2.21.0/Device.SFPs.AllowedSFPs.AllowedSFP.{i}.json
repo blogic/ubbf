@@ -1,0 +1,74 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.SFPs.AllowedSFPs.AllowedSFP.{i}.",
+  "object": {
+    "path": "Device.SFPs.AllowedSFPs.AllowedSFP.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "AllowedSFPNumberOfEntries",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.21"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this entry. If {{true}}, the CPE should allow the SFPs which match this entry. If {{false}}, the CPE should not use this entry to determine if an SFP is allowed or not.",
+        "type": "boolean"
+      },
+      {
+        "name": "SFPType",
+        "access": "readWrite",
+        "description": "Classification criterion. When empty, the SFP is not classified by SFP type.",
+        "type": "string",
+        "enumerationRef": "##.SupportedSFPTypes"
+      },
+      {
+        "name": "VendorName",
+        "access": "readWrite",
+        "description": "Classification criterion. When empty, the SFP is not classified by vendor name.",
+        "type": "string",
+        "maxLength": 16
+      },
+      {
+        "name": "VendorOUI",
+        "access": "readWrite",
+        "description": "Classification criterion. The vendor organizationally unique identifier (OUI) field of the SFP. When empty, the SFP is not classified by vendor OUI.",
+        "type": "hexBinary",
+        "minLength": 3,
+        "maxLength": 3
+      },
+      {
+        "name": "VendorPN",
+        "access": "readWrite",
+        "description": "Classification criterion. The vendor part number (PN) of the SFP. The ASCII character `*` is interpreted as a wildcard character. The `*` wildcard may be used to match any value, either fully (e.g., `*`) or partially (e.g., `F*` or `*3`). When empty or equal to \"*\", the SFP is not classified by vendor PN. Note: the string \"*\" as value for this parameter is equivalent to the empty string as value for this parameter.",
+        "type": "string",
+        "maxLength": 16
+      },
+      {
+        "name": "Fingerprint",
+        "access": "readWrite",
+        "description": "Classification criterion. Fingerprint over certain properties of the SFP. If non-empty, the CPE must take this fingerprint into account when classifying the SFP. Sometimes the other classification criteria in this {{object}} do not suffice to classify an SFP (to determine whether the SFP should be blocked or allowed). Then a CPE can use a fingerprint/CRC/hash calculated over other properties of the SFP as extra discriminator. E.g. it could calculate a hash over the calibration data. Example: Assume {{object}} has only 1 entry with: - {{param|SFPType}} = \"XGS-PON\" - {{param|VendorName}} = \"NameA\" - {{param|VendorOUI}} = \"\" - {{param|VendorPN}} = \"PartA\" - Fingerprint = \"FP1\" If a user inserts an XGS-PON SFP with \"NameA\" as vendor name and \"PartA\" as part number, it depends on the fingerprint whether the CPE blocks or allows the SFP. If the fingerprint of the SFP is \"FP1\", the CPE must allow the SFP, else it must block it.",
+        "type": "string",
+        "maxLength": 512
+      }
+    ],
+    "description": "Table of entries to classify pluggable SFPs. The CPE should allow any pluggable SFP which matches at least one of the entries; the CPE should block any SFP which does not match any entries. Example 1: allow all optical Ethernet SFPs Add entry with {{param|SFPType}} set to \"Optical Ethernet\" and with all other classification criteria set to the empty string. Example 2: allow XGS-PON SFP with \"VendorA\" as vendor name and \"PartA\" as part number Add entry with following values: - {{param|SFPType}} = \"XGS-PON\" - {{param|VendorName}} = \"VendorA\" - {{param|VendorOUI}} = \"\" - {{param|VendorPN}} = \"PartA\" - {{param|Fingerprint}} = \"\"",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

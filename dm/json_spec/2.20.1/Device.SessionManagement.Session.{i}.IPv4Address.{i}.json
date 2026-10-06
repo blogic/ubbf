@@ -1,0 +1,63 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.SessionManagement.Session.{i}.IPv4Address.{i}.",
+  "object": {
+    "path": "Device.SessionManagement.Session.{i}.IPv4Address.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "IPv4AddressNumberOfEntries",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "string",
+        "maxLength": 64,
+        "dataType": "_AliasUSP",
+        "version": "2.20"
+      },
+      {
+        "name": "IPAddress",
+        "access": "readOnly",
+        "description": "IPv4 address.",
+        "type": "string",
+        "maxLength": 15,
+        "dataType": "IPv4Address"
+      },
+      {
+        "name": "SubnetMask",
+        "access": "readOnly",
+        "description": "Subnet mask.",
+        "type": "string",
+        "maxLength": 15,
+        "dataType": "IPv4Address"
+      },
+      {
+        "name": "GatewayIPAddress",
+        "access": "readOnly",
+        "description": "IPv4 address of the gateway.",
+        "type": "string",
+        "maxLength": 15,
+        "dataType": "IPv4Address"
+      },
+      {
+        "name": "MTU",
+        "access": "readOnly",
+        "description": "Maximum Transmission Unit for this link (expressed in {{units}}). {{range}}",
+        "type": "unsignedInt",
+        "minInclusive": 576
+      }
+    ],
+    "description": "This object models IPv4 network information that the Cellular modem received from the network.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

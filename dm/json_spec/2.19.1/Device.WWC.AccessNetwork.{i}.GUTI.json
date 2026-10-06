@@ -1,0 +1,38 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WWC.AccessNetwork.{i}.GUTI.",
+  "object": {
+    "path": "Device.WWC.AccessNetwork.{i}.GUTI.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.14",
+    "parameters": [
+      {
+        "name": "PLMN",
+        "access": "readOnly",
+        "description": "The Public Land Mobile Network (PLMN) globally identifies the service provider. A PLMN consists of a country code (MCC) and a network code (MNC). See {{bibref|3GPP-TS.23.003|Clause 12.1}}. For example, a PLMN of 50101 refers to MCC 501 (Australia) and MNC 01 (Telstra).",
+        "type": "unsignedInt",
+        "version": "2.14"
+      },
+      {
+        "name": "AMFId",
+        "access": "readOnly",
+        "description": "The AMFId identifies an AMF instance within a service provider's network. In conjunction with the PLMN, it forms a Globally Unique AMF Id (GUAMI) which globally uniquely identifes an AMF. See {{bibref|3GPP-TS.23.003|Clause 2.10}}.",
+        "type": "unsignedInt",
+        "version": "2.14"
+      },
+      {
+        "name": "TMSI",
+        "access": "readOnly",
+        "description": "The Temporary Mobile Subscriber Identity (TMSI) is allocatred by the AMF at the time of registration and uniquely identifies the CPE. See {{bibref|3GPP-TS.23.003|Clause 2.4}}.",
+        "type": "unsignedInt",
+        "version": "2.14"
+      }
+    ],
+    "description": "A 5G Globally Unique Temporary Identity (GUTI) securely identifes an CPE by keeping the permanent User Equipment (UE identifier (IMSI) hidden. This identity is globally unique and assigned by the AMF at the time of registration. See {{bibref|3GPP-TS.23.003|.Clause 2.10}}.",
+    "children": []
+  }
+}

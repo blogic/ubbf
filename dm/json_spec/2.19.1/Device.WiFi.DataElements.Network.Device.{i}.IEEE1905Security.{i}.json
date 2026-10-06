@@ -1,0 +1,41 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.IEEE1905Security.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.IEEE1905Security.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "IEEE1905SecurityNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "OnboardingProtocol",
+        "access": "readOnly",
+        "description": "Onboarding protocols supported; :0: 1905 Device Provisioning Protocol as defined in the EasyMesh {{bibref|EasyMesh}} 1905 Layer Security Capability TLV.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IntegrityAlgorithm",
+        "access": "readOnly",
+        "description": "Message integrity algorithms supported. : 0: HMAC-SHA256.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "EncryptionAlgorithm",
+        "access": "readOnly",
+        "description": "Message encryption algorithms supported. : 0: AES-SIV.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object describes the IEEE 1905 security capabilities.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "OnboardingProtocol"
+      ]
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LocalAgent.MTP.{i}.UDS.",
+  "object": {
+    "path": "Device.LocalAgent.MTP.{i}.UDS.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "UnixDomainSocketRef",
+        "access": "readWrite",
+        "description": "A reference to the Unix Domain Socket used by this Agent when communicating via the UDS MTP.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".UnixDomainSockets.UnixDomainSocket.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "If the USP Endpoint uses the Unix Domain Socket (UDS) Message Transfer Protocol (MTP), then this object contains UDS specific configuration parameters related to how this Agent communicates with a Controller on another USP Endpoint. An example of how to set up this MTP can be found in {{bibref|TR-369| Section \"Example Data Models for a USP Broker and USP Services\"}}.",
+    "children": []
+  }
+}

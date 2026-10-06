@@ -1,0 +1,40 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.IEEE1905.Network.",
+  "object": {
+    "path": "Device.IEEE1905.Network.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.21",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the 1905 Network Topology reporting (via a Controller).",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "When {{param|Enable}} is set to {{true}}, this parameter indicates the transient phase of the discovery of the {{object}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Incomplete",
+          "Available",
+          "Error"
+        ]
+      },
+      {
+        "name": "ALNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object represents the Network Topology of the multi-hop mixed media IEEE 1905.1a data model. {{object|Device.IEEE1905.AL.NetworkTopology.}} provides the network topology view up to two hops from the perspective of this IEEE 1905 node. To obtain multi-hop topology information beyond two hops, network topology data from each device needs to be fetched individually. This object provides a consolidated, multi-hop, and hierarchical representation of the complete IEEE 1905 network topology, as viewed from the local device, encompassing all IEEE 1905 devices within the network. If this object is implemented in the 1905 data model, it is expected to use this object instead of {{object|Device.IEEE1905.AL.NetworkTopology.}}.",
+    "children": []
+  }
+}

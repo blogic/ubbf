@@ -1,0 +1,35 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DOCSIS.DownstreamChannel.{i}.SignalQualityExt.",
+  "object": {
+    "path": "Device.DOCSIS.DownstreamChannel.{i}.SignalQualityExt.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "RxMER",
+        "access": "readOnly",
+        "description": "{{param}} provides an in-channel received Modulation Error Ratio (MER), measured in {{units}}. {{param}} is defined as an estimate, provided by the demodulator, of the ratio: (average constellation energy with equally likely symbols) / (average squared magnitude of error vector) {{param}} is measured just prior to FEC (trellis/Reed-Solomon) decoding. {{param}} includes the effects of the HFC channel as well as implementation effects of the modulator and demodulator. Error vector estimation may vary among demodulator implementations. In the case of S-CDMA mode, RxMER is measured on the de-spread signal.",
+        "type": "unknown"
+      },
+      {
+        "name": "RxMerSamples",
+        "access": "readOnly",
+        "description": "{{param}} is a statistically significant number of symbols processed to arrive at the RxMER value.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "FbeNormalizationCoefficient",
+        "access": "readOnly",
+        "description": "The Downstream Adaptive Decision Feedback Equalizer (DFE) is implemented as a Feedforward Equalizer (FFE) and a Feedback Equalizer (FBE). In order to evaluate the composite DFE response it is necessary to normalize the FBE coefficients to 1 and then evaluate the FFT(hffe)/FFT(1,hfbe), where the hfbe coefficients have been normalized to 1 using FbeNormalizationCoefficient. The complex data representing the hffe and hfbe coefficients is contained in the EqualizationData MIB. It is possible to implement the DFE such that the response is evaluated as FFT(hffe)/FFT(1,-hfbe). In this case the FbeNormalizationCoefficient will be reported as a negative number and the response will be evaluated as FFT(hffe)/FFT(1,hfbe).",
+        "type": "int"
+      }
+    ],
+    "description": "Describes the received modulation error ratio of each downstream channel.",
+    "children": []
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "lldp": {
+    "interface": {
+      "lan3": {
+        "via": "LLDP", "rid": "4", "age": "1 day, 02:03:04",
+        "chassis": { "phone-17": {
+          "id": { "type": "mac", "value": "aa:bb:cc:dd:ee:03" },
+          "descr": "SIP phone",
+          "capability": { "type": "Tel", "enabled": true } } },
+        "port": { "id": { "type": "mac", "value": "aa:bb:cc:dd:ee:03" }, "descr": "LAN", "ttl": "180" }
+      }
+    }
+  }
+}

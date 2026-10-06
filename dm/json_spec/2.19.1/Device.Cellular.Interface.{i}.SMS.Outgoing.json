@@ -1,0 +1,34 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Cellular.Interface.{i}.SMS.Outgoing.",
+  "object": {
+    "path": "Device.Cellular.Interface.{i}.SMS.Outgoing.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "StorageRef",
+        "access": "readWrite",
+        "description": "Specifies the memory path where the messages are stored.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "Device.Cellular.Interface.{i}.SMS.Storage.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "CapacityLimit",
+        "access": "readWrite",
+        "description": "Maximum number of outgoing SMS messages to be stored. If the number of outgoing messages in {{object|Device.Cellular.Interface.{i}.SMS.Message}} exceeds CapacityLimit, the oldest outgoing messages will be removed automatically to prevent storage overfilling. -1 disables automatic messages removal.",
+        "type": "int",
+        "minInclusive": -1
+      }
+    ],
+    "description": "This object models outgoing SMS configuration.",
+    "children": []
+  }
+}

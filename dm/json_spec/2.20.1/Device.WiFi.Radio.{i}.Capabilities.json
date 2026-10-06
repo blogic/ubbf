@@ -1,0 +1,16 @@
+{
+  "source_file": "tr-181-2-20-1-usp-full.xml",
+  "path": "Device.WiFi.Radio.{i}.Capabilities.",
+  "object": {
+    "path": "Device.WiFi.Radio.{i}.Capabilities.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [],
+    "description": "This object represents the capabilities of the radio which may be different from the current operational configuration.",
+    "children": []
+  }
+}

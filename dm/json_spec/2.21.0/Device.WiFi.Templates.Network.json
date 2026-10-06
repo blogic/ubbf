@@ -1,0 +1,63 @@
+{
+  "source_file": "tr-181-2-21-0-usp-full.xml",
+  "path": "Device.WiFi.Templates.Network.",
+  "object": {
+    "path": "Device.WiFi.Templates.Network.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.20",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Indicates whether any BSS may be deployed in the Wi-Fi network. : {{true}}: BSS(s) are deployed according to the template matching process. : {{false}}: No BSS is deployed in the network.",
+        "type": "boolean"
+      },
+      {
+        "name": "TopologyFlag",
+        "access": "readWrite",
+        "description": "The TopologyFlag is used to specify a list of EasyMesh Agents on which BSS(es) are deployed according to the template matching process. If an EasyMesh Agent does not match any value in the list, then no BSS is deployed on this EasyMesh Agent. These values refer to the network topology role of the EasyMesh Agent as determined by the EasyMesh Controller. This flag matches if any of the list items match (logical OR). {{list}}{{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "Root",
+          "Repeater",
+          "Wired_Repeater",
+          "Wireless_Repeater",
+          "ALID"
+        ]
+      },
+      {
+        "name": "IEEE1905ALID",
+        "access": "readWrite",
+        "description": "{{list}} IEEE 1905 {{bibref|IEEE1905.1a}} Abstraction-Layer ID (ALID). This matches if any of the list items match (logical OR). This should match an entry in {{param|##.DataElements.Network.Device.{i}.ID}}.",
+        "list": true,
+        "type": "string",
+        "maxLength": 17,
+        "pattern": "",
+        "dataType": "MACAddress"
+      },
+      {
+        "name": "PrimarySSCTemplateReference",
+        "access": "readWrite",
+        "description": "Indicates the Primary SSCTemplate. The PrimaryVLANID in the EasyMesh network is the VLANID of the SSCTemplate referenced by {{param}}. If this value is empty, then Traffic Separation is not used. {{bibref|EasyMesh|Section 19}}.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.SSCTemplate.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "PrimarySSCTemplateID",
+        "access": "readOnly",
+        "description": "Indicates the Primary SSCTemplate. The value must be the {{param|#.SSCTemplate.{i}.SSCTemplateID}} to identify an instance of {{object|#.SSCTemplate}}. If this value is empty, then Traffic Separation is not used. {{bibref|EasyMesh|Section 19}}.",
+        "type": "string"
+      }
+    ],
+    "description": "This {{object}} either has the Configuration Template Manager (CTM) deploy BSS(s) according to the templates, or has all BSS(s) be disabled.",
+    "children": []
+  }
+}

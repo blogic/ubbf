@@ -1,0 +1,34 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PCP.Client.{i}.UPnPIWF.",
+  "object": {
+    "path": "Device.PCP.Client.{i}.UPnPIWF.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the UPnP IGD-PCP Interworking Function for this PCP Client.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of the UPnP IGD-PCP Interworking Function for this PCP Client. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      }
+    ],
+    "description": "Properties for the interworking function between UPnP IGD (Internet Gateway Device) and PCP, as specified in {{bibref|RFC6970}}.",
+    "children": []
+  }
+}
