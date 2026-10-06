@@ -1,0 +1,92 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.QoS.Shaper.{i}.",
+  "object": {
+    "path": "Device.QoS.Shaper.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ShaperNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this shaper.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this shaper. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Children",
+        "access": "readWrite",
+        "description": "{{list}} Each reference can be associated with another {{object|##.QoS.Queue.{i}}}, {{object|##.QoS.Shaper.{i}}}, {{object|##.QoS.Scheduler.{i}}} instance object. The references in this parameter are used to build a hierarchy.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        },
+        "version": "2.16"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "{{reference}}The interface object associated with this ''Shaper'' entry. It MAY be a layer 1, 2 or 3 interface, however, the types of interfaces for which ''Shapers'' can be instantiated is a local matter to the CPE.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ShapingRate",
+        "access": "readWrite",
+        "description": "Rate to shape the associated interface connection's egress traffic to. For leaky bucket (constant rate shaping), this is the constant rate. For token bucket (variable rate shaping), this is the average rate. If <= 100, in percent of the rate of the highest rate-constrained layer over which the packet will travel on egress. If > 100, in bits per second. A value of -1 indicates no shaping. For example, for packets destined for a WAN DSL interface, if the ATM layer is rate-constrained, then the rate is calculated relative to this rate. Otherwise, the rate is calculated relative to the physical-layer DSL rate. Note: To be able to support higher bit rates, this parameter was changed to unsignedLong in the Device:2.18 version.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "long",
+        "minInclusive": -1
+      },
+      {
+        "name": "ShapingBurstSize",
+        "access": "readWrite",
+        "description": "Burst size in {{units}}. For both leaky bucket (constant rate shaping) and token bucket (variable rate shaping) this is the bucket size and is therefore the maximum burst size.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Shaper table. Used to shape the queue(s) associated with {{param|Interface}}. In case of a single queue for that interface, determines the egress rate of the queue. In case of multiple queues for that interface (possibly with per queue shaping rates), determines the aggregate egress rate on that interface. For enabled table entries, if {{param|Interface}} is not a valid reference then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}. Note: The {{object}} table includes a unique key parameter that is a strong reference. If a strongly referenced object is deleted, the CPE will set the referencing parameter to {{empty}}. However, doing so under these circumstances might cause the updated {{object}} row to then violate the table's unique key constraint; if this occurs, the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and disable the offending {{object}} row.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

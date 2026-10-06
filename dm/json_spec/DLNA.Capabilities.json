@@ -1,0 +1,81 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DLNA.Capabilities.",
+  "object": {
+    "path": "Device.DLNA.Capabilities.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "HNDDeviceClass",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the supported DLNA Home Network Device Classes {{bibref|DLNA-NDIG|Table 4-1}}.",
+        "list": true,
+        "listMaxLength": 256,
+        "type": "string"
+      },
+      {
+        "name": "DeviceCapability",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the supported DLNA Device Capabilities {{bibref|DLNA-NDIG|Table 4-2}}.",
+        "list": true,
+        "listMaxLength": 256,
+        "type": "string"
+      },
+      {
+        "name": "HIDDeviceClass",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the supported DLNA Home Infrastructure Device Classes {{bibref|DLNA-NDIG|Table 4-4}}.",
+        "list": true,
+        "listMaxLength": 256,
+        "type": "string"
+      },
+      {
+        "name": "ImageClassProfileID",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the DLNA Image Class Profile IDs supported by this device, from Tables 5-2 and 5-3 of {{bibref|DLNA-NDIG}}.",
+        "list": true,
+        "listMaxLength": 256,
+        "type": "string"
+      },
+      {
+        "name": "AudioClassProfileID",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the DLNA Audio Class Profile IDs supported by this device, from Tables 5-4 through 5-10 of {{bibref|DLNA-NDIG}}.",
+        "list": true,
+        "listMaxLength": 256,
+        "type": "string"
+      },
+      {
+        "name": "AVClassProfileID",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the DLNA AV Class Profile IDs supported by this device, from Tables 5-11 through 5-15 of {{bibref|DLNA-NDIG}}.",
+        "list": true,
+        "listMaxLength": 256,
+        "type": "string"
+      },
+      {
+        "name": "MediaCollectionProfileID",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the DLNA Media Collection Profile IDs supported by this device {{bibref|DLNA-NDIG|Table 5-16}}.",
+        "list": true,
+        "listMaxLength": 256,
+        "type": "string"
+      },
+      {
+        "name": "PrinterClassProfileID",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the DLNA Printer Class Profile IDs supported by this device {{bibref|DLNA-NDIG|Table 5-17}}.",
+        "list": true,
+        "listMaxLength": 256,
+        "type": "string"
+      }
+    ],
+    "description": "DLNA capabilities.",
+    "children": []
+  }
+}

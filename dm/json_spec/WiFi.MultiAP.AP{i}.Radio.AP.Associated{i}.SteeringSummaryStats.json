@@ -1,0 +1,71 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.MultiAP.APDevice.{i}.Radio.{i}.AP.{i}.AssociatedDevice.{i}.SteeringSummaryStats.",
+  "object": {
+    "path": "Device.WiFi.MultiAP.APDevice.{i}.Radio.{i}.AP.{i}.AssociatedDevice.{i}.SteeringSummaryStats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "NoCandidateAPFailures",
+        "access": "readOnly",
+        "description": "Number of times this Associated Device should have been steered but wasn't because a better candidate AP couldn't be found.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BlacklistAttempts",
+        "access": "readOnly",
+        "description": "Number of times a Blacklist steer was attempted on this Associated Device.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BlacklistSuccesses",
+        "access": "readOnly",
+        "description": "Number of times an attempted Blacklist steer succeeded for this Associated Device.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BlacklistFailures",
+        "access": "readOnly",
+        "description": "Number of times an attempted Blacklist steer failed for this Associated Device.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BTMAttempts",
+        "access": "readOnly",
+        "description": "Number of times a BTM (BSS Transition Management; 802.11k) steer was attempted on this Associated Device.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BTMSuccesses",
+        "access": "readOnly",
+        "description": "Number of times an attempted BTM (BSS Transition Management; 802.11k) steer succeeded for this Associated Device.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BTMFailures",
+        "access": "readOnly",
+        "description": "Number of times an attempted BTM (BSS Transition Management; 802.11k) steer failed for this Associated Device.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BTMQueryResponses",
+        "access": "readOnly",
+        "description": "Number of asynchronous BTM (BSS Transition Management; 802.11k) Queries for which a BTM Request was issued to this Associated Device.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "LastSteerTime",
+        "access": "readOnly",
+        "description": "The number of {{units}} since this Associated Device was last attempted to be steered.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The summary of statistics related to Multi-AP Steering for an individual STA on the Wi-Fi network. The counters contained in {{object}} are all reset on reboot. {{deprecated|2.15|because it has moved to {{object|######.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.MultiAPSTA.SteeringSummaryStats.}}}} {{obsoleted|2.17}} {{deleted|2.18}}",
+    "children": []
+  }
+}

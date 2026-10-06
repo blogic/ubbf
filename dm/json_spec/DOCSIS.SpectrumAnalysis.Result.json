@@ -1,0 +1,43 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DOCSIS.SpectrumAnalysis.Result.{i}.",
+  "object": {
+    "path": "Device.DOCSIS.SpectrumAnalysis.Result.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ResultNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Frequency",
+        "access": "readOnly",
+        "description": "The center frequency (in {{units}}) of the spectral analysis span which is represented by this instance.",
+        "type": "int",
+        "minInclusive": -2147483648,
+        "maxInclusive": 2147483647
+      },
+      {
+        "name": "AmplitudeData",
+        "access": "readOnly",
+        "description": "This parameter provides a list of the spectral amplitudes as measured at the center frequency specified by the {{param|Frequency}}. The frequency bins are ordered from lowest to highest frequencies covering the frequency span. Information about the center frequency, frequency span, number of bins and resolution bandwidth are included to provide context to the measurement point.",
+        "type": "dataType:AmplitudeData"
+      },
+      {
+        "name": "TotalSegmentPower",
+        "access": "readOnly",
+        "description": "This parameter provides the total RF power present in the segment with the center frequency equal to the {{param|Frequency}} and the span equal to the {{param|#.SegmentFrequencySpan}}. The value represents the sum of the spectrum power in all of the associated bins. The value is computed by summing power (not dB) values and converting the final sum to {{units}}.",
+        "type": "unknown"
+      }
+    ],
+    "description": "{{section|table}}This table provides a list of spectral analysis measurements as performed across a range of center frequencies. The table is capable of representing a full scan of the spectrum. {{section|row}}Each {{object}} instance represents the spectral analysis around a single center frequency point in the spectrum.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Frequency"
+      ]
+    }
+  }
+}

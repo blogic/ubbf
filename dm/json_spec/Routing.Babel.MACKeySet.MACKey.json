@@ -1,0 +1,55 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Routing.Babel.MACKeySet.{i}.MACKey.{i}.",
+  "object": {
+    "path": "Device.Routing.Babel.MACKeySet.{i}.MACKey.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "MACKeyNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.15"
+      },
+      {
+        "name": "KeyUseSend",
+        "access": "readWrite",
+        "description": "Indicates whether this {{param|KeyValue}} is used to compute a MAC and include that MAC in the sent Babel packet. A MAC for sent packets is computed using this key if the value is {{true}}. If the value is {{false}}, this key is not used to compute a MAC to include in sent Babel packets.",
+        "type": "boolean"
+      },
+      {
+        "name": "KeyUseVerify",
+        "access": "readWrite",
+        "description": "Indicates whether the {{param|KeyValue}} is used to verify incoming Babel packets. Incoming packets are verified using this key if {{true}}. If {{false}} no MAC is computed from {{param|KeyValue}} for comparing with the MAC in an incoming Babel packet.",
+        "type": "boolean"
+      },
+      {
+        "name": "KeyValue",
+        "access": "writeOnceReadOnly",
+        "description": "The value of the MAC key. This value is immutable, once written. This value is of a length suitable for the associated {{param|MACKeyAlgorithm}}. If the algorithm is based on the HMAC construction {{bibref|RFC2104}}, the length MUST be between 0 and an upper limit that is at least the size of the output length (where \"HMAC-SHA256\" output length is 32 octets as described in {{bibref|RFC4868}}). Longer lengths MAY be supported but are not necessary if the management system has the ability to generate a suitably random value (e.g., by randomly generating a value or by using a key derivation technique as recommended in {{bibref|RFC8967|Security Considerations}}). If the algorithm is \"BLAKE2s-128\", the length MUST be between 0 and 32 bytes inclusive, as specified in {{bibref|RFC7693}}.",
+        "secured": true,
+        "type": "hexBinary"
+      },
+      {
+        "name": "MACKeyAlgorithm",
+        "access": "readWrite",
+        "description": "The name of the MAC algorithm used with this key. The value MUST be the same as one of the enumerations listed in the {{param|##.SupportedMACAlgorithms}} parameter.",
+        "type": "string"
+      }
+    ],
+    "description": "This object provides the MAC keys used to calculate MACs for verification and sending by the {{object|#.}} instance.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

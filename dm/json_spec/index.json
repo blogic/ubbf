@@ -1,0 +1,5584 @@
+{
+  "total_objects": 912,
+  "output_directory": "/src/ubbf/ubbf/dm/json_spec",
+  "objects": {
+    "ApplicationData.{i}.": {
+      "file": "ApplicationData.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "AutoRestart.": {
+      "file": "AutoRestart.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "BondingGroup.{i}.": {
+      "file": "BondingGroup.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Certificate.{i}.": {
+      "file": "Certificate.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "ChangeSet.{i}.": {
+      "file": "ChangeSet.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "ChangeSet.{i}.Parameter.{i}.": {
+      "file": "ChangeSet.Parameter.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Channel.{i}.": {
+      "file": "Channel.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "ChannelScan.{i}.": {
+      "file": "ChannelScan.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Channels.": {
+      "file": "Channels.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Channels.Channel.{i}.": {
+      "file": "Channels.Channel.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Class.{i}.": {
+      "file": "Class.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Class.{i}.Channel.{i}.": {
+      "file": "Class.Channel.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Controller.{i}.": {
+      "file": "Controller.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Controller.{i}.MTP.{i}.": {
+      "file": "Controller.MTP.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Controller.{i}.MTP.{i}.CoAP.": {
+      "file": "Controller.MTP.CoAP.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Controller.{i}.MTP.{i}.MQTT.": {
+      "file": "Controller.MTP.MQTT.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Controller.{i}.MTP.{i}.STOMP.": {
+      "file": "Controller.MTP.STOMP.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Controller.{i}.MTP.{i}.UDS.": {
+      "file": "Controller.MTP.UDS.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Controller.{i}.MTP.{i}.WebSocket.": {
+      "file": "Controller.MTP.WebSocket.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "ControllerTrust.": {
+      "file": "ControllerTrust.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "ControllerTrust.Challenge.{i}.": {
+      "file": "ControllerTrust.Challenge.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "ControllerTrust.Credential.{i}.": {
+      "file": "ControllerTrust.Credential.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "ControllerTrust.Role.{i}.": {
+      "file": "ControllerTrust.Role.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "ControllerTrust.Role.{i}.Permission.{i}.": {
+      "file": "ControllerTrust.Role.Permission.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.": {
+      "file": ".json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.ATM.": {
+      "file": "ATM.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.ATM.Diagnostics.": {
+      "file": "ATM.Diagnostics.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.ATM.Link.{i}.": {
+      "file": "ATM.Link.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.ATM.Link.{i}.QoS.": {
+      "file": "ATM.Link.QoS.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.ATM.Link.{i}.Stats.": {
+      "file": "ATM.Link.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.BASAPM.": {
+      "file": "BASAPM.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.BASAPM.MeasurementEndpoint.{i}.": {
+      "file": "BASAPM.MeasurementEndpoint.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.BASAPM.MeasurementEndpoint.{i}.CustomerDevice.": {
+      "file": "BASAPM.MeasurementEndpoint.Customer.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.BASAPM.MeasurementEndpoint.{i}.ISPDevice.": {
+      "file": "BASAPM.MeasurementEndpoint.ISP.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Bridging.": {
+      "file": "Bridging.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Bridging.Bridge.{i}.": {
+      "file": "Bridging.Bridge.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Bridging.Bridge.{i}.Port.{i}.": {
+      "file": "Bridging.Bridge.Port.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Bridging.Bridge.{i}.Port.{i}.PriorityCodePoint.": {
+      "file": "Bridging.Bridge.Port.PriorityCodePoint.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Bridging.Bridge.{i}.Port.{i}.Stats.": {
+      "file": "Bridging.Bridge.Port.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Bridging.Bridge.{i}.STP.": {
+      "file": "Bridging.Bridge.STP.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Bridging.Bridge.{i}.VLAN.{i}.": {
+      "file": "Bridging.Bridge.VLAN.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Bridging.Bridge.{i}.VLANPort.{i}.": {
+      "file": "Bridging.Bridge.VLANPort.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Bridging.Filter.{i}.": {
+      "file": "Bridging.Filter.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Bridging.ProviderBridge.{i}.": {
+      "file": "Bridging.ProviderBridge.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.BulkData.": {
+      "file": "BulkData.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.BulkData.Profile.{i}.": {
+      "file": "BulkData.Profile.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.BulkData.Profile.{i}.CSVEncoding.": {
+      "file": "BulkData.Profile.CSVEncoding.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.BulkData.Profile.{i}.HTTP.": {
+      "file": "BulkData.Profile.HTTP.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.BulkData.Profile.{i}.HTTP.RequestURIParameter.{i}.": {
+      "file": "BulkData.Profile.HTTP.RequestURIParameter.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.BulkData.Profile.{i}.JSONEncoding.": {
+      "file": "BulkData.Profile.JSONEncoding.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.BulkData.Profile.{i}.MQTT.": {
+      "file": "BulkData.Profile.MQTT.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.BulkData.Profile.{i}.Parameter.{i}.": {
+      "file": "BulkData.Profile.Parameter.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.CWMPManagementServer.": {
+      "file": "CWMPManagementServer.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.CaptivePortal.": {
+      "file": "CaptivePortal.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Cellular.": {
+      "file": "Cellular.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Cellular.AccessPoint.{i}.": {
+      "file": "Cellular.AccessPoint.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Cellular.Interface.{i}.": {
+      "file": "Cellular.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Cellular.Interface.{i}.SMS.": {
+      "file": "Cellular.Interface.SMS.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Cellular.Interface.{i}.SMS.Incoming.": {
+      "file": "Cellular.Interface.SMS.Incoming.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Cellular.Interface.{i}.SMS.Message.{i}.": {
+      "file": "Cellular.Interface.SMS.Message.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Cellular.Interface.{i}.SMS.Outgoing.": {
+      "file": "Cellular.Interface.SMS.Outgoing.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Cellular.Interface.{i}.SMS.Storage.{i}.": {
+      "file": "Cellular.Interface.SMS.Storage.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Cellular.Interface.{i}.Stats.": {
+      "file": "Cellular.Interface.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Cellular.Interface.{i}.USIM.": {
+      "file": "Cellular.Interface.USIM.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.CollectionDevice.{i}.": {
+      "file": "Collection{i}.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DHCPv4.": {
+      "file": "DHCPv4.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DHCPv4.Client.{i}.": {
+      "file": "DHCPv4.Client.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DHCPv4.Client.{i}.ReqOption.{i}.": {
+      "file": "DHCPv4.Client.ReqOption.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.DHCPv4.Client.{i}.Retransmission.": {
+      "file": "DHCPv4.Client.Retransmission.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DHCPv4.Client.{i}.SentOption.{i}.": {
+      "file": "DHCPv4.Client.SentOption.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.DHCPv4.Client.{i}.Stats.": {
+      "file": "DHCPv4.Client.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DHCPv4.Relay.": {
+      "file": "DHCPv4.Relay.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DHCPv4.Relay.Forwarding.{i}.": {
+      "file": "DHCPv4.Relay.Forwarding.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DHCPv4.Server.": {
+      "file": "DHCPv4.Server.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DHCPv4.Server.Pool.{i}.": {
+      "file": "DHCPv4.Server.Pool.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DHCPv4.Server.Pool.{i}.Client.{i}.": {
+      "file": "DHCPv4.Server.Pool.Client.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.DHCPv4.Server.Pool.{i}.Client.{i}.IPv4Address.{i}.": {
+      "file": "DHCPv4.Server.Pool.Client.IPv4Address.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.DHCPv4.Server.Pool.{i}.Client.{i}.Option.{i}.": {
+      "file": "DHCPv4.Server.Pool.Client.Option.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.DHCPv4.Server.Pool.{i}.Option.{i}.": {
+      "file": "DHCPv4.Server.Pool.Option.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.DHCPv4.Server.Pool.{i}.StaticAddress.{i}.": {
+      "file": "DHCPv4.Server.Pool.StaticAddress.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.DHCPv4.Server.Stats.": {
+      "file": "DHCPv4.Server.Stats.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DHCPv6.": {
+      "file": "DHCPv6.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DHCPv6.Client.{i}.": {
+      "file": "DHCPv6.Client.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DHCPv6.Client.{i}.ReceivedOption.{i}.": {
+      "file": "DHCPv6.Client.ReceivedOption.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.DHCPv6.Client.{i}.Retransmission.": {
+      "file": "DHCPv6.Client.Retransmission.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DHCPv6.Client.{i}.SentOption.{i}.": {
+      "file": "DHCPv6.Client.SentOption.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.DHCPv6.Client.{i}.Server.{i}.": {
+      "file": "DHCPv6.Client.Server.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.DHCPv6.Client.{i}.Stats.": {
+      "file": "DHCPv6.Client.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DHCPv6.Server.": {
+      "file": "DHCPv6.Server.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DHCPv6.Server.Pool.{i}.": {
+      "file": "DHCPv6.Server.Pool.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DHCPv6.Server.Pool.{i}.Client.{i}.": {
+      "file": "DHCPv6.Server.Pool.Client.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.DHCPv6.Server.Pool.{i}.Client.{i}.IPv6Address.{i}.": {
+      "file": "DHCPv6.Server.Pool.Client.IPv6Address.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.DHCPv6.Server.Pool.{i}.Client.{i}.IPv6Prefix.{i}.": {
+      "file": "DHCPv6.Server.Pool.Client.IPv6Prefix.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.DHCPv6.Server.Pool.{i}.Client.{i}.Option.{i}.": {
+      "file": "DHCPv6.Server.Pool.Client.Option.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.DHCPv6.Server.Pool.{i}.Option.{i}.": {
+      "file": "DHCPv6.Server.Pool.Option.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.DHCPv6.Server.Stats.": {
+      "file": "DHCPv6.Server.Stats.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DLNA.": {
+      "file": "DLNA.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DLNA.Capabilities.": {
+      "file": "DLNA.Capabilities.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DNS.": {
+      "file": "DNS.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DNS.Client.": {
+      "file": "DNS.Client.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DNS.Client.Server.{i}.": {
+      "file": "DNS.Client.Server.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DNS.Diagnostics.": {
+      "file": "DNS.Diagnostics.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DNS.Relay.": {
+      "file": "DNS.Relay.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DNS.Relay.Config.{i}.": {
+      "file": "DNS.Relay.Config.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DNS.Relay.Forwarding.{i}.": {
+      "file": "DNS.Relay.Forwarding.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DNS.SD.": {
+      "file": "DNS.SD.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DNS.SD.Advertise.{i}.": {
+      "file": "DNS.SD.Advertise.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DNS.SD.Advertise.{i}.TextRecord.{i}.": {
+      "file": "DNS.SD.Advertise.TextRecord.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.DNS.SD.Service.{i}.": {
+      "file": "DNS.SD.Service.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DNS.SD.Service.{i}.TextRecord.{i}.": {
+      "file": "DNS.SD.Service.TextRecord.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.DNS.Zone.{i}.": {
+      "file": "DNS.Zone.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DNS.Zone.{i}.Host.{i}.": {
+      "file": "DNS.Zone.Host.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.DOCSIS.": {
+      "file": "DOCSIS.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DOCSIS.Downstream.{i}.": {
+      "file": "DOCSIS.Downstream.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DOCSIS.Downstream.{i}.Stats.": {
+      "file": "DOCSIS.Downstream.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DOCSIS.DownstreamChannel.{i}.": {
+      "file": "DOCSIS.DownstreamChannel.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DOCSIS.DownstreamChannel.{i}.SignalQuality.": {
+      "file": "DOCSIS.DownstreamChannel.SignalQuality.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DOCSIS.DownstreamChannel.{i}.SignalQualityExt.": {
+      "file": "DOCSIS.DownstreamChannel.SignalQualityExt.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DOCSIS.Interface.{i}.": {
+      "file": "DOCSIS.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DOCSIS.Interface.{i}.ConnectivityStatus.": {
+      "file": "DOCSIS.Interface.ConnectivityStatus.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DOCSIS.Interface.{i}.Stats.": {
+      "file": "DOCSIS.Interface.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DOCSIS.SpectrumAnalysis.": {
+      "file": "DOCSIS.SpectrumAnalysis.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DOCSIS.SpectrumAnalysis.Result.{i}.": {
+      "file": "DOCSIS.SpectrumAnalysis.Result.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DOCSIS.Upstream.{i}.": {
+      "file": "DOCSIS.Upstream.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DOCSIS.Upstream.{i}.Stats.": {
+      "file": "DOCSIS.Upstream.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DOCSIS.UpstreamChannel.{i}.": {
+      "file": "DOCSIS.UpstreamChannel.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DOCSIS.UpstreamChannel.{i}.Status.": {
+      "file": "DOCSIS.UpstreamChannel.Status.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.": {
+      "file": "DSL.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DSL.BondingGroup.{i}.": {
+      "file": "DSL.BondingGroup.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.BondingGroup.{i}.BondedChannel.{i}.": {
+      "file": "DSL.BondingGroup.BondedChannel.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.DSL.BondingGroup.{i}.BondedChannel.{i}.Ethernet.": {
+      "file": "DSL.BondingGroup.BondedChannel.Ethernet.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.DSL.BondingGroup.{i}.BondedChannel.{i}.Ethernet.Stats.": {
+      "file": "DSL.BondingGroup.BondedChannel.Ethernet.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.DSL.BondingGroup.{i}.Ethernet.": {
+      "file": "DSL.BondingGroup.Ethernet.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.BondingGroup.{i}.Ethernet.Stats.": {
+      "file": "DSL.BondingGroup.Ethernet.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.BondingGroup.{i}.Stats.": {
+      "file": "DSL.BondingGroup.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.BondingGroup.{i}.Stats.CurrentDay.": {
+      "file": "DSL.BondingGroup.Stats.CurrentDay.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.BondingGroup.{i}.Stats.QuarterHour.": {
+      "file": "DSL.BondingGroup.Stats.QuarterHour.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.BondingGroup.{i}.Stats.Total.": {
+      "file": "DSL.BondingGroup.Stats.Total.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.Channel.{i}.": {
+      "file": "DSL.Channel.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.Channel.{i}.Stats.": {
+      "file": "DSL.Channel.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.Channel.{i}.Stats.CurrentDay.": {
+      "file": "DSL.Channel.Stats.CurrentDay.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.Channel.{i}.Stats.LastShowtime.": {
+      "file": "DSL.Channel.Stats.LastShowtime.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.Channel.{i}.Stats.QuarterHour.": {
+      "file": "DSL.Channel.Stats.QuarterHour.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.Channel.{i}.Stats.Showtime.": {
+      "file": "DSL.Channel.Stats.Showtime.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.Channel.{i}.Stats.Total.": {
+      "file": "DSL.Channel.Stats.Total.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.Diagnostics.": {
+      "file": "DSL.Diagnostics.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DSL.Line.{i}.": {
+      "file": "DSL.Line.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.Line.{i}.DataGathering.": {
+      "file": "DSL.Line.DataGathering.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.Line.{i}.Stats.": {
+      "file": "DSL.Line.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.Line.{i}.Stats.CurrentDay.": {
+      "file": "DSL.Line.Stats.CurrentDay.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.Line.{i}.Stats.LastShowtime.": {
+      "file": "DSL.Line.Stats.LastShowtime.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.Line.{i}.Stats.QuarterHour.": {
+      "file": "DSL.Line.Stats.QuarterHour.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.Line.{i}.Stats.Showtime.": {
+      "file": "DSL.Line.Stats.Showtime.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.Line.{i}.Stats.Total.": {
+      "file": "DSL.Line.Stats.Total.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSL.Line.{i}.TestParams.": {
+      "file": "DSL.Line.TestParams.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DSLite.": {
+      "file": "DSLite.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DSLite.InterfaceSetting.{i}.": {
+      "file": "DSLite.InterfaceSetting.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DeviceInfo.": {
+      "file": "DeviceInfo.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DeviceInfo.DeviceImageFile.{i}.": {
+      "file": "DeviceInfo.DeviceImageFile.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DeviceInfo.FirmwareImage.{i}.": {
+      "file": "DeviceInfo.FirmwareImage.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DeviceInfo.KernelFaults.": {
+      "file": "DeviceInfo.KernelFaults.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DeviceInfo.KernelFaults.KernelFault.{i}.": {
+      "file": "DeviceInfo.KernelFaults.KernelFault.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DeviceInfo.Location.{i}.": {
+      "file": "DeviceInfo.Location.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DeviceInfo.LogRotate.{i}.": {
+      "file": "DeviceInfo.LogRotate.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DeviceInfo.LogRotate.{i}.LogFile.{i}.": {
+      "file": "DeviceInfo.LogRotate.LogFile.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.DeviceInfo.MemoryStatus.": {
+      "file": "DeviceInfo.MemoryStatus.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DeviceInfo.MemoryStatus.MemoryMonitor.": {
+      "file": "DeviceInfo.MemoryStatus.MemoryMonitor.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DeviceInfo.NetworkProperties.": {
+      "file": "DeviceInfo.NetworkProperties.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DeviceInfo.PowerStatus.": {
+      "file": "DeviceInfo.PowerStatus.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DeviceInfo.PowerStatus.PowerSensor.{i}.": {
+      "file": "DeviceInfo.PowerStatus.PowerSensor.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DeviceInfo.ProcessFaults.": {
+      "file": "DeviceInfo.ProcessFaults.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DeviceInfo.ProcessFaults.ProcessFault.{i}.": {
+      "file": "DeviceInfo.ProcessFaults.ProcessFault.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DeviceInfo.ProcessStatus.": {
+      "file": "DeviceInfo.ProcessStatus.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DeviceInfo.ProcessStatus.CPU.{i}.": {
+      "file": "DeviceInfo.ProcessStatus.CPU.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DeviceInfo.ProcessStatus.Process.{i}.": {
+      "file": "DeviceInfo.ProcessStatus.Process.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DeviceInfo.Processor.{i}.": {
+      "file": "DeviceInfo.Processor.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DeviceInfo.Reboots.": {
+      "file": "DeviceInfo.Reboots.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DeviceInfo.Reboots.Reboot.{i}.": {
+      "file": "DeviceInfo.Reboots.Reboot.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DeviceInfo.TemperatureStatus.": {
+      "file": "DeviceInfo.TemperatureStatus.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DeviceInfo.TemperatureStatus.TemperatureSensor.{i}.": {
+      "file": "DeviceInfo.TemperatureStatus.TemperatureSensor.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DeviceInfo.VendorConfigFile.{i}.": {
+      "file": "DeviceInfo.VendorConfigFile.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DeviceInfo.VendorLogFile.{i}.": {
+      "file": "DeviceInfo.VendorLogFile.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DynamicDNS.": {
+      "file": "DynamicDNS.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.DynamicDNS.Client.{i}.": {
+      "file": "DynamicDNS.Client.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.DynamicDNS.Client.{i}.Hostname.{i}.": {
+      "file": "DynamicDNS.Client.Hostname.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.DynamicDNS.Server.{i}.": {
+      "file": "DynamicDNS.Server.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Ethernet.": {
+      "file": "Ethernet.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Ethernet.Interface.{i}.": {
+      "file": "Ethernet.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Ethernet.Interface.{i}.Stats.": {
+      "file": "Ethernet.Interface.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Ethernet.LAG.{i}.": {
+      "file": "Ethernet.LAG.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Ethernet.LAG.{i}.Stats.": {
+      "file": "Ethernet.LAG.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Ethernet.Link.{i}.": {
+      "file": "Ethernet.Link.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Ethernet.Link.{i}.Stats.": {
+      "file": "Ethernet.Link.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Ethernet.RMONStats.{i}.": {
+      "file": "Ethernet.RMONStats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Ethernet.VLANTermination.{i}.": {
+      "file": "Ethernet.VLANTermination.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Ethernet.VLANTermination.{i}.Stats.": {
+      "file": "Ethernet.VLANTermination.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Ethernet.WoL.": {
+      "file": "Ethernet.WoL.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FAP.": {
+      "file": "FAP.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FAP.ApplicationPlatform.": {
+      "file": "FAP.ApplicationPlatform.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FAP.ApplicationPlatform.Capabilities.": {
+      "file": "FAP.ApplicationPlatform.Capabilities.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FAP.ApplicationPlatform.Control.": {
+      "file": "FAP.ApplicationPlatform.Control.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FAP.ApplicationPlatform.Control.FemtoAwareness.": {
+      "file": "FAP.ApplicationPlatform.Control.FemtoAwareness.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FAP.ApplicationPlatform.Control.MMS.": {
+      "file": "FAP.ApplicationPlatform.Control.MMS.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FAP.ApplicationPlatform.Control.SMS.": {
+      "file": "FAP.ApplicationPlatform.Control.SMS.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FAP.ApplicationPlatform.Control.TerminalLocation.": {
+      "file": "FAP.ApplicationPlatform.Control.TerminalLocation.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FAP.ApplicationPlatform.Monitoring.": {
+      "file": "FAP.ApplicationPlatform.Monitoring.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.": {
+      "file": "FAP.ApplicationPlatform.Monitoring.FemtoAwareness.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FAP.ApplicationPlatform.Monitoring.MMS.": {
+      "file": "FAP.ApplicationPlatform.Monitoring.MMS.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FAP.ApplicationPlatform.Monitoring.SMS.": {
+      "file": "FAP.ApplicationPlatform.Monitoring.SMS.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FAP.ApplicationPlatform.Monitoring.TerminalLocation.": {
+      "file": "FAP.ApplicationPlatform.Monitoring.TerminalLocation.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FAP.GPS.": {
+      "file": "FAP.GPS.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FAP.GPS.AGPSServerConfig.": {
+      "file": "FAP.GPS.AGPSServerConfig.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FAP.GPS.ContinuousGPSStatus.": {
+      "file": "FAP.GPS.ContinuousGPSStatus.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FAP.PerfMgmt.": {
+      "file": "FAP.PerfMgmt.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FAP.PerfMgmt.Config.{i}.": {
+      "file": "FAP.PerfMgmt.Config.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.FAST.": {
+      "file": "FAST.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FAST.Line.{i}.": {
+      "file": "FAST.Line.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.FAST.Line.{i}.Stats.": {
+      "file": "FAST.Line.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.FAST.Line.{i}.Stats.CurrentDay.": {
+      "file": "FAST.Line.Stats.CurrentDay.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.FAST.Line.{i}.Stats.LastShowtime.": {
+      "file": "FAST.Line.Stats.LastShowtime.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.FAST.Line.{i}.Stats.QuarterHour.": {
+      "file": "FAST.Line.Stats.QuarterHour.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.FAST.Line.{i}.Stats.Showtime.": {
+      "file": "FAST.Line.Stats.Showtime.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.FAST.Line.{i}.Stats.Total.": {
+      "file": "FAST.Line.Stats.Total.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.FAST.Line.{i}.TestParams.": {
+      "file": "FAST.Line.TestParams.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.FWE.": {
+      "file": "FWE.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FWE.Link.{i}.": {
+      "file": "FWE.Link.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.FWE.Link.{i}.Stats.": {
+      "file": "FWE.Link.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.FaultMgmt.": {
+      "file": "FaultMgmt.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.FaultMgmt.CurrentAlarm.{i}.": {
+      "file": "FaultMgmt.CurrentAlarm.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.FaultMgmt.ExpeditedEvent.{i}.": {
+      "file": "FaultMgmt.ExpeditedEvent.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.FaultMgmt.HistoryEvent.{i}.": {
+      "file": "FaultMgmt.HistoryEvent.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.FaultMgmt.QueuedEvent.{i}.": {
+      "file": "FaultMgmt.QueuedEvent.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.FaultMgmt.SupportedAlarm.{i}.": {
+      "file": "FaultMgmt.SupportedAlarm.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Firewall.": {
+      "file": "Firewall.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Firewall.Chain.{i}.": {
+      "file": "Firewall.Chain.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Firewall.Chain.{i}.Rule.{i}.": {
+      "file": "Firewall.Chain.Rule.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Firewall.ConnectionTracking.": {
+      "file": "Firewall.ConnectionTracking.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Firewall.ConnectionTracking.FTP.": {
+      "file": "Firewall.ConnectionTracking.FTP.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Firewall.ConnectionTracking.H323.": {
+      "file": "Firewall.ConnectionTracking.H323.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Firewall.ConnectionTracking.IRC.": {
+      "file": "Firewall.ConnectionTracking.IRC.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Firewall.ConnectionTracking.PPTP.": {
+      "file": "Firewall.ConnectionTracking.PPTP.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Firewall.ConnectionTracking.SIP.": {
+      "file": "Firewall.ConnectionTracking.SIP.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Firewall.ConnectionTracking.TFTP.": {
+      "file": "Firewall.ConnectionTracking.TFTP.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Firewall.DMZ.{i}.": {
+      "file": "Firewall.DMZ.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Firewall.InterfaceSetting.{i}.": {
+      "file": "Firewall.InterfaceSetting.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Firewall.Level.{i}.": {
+      "file": "Firewall.Level.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Firewall.Log.{i}.": {
+      "file": "Firewall.Log.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Firewall.Log.{i}.Filter.": {
+      "file": "Firewall.Log.Filter.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Firewall.Pinhole.{i}.": {
+      "file": "Firewall.Pinhole.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Firewall.Policy.{i}.": {
+      "file": "Firewall.Policy.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Firewall.Service.{i}.": {
+      "file": "Firewall.Service.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Firewall.Set.{i}.": {
+      "file": "Firewall.Set.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Firewall.Set.{i}.Rule.{i}.": {
+      "file": "Firewall.Set.Rule.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.GRE.": {
+      "file": "GRE.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.GRE.Filter.{i}.": {
+      "file": "GRE.Filter.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.GRE.Tunnel.{i}.": {
+      "file": "GRE.Tunnel.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.GRE.Tunnel.{i}.Interface.{i}.": {
+      "file": "GRE.Tunnel.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.GRE.Tunnel.{i}.Interface.{i}.Stats.": {
+      "file": "GRE.Tunnel.Interface.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.GRE.Tunnel.{i}.Stats.": {
+      "file": "GRE.Tunnel.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.GatewayInfo.": {
+      "file": "GatewayInfo.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Ghn.": {
+      "file": "Ghn.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Ghn.Diagnostics.": {
+      "file": "Ghn.Diagnostics.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Ghn.Interface.{i}.": {
+      "file": "Ghn.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Ghn.Interface.{i}.AssociatedDevice.{i}.": {
+      "file": "Ghn.Interface.Associated{i}.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Ghn.Interface.{i}.DMInfo.": {
+      "file": "Ghn.Interface.DMInfo.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Ghn.Interface.{i}.SCInfo.": {
+      "file": "Ghn.Interface.SCInfo.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Ghn.Interface.{i}.SMMaskedBand.{i}.": {
+      "file": "Ghn.Interface.SMMaskedBand.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Ghn.Interface.{i}.Stats.": {
+      "file": "Ghn.Interface.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.HPNA.": {
+      "file": "HPNA.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.HPNA.Diagnostics.": {
+      "file": "HPNA.Diagnostics.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.HPNA.Interface.{i}.": {
+      "file": "HPNA.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.HPNA.Interface.{i}.AssociatedDevice.{i}.": {
+      "file": "HPNA.Interface.Associated{i}.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.HPNA.Interface.{i}.QoS.": {
+      "file": "HPNA.Interface.QoS.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.HPNA.Interface.{i}.QoS.FlowSpec.{i}.": {
+      "file": "HPNA.Interface.QoS.FlowSpec.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.HPNA.Interface.{i}.Stats.": {
+      "file": "HPNA.Interface.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.HomePlug.": {
+      "file": "HomePlug.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.HomePlug.Interface.{i}.": {
+      "file": "HomePlug.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.HomePlug.Interface.{i}.AssociatedDevice.{i}.": {
+      "file": "HomePlug.Interface.Associated{i}.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.HomePlug.Interface.{i}.Stats.": {
+      "file": "HomePlug.Interface.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Hosts.": {
+      "file": "Hosts.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Hosts.AccessControl.{i}.": {
+      "file": "Hosts.AccessControl.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Hosts.AccessControl.{i}.Schedule.{i}.": {
+      "file": "Hosts.AccessControl.Schedule.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Hosts.Host.{i}.": {
+      "file": "Hosts.Host.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Hosts.Host.{i}.IPv4Address.{i}.": {
+      "file": "Hosts.Host.IPv4Address.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Hosts.Host.{i}.IPv6Address.{i}.": {
+      "file": "Hosts.Host.IPv6Address.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Hosts.Host.{i}.WANStats.": {
+      "file": "Hosts.Host.WANStats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IEEE1905.": {
+      "file": "IEEE1905.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.IEEE1905.AL.": {
+      "file": "IEEE1905.AL.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.IEEE1905.AL.ForwardingTable.": {
+      "file": "IEEE1905.AL.ForwardingTable.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.IEEE1905.AL.ForwardingTable.ForwardingRule.{i}.": {
+      "file": "IEEE1905.AL.ForwardingTable.ForwardingRule.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IEEE1905.AL.Interface.{i}.": {
+      "file": "IEEE1905.AL.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IEEE1905.AL.Interface.{i}.Link.{i}.": {
+      "file": "IEEE1905.AL.Interface.Link.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.IEEE1905.AL.Interface.{i}.Link.{i}.Metric.": {
+      "file": "IEEE1905.AL.Interface.Link.Metric.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.IEEE1905.AL.Interface.{i}.VendorProperties.{i}.": {
+      "file": "IEEE1905.AL.Interface.VendorProperties.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.IEEE1905.AL.NetworkTopology.": {
+      "file": "IEEE1905.AL.NetworkTopology.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.IEEE1905.AL.NetworkTopology.ChangeLog.{i}.": {
+      "file": "IEEE1905.AL.NetworkTopology.ChangeLog.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.": {
+      "file": "IEEE1905.AL.NetworkTopology.IEEE1905{i}.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.BridgingTuple.{i}.": {
+      "file": "IEEE1905.AL.NetworkTopology.IEEE1905{i}.BridgingTuple.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IEEE1905Neighbor.{i}.": {
+      "file": "IEEE1905.AL.NetworkTopology.IEEE1905{i}.IEEE1905Neighbor.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IEEE1905Neighbor.{i}.Metric.{i}.": {
+      "file": "IEEE1905.AL.NetworkTopology.IEEE1905{i}.IEEE1905Neighbor.Metric.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IPv4Address.{i}.": {
+      "file": "IEEE1905.AL.NetworkTopology.IEEE1905{i}.IPv4Address.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IPv6Address.{i}.": {
+      "file": "IEEE1905.AL.NetworkTopology.IEEE1905{i}.IPv6Address.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.Interface.{i}.": {
+      "file": "IEEE1905.AL.NetworkTopology.IEEE1905{i}.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.L2Neighbor.{i}.": {
+      "file": "IEEE1905.AL.NetworkTopology.IEEE1905{i}.L2Neighbor.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.NonIEEE1905Neighbor.{i}.": {
+      "file": "IEEE1905.AL.NetworkTopology.IEEE1905{i}.NonIEEE1905Neighbor.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.VendorProperties.{i}.": {
+      "file": "IEEE1905.AL.NetworkTopology.IEEE1905{i}.VendorProperties.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.IEEE1905.AL.NetworkingRegistrar.": {
+      "file": "IEEE1905.AL.NetworkingRegistrar.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.IEEE1905.AL.Security.": {
+      "file": "IEEE1905.AL.Security.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.IEEE8021x.": {
+      "file": "IEEE8021x.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.IEEE8021x.Supplicant.{i}.": {
+      "file": "IEEE8021x.Supplicant.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IEEE8021x.Supplicant.{i}.EAPMD5.": {
+      "file": "IEEE8021x.Supplicant.EAPMD5.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IEEE8021x.Supplicant.{i}.EAPTLS.": {
+      "file": "IEEE8021x.Supplicant.EAPTLS.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IEEE8021x.Supplicant.{i}.Stats.": {
+      "file": "IEEE8021x.Supplicant.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IP.": {
+      "file": "IP.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.IP.ActivePort.{i}.": {
+      "file": "IP.ActivePort.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IP.Diagnostics.": {
+      "file": "IP.Diagnostics.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.IP.Diagnostics.IPLayerCapacityAuthCode.{i}.": {
+      "file": "IP.Diagnostics.IPLayerCapacityAuthCode.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IP.Diagnostics.UDPEchoConfig.": {
+      "file": "IP.Diagnostics.UDPEchoConfig.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.IP.Interface.{i}.": {
+      "file": "IP.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IP.Interface.{i}.IPv4Address.{i}.": {
+      "file": "IP.Interface.IPv4Address.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.IP.Interface.{i}.IPv6Address.{i}.": {
+      "file": "IP.Interface.IPv6Address.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.IP.Interface.{i}.IPv6Prefix.{i}.": {
+      "file": "IP.Interface.IPv6Prefix.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.IP.Interface.{i}.Stats.": {
+      "file": "IP.Interface.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IP.Interface.{i}.TWAMPReflector.{i}.": {
+      "file": "IP.Interface.TWAMPReflector.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.IPsec.": {
+      "file": "IPsec.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.IPsec.Filter.{i}.": {
+      "file": "IPsec.Filter.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IPsec.IKEv2SA.{i}.": {
+      "file": "IPsec.IKEv2SA.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IPsec.IKEv2SA.{i}.ChildSA.{i}.": {
+      "file": "IPsec.IKEv2SA.ChildSA.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.IPsec.IKEv2SA.{i}.ChildSA.{i}.Stats.": {
+      "file": "IPsec.IKEv2SA.ChildSA.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.IPsec.IKEv2SA.{i}.ReceivedCPAttr.{i}.": {
+      "file": "IPsec.IKEv2SA.ReceivedCPAttr.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.IPsec.IKEv2SA.{i}.Stats.": {
+      "file": "IPsec.IKEv2SA.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IPsec.Profile.{i}.": {
+      "file": "IPsec.Profile.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IPsec.Profile.{i}.SentCPAttr.{i}.": {
+      "file": "IPsec.Profile.SentCPAttr.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.IPsec.Stats.": {
+      "file": "IPsec.Stats.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.IPsec.Tunnel.{i}.": {
+      "file": "IPsec.Tunnel.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IPsec.Tunnel.{i}.Stats.": {
+      "file": "IPsec.Tunnel.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IPv6rd.": {
+      "file": "IPv6rd.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.IPv6rd.InterfaceSetting.{i}.": {
+      "file": "IPv6rd.InterfaceSetting.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.InterfaceStack.{i}.": {
+      "file": "InterfaceStack.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IoTCapability.{i}.": {
+      "file": "IoTCapability.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IoTCapability.{i}.BinaryControl.": {
+      "file": "IoTCapability.BinaryControl.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IoTCapability.{i}.BinarySensor.": {
+      "file": "IoTCapability.BinarySensor.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IoTCapability.{i}.BlobSensor.": {
+      "file": "IoTCapability.BlobSensor.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IoTCapability.{i}.EnumControl.": {
+      "file": "IoTCapability.EnumControl.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IoTCapability.{i}.EnumSensor.": {
+      "file": "IoTCapability.EnumSensor.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IoTCapability.{i}.LevelControl.": {
+      "file": "IoTCapability.LevelControl.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IoTCapability.{i}.LevelSensor.": {
+      "file": "IoTCapability.LevelSensor.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.IoTCapability.{i}.MultiLevelSensor.": {
+      "file": "IoTCapability.MultiLevelSensor.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.L2TPv3.": {
+      "file": "L2TPv3.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.L2TPv3.Filter.{i}.": {
+      "file": "L2TPv3.Filter.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.L2TPv3.Tunnel.{i}.": {
+      "file": "L2TPv3.Tunnel.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.L2TPv3.Tunnel.{i}.Interface.{i}.": {
+      "file": "L2TPv3.Tunnel.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.L2TPv3.Tunnel.{i}.Interface.{i}.Stats.": {
+      "file": "L2TPv3.Tunnel.Interface.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.L2TPv3.Tunnel.{i}.Stats.": {
+      "file": "L2TPv3.Tunnel.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.L2TPv3.Tunnel.{i}.UDP.": {
+      "file": "L2TPv3.Tunnel.UDP.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LANConfigSecurity.": {
+      "file": "LANConfigSecurity.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.LEDs.": {
+      "file": "LEDs.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.LEDs.LED.{i}.": {
+      "file": "LEDs.LED.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LEDs.LED.{i}.CurrentCycleElement.": {
+      "file": "LEDs.LED.CurrentCycleElement.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LEDs.LED.{i}.CycleElement.{i}.": {
+      "file": "LEDs.LED.CycleElement.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.LLDP.": {
+      "file": "LLDP.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.LLDP.Discovery.": {
+      "file": "LLDP.Discovery.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.LLDP.Discovery.Device.{i}.": {
+      "file": "LLDP.Discovery.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LLDP.Discovery.Device.{i}.DeviceInformation.": {
+      "file": "LLDP.Discovery.DeviceInformation.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LLDP.Discovery.Device.{i}.DeviceInformation.VendorSpecific.{i}.": {
+      "file": "LLDP.Discovery.DeviceInformation.VendorSpecific.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.LLDP.Discovery.Device.{i}.Port.{i}.": {
+      "file": "LLDP.Discovery.Port.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.LLDP.Discovery.Device.{i}.Port.{i}.LinkInformation.": {
+      "file": "LLDP.Discovery.Port.LinkInformation.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.LMAP.": {
+      "file": "LMAP.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.LMAP.Event.{i}.": {
+      "file": "LMAP.Event.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LMAP.Event.{i}.CalendarTimer.": {
+      "file": "LMAP.Event.CalendarTimer.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LMAP.Event.{i}.OneOff.": {
+      "file": "LMAP.Event.OneOff.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LMAP.Event.{i}.PeriodicTimer.": {
+      "file": "LMAP.Event.PeriodicTimer.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LMAP.MeasurementAgent.{i}.": {
+      "file": "LMAP.MeasurementAgent.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LMAP.MeasurementAgent.{i}.CommunicationChannel.{i}.": {
+      "file": "LMAP.MeasurementAgent.CommunicationChannel.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.LMAP.MeasurementAgent.{i}.Controller.": {
+      "file": "LMAP.MeasurementAgent.Controller.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LMAP.MeasurementAgent.{i}.Instruction.{i}.": {
+      "file": "LMAP.MeasurementAgent.Instruction.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.LMAP.MeasurementAgent.{i}.Instruction.{i}.MeasurementSuppression.{i}.": {
+      "file": "LMAP.MeasurementAgent.Instruction.MeasurementSuppression.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.": {
+      "file": "LMAP.MeasurementAgent.Schedule.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Action.{i}.": {
+      "file": "LMAP.MeasurementAgent.Schedule.Action.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Action.{i}.Option.{i}.": {
+      "file": "LMAP.MeasurementAgent.Schedule.Action.Option.json",
+      "instance_type": "multi",
+      "nesting_level": 4
+    },
+    "Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Action.{i}.Stats.": {
+      "file": "LMAP.MeasurementAgent.Schedule.Action.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Stats.": {
+      "file": "LMAP.MeasurementAgent.Schedule.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.LMAP.MeasurementAgent.{i}.Task.{i}.": {
+      "file": "LMAP.MeasurementAgent.Task.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.LMAP.MeasurementAgent.{i}.Task.{i}.Option.{i}.": {
+      "file": "LMAP.MeasurementAgent.Task.Option.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.LMAP.MeasurementAgent.{i}.Task.{i}.Registry.{i}.": {
+      "file": "LMAP.MeasurementAgent.Task.Registry.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.LMAP.MeasurementAgent.{i}.TaskCapability.{i}.": {
+      "file": "LMAP.MeasurementAgent.TaskCapability.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.LMAP.MeasurementAgent.{i}.TaskCapability.{i}.Registry.{i}.": {
+      "file": "LMAP.MeasurementAgent.TaskCapability.Registry.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.LMAP.Report.{i}.": {
+      "file": "LMAP.Report.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LMAP.Report.{i}.Result.{i}.": {
+      "file": "LMAP.Report.Result.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.LMAP.Report.{i}.Result.{i}.Conflict.{i}.": {
+      "file": "LMAP.Report.Result.Conflict.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.LMAP.Report.{i}.Result.{i}.Option.{i}.": {
+      "file": "LMAP.Report.Result.Option.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.LMAP.Report.{i}.Result.{i}.ReportTable.{i}.": {
+      "file": "LMAP.Report.Result.ReportTable.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.LMAP.Report.{i}.Result.{i}.ReportTable.{i}.Registry.{i}.": {
+      "file": "LMAP.Report.Result.ReportTable.Registry.json",
+      "instance_type": "multi",
+      "nesting_level": 4
+    },
+    "Device.LMAP.Report.{i}.Result.{i}.ReportTable.{i}.ResultRow.{i}.": {
+      "file": "LMAP.Report.Result.ReportTable.ResultRow.json",
+      "instance_type": "multi",
+      "nesting_level": 4
+    },
+    "Device.Layer12.": {
+      "file": "Layer12.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Layer1A.": {
+      "file": "Layer1A.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Layer1B.": {
+      "file": "Layer1B.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Layer1C.": {
+      "file": "Layer1C.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Layer2.": {
+      "file": "Layer2.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Layer3.": {
+      "file": "Layer3.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.LocalAgent.": {
+      "file": "LocalAgent.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.LocalAgent.Certificate.{i}.": {
+      "file": "LocalAgent.Certificate.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LocalAgent.Controller.{i}.": {
+      "file": "LocalAgent.Controller.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LocalAgent.Controller.{i}.BootParameter.{i}.": {
+      "file": "LocalAgent.Controller.BootParameter.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.LocalAgent.Controller.{i}.E2ESession.": {
+      "file": "LocalAgent.Controller.E2ESession.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LocalAgent.Controller.{i}.MTP.{i}.": {
+      "file": "LocalAgent.Controller.MTP.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.LocalAgent.Controller.{i}.MTP.{i}.CoAP.": {
+      "file": "LocalAgent.Controller.MTP.CoAP.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.LocalAgent.Controller.{i}.MTP.{i}.MQTT.": {
+      "file": "LocalAgent.Controller.MTP.MQTT.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.LocalAgent.Controller.{i}.MTP.{i}.STOMP.": {
+      "file": "LocalAgent.Controller.MTP.STOMP.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.LocalAgent.Controller.{i}.MTP.{i}.UDS.": {
+      "file": "LocalAgent.Controller.MTP.UDS.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.": {
+      "file": "LocalAgent.Controller.MTP.WebSocket.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.LocalAgent.Controller.{i}.TransferCompletePolicy.": {
+      "file": "LocalAgent.Controller.TransferCompletePolicy.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LocalAgent.ControllerTrust.": {
+      "file": "LocalAgent.ControllerTrust.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.LocalAgent.ControllerTrust.Challenge.{i}.": {
+      "file": "LocalAgent.ControllerTrust.Challenge.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LocalAgent.ControllerTrust.Credential.{i}.": {
+      "file": "LocalAgent.ControllerTrust.Credential.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LocalAgent.ControllerTrust.Role.{i}.": {
+      "file": "LocalAgent.ControllerTrust.Role.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LocalAgent.ControllerTrust.Role.{i}.Permission.{i}.": {
+      "file": "LocalAgent.ControllerTrust.Role.Permission.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.LocalAgent.MTP.{i}.": {
+      "file": "LocalAgent.MTP.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LocalAgent.MTP.{i}.CoAP.": {
+      "file": "LocalAgent.MTP.CoAP.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LocalAgent.MTP.{i}.MQTT.": {
+      "file": "LocalAgent.MTP.MQTT.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LocalAgent.MTP.{i}.STOMP.": {
+      "file": "LocalAgent.MTP.STOMP.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LocalAgent.MTP.{i}.UDS.": {
+      "file": "LocalAgent.MTP.UDS.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LocalAgent.MTP.{i}.WebSocket.": {
+      "file": "LocalAgent.MTP.WebSocket.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LocalAgent.Monitor.{i}.": {
+      "file": "LocalAgent.Monitor.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LocalAgent.Request.{i}.": {
+      "file": "LocalAgent.Request.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LocalAgent.Subscription.{i}.": {
+      "file": "LocalAgent.Subscription.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LocalAgent.Threshold.{i}.": {
+      "file": "LocalAgent.Threshold.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.LocalAgent.Watchdog.{i}.": {
+      "file": "LocalAgent.Watchdog.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Logical.": {
+      "file": "Logical.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Logical.Interface.{i}.": {
+      "file": "Logical.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Logical.Interface.{i}.Stats.": {
+      "file": "Logical.Interface.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.MAP.": {
+      "file": "MAP.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.MAP.Domain.{i}.": {
+      "file": "MAP.Domain.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.MAP.Domain.{i}.Interface.": {
+      "file": "MAP.Domain.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.MAP.Domain.{i}.Interface.Stats.": {
+      "file": "MAP.Domain.Interface.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.MAP.Domain.{i}.Rule.{i}.": {
+      "file": "MAP.Domain.Rule.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.MQTT.": {
+      "file": "MQTT.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.MQTT.Broker.{i}.": {
+      "file": "MQTT.Broker.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.MQTT.Broker.{i}.Bridge.{i}.": {
+      "file": "MQTT.Broker.Bridge.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.MQTT.Broker.{i}.Bridge.{i}.Server.{i}.": {
+      "file": "MQTT.Broker.Bridge.Server.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.MQTT.Broker.{i}.Bridge.{i}.Subscription.{i}.": {
+      "file": "MQTT.Broker.Bridge.Subscription.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.MQTT.Broker.{i}.Stats.": {
+      "file": "MQTT.Broker.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.MQTT.Capabilities.": {
+      "file": "MQTT.Capabilities.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.MQTT.Client.{i}.": {
+      "file": "MQTT.Client.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.MQTT.Client.{i}.Stats.": {
+      "file": "MQTT.Client.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.MQTT.Client.{i}.Subscription.{i}.": {
+      "file": "MQTT.Client.Subscription.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.MQTT.Client.{i}.UserProperty.{i}.": {
+      "file": "MQTT.Client.UserProperty.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.MoCA.": {
+      "file": "MoCA.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.MoCA.Interface.{i}.": {
+      "file": "MoCA.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.MoCA.Interface.{i}.Aca.": {
+      "file": "MoCA.Interface.Aca.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.MoCA.Interface.{i}.AccessControl.{i}.": {
+      "file": "MoCA.Interface.AccessControl.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.MoCA.Interface.{i}.AssociatedDevice.{i}.": {
+      "file": "MoCA.Interface.Associated{i}.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.MoCA.Interface.{i}.Bridge.{i}.": {
+      "file": "MoCA.Interface.Bridge.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.MoCA.Interface.{i}.Mesh.{i}.": {
+      "file": "MoCA.Interface.Mesh.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.MoCA.Interface.{i}.MeshScMod.{i}.": {
+      "file": "MoCA.Interface.MeshScMod.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.MoCA.Interface.{i}.QoS.": {
+      "file": "MoCA.Interface.QoS.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.MoCA.Interface.{i}.QoS.FlowStats.{i}.": {
+      "file": "MoCA.Interface.QoS.FlowStats.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.MoCA.Interface.{i}.Reset.": {
+      "file": "MoCA.Interface.Reset.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.MoCA.Interface.{i}.Rlapm.{i}.": {
+      "file": "MoCA.Interface.Rlapm.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.MoCA.Interface.{i}.Sapm.{i}.": {
+      "file": "MoCA.Interface.Sapm.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.MoCA.Interface.{i}.Stats.": {
+      "file": "MoCA.Interface.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.NAT.": {
+      "file": "NAT.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.NAT.InterfaceSetting.{i}.": {
+      "file": "NAT.InterfaceSetting.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.NAT.PortMapping.{i}.": {
+      "file": "NAT.PortMapping.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.NAT.PortTrigger.{i}.": {
+      "file": "NAT.PortTrigger.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.NAT.PortTrigger.{i}.Rule.{i}.": {
+      "file": "NAT.PortTrigger.Rule.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.NeighborDiscovery.": {
+      "file": "NeighborDiscovery.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.NeighborDiscovery.InterfaceSetting.{i}.": {
+      "file": "NeighborDiscovery.InterfaceSetting.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Node.{i}.": {
+      "file": "Node.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Optical.": {
+      "file": "Optical.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Optical.Interface.{i}.": {
+      "file": "Optical.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Optical.Interface.{i}.Stats.": {
+      "file": "Optical.Interface.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.PCP.": {
+      "file": "PCP.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.PCP.Client.{i}.": {
+      "file": "PCP.Client.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.PCP.Client.{i}.PCPProxy.": {
+      "file": "PCP.Client.PCPProxy.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.PCP.Client.{i}.Server.{i}.": {
+      "file": "PCP.Client.Server.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.PCP.Client.{i}.Server.{i}.InboundMapping.{i}.": {
+      "file": "PCP.Client.Server.InboundMapping.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.PCP.Client.{i}.Server.{i}.InboundMapping.{i}.Filter.{i}.": {
+      "file": "PCP.Client.Server.InboundMapping.Filter.json",
+      "instance_type": "multi",
+      "nesting_level": 4
+    },
+    "Device.PCP.Client.{i}.Server.{i}.OutboundMapping.{i}.": {
+      "file": "PCP.Client.Server.OutboundMapping.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.PCP.Client.{i}.UPnPIWF.": {
+      "file": "PCP.Client.UPnPIWF.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.PDU.": {
+      "file": "PDU.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.PDU.Session.{i}.": {
+      "file": "PDU.Session.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.PDU.Session.{i}.NetworkSlice.": {
+      "file": "PDU.Session.NetworkSlice.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.PDU.Session.{i}.PCO.": {
+      "file": "PDU.Session.PCO.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.PDU.Session.{i}.QoSFlow.{i}.": {
+      "file": "PDU.Session.QoSFlow.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.PDU.Session.{i}.QoSRule.{i}.": {
+      "file": "PDU.Session.QoSRule.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.PDU.Session.{i}.QoSRule.{i}.Filter.{i}.": {
+      "file": "PDU.Session.QoSRule.Filter.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.PPP.": {
+      "file": "PPP.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.PPP.Interface.{i}.": {
+      "file": "PPP.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.PPP.Interface.{i}.IPCP.": {
+      "file": "PPP.Interface.IPCP.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.PPP.Interface.{i}.IPv6CP.": {
+      "file": "PPP.Interface.IPv6CP.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.PPP.Interface.{i}.PPPoA.": {
+      "file": "PPP.Interface.PPPoA.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.PPP.Interface.{i}.PPPoE.": {
+      "file": "PPP.Interface.PPPoE.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.PPP.Interface.{i}.Stats.": {
+      "file": "PPP.Interface.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.PTM.": {
+      "file": "PTM.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.PTM.Link.{i}.": {
+      "file": "PTM.Link.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.PTM.Link.{i}.Stats.": {
+      "file": "PTM.Link.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.PeriodicStatistics.": {
+      "file": "PeriodicStatistics.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.PeriodicStatistics.SampleSet.{i}.": {
+      "file": "PeriodicStatistics.SampleSet.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.PeriodicStatistics.SampleSet.{i}.Parameter.{i}.": {
+      "file": "PeriodicStatistics.SampleSet.Parameter.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.ProxiedDevice.{i}.": {
+      "file": "Proxied{i}.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.ProxiedDevice.{i}.Node.{i}.": {
+      "file": "Proxied{i}.Node.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.QoS.": {
+      "file": "QoS.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.QoS.App.{i}.": {
+      "file": "QoS.App.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.QoS.Classification.{i}.": {
+      "file": "QoS.Classification.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.QoS.Flow.{i}.": {
+      "file": "QoS.Flow.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.QoS.Policer.{i}.": {
+      "file": "QoS.Policer.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.QoS.Queue.{i}.": {
+      "file": "QoS.Queue.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.QoS.QueueStats.{i}.": {
+      "file": "QoS.QueueStats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.QoS.Scheduler.{i}.": {
+      "file": "QoS.Scheduler.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.QoS.Shaper.{i}.": {
+      "file": "QoS.Shaper.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.RadSecProxy.": {
+      "file": "RadSecProxy.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.RadSecProxy.Client.{i}.": {
+      "file": "RadSecProxy.Client.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.RadSecProxy.ListenConfig.{i}.": {
+      "file": "RadSecProxy.ListenConfig.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.RadSecProxy.Realm.{i}.": {
+      "file": "RadSecProxy.Realm.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.RadSecProxy.Server.{i}.": {
+      "file": "RadSecProxy.Server.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.RadSecProxy.SourceConfig.{i}.": {
+      "file": "RadSecProxy.SourceConfig.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.RadSecProxy.TLS.{i}.": {
+      "file": "RadSecProxy.TLS.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.RouterAdvertisement.": {
+      "file": "RouterAdvertisement.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.RouterAdvertisement.InterfaceSetting.{i}.": {
+      "file": "RouterAdvertisement.InterfaceSetting.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.RouterAdvertisement.InterfaceSetting.{i}.Option.{i}.": {
+      "file": "RouterAdvertisement.InterfaceSetting.Option.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Routing.": {
+      "file": "Routing.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Routing.Babel.": {
+      "file": "Routing.Babel.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Routing.Babel.Constants.": {
+      "file": "Routing.Babel.Constants.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Routing.Babel.DTLSCertSet.{i}.": {
+      "file": "Routing.Babel.DTLSCertSet.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Routing.Babel.DTLSCertSet.{i}.DTLSCert.{i}.": {
+      "file": "Routing.Babel.DTLSCertSet.DTLSCert.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Routing.Babel.InterfaceSetting.{i}.": {
+      "file": "Routing.Babel.InterfaceSetting.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Routing.Babel.InterfaceSetting.{i}.Neighbor.{i}.": {
+      "file": "Routing.Babel.InterfaceSetting.Neighbor.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Routing.Babel.InterfaceSetting.{i}.Stats.": {
+      "file": "Routing.Babel.InterfaceSetting.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Routing.Babel.MACKeySet.{i}.": {
+      "file": "Routing.Babel.MACKeySet.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Routing.Babel.MACKeySet.{i}.MACKey.{i}.": {
+      "file": "Routing.Babel.MACKeySet.MACKey.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Routing.Babel.Route.{i}.": {
+      "file": "Routing.Babel.Route.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Routing.RIP.": {
+      "file": "Routing.RIP.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Routing.RIP.InterfaceSetting.{i}.": {
+      "file": "Routing.RIP.InterfaceSetting.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Routing.RouteInformation.": {
+      "file": "Routing.RouteInformation.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Routing.RouteInformation.InterfaceSetting.{i}.": {
+      "file": "Routing.RouteInformation.InterfaceSetting.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Routing.RouteInformation.InterfaceSetting.{i}.Option.{i}.": {
+      "file": "Routing.RouteInformation.InterfaceSetting.Option.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Routing.Router.{i}.": {
+      "file": "Routing.Router.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Routing.Router.{i}.IPv4Forwarding.{i}.": {
+      "file": "Routing.Router.IPv4Forwarding.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Routing.Router.{i}.IPv6Forwarding.{i}.": {
+      "file": "Routing.Router.IPv6Forwarding.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.SFPs.": {
+      "file": "SFPs.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.SFPs.Mgmt.": {
+      "file": "SFPs.Mgmt.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.SFPs.Mgmt.SFF8472.{i}.": {
+      "file": "SFPs.Mgmt.SFF8472.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.": {
+      "file": "SFPs.Mgmt.SFF8472.Transceiver.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Alarms.": {
+      "file": "SFPs.Mgmt.SFF8472.Transceiver.Alarms.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Status.": {
+      "file": "SFPs.Mgmt.SFF8472.Transceiver.Status.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Thresholds.": {
+      "file": "SFPs.Mgmt.SFF8472.Transceiver.Thresholds.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Warnings.": {
+      "file": "SFPs.Mgmt.SFF8472.Transceiver.Warnings.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SFPs.SFPCage.{i}.": {
+      "file": "SFPs.SFPCage.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SSH.": {
+      "file": "SSH.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.SSH.AuthorizedKey.{i}.": {
+      "file": "SSH.AuthorizedKey.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SSH.Server.{i}.": {
+      "file": "SSH.Server.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SSH.Server.{i}.AccessLog.{i}.": {
+      "file": "SSH.Server.AccessLog.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.SSH.Server.{i}.Session.{i}.": {
+      "file": "SSH.Server.Session.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.SSH.Server.{i}.Stats.": {
+      "file": "SSH.Server.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.STOMP.": {
+      "file": "STOMP.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.STOMP.Connection.{i}.": {
+      "file": "STOMP.Connection.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Schedules.": {
+      "file": "Schedules.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Schedules.Schedule.{i}.": {
+      "file": "Schedules.Schedule.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Security.": {
+      "file": "Security.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Security.CABundle.{i}.": {
+      "file": "Security.CABundle.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Security.Certificate.{i}.": {
+      "file": "Security.Certificate.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Services.": {
+      "file": "Services.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.SessionManagement.": {
+      "file": "SessionManagement.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.SessionManagement.PDN.{i}.": {
+      "file": "SessionManagement.PDN.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SessionManagement.PDP.{i}.": {
+      "file": "SessionManagement.PDP.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SessionManagement.PDU.{i}.": {
+      "file": "SessionManagement.PDU.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SessionManagement.PDU.{i}.NetworkSlice.": {
+      "file": "SessionManagement.PDU.NetworkSlice.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SessionManagement.PDU.{i}.QoSFlow.{i}.": {
+      "file": "SessionManagement.PDU.QoSFlow.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.SessionManagement.PDU.{i}.QoSRule.{i}.": {
+      "file": "SessionManagement.PDU.QoSRule.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.SessionManagement.PDU.{i}.QoSRule.{i}.Filter.{i}.": {
+      "file": "SessionManagement.PDU.QoSRule.Filter.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.SessionManagement.Session.{i}.": {
+      "file": "SessionManagement.Session.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SessionManagement.Session.{i}.PCO.": {
+      "file": "SessionManagement.Session.PCO.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SmartCardReaders.": {
+      "file": "SmartCardReaders.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.SmartCardReaders.SmartCardReader.{i}.": {
+      "file": "SmartCardReaders.SmartCardReader.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SmartCardReaders.SmartCardReader.{i}.SmartCard.": {
+      "file": "SmartCardReaders.SmartCardReader.SmartCard.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SoftwareModules.": {
+      "file": "SoftwareModules.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.SoftwareModules.DeploymentUnit.{i}.": {
+      "file": "SoftwareModules.DeploymentUnit.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SoftwareModules.ExecEnv.{i}.": {
+      "file": "SoftwareModules.ExecEnv.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SoftwareModules.ExecEnv.{i}.ApplicationData.{i}.": {
+      "file": "SoftwareModules.ExecEnv.ApplicationData.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.SoftwareModules.ExecEnvClass.{i}.": {
+      "file": "SoftwareModules.ExecEnvClass.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SoftwareModules.ExecEnvClass.{i}.Capability.{i}.": {
+      "file": "SoftwareModules.ExecEnvClass.Capability.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.SoftwareModules.ExecutionUnit.{i}.": {
+      "file": "SoftwareModules.ExecutionUnit.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SoftwareModules.ExecutionUnit.{i}.AutoRestart.": {
+      "file": "SoftwareModules.ExecutionUnit.AutoRestart.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SoftwareModules.ExecutionUnit.{i}.EnvVariable.{i}.": {
+      "file": "SoftwareModules.ExecutionUnit.EnvVariable.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.SoftwareModules.ExecutionUnit.{i}.Extensions.": {
+      "file": "SoftwareModules.ExecutionUnit.Extensions.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.SoftwareModules.ExecutionUnit.{i}.HostObject.{i}.": {
+      "file": "SoftwareModules.ExecutionUnit.HostObject.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.SoftwareModules.ExecutionUnit.{i}.NetworkConfig.": {
+      "file": "SoftwareModules.ExecutionUnit.NetworkConfig.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Standby.": {
+      "file": "Standby.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Syslog.": {
+      "file": "Syslog.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Syslog.Action.{i}.": {
+      "file": "Syslog.Action.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Syslog.Action.{i}.LogFile.": {
+      "file": "Syslog.Action.LogFile.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Syslog.Action.{i}.LogRemote.": {
+      "file": "Syslog.Action.LogRemote.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Syslog.Filter.{i}.": {
+      "file": "Syslog.Filter.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Syslog.Source.{i}.": {
+      "file": "Syslog.Source.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Syslog.Source.{i}.Network.": {
+      "file": "Syslog.Source.Network.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Syslog.Template.{i}.": {
+      "file": "Syslog.Template.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Thread.": {
+      "file": "Thread.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Thread.BorderRouter.{i}.": {
+      "file": "Thread.BorderRouter.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Thread.MLE.{i}.": {
+      "file": "Thread.MLE.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Thread.MLE.{i}.AssociatedNode.{i}.": {
+      "file": "Thread.MLE.AssociatedNode.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Thread.MLE.{i}.AssociatedNode.{i}.IPv6Address.{i}.": {
+      "file": "Thread.MLE.AssociatedNode.IPv6Address.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.Thread.MLE.{i}.AssociatedNode.{i}.Neighbor.{i}.": {
+      "file": "Thread.MLE.AssociatedNode.Neighbor.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.Thread.MLE.{i}.AssociatedNode.{i}.Route.{i}.": {
+      "file": "Thread.MLE.AssociatedNode.Route.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.Thread.MLE.{i}.Dataset.{i}.": {
+      "file": "Thread.MLE.Dataset.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Thread.MLE.{i}.Dataset.{i}.SecurityPolicy.": {
+      "file": "Thread.MLE.Dataset.SecurityPolicy.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.Thread.MLE.{i}.LeaderData.": {
+      "file": "Thread.MLE.LeaderData.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Thread.MLE.{i}.Stats.": {
+      "file": "Thread.MLE.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Thread.Node.{i}.": {
+      "file": "Thread.Node.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Thread.Radio.{i}.": {
+      "file": "Thread.Radio.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Thread.Radio.{i}.Stats.": {
+      "file": "Thread.Radio.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Time.": {
+      "file": "Time.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Time.Client.{i}.": {
+      "file": "Time.Client.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Time.Client.{i}.Authentication.": {
+      "file": "Time.Client.Authentication.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Time.Client.{i}.Stats.": {
+      "file": "Time.Client.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Time.Server.{i}.": {
+      "file": "Time.Server.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Time.Server.{i}.Authentication.": {
+      "file": "Time.Server.Authentication.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Time.Server.{i}.Stats.": {
+      "file": "Time.Server.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.TrustedElements.": {
+      "file": "TrustedElements.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.TrustedElements.SIM.{i}.": {
+      "file": "TrustedElements.SIM.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.TrustedElements.SIM.{i}.Profile.{i}.": {
+      "file": "TrustedElements.SIM.Profile.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.UPA.": {
+      "file": "UPA.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.UPA.Diagnostics.": {
+      "file": "UPA.Diagnostics.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.UPA.Interface.{i}.": {
+      "file": "UPA.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.UPA.Interface.{i}.ActiveNotch.{i}.": {
+      "file": "UPA.Interface.ActiveNotch.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.UPA.Interface.{i}.AssociatedDevice.{i}.": {
+      "file": "UPA.Interface.Associated{i}.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.UPA.Interface.{i}.BridgeFor.{i}.": {
+      "file": "UPA.Interface.BridgeFor.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.UPA.Interface.{i}.Stats.": {
+      "file": "UPA.Interface.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.UPnP.": {
+      "file": "UPnP.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.UPnP.Description.": {
+      "file": "UPnP.Description.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.UPnP.Description.DeviceDescription.{i}.": {
+      "file": "UPnP.Description.DeviceDescription.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.UPnP.Description.DeviceInstance.{i}.": {
+      "file": "UPnP.Description.DeviceInstance.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.UPnP.Description.ServiceInstance.{i}.": {
+      "file": "UPnP.Description.ServiceInstance.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.UPnP.Device.": {
+      "file": "UPnP.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.UPnP.Device.Capabilities.": {
+      "file": "UPnP.Capabilities.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.UPnP.Discovery.": {
+      "file": "UPnP.Discovery.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.UPnP.Discovery.Device.{i}.": {
+      "file": "UPnP.Discovery.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.UPnP.Discovery.RootDevice.{i}.": {
+      "file": "UPnP.Discovery.Root{i}.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.UPnP.Discovery.Service.{i}.": {
+      "file": "UPnP.Discovery.Service.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.USB.": {
+      "file": "USB.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.USB.Interface.{i}.": {
+      "file": "USB.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.USB.Interface.{i}.Stats.": {
+      "file": "USB.Interface.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.USB.Port.{i}.": {
+      "file": "USB.Port.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.USB.USBHosts.": {
+      "file": "USB.USBHosts.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.USB.USBHosts.Host.{i}.": {
+      "file": "USB.USBHosts.Host.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.USB.USBHosts.Host.{i}.Device.{i}.": {
+      "file": "USB.USBHosts.Host.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.USB.USBHosts.Host.{i}.Device.{i}.Configuration.{i}.": {
+      "file": "USB.USBHosts.Host.Configuration.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.USB.USBHosts.Host.{i}.Device.{i}.Configuration.{i}.Interface.{i}.": {
+      "file": "USB.USBHosts.Host.Configuration.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 4
+    },
+    "Device.USPServices.": {
+      "file": "USPServices.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.USPServices.Trust.{i}.": {
+      "file": "USPServices.Trust.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.USPServices.USPService.{i}.": {
+      "file": "USPServices.USPService.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.UnixDomainSockets.": {
+      "file": "UnixDomainSockets.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.UnixDomainSockets.UnixDomainSocket.{i}.": {
+      "file": "UnixDomainSockets.UnixDomainSocket.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.UserInterface.": {
+      "file": "UserInterface.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.UserInterface.HTTPAccess.{i}.": {
+      "file": "UserInterface.HTTPAccess.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.UserInterface.HTTPAccess.{i}.Session.{i}.": {
+      "file": "UserInterface.HTTPAccess.Session.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.UserInterface.LocalDisplay.": {
+      "file": "UserInterface.LocalDisplay.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.UserInterface.Messages.": {
+      "file": "UserInterface.Messages.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.UserInterface.RemoteAccess.": {
+      "file": "UserInterface.RemoteAccess.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Users.": {
+      "file": "Users.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.Users.Group.{i}.": {
+      "file": "Users.Group.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Users.Role.{i}.": {
+      "file": "Users.Role.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Users.SupportedShell.{i}.": {
+      "file": "Users.SupportedShell.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.Users.User.{i}.": {
+      "file": "Users.User.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.VXLAN.": {
+      "file": "VXLAN.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.VXLAN.Filter.{i}.": {
+      "file": "VXLAN.Filter.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.VXLAN.Tunnel.{i}.": {
+      "file": "VXLAN.Tunnel.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.VXLAN.Tunnel.{i}.Interface.{i}.": {
+      "file": "VXLAN.Tunnel.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.VXLAN.Tunnel.{i}.Interface.{i}.Stats.": {
+      "file": "VXLAN.Tunnel.Interface.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.VXLAN.Tunnel.{i}.Stats.": {
+      "file": "VXLAN.Tunnel.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WWC.": {
+      "file": "WWC.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.WWC.AccessNetwork.{i}.": {
+      "file": "WWC.AccessNetwork.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WWC.AccessNetwork.{i}.GUTI.": {
+      "file": "WWC.AccessNetwork.GUTI.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WWC.URSP.{i}.": {
+      "file": "WWC.URSP.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WWC.URSP.{i}.TrafficDescriptor.{i}.": {
+      "file": "WWC.URSP.TrafficDescriptor.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WWC.URSP.{i}.TrafficDescriptor.{i}.RouteSelectionDescriptor.{i}.": {
+      "file": "WWC.URSP.TrafficDescriptor.RouteSelectionDescriptor.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WWC.URSP.{i}.TrafficDescriptor.{i}.RouteSelectionDescriptor.{i}.NetworkSlice.": {
+      "file": "WWC.URSP.TrafficDescriptor.RouteSelectionDescriptor.NetworkSlice.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.": {
+      "file": "WiFi.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.WiFi.AccessPoint.{i}.": {
+      "file": "WiFi.AccessPoint.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.AccessPoint.{i}.AC.{i}.": {
+      "file": "WiFi.AccessPoint.AC.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.AccessPoint.{i}.AC.{i}.Stats.": {
+      "file": "WiFi.AccessPoint.AC.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.AccessPoint.{i}.ANQP.": {
+      "file": "WiFi.AccessPoint.ANQP.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.AccessPoint.{i}.Accounting.": {
+      "file": "WiFi.AccessPoint.Accounting.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.": {
+      "file": "WiFi.AccessPoint.Associated{i}.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.Stats.": {
+      "file": "WiFi.AccessPoint.Associated{i}.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.AccessPoint.{i}.Interworking.": {
+      "file": "WiFi.AccessPoint.Interworking.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.AccessPoint.{i}.Passpoint.": {
+      "file": "WiFi.AccessPoint.Passpoint.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.AccessPoint.{i}.Passpoint.OSU.": {
+      "file": "WiFi.AccessPoint.Passpoint.OSU.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.AccessPoint.{i}.Security.": {
+      "file": "WiFi.AccessPoint.Security.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.AccessPoint.{i}.WPS.": {
+      "file": "WiFi.AccessPoint.WPS.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.DataElements.": {
+      "file": "WiFi.DataElements.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.WiFi.DataElements.AssociationEvent.": {
+      "file": "WiFi.DataElements.AssociationEvent.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.WiFi.DataElements.AssociationEvent.AssociationEventData.{i}.": {
+      "file": "WiFi.DataElements.AssociationEvent.AssociationEventData.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.DataElements.AssociationEvent.AssociationEventData.{i}.WiFi6Capabilities.": {
+      "file": "WiFi.DataElements.AssociationEvent.AssociationEventData.WiFi6Capabilities.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.DataElements.DisassociationEvent.": {
+      "file": "WiFi.DataElements.DisassociationEvent.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.WiFi.DataElements.DisassociationEvent.DisassociationEventData.{i}.": {
+      "file": "WiFi.DataElements.DisassociationEvent.DisassociationEventData.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.DataElements.FailedConnectionEvent.": {
+      "file": "WiFi.DataElements.FailedConnectionEvent.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.WiFi.DataElements.FailedConnectionEvent.FailedConnectionEventData.{i}.": {
+      "file": "WiFi.DataElements.FailedConnectionEvent.FailedConnectionEventData.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.DataElements.Network.": {
+      "file": "WiFi.DataElements.Network.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.": {
+      "file": "WiFi.DataElements.Network.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.AFCAvailableSpectrum.": {
+      "file": "WiFi.DataElements.Network.AFCAvailableSpectrum.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.": {
+      "file": "WiFi.DataElements.Network.APMLD.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.APMLDConfig.": {
+      "file": "WiFi.DataElements.Network.APMLD.APMLDConfig.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.APMLDConfig.TIDToOpClassPolicy.{i}.": {
+      "file": "WiFi.DataElements.Network.APMLD.APMLDConfig.TIDToOpClassPolicy.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.AffiliatedAP.{i}.": {
+      "file": "WiFi.DataElements.Network.APMLD.AffiliatedAP.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.LinkToOpClassMap.{i}.": {
+      "file": "WiFi.DataElements.Network.APMLD.LinkToOpClassMap.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.STAMLD.{i}.": {
+      "file": "WiFi.DataElements.Network.APMLD.STAMLD.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.STAMLD.{i}.AffiliatedSTA.{i}.": {
+      "file": "WiFi.DataElements.Network.APMLD.STAMLD.AffiliatedSTA.json",
+      "instance_type": "multi",
+      "nesting_level": 4
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.STAMLD.{i}.STAMLDConfig.": {
+      "file": "WiFi.DataElements.Network.APMLD.STAMLD.STAMLDConfig.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.STAMLD.{i}.STATIDLinkMap.{i}.": {
+      "file": "WiFi.DataElements.Network.APMLD.STAMLD.STATIDLinkMap.json",
+      "instance_type": "multi",
+      "nesting_level": 4
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.STAMLD.{i}.WiFi7Capabilities.": {
+      "file": "WiFi.DataElements.Network.APMLD.STAMLD.WiFi7Capabilities.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.TIDLinkMap.{i}.": {
+      "file": "WiFi.DataElements.Network.APMLD.TIDLinkMap.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.AnticipatedChannelUsage.{i}.": {
+      "file": "WiFi.DataElements.Network.AnticipatedChannelUsage.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.AnticipatedChannelUsage.{i}.Entry.{i}.": {
+      "file": "WiFi.DataElements.Network.AnticipatedChannelUsage.Entry.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.AnticipatedChannels.{i}.": {
+      "file": "WiFi.DataElements.Network.AnticipatedChannels.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.BackhaulDown.{i}.": {
+      "file": "WiFi.DataElements.Network.BackhaulDown.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.CACStatus.{i}.": {
+      "file": "WiFi.DataElements.Network.CACStatus.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.CACStatus.{i}.CACActiveChannel.{i}.": {
+      "file": "WiFi.DataElements.Network.CACStatus.CACActiveChannel.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.CACStatus.{i}.CACAvailableChannel.{i}.": {
+      "file": "WiFi.DataElements.Network.CACStatus.CACAvailableChannel.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.CACStatus.{i}.CACNonOccupancyChannel.{i}.": {
+      "file": "WiFi.DataElements.Network.CACStatus.CACNonOccupancyChannel.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Default8021Q.{i}.": {
+      "file": "WiFi.DataElements.Network.Default8021Q.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.IEEE1905Security.{i}.": {
+      "file": "WiFi.DataElements.Network.IEEE1905Security.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.MultiAPDevice.": {
+      "file": "WiFi.DataElements.Network.MultiAP.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.MultiAPDevice.Backhaul.": {
+      "file": "WiFi.DataElements.Network.MultiAPBackhaul.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.MultiAPDevice.Backhaul.CurrentOperatingClassProfile.{i}.": {
+      "file": "WiFi.DataElements.Network.MultiAPBackhaul.CurrentOperatingClassProfile.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.MultiAPDevice.Backhaul.Stats.": {
+      "file": "WiFi.DataElements.Network.MultiAPBackhaul.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.BSS.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.LatencyTestResult.": {
+      "file": "WiFi.DataElements.Network.Radio.BSS.LatencyTestResult.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.MUConfig.": {
+      "file": "WiFi.DataElements.Network.Radio.BSS.MUConfig.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.MUStats.": {
+      "file": "WiFi.DataElements.Network.Radio.BSS.MUStats.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.MultiAPSteering.": {
+      "file": "WiFi.DataElements.Network.Radio.BSS.MultiAPSteering.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.QMDescriptor.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.BSS.QMDescriptor.json",
+      "instance_type": "multi",
+      "nesting_level": 4
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.BSS.STA.json",
+      "instance_type": "multi",
+      "nesting_level": 4
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.HaLowCapabilities.": {
+      "file": "WiFi.DataElements.Network.Radio.BSS.STA.HaLowCapabilities.json",
+      "instance_type": "multi",
+      "nesting_level": 4
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.MultiAPSTA.": {
+      "file": "WiFi.DataElements.Network.Radio.BSS.STA.MultiAPSTA.json",
+      "instance_type": "multi",
+      "nesting_level": 4
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.MultiAPSTA.SteeringHistory.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.BSS.STA.MultiAPSTA.SteeringHistory.json",
+      "instance_type": "multi",
+      "nesting_level": 5
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.MultiAPSTA.SteeringSummaryStats.": {
+      "file": "WiFi.DataElements.Network.Radio.BSS.STA.MultiAPSTA.SteeringSummaryStats.json",
+      "instance_type": "multi",
+      "nesting_level": 4
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.TIDQueueSizes.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.BSS.STA.TIDQueueSizes.json",
+      "instance_type": "multi",
+      "nesting_level": 5
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.WiFi6Capabilities.": {
+      "file": "WiFi.DataElements.Network.Radio.BSS.STA.WiFi6Capabilities.json",
+      "instance_type": "multi",
+      "nesting_level": 4
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.SetQoSManagementInput.": {
+      "file": "WiFi.DataElements.Network.Radio.BSS.SetQoSManagementInput.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.ThroughputTestResult.": {
+      "file": "WiFi.DataElements.Network.Radio.BSS.ThroughputTestResult.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BackhaulSta.": {
+      "file": "WiFi.DataElements.Network.Radio.BackhaulSta.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CACCapability.": {
+      "file": "WiFi.DataElements.Network.Radio.CACCapability.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CACCapability.CACMethod.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.CACCapability.CACMethod.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CACCapability.CACMethod.{i}.OpClassChannels.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.CACCapability.CACMethod.OpClassChannels.json",
+      "instance_type": "multi",
+      "nesting_level": 4
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.": {
+      "file": "WiFi.DataElements.Network.Radio.Capabilities.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.AKMBackhaul.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.Capabilities.AKMBackhaul.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.AKMFrontHaul.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.Capabilities.AKMFrontHaul.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.CapableOperatingClassProfile.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.Capabilities.CapableOperatingClassProfile.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.HaLowCapabilities.": {
+      "file": "WiFi.DataElements.Network.Radio.Capabilities.HaLowCapabilities.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi6APRole.": {
+      "file": "WiFi.DataElements.Network.Radio.Capabilities.WiFi6APRole.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi6bSTARole.": {
+      "file": "WiFi.DataElements.Network.Radio.Capabilities.WiFi6bSTARole.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7APRole.": {
+      "file": "WiFi.DataElements.Network.Radio.Capabilities.WiFi7APRole.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7APRole.EMLMRFreqSeparation.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.Capabilities.WiFi7APRole.EMLMRFreqSeparation.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7APRole.EMLSRFreqSeparation.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.Capabilities.WiFi7APRole.EMLSRFreqSeparation.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7APRole.NSTRFreqSeparation.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.Capabilities.WiFi7APRole.NSTRFreqSeparation.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7APRole.STRFreqSeparation.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.Capabilities.WiFi7APRole.STRFreqSeparation.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7bSTARole.": {
+      "file": "WiFi.DataElements.Network.Radio.Capabilities.WiFi7bSTARole.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7bSTARole.EMLMRFreqSeparation.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.Capabilities.WiFi7bSTARole.EMLMRFreqSeparation.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7bSTARole.EMLSRFreqSeparation.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.Capabilities.WiFi7bSTARole.EMLSRFreqSeparation.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7bSTARole.NSTRFreqSeparation.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.Capabilities.WiFi7bSTARole.NSTRFreqSeparation.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7bSTARole.STRFreqSeparation.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.Capabilities.WiFi7bSTARole.STRFreqSeparation.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CurrentOperatingClassProfile.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.CurrentOperatingClassProfile.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.DisAllowedOpClassChannels.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.DisAllowedOpClassChannels.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.MultiAPRadio.": {
+      "file": "WiFi.DataElements.Network.Radio.MultiAPRadio.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.OpClassPreference.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.OpClassPreference.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanCapability.": {
+      "file": "WiFi.DataElements.Network.Radio.ScanCapability.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanCapability.OpClassChannels.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.ScanCapability.OpClassChannels.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanResult.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.ScanResult.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanResult.{i}.OpClassScan.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.ScanResult.OpClassScan.json",
+      "instance_type": "multi",
+      "nesting_level": 4
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanResult.{i}.OpClassScan.{i}.ChannelScan.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.ScanResult.OpClassScan.ChannelScan.json",
+      "instance_type": "multi",
+      "nesting_level": 5
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanResult.{i}.OpClassScan.{i}.ChannelScan.{i}.NeighborBSS.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.ScanResult.OpClassScan.ChannelScan.NeighborBSS.json",
+      "instance_type": "multi",
+      "nesting_level": 6
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.SpatialReuse.": {
+      "file": "WiFi.DataElements.Network.Radio.SpatialReuse.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.UnassociatedSTA.{i}.": {
+      "file": "WiFi.DataElements.Network.Radio.UnassociatedSTA.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.SPRule.{i}.": {
+      "file": "WiFi.DataElements.Network.SPRule.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.SSIDtoVIDMapping.{i}.": {
+      "file": "WiFi.DataElements.Network.SSIDtoVIDMapping.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.WPS.": {
+      "file": "WiFi.DataElements.Network.WPS.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.bSTAMLD.": {
+      "file": "WiFi.DataElements.Network.bSTAMLD.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.DataElements.Network.Device.{i}.bSTAMLD.bSTAMLDConfig.": {
+      "file": "WiFi.DataElements.Network.bSTAMLD.bSTAMLDConfig.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.DataElements.Network.MultiAPSteeringSummaryStats.": {
+      "file": "WiFi.DataElements.Network.MultiAPSteeringSummaryStats.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.WiFi.DataElements.Network.PreferredBackhauls.{i}.": {
+      "file": "WiFi.DataElements.Network.PreferredBackhauls.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.DataElements.Network.ProvisionedDPP.{i}.": {
+      "file": "WiFi.DataElements.Network.ProvisionedDPP.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.DataElements.Network.SSID.{i}.": {
+      "file": "WiFi.DataElements.Network.SSID.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.DataElements.Network.STABlock.{i}.": {
+      "file": "WiFi.DataElements.Network.STABlock.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.DataElements.Network.STABlock.{i}.Schedule.{i}.": {
+      "file": "WiFi.DataElements.Network.STABlock.Schedule.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.EndPoint.{i}.": {
+      "file": "WiFi.EndPoint.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.EndPoint.{i}.AC.{i}.": {
+      "file": "WiFi.EndPoint.AC.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.EndPoint.{i}.AC.{i}.Stats.": {
+      "file": "WiFi.EndPoint.AC.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.EndPoint.{i}.Profile.{i}.": {
+      "file": "WiFi.EndPoint.Profile.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.EndPoint.{i}.Profile.{i}.Security.": {
+      "file": "WiFi.EndPoint.Profile.Security.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.EndPoint.{i}.Security.": {
+      "file": "WiFi.EndPoint.Security.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.EndPoint.{i}.Stats.": {
+      "file": "WiFi.EndPoint.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.EndPoint.{i}.WPS.": {
+      "file": "WiFi.EndPoint.WPS.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.MultiAP.": {
+      "file": "WiFi.MultiAP.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.WiFi.MultiAP.APDevice.{i}.": {
+      "file": "WiFi.MultiAP.AP{i}.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.MultiAP.APDevice.{i}.Radio.{i}.": {
+      "file": "WiFi.MultiAP.AP{i}.Radio.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.WiFi.MultiAP.APDevice.{i}.Radio.{i}.AP.{i}.": {
+      "file": "WiFi.MultiAP.AP{i}.Radio.AP.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.WiFi.MultiAP.APDevice.{i}.Radio.{i}.AP.{i}.AssociatedDevice.{i}.": {
+      "file": "WiFi.MultiAP.AP{i}.Radio.AP.Associated{i}.json",
+      "instance_type": "multi",
+      "nesting_level": 4
+    },
+    "Device.WiFi.MultiAP.APDevice.{i}.Radio.{i}.AP.{i}.AssociatedDevice.{i}.Stats.": {
+      "file": "WiFi.MultiAP.AP{i}.Radio.AP.Associated{i}.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 4
+    },
+    "Device.WiFi.MultiAP.APDevice.{i}.Radio.{i}.AP.{i}.AssociatedDevice.{i}.SteeringHistory.{i}.": {
+      "file": "WiFi.MultiAP.AP{i}.Radio.AP.Associated{i}.SteeringHistory.json",
+      "instance_type": "multi",
+      "nesting_level": 5
+    },
+    "Device.WiFi.MultiAP.APDevice.{i}.Radio.{i}.AP.{i}.AssociatedDevice.{i}.SteeringSummaryStats.": {
+      "file": "WiFi.MultiAP.AP{i}.Radio.AP.Associated{i}.SteeringSummaryStats.json",
+      "instance_type": "multi",
+      "nesting_level": 4
+    },
+    "Device.WiFi.MultiAP.SteeringSummaryStats.": {
+      "file": "WiFi.MultiAP.SteeringSummaryStats.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.WiFi.Radio.{i}.": {
+      "file": "WiFi.Radio.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.Radio.{i}.Stats.": {
+      "file": "WiFi.Radio.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.SSID.{i}.": {
+      "file": "WiFi.SSID.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.WiFi.SSID.{i}.Stats.": {
+      "file": "WiFi.SSID.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.XMPP.": {
+      "file": "XMPP.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.XMPP.Connection.{i}.": {
+      "file": "XMPP.Connection.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.XMPP.Connection.{i}.Server.{i}.": {
+      "file": "XMPP.Connection.Server.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.XMPP.Connection.{i}.Stats.": {
+      "file": "XMPP.Connection.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.XPON.": {
+      "file": "XPON.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.XPON.ONU.{i}.": {
+      "file": "XPON.ONU.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.XPON.ONU.{i}.ANI.{i}.": {
+      "file": "XPON.ONU.ANI.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.XPON.ONU.{i}.ANI.{i}.Stats.": {
+      "file": "XPON.ONU.ANI.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.XPON.ONU.{i}.ANI.{i}.TC.": {
+      "file": "XPON.ONU.ANI.TC.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.XPON.ONU.{i}.ANI.{i}.TC.Alarms.": {
+      "file": "XPON.ONU.ANI.TC.Alarms.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.XPON.ONU.{i}.ANI.{i}.TC.Authentication.": {
+      "file": "XPON.ONU.ANI.TC.Authentication.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.XPON.ONU.{i}.ANI.{i}.TC.GEM.": {
+      "file": "XPON.ONU.ANI.TC.GEM.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.XPON.ONU.{i}.ANI.{i}.TC.GEM.Port.{i}.": {
+      "file": "XPON.ONU.ANI.TC.GEM.Port.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.XPON.ONU.{i}.ANI.{i}.TC.GEM.Port.{i}.PM.": {
+      "file": "XPON.ONU.ANI.TC.GEM.Port.PM.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.XPON.ONU.{i}.ANI.{i}.TC.ONUActivation.": {
+      "file": "XPON.ONU.ANI.TC.ONUActivation.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.": {
+      "file": "XPON.ONU.ANI.TC.PM.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.GEM.": {
+      "file": "XPON.ONU.ANI.TC.PM.GEM.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.OMCI.": {
+      "file": "XPON.ONU.ANI.TC.PM.OMCI.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.PHY.": {
+      "file": "XPON.ONU.ANI.TC.PM.PHY.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.PLOAM.": {
+      "file": "XPON.ONU.ANI.TC.PM.PLOAM.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.XPON.ONU.{i}.ANI.{i}.TC.PerformanceThresholds.": {
+      "file": "XPON.ONU.ANI.TC.PerformanceThresholds.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.XPON.ONU.{i}.ANI.{i}.Transceiver.{i}.": {
+      "file": "XPON.ONU.ANI.Transceiver.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "Device.XPON.ONU.{i}.EthernetUNI.{i}.": {
+      "file": "XPON.ONU.EthernetUNI.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.XPON.ONU.{i}.EthernetUNI.{i}.Stats.": {
+      "file": "XPON.ONU.EthernetUNI.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.XPON.ONU.{i}.SoftwareImage.{i}.": {
+      "file": "XPON.ONU.SoftwareImage.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.ZigBee.": {
+      "file": "ZigBee.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.ZigBee.Discovery.": {
+      "file": "ZigBee.Discovery.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Device.ZigBee.Discovery.AreaNetwork.{i}.": {
+      "file": "ZigBee.Discovery.AreaNetwork.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.ZigBee.Interface.{i}.": {
+      "file": "ZigBee.Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.ZigBee.Interface.{i}.AssociatedDevice.{i}.": {
+      "file": "ZigBee.Interface.Associated{i}.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.ZigBee.Interface.{i}.Stats.": {
+      "file": "ZigBee.Interface.Stats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.ZigBee.ZDO.{i}.": {
+      "file": "ZigBee.ZDO.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.ZigBee.ZDO.{i}.ApplicationEndpoint.{i}.": {
+      "file": "ZigBee.ZDO.ApplicationEndpoint.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.ZigBee.ZDO.{i}.ApplicationEndpoint.{i}.SimpleDescriptor.": {
+      "file": "ZigBee.ZDO.ApplicationEndpoint.SimpleDescriptor.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.ZigBee.ZDO.{i}.Binding.{i}.": {
+      "file": "ZigBee.ZDO.Binding.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.ZigBee.ZDO.{i}.ComplexDescriptor.": {
+      "file": "ZigBee.ZDO.ComplexDescriptor.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.ZigBee.ZDO.{i}.Group.{i}.": {
+      "file": "ZigBee.ZDO.Group.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.ZigBee.ZDO.{i}.Network.": {
+      "file": "ZigBee.ZDO.Network.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.ZigBee.ZDO.{i}.Network.Neighbor.{i}.": {
+      "file": "ZigBee.ZDO.Network.Neighbor.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.ZigBee.ZDO.{i}.NodeDescriptor.": {
+      "file": "ZigBee.ZDO.NodeDescriptor.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.ZigBee.ZDO.{i}.NodeManager.": {
+      "file": "ZigBee.ZDO.NodeManager.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.ZigBee.ZDO.{i}.NodeManager.RoutingTable.{i}.": {
+      "file": "ZigBee.ZDO.NodeManager.RoutingTable.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "Device.ZigBee.ZDO.{i}.PowerDescriptor.": {
+      "file": "ZigBee.ZDO.PowerDescriptor.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.ZigBee.ZDO.{i}.Security.": {
+      "file": "ZigBee.ZDO.Security.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Device.ZigBee.ZDO.{i}.UserDescriptor.": {
+      "file": "ZigBee.ZDO.UserDescriptor.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "DisassociationLinkStats.{i}.": {
+      "file": "DisassociationLinkStats.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Downstream.{i}.": {
+      "file": "Downstream.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "EnvVariable.{i}.": {
+      "file": "EnvVariable.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "EthernetUNI.{i}.": {
+      "file": "EthernetUNI.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Fault.": {
+      "file": "Fault.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "HostObject.{i}.": {
+      "file": "HostObject.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "IPLayerCapacityAuthCode.{i}.": {
+      "file": "IPLayerCapacityAuthCode.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "IncrementalResult.{i}.": {
+      "file": "IncrementalResult.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "IndividualPacketResult.{i}.": {
+      "file": "IndividualPacketResult.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Interface.": {
+      "file": "Interface.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Interface.{i}.": {
+      "file": "Interface.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "IoTCapability.{i}.": {
+      "file": "IoTCapability.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "IoTCapability.{i}.BinaryControl.": {
+      "file": "IoTCapability.BinaryControl.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "IoTCapability.{i}.BinarySensor.": {
+      "file": "IoTCapability.BinarySensor.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "IoTCapability.{i}.BlobSensor.": {
+      "file": "IoTCapability.BlobSensor.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "IoTCapability.{i}.EnumControl.": {
+      "file": "IoTCapability.EnumControl.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "IoTCapability.{i}.EnumSensor.": {
+      "file": "IoTCapability.EnumSensor.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "IoTCapability.{i}.LevelControl.": {
+      "file": "IoTCapability.LevelControl.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "IoTCapability.{i}.LevelSensor.": {
+      "file": "IoTCapability.LevelSensor.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "IoTCapability.{i}.MultiLevelSensor.": {
+      "file": "IoTCapability.MultiLevelSensor.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "LAG.{i}.": {
+      "file": "LAG.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Line.{i}.": {
+      "file": "Line.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Link.{i}.": {
+      "file": "Link.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "MTP.{i}.": {
+      "file": "MTP.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "MTP.{i}.CoAP.": {
+      "file": "MTP.CoAP.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "MTP.{i}.MQTT.": {
+      "file": "MTP.MQTT.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "MTP.{i}.STOMP.": {
+      "file": "MTP.STOMP.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "MTP.{i}.UDS.": {
+      "file": "MTP.UDS.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "MTP.{i}.WebSocket.": {
+      "file": "MTP.WebSocket.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "ModalResult.{i}.": {
+      "file": "ModalResult.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "NetworkConfig.": {
+      "file": "NetworkConfig.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "NetworkConfig.PortMapping.{i}.": {
+      "file": "NetworkConfig.PortMapping.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Node.{i}.": {
+      "file": "Node.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Nodes.": {
+      "file": "Nodes.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Nodes.Node.{i}.": {
+      "file": "Nodes.Node.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "OpClass.{i}.": {
+      "file": "OpClass.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "OpClass.{i}.Channel.{i}.": {
+      "file": "OpClass.Channel.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "PacketCaptureResult.{i}.": {
+      "file": "PacketCaptureResult.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "PanScan.{i}.": {
+      "file": "PanScan.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Parameter.{i}.": {
+      "file": "Parameter.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "PerConnectionResult.{i}.": {
+      "file": "PerConnectionResult.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Port.{i}.": {
+      "file": "Port.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "PreferredBackhauls.{i}.": {
+      "file": "PreferredBackhauls.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "QMDescriptor.{i}.": {
+      "file": "QMDescriptor.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Radio.{i}.": {
+      "file": "Radio.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Resources.": {
+      "file": "Resources.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "Result.{i}.": {
+      "file": "Result.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "RouteHops.{i}.": {
+      "file": "RouteHops.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "SPRule.{i}.": {
+      "file": "SPRule.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "SSID.{i}.": {
+      "file": "SSID.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "SSIDtoVIDMapping.{i}.": {
+      "file": "SSIDtoVIDMapping.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "ScanResult.{i}.": {
+      "file": "ScanResult.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "ScanResult.{i}.OpClassScan.{i}.": {
+      "file": "ScanResult.OpClassScan.json",
+      "instance_type": "multi",
+      "nesting_level": 2
+    },
+    "ScanResult.{i}.OpClassScan.{i}.ChannelScan.{i}.": {
+      "file": "ScanResult.OpClassScan.ChannelScan.json",
+      "instance_type": "multi",
+      "nesting_level": 3
+    },
+    "ScanResult.{i}.OpClassScan.{i}.ChannelScan.{i}.NeighborBSS.{i}.": {
+      "file": "ScanResult.OpClassScan.ChannelScan.NeighborBSS.json",
+      "instance_type": "multi",
+      "nesting_level": 4
+    },
+    "Stats.": {
+      "file": "Stats.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    },
+    "TimeWindow.{i}.": {
+      "file": "TimeWindow.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "Upstream.{i}.": {
+      "file": "Upstream.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "VLANTermination.{i}.": {
+      "file": "VLANTermination.json",
+      "instance_type": "multi",
+      "nesting_level": 1
+    },
+    "WiFi6Capabilities.": {
+      "file": "WiFi6Capabilities.json",
+      "instance_type": "single",
+      "nesting_level": 0
+    }
+  },
+  "by_category": {
+    "": [
+      "Device."
+    ],
+    "ATM": [
+      "Device.ATM.",
+      "Device.ATM.Diagnostics.",
+      "Device.ATM.Link.{i}.",
+      "Device.ATM.Link.{i}.QoS.",
+      "Device.ATM.Link.{i}.Stats."
+    ],
+    "BASAPM": [
+      "Device.BASAPM.",
+      "Device.BASAPM.MeasurementEndpoint.{i}.",
+      "Device.BASAPM.MeasurementEndpoint.{i}.CustomerDevice.",
+      "Device.BASAPM.MeasurementEndpoint.{i}.ISPDevice."
+    ],
+    "Bridging": [
+      "Device.Bridging.",
+      "Device.Bridging.Bridge.{i}.",
+      "Device.Bridging.Bridge.{i}.Port.{i}.",
+      "Device.Bridging.Bridge.{i}.Port.{i}.PriorityCodePoint.",
+      "Device.Bridging.Bridge.{i}.Port.{i}.Stats.",
+      "Device.Bridging.Bridge.{i}.STP.",
+      "Device.Bridging.Bridge.{i}.VLAN.{i}.",
+      "Device.Bridging.Bridge.{i}.VLANPort.{i}.",
+      "Device.Bridging.Filter.{i}.",
+      "Device.Bridging.ProviderBridge.{i}."
+    ],
+    "BulkData": [
+      "Device.BulkData.",
+      "Device.BulkData.Profile.{i}.",
+      "Device.BulkData.Profile.{i}.CSVEncoding.",
+      "Device.BulkData.Profile.{i}.HTTP.",
+      "Device.BulkData.Profile.{i}.HTTP.RequestURIParameter.{i}.",
+      "Device.BulkData.Profile.{i}.JSONEncoding.",
+      "Device.BulkData.Profile.{i}.MQTT.",
+      "Device.BulkData.Profile.{i}.Parameter.{i}."
+    ],
+    "CWMPManagementServer": [
+      "Device.CWMPManagementServer."
+    ],
+    "CaptivePortal": [
+      "Device.CaptivePortal."
+    ],
+    "Cellular": [
+      "Device.Cellular.",
+      "Device.Cellular.AccessPoint.{i}.",
+      "Device.Cellular.Interface.{i}.",
+      "Device.Cellular.Interface.{i}.SMS.",
+      "Device.Cellular.Interface.{i}.SMS.Incoming.",
+      "Device.Cellular.Interface.{i}.SMS.Message.{i}.",
+      "Device.Cellular.Interface.{i}.SMS.Outgoing.",
+      "Device.Cellular.Interface.{i}.SMS.Storage.{i}.",
+      "Device.Cellular.Interface.{i}.Stats.",
+      "Device.Cellular.Interface.{i}.USIM."
+    ],
+    "CollectionDevice": [
+      "Device.CollectionDevice.{i}."
+    ],
+    "DHCPv4": [
+      "Device.DHCPv4.",
+      "Device.DHCPv4.Client.{i}.",
+      "Device.DHCPv4.Client.{i}.ReqOption.{i}.",
+      "Device.DHCPv4.Client.{i}.Retransmission.",
+      "Device.DHCPv4.Client.{i}.SentOption.{i}.",
+      "Device.DHCPv4.Client.{i}.Stats.",
+      "Device.DHCPv4.Relay.",
+      "Device.DHCPv4.Relay.Forwarding.{i}.",
+      "Device.DHCPv4.Server.",
+      "Device.DHCPv4.Server.Pool.{i}.",
+      "Device.DHCPv4.Server.Pool.{i}.Client.{i}.",
+      "Device.DHCPv4.Server.Pool.{i}.Client.{i}.IPv4Address.{i}.",
+      "Device.DHCPv4.Server.Pool.{i}.Client.{i}.Option.{i}.",
+      "Device.DHCPv4.Server.Pool.{i}.Option.{i}.",
+      "Device.DHCPv4.Server.Pool.{i}.StaticAddress.{i}.",
+      "Device.DHCPv4.Server.Stats."
+    ],
+    "DHCPv6": [
+      "Device.DHCPv6.",
+      "Device.DHCPv6.Client.{i}.",
+      "Device.DHCPv6.Client.{i}.ReceivedOption.{i}.",
+      "Device.DHCPv6.Client.{i}.Retransmission.",
+      "Device.DHCPv6.Client.{i}.SentOption.{i}.",
+      "Device.DHCPv6.Client.{i}.Server.{i}.",
+      "Device.DHCPv6.Client.{i}.Stats.",
+      "Device.DHCPv6.Server.",
+      "Device.DHCPv6.Server.Pool.{i}.",
+      "Device.DHCPv6.Server.Pool.{i}.Client.{i}.",
+      "Device.DHCPv6.Server.Pool.{i}.Client.{i}.IPv6Address.{i}.",
+      "Device.DHCPv6.Server.Pool.{i}.Client.{i}.IPv6Prefix.{i}.",
+      "Device.DHCPv6.Server.Pool.{i}.Client.{i}.Option.{i}.",
+      "Device.DHCPv6.Server.Pool.{i}.Option.{i}.",
+      "Device.DHCPv6.Server.Stats."
+    ],
+    "DLNA": [
+      "Device.DLNA.",
+      "Device.DLNA.Capabilities."
+    ],
+    "DNS": [
+      "Device.DNS.",
+      "Device.DNS.Client.",
+      "Device.DNS.Client.Server.{i}.",
+      "Device.DNS.Diagnostics.",
+      "Device.DNS.Relay.",
+      "Device.DNS.Relay.Config.{i}.",
+      "Device.DNS.Relay.Forwarding.{i}.",
+      "Device.DNS.SD.",
+      "Device.DNS.SD.Advertise.{i}.",
+      "Device.DNS.SD.Advertise.{i}.TextRecord.{i}.",
+      "Device.DNS.SD.Service.{i}.",
+      "Device.DNS.SD.Service.{i}.TextRecord.{i}.",
+      "Device.DNS.Zone.{i}.",
+      "Device.DNS.Zone.{i}.Host.{i}."
+    ],
+    "DOCSIS": [
+      "Device.DOCSIS.",
+      "Device.DOCSIS.Downstream.{i}.",
+      "Device.DOCSIS.Downstream.{i}.Stats.",
+      "Device.DOCSIS.DownstreamChannel.{i}.",
+      "Device.DOCSIS.DownstreamChannel.{i}.SignalQuality.",
+      "Device.DOCSIS.DownstreamChannel.{i}.SignalQualityExt.",
+      "Device.DOCSIS.Interface.{i}.",
+      "Device.DOCSIS.Interface.{i}.ConnectivityStatus.",
+      "Device.DOCSIS.Interface.{i}.Stats.",
+      "Device.DOCSIS.SpectrumAnalysis.",
+      "Device.DOCSIS.SpectrumAnalysis.Result.{i}.",
+      "Device.DOCSIS.Upstream.{i}.",
+      "Device.DOCSIS.Upstream.{i}.Stats.",
+      "Device.DOCSIS.UpstreamChannel.{i}.",
+      "Device.DOCSIS.UpstreamChannel.{i}.Status."
+    ],
+    "DSL": [
+      "Device.DSL.",
+      "Device.DSL.BondingGroup.{i}.",
+      "Device.DSL.BondingGroup.{i}.BondedChannel.{i}.",
+      "Device.DSL.BondingGroup.{i}.BondedChannel.{i}.Ethernet.",
+      "Device.DSL.BondingGroup.{i}.BondedChannel.{i}.Ethernet.Stats.",
+      "Device.DSL.BondingGroup.{i}.Ethernet.",
+      "Device.DSL.BondingGroup.{i}.Ethernet.Stats.",
+      "Device.DSL.BondingGroup.{i}.Stats.",
+      "Device.DSL.BondingGroup.{i}.Stats.CurrentDay.",
+      "Device.DSL.BondingGroup.{i}.Stats.QuarterHour.",
+      "Device.DSL.BondingGroup.{i}.Stats.Total.",
+      "Device.DSL.Channel.{i}.",
+      "Device.DSL.Channel.{i}.Stats.",
+      "Device.DSL.Channel.{i}.Stats.CurrentDay.",
+      "Device.DSL.Channel.{i}.Stats.LastShowtime.",
+      "Device.DSL.Channel.{i}.Stats.QuarterHour.",
+      "Device.DSL.Channel.{i}.Stats.Showtime.",
+      "Device.DSL.Channel.{i}.Stats.Total.",
+      "Device.DSL.Diagnostics.",
+      "Device.DSL.Line.{i}.",
+      "Device.DSL.Line.{i}.DataGathering.",
+      "Device.DSL.Line.{i}.Stats.",
+      "Device.DSL.Line.{i}.Stats.CurrentDay.",
+      "Device.DSL.Line.{i}.Stats.LastShowtime.",
+      "Device.DSL.Line.{i}.Stats.QuarterHour.",
+      "Device.DSL.Line.{i}.Stats.Showtime.",
+      "Device.DSL.Line.{i}.Stats.Total.",
+      "Device.DSL.Line.{i}.TestParams."
+    ],
+    "DSLite": [
+      "Device.DSLite.",
+      "Device.DSLite.InterfaceSetting.{i}."
+    ],
+    "DeviceInfo": [
+      "Device.DeviceInfo.",
+      "Device.DeviceInfo.DeviceImageFile.{i}.",
+      "Device.DeviceInfo.FirmwareImage.{i}.",
+      "Device.DeviceInfo.KernelFaults.",
+      "Device.DeviceInfo.KernelFaults.KernelFault.{i}.",
+      "Device.DeviceInfo.Location.{i}.",
+      "Device.DeviceInfo.LogRotate.{i}.",
+      "Device.DeviceInfo.LogRotate.{i}.LogFile.{i}.",
+      "Device.DeviceInfo.MemoryStatus.",
+      "Device.DeviceInfo.MemoryStatus.MemoryMonitor.",
+      "Device.DeviceInfo.NetworkProperties.",
+      "Device.DeviceInfo.PowerStatus.",
+      "Device.DeviceInfo.PowerStatus.PowerSensor.{i}.",
+      "Device.DeviceInfo.ProcessFaults.",
+      "Device.DeviceInfo.ProcessFaults.ProcessFault.{i}.",
+      "Device.DeviceInfo.ProcessStatus.",
+      "Device.DeviceInfo.ProcessStatus.CPU.{i}.",
+      "Device.DeviceInfo.ProcessStatus.Process.{i}.",
+      "Device.DeviceInfo.Processor.{i}.",
+      "Device.DeviceInfo.Reboots.",
+      "Device.DeviceInfo.Reboots.Reboot.{i}.",
+      "Device.DeviceInfo.TemperatureStatus.",
+      "Device.DeviceInfo.TemperatureStatus.TemperatureSensor.{i}.",
+      "Device.DeviceInfo.VendorConfigFile.{i}.",
+      "Device.DeviceInfo.VendorLogFile.{i}."
+    ],
+    "DynamicDNS": [
+      "Device.DynamicDNS.",
+      "Device.DynamicDNS.Client.{i}.",
+      "Device.DynamicDNS.Client.{i}.Hostname.{i}.",
+      "Device.DynamicDNS.Server.{i}."
+    ],
+    "Ethernet": [
+      "Device.Ethernet.",
+      "Device.Ethernet.Interface.{i}.",
+      "Device.Ethernet.Interface.{i}.Stats.",
+      "Device.Ethernet.LAG.{i}.",
+      "Device.Ethernet.LAG.{i}.Stats.",
+      "Device.Ethernet.Link.{i}.",
+      "Device.Ethernet.Link.{i}.Stats.",
+      "Device.Ethernet.RMONStats.{i}.",
+      "Device.Ethernet.VLANTermination.{i}.",
+      "Device.Ethernet.VLANTermination.{i}.Stats.",
+      "Device.Ethernet.WoL."
+    ],
+    "FAP": [
+      "Device.FAP.",
+      "Device.FAP.ApplicationPlatform.",
+      "Device.FAP.ApplicationPlatform.Capabilities.",
+      "Device.FAP.ApplicationPlatform.Control.",
+      "Device.FAP.ApplicationPlatform.Control.FemtoAwareness.",
+      "Device.FAP.ApplicationPlatform.Control.MMS.",
+      "Device.FAP.ApplicationPlatform.Control.SMS.",
+      "Device.FAP.ApplicationPlatform.Control.TerminalLocation.",
+      "Device.FAP.ApplicationPlatform.Monitoring.",
+      "Device.FAP.ApplicationPlatform.Monitoring.FemtoAwareness.",
+      "Device.FAP.ApplicationPlatform.Monitoring.MMS.",
+      "Device.FAP.ApplicationPlatform.Monitoring.SMS.",
+      "Device.FAP.ApplicationPlatform.Monitoring.TerminalLocation.",
+      "Device.FAP.GPS.",
+      "Device.FAP.GPS.AGPSServerConfig.",
+      "Device.FAP.GPS.ContinuousGPSStatus.",
+      "Device.FAP.PerfMgmt.",
+      "Device.FAP.PerfMgmt.Config.{i}."
+    ],
+    "FAST": [
+      "Device.FAST.",
+      "Device.FAST.Line.{i}.",
+      "Device.FAST.Line.{i}.Stats.",
+      "Device.FAST.Line.{i}.Stats.CurrentDay.",
+      "Device.FAST.Line.{i}.Stats.LastShowtime.",
+      "Device.FAST.Line.{i}.Stats.QuarterHour.",
+      "Device.FAST.Line.{i}.Stats.Showtime.",
+      "Device.FAST.Line.{i}.Stats.Total.",
+      "Device.FAST.Line.{i}.TestParams."
+    ],
+    "FWE": [
+      "Device.FWE.",
+      "Device.FWE.Link.{i}.",
+      "Device.FWE.Link.{i}.Stats."
+    ],
+    "FaultMgmt": [
+      "Device.FaultMgmt.",
+      "Device.FaultMgmt.CurrentAlarm.{i}.",
+      "Device.FaultMgmt.ExpeditedEvent.{i}.",
+      "Device.FaultMgmt.HistoryEvent.{i}.",
+      "Device.FaultMgmt.QueuedEvent.{i}.",
+      "Device.FaultMgmt.SupportedAlarm.{i}."
+    ],
+    "Firewall": [
+      "Device.Firewall.",
+      "Device.Firewall.Chain.{i}.",
+      "Device.Firewall.Chain.{i}.Rule.{i}.",
+      "Device.Firewall.ConnectionTracking.",
+      "Device.Firewall.ConnectionTracking.FTP.",
+      "Device.Firewall.ConnectionTracking.H323.",
+      "Device.Firewall.ConnectionTracking.IRC.",
+      "Device.Firewall.ConnectionTracking.PPTP.",
+      "Device.Firewall.ConnectionTracking.SIP.",
+      "Device.Firewall.ConnectionTracking.TFTP.",
+      "Device.Firewall.DMZ.{i}.",
+      "Device.Firewall.InterfaceSetting.{i}.",
+      "Device.Firewall.Level.{i}.",
+      "Device.Firewall.Log.{i}.",
+      "Device.Firewall.Log.{i}.Filter.",
+      "Device.Firewall.Pinhole.{i}.",
+      "Device.Firewall.Policy.{i}.",
+      "Device.Firewall.Service.{i}.",
+      "Device.Firewall.Set.{i}.",
+      "Device.Firewall.Set.{i}.Rule.{i}."
+    ],
+    "GRE": [
+      "Device.GRE.",
+      "Device.GRE.Filter.{i}.",
+      "Device.GRE.Tunnel.{i}.",
+      "Device.GRE.Tunnel.{i}.Interface.{i}.",
+      "Device.GRE.Tunnel.{i}.Interface.{i}.Stats.",
+      "Device.GRE.Tunnel.{i}.Stats."
+    ],
+    "GatewayInfo": [
+      "Device.GatewayInfo."
+    ],
+    "Ghn": [
+      "Device.Ghn.",
+      "Device.Ghn.Diagnostics.",
+      "Device.Ghn.Interface.{i}.",
+      "Device.Ghn.Interface.{i}.AssociatedDevice.{i}.",
+      "Device.Ghn.Interface.{i}.DMInfo.",
+      "Device.Ghn.Interface.{i}.SCInfo.",
+      "Device.Ghn.Interface.{i}.SMMaskedBand.{i}.",
+      "Device.Ghn.Interface.{i}.Stats."
+    ],
+    "HPNA": [
+      "Device.HPNA.",
+      "Device.HPNA.Diagnostics.",
+      "Device.HPNA.Interface.{i}.",
+      "Device.HPNA.Interface.{i}.AssociatedDevice.{i}.",
+      "Device.HPNA.Interface.{i}.QoS.",
+      "Device.HPNA.Interface.{i}.QoS.FlowSpec.{i}.",
+      "Device.HPNA.Interface.{i}.Stats."
+    ],
+    "HomePlug": [
+      "Device.HomePlug.",
+      "Device.HomePlug.Interface.{i}.",
+      "Device.HomePlug.Interface.{i}.AssociatedDevice.{i}.",
+      "Device.HomePlug.Interface.{i}.Stats."
+    ],
+    "Hosts": [
+      "Device.Hosts.",
+      "Device.Hosts.AccessControl.{i}.",
+      "Device.Hosts.AccessControl.{i}.Schedule.{i}.",
+      "Device.Hosts.Host.{i}.",
+      "Device.Hosts.Host.{i}.IPv4Address.{i}.",
+      "Device.Hosts.Host.{i}.IPv6Address.{i}.",
+      "Device.Hosts.Host.{i}.WANStats."
+    ],
+    "IEEE1905": [
+      "Device.IEEE1905.",
+      "Device.IEEE1905.AL.",
+      "Device.IEEE1905.AL.ForwardingTable.",
+      "Device.IEEE1905.AL.ForwardingTable.ForwardingRule.{i}.",
+      "Device.IEEE1905.AL.Interface.{i}.",
+      "Device.IEEE1905.AL.Interface.{i}.Link.{i}.",
+      "Device.IEEE1905.AL.Interface.{i}.Link.{i}.Metric.",
+      "Device.IEEE1905.AL.Interface.{i}.VendorProperties.{i}.",
+      "Device.IEEE1905.AL.NetworkTopology.",
+      "Device.IEEE1905.AL.NetworkTopology.ChangeLog.{i}.",
+      "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.",
+      "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.BridgingTuple.{i}.",
+      "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IEEE1905Neighbor.{i}.",
+      "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IEEE1905Neighbor.{i}.Metric.{i}.",
+      "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IPv4Address.{i}.",
+      "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IPv6Address.{i}.",
+      "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.Interface.{i}.",
+      "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.L2Neighbor.{i}.",
+      "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.NonIEEE1905Neighbor.{i}.",
+      "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.VendorProperties.{i}.",
+      "Device.IEEE1905.AL.NetworkingRegistrar.",
+      "Device.IEEE1905.AL.Security."
+    ],
+    "IEEE8021x": [
+      "Device.IEEE8021x.",
+      "Device.IEEE8021x.Supplicant.{i}.",
+      "Device.IEEE8021x.Supplicant.{i}.EAPMD5.",
+      "Device.IEEE8021x.Supplicant.{i}.EAPTLS.",
+      "Device.IEEE8021x.Supplicant.{i}.Stats."
+    ],
+    "IP": [
+      "Device.IP.",
+      "Device.IP.ActivePort.{i}.",
+      "Device.IP.Diagnostics.",
+      "Device.IP.Diagnostics.IPLayerCapacityAuthCode.{i}.",
+      "Device.IP.Diagnostics.UDPEchoConfig.",
+      "Device.IP.Interface.{i}.",
+      "Device.IP.Interface.{i}.IPv4Address.{i}.",
+      "Device.IP.Interface.{i}.IPv6Address.{i}.",
+      "Device.IP.Interface.{i}.IPv6Prefix.{i}.",
+      "Device.IP.Interface.{i}.Stats.",
+      "Device.IP.Interface.{i}.TWAMPReflector.{i}."
+    ],
+    "IPsec": [
+      "Device.IPsec.",
+      "Device.IPsec.Filter.{i}.",
+      "Device.IPsec.IKEv2SA.{i}.",
+      "Device.IPsec.IKEv2SA.{i}.ChildSA.{i}.",
+      "Device.IPsec.IKEv2SA.{i}.ChildSA.{i}.Stats.",
+      "Device.IPsec.IKEv2SA.{i}.ReceivedCPAttr.{i}.",
+      "Device.IPsec.IKEv2SA.{i}.Stats.",
+      "Device.IPsec.Profile.{i}.",
+      "Device.IPsec.Profile.{i}.SentCPAttr.{i}.",
+      "Device.IPsec.Stats.",
+      "Device.IPsec.Tunnel.{i}.",
+      "Device.IPsec.Tunnel.{i}.Stats."
+    ],
+    "IPv6rd": [
+      "Device.IPv6rd.",
+      "Device.IPv6rd.InterfaceSetting.{i}."
+    ],
+    "InterfaceStack": [
+      "Device.InterfaceStack.{i}."
+    ],
+    "IoTCapability": [
+      "Device.IoTCapability.{i}.",
+      "Device.IoTCapability.{i}.BinaryControl.",
+      "Device.IoTCapability.{i}.BinarySensor.",
+      "Device.IoTCapability.{i}.BlobSensor.",
+      "Device.IoTCapability.{i}.EnumControl.",
+      "Device.IoTCapability.{i}.EnumSensor.",
+      "Device.IoTCapability.{i}.LevelControl.",
+      "Device.IoTCapability.{i}.LevelSensor.",
+      "Device.IoTCapability.{i}.MultiLevelSensor."
+    ],
+    "L2TPv3": [
+      "Device.L2TPv3.",
+      "Device.L2TPv3.Filter.{i}.",
+      "Device.L2TPv3.Tunnel.{i}.",
+      "Device.L2TPv3.Tunnel.{i}.Interface.{i}.",
+      "Device.L2TPv3.Tunnel.{i}.Interface.{i}.Stats.",
+      "Device.L2TPv3.Tunnel.{i}.Stats.",
+      "Device.L2TPv3.Tunnel.{i}.UDP."
+    ],
+    "LANConfigSecurity": [
+      "Device.LANConfigSecurity."
+    ],
+    "LEDs": [
+      "Device.LEDs.",
+      "Device.LEDs.LED.{i}.",
+      "Device.LEDs.LED.{i}.CurrentCycleElement.",
+      "Device.LEDs.LED.{i}.CycleElement.{i}."
+    ],
+    "LLDP": [
+      "Device.LLDP.",
+      "Device.LLDP.Discovery.",
+      "Device.LLDP.Discovery.Device.{i}.",
+      "Device.LLDP.Discovery.Device.{i}.DeviceInformation.",
+      "Device.LLDP.Discovery.Device.{i}.DeviceInformation.VendorSpecific.{i}.",
+      "Device.LLDP.Discovery.Device.{i}.Port.{i}.",
+      "Device.LLDP.Discovery.Device.{i}.Port.{i}.LinkInformation."
+    ],
+    "LMAP": [
+      "Device.LMAP.",
+      "Device.LMAP.Event.{i}.",
+      "Device.LMAP.Event.{i}.CalendarTimer.",
+      "Device.LMAP.Event.{i}.OneOff.",
+      "Device.LMAP.Event.{i}.PeriodicTimer.",
+      "Device.LMAP.MeasurementAgent.{i}.",
+      "Device.LMAP.MeasurementAgent.{i}.CommunicationChannel.{i}.",
+      "Device.LMAP.MeasurementAgent.{i}.Controller.",
+      "Device.LMAP.MeasurementAgent.{i}.Instruction.{i}.",
+      "Device.LMAP.MeasurementAgent.{i}.Instruction.{i}.MeasurementSuppression.{i}.",
+      "Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.",
+      "Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Action.{i}.",
+      "Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Action.{i}.Option.{i}.",
+      "Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Action.{i}.Stats.",
+      "Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Stats.",
+      "Device.LMAP.MeasurementAgent.{i}.Task.{i}.",
+      "Device.LMAP.MeasurementAgent.{i}.Task.{i}.Option.{i}.",
+      "Device.LMAP.MeasurementAgent.{i}.Task.{i}.Registry.{i}.",
+      "Device.LMAP.MeasurementAgent.{i}.TaskCapability.{i}.",
+      "Device.LMAP.MeasurementAgent.{i}.TaskCapability.{i}.Registry.{i}.",
+      "Device.LMAP.Report.{i}.",
+      "Device.LMAP.Report.{i}.Result.{i}.",
+      "Device.LMAP.Report.{i}.Result.{i}.Conflict.{i}.",
+      "Device.LMAP.Report.{i}.Result.{i}.Option.{i}.",
+      "Device.LMAP.Report.{i}.Result.{i}.ReportTable.{i}.",
+      "Device.LMAP.Report.{i}.Result.{i}.ReportTable.{i}.Registry.{i}.",
+      "Device.LMAP.Report.{i}.Result.{i}.ReportTable.{i}.ResultRow.{i}."
+    ],
+    "Layer12": [
+      "Device.Layer12."
+    ],
+    "Layer1A": [
+      "Device.Layer1A."
+    ],
+    "Layer1B": [
+      "Device.Layer1B."
+    ],
+    "Layer1C": [
+      "Device.Layer1C."
+    ],
+    "Layer2": [
+      "Device.Layer2."
+    ],
+    "Layer3": [
+      "Device.Layer3."
+    ],
+    "LocalAgent": [
+      "Device.LocalAgent.",
+      "Device.LocalAgent.Certificate.{i}.",
+      "Device.LocalAgent.Controller.{i}.",
+      "Device.LocalAgent.Controller.{i}.BootParameter.{i}.",
+      "Device.LocalAgent.Controller.{i}.E2ESession.",
+      "Device.LocalAgent.Controller.{i}.MTP.{i}.",
+      "Device.LocalAgent.Controller.{i}.MTP.{i}.CoAP.",
+      "Device.LocalAgent.Controller.{i}.MTP.{i}.MQTT.",
+      "Device.LocalAgent.Controller.{i}.MTP.{i}.STOMP.",
+      "Device.LocalAgent.Controller.{i}.MTP.{i}.UDS.",
+      "Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.",
+      "Device.LocalAgent.Controller.{i}.TransferCompletePolicy.",
+      "Device.LocalAgent.ControllerTrust.",
+      "Device.LocalAgent.ControllerTrust.Challenge.{i}.",
+      "Device.LocalAgent.ControllerTrust.Credential.{i}.",
+      "Device.LocalAgent.ControllerTrust.Role.{i}.",
+      "Device.LocalAgent.ControllerTrust.Role.{i}.Permission.{i}.",
+      "Device.LocalAgent.MTP.{i}.",
+      "Device.LocalAgent.MTP.{i}.CoAP.",
+      "Device.LocalAgent.MTP.{i}.MQTT.",
+      "Device.LocalAgent.MTP.{i}.STOMP.",
+      "Device.LocalAgent.MTP.{i}.UDS.",
+      "Device.LocalAgent.MTP.{i}.WebSocket.",
+      "Device.LocalAgent.Monitor.{i}.",
+      "Device.LocalAgent.Request.{i}.",
+      "Device.LocalAgent.Subscription.{i}.",
+      "Device.LocalAgent.Threshold.{i}.",
+      "Device.LocalAgent.Watchdog.{i}."
+    ],
+    "Logical": [
+      "Device.Logical.",
+      "Device.Logical.Interface.{i}.",
+      "Device.Logical.Interface.{i}.Stats."
+    ],
+    "MAP": [
+      "Device.MAP.",
+      "Device.MAP.Domain.{i}.",
+      "Device.MAP.Domain.{i}.Interface.",
+      "Device.MAP.Domain.{i}.Interface.Stats.",
+      "Device.MAP.Domain.{i}.Rule.{i}."
+    ],
+    "MQTT": [
+      "Device.MQTT.",
+      "Device.MQTT.Broker.{i}.",
+      "Device.MQTT.Broker.{i}.Bridge.{i}.",
+      "Device.MQTT.Broker.{i}.Bridge.{i}.Server.{i}.",
+      "Device.MQTT.Broker.{i}.Bridge.{i}.Subscription.{i}.",
+      "Device.MQTT.Broker.{i}.Stats.",
+      "Device.MQTT.Capabilities.",
+      "Device.MQTT.Client.{i}.",
+      "Device.MQTT.Client.{i}.Stats.",
+      "Device.MQTT.Client.{i}.Subscription.{i}.",
+      "Device.MQTT.Client.{i}.UserProperty.{i}."
+    ],
+    "MoCA": [
+      "Device.MoCA.",
+      "Device.MoCA.Interface.{i}.",
+      "Device.MoCA.Interface.{i}.Aca.",
+      "Device.MoCA.Interface.{i}.AccessControl.{i}.",
+      "Device.MoCA.Interface.{i}.AssociatedDevice.{i}.",
+      "Device.MoCA.Interface.{i}.Bridge.{i}.",
+      "Device.MoCA.Interface.{i}.Mesh.{i}.",
+      "Device.MoCA.Interface.{i}.MeshScMod.{i}.",
+      "Device.MoCA.Interface.{i}.QoS.",
+      "Device.MoCA.Interface.{i}.QoS.FlowStats.{i}.",
+      "Device.MoCA.Interface.{i}.Reset.",
+      "Device.MoCA.Interface.{i}.Rlapm.{i}.",
+      "Device.MoCA.Interface.{i}.Sapm.{i}.",
+      "Device.MoCA.Interface.{i}.Stats."
+    ],
+    "NAT": [
+      "Device.NAT.",
+      "Device.NAT.InterfaceSetting.{i}.",
+      "Device.NAT.PortMapping.{i}.",
+      "Device.NAT.PortTrigger.{i}.",
+      "Device.NAT.PortTrigger.{i}.Rule.{i}."
+    ],
+    "NeighborDiscovery": [
+      "Device.NeighborDiscovery.",
+      "Device.NeighborDiscovery.InterfaceSetting.{i}."
+    ],
+    "Node": [
+      "Device.Node.{i}."
+    ],
+    "Optical": [
+      "Device.Optical.",
+      "Device.Optical.Interface.{i}.",
+      "Device.Optical.Interface.{i}.Stats."
+    ],
+    "PCP": [
+      "Device.PCP.",
+      "Device.PCP.Client.{i}.",
+      "Device.PCP.Client.{i}.PCPProxy.",
+      "Device.PCP.Client.{i}.Server.{i}.",
+      "Device.PCP.Client.{i}.Server.{i}.InboundMapping.{i}.",
+      "Device.PCP.Client.{i}.Server.{i}.InboundMapping.{i}.Filter.{i}.",
+      "Device.PCP.Client.{i}.Server.{i}.OutboundMapping.{i}.",
+      "Device.PCP.Client.{i}.UPnPIWF."
+    ],
+    "PDU": [
+      "Device.PDU.",
+      "Device.PDU.Session.{i}.",
+      "Device.PDU.Session.{i}.NetworkSlice.",
+      "Device.PDU.Session.{i}.PCO.",
+      "Device.PDU.Session.{i}.QoSFlow.{i}.",
+      "Device.PDU.Session.{i}.QoSRule.{i}.",
+      "Device.PDU.Session.{i}.QoSRule.{i}.Filter.{i}."
+    ],
+    "PPP": [
+      "Device.PPP.",
+      "Device.PPP.Interface.{i}.",
+      "Device.PPP.Interface.{i}.IPCP.",
+      "Device.PPP.Interface.{i}.IPv6CP.",
+      "Device.PPP.Interface.{i}.PPPoA.",
+      "Device.PPP.Interface.{i}.PPPoE.",
+      "Device.PPP.Interface.{i}.Stats."
+    ],
+    "PTM": [
+      "Device.PTM.",
+      "Device.PTM.Link.{i}.",
+      "Device.PTM.Link.{i}.Stats."
+    ],
+    "PeriodicStatistics": [
+      "Device.PeriodicStatistics.",
+      "Device.PeriodicStatistics.SampleSet.{i}.",
+      "Device.PeriodicStatistics.SampleSet.{i}.Parameter.{i}."
+    ],
+    "ProxiedDevice": [
+      "Device.ProxiedDevice.{i}.",
+      "Device.ProxiedDevice.{i}.Node.{i}."
+    ],
+    "QoS": [
+      "Device.QoS.",
+      "Device.QoS.App.{i}.",
+      "Device.QoS.Classification.{i}.",
+      "Device.QoS.Flow.{i}.",
+      "Device.QoS.Policer.{i}.",
+      "Device.QoS.Queue.{i}.",
+      "Device.QoS.QueueStats.{i}.",
+      "Device.QoS.Scheduler.{i}.",
+      "Device.QoS.Shaper.{i}."
+    ],
+    "RadSecProxy": [
+      "Device.RadSecProxy.",
+      "Device.RadSecProxy.Client.{i}.",
+      "Device.RadSecProxy.ListenConfig.{i}.",
+      "Device.RadSecProxy.Realm.{i}.",
+      "Device.RadSecProxy.Server.{i}.",
+      "Device.RadSecProxy.SourceConfig.{i}.",
+      "Device.RadSecProxy.TLS.{i}."
+    ],
+    "RouterAdvertisement": [
+      "Device.RouterAdvertisement.",
+      "Device.RouterAdvertisement.InterfaceSetting.{i}.",
+      "Device.RouterAdvertisement.InterfaceSetting.{i}.Option.{i}."
+    ],
+    "Routing": [
+      "Device.Routing.",
+      "Device.Routing.Babel.",
+      "Device.Routing.Babel.Constants.",
+      "Device.Routing.Babel.DTLSCertSet.{i}.",
+      "Device.Routing.Babel.DTLSCertSet.{i}.DTLSCert.{i}.",
+      "Device.Routing.Babel.InterfaceSetting.{i}.",
+      "Device.Routing.Babel.InterfaceSetting.{i}.Neighbor.{i}.",
+      "Device.Routing.Babel.InterfaceSetting.{i}.Stats.",
+      "Device.Routing.Babel.MACKeySet.{i}.",
+      "Device.Routing.Babel.MACKeySet.{i}.MACKey.{i}.",
+      "Device.Routing.Babel.Route.{i}.",
+      "Device.Routing.RIP.",
+      "Device.Routing.RIP.InterfaceSetting.{i}.",
+      "Device.Routing.RouteInformation.",
+      "Device.Routing.RouteInformation.InterfaceSetting.{i}.",
+      "Device.Routing.RouteInformation.InterfaceSetting.{i}.Option.{i}.",
+      "Device.Routing.Router.{i}.",
+      "Device.Routing.Router.{i}.IPv4Forwarding.{i}.",
+      "Device.Routing.Router.{i}.IPv6Forwarding.{i}."
+    ],
+    "SFPs": [
+      "Device.SFPs.",
+      "Device.SFPs.Mgmt.",
+      "Device.SFPs.Mgmt.SFF8472.{i}.",
+      "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.",
+      "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Alarms.",
+      "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Status.",
+      "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Thresholds.",
+      "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Warnings.",
+      "Device.SFPs.SFPCage.{i}."
+    ],
+    "SSH": [
+      "Device.SSH.",
+      "Device.SSH.AuthorizedKey.{i}.",
+      "Device.SSH.Server.{i}.",
+      "Device.SSH.Server.{i}.AccessLog.{i}.",
+      "Device.SSH.Server.{i}.Session.{i}.",
+      "Device.SSH.Server.{i}.Stats."
+    ],
+    "STOMP": [
+      "Device.STOMP.",
+      "Device.STOMP.Connection.{i}."
+    ],
+    "Schedules": [
+      "Device.Schedules.",
+      "Device.Schedules.Schedule.{i}."
+    ],
+    "Security": [
+      "Device.Security.",
+      "Device.Security.CABundle.{i}.",
+      "Device.Security.Certificate.{i}."
+    ],
+    "Services": [
+      "Device.Services."
+    ],
+    "SessionManagement": [
+      "Device.SessionManagement.",
+      "Device.SessionManagement.PDN.{i}.",
+      "Device.SessionManagement.PDP.{i}.",
+      "Device.SessionManagement.PDU.{i}.",
+      "Device.SessionManagement.PDU.{i}.NetworkSlice.",
+      "Device.SessionManagement.PDU.{i}.QoSFlow.{i}.",
+      "Device.SessionManagement.PDU.{i}.QoSRule.{i}.",
+      "Device.SessionManagement.PDU.{i}.QoSRule.{i}.Filter.{i}.",
+      "Device.SessionManagement.Session.{i}.",
+      "Device.SessionManagement.Session.{i}.PCO."
+    ],
+    "SmartCardReaders": [
+      "Device.SmartCardReaders.",
+      "Device.SmartCardReaders.SmartCardReader.{i}.",
+      "Device.SmartCardReaders.SmartCardReader.{i}.SmartCard."
+    ],
+    "SoftwareModules": [
+      "Device.SoftwareModules.",
+      "Device.SoftwareModules.DeploymentUnit.{i}.",
+      "Device.SoftwareModules.ExecEnv.{i}.",
+      "Device.SoftwareModules.ExecEnv.{i}.ApplicationData.{i}.",
+      "Device.SoftwareModules.ExecEnvClass.{i}.",
+      "Device.SoftwareModules.ExecEnvClass.{i}.Capability.{i}.",
+      "Device.SoftwareModules.ExecutionUnit.{i}.",
+      "Device.SoftwareModules.ExecutionUnit.{i}.AutoRestart.",
+      "Device.SoftwareModules.ExecutionUnit.{i}.EnvVariable.{i}.",
+      "Device.SoftwareModules.ExecutionUnit.{i}.Extensions.",
+      "Device.SoftwareModules.ExecutionUnit.{i}.HostObject.{i}.",
+      "Device.SoftwareModules.ExecutionUnit.{i}.NetworkConfig."
+    ],
+    "Standby": [
+      "Device.Standby."
+    ],
+    "Syslog": [
+      "Device.Syslog.",
+      "Device.Syslog.Action.{i}.",
+      "Device.Syslog.Action.{i}.LogFile.",
+      "Device.Syslog.Action.{i}.LogRemote.",
+      "Device.Syslog.Filter.{i}.",
+      "Device.Syslog.Source.{i}.",
+      "Device.Syslog.Source.{i}.Network.",
+      "Device.Syslog.Template.{i}."
+    ],
+    "Thread": [
+      "Device.Thread.",
+      "Device.Thread.BorderRouter.{i}.",
+      "Device.Thread.MLE.{i}.",
+      "Device.Thread.MLE.{i}.AssociatedNode.{i}.",
+      "Device.Thread.MLE.{i}.AssociatedNode.{i}.IPv6Address.{i}.",
+      "Device.Thread.MLE.{i}.AssociatedNode.{i}.Neighbor.{i}.",
+      "Device.Thread.MLE.{i}.AssociatedNode.{i}.Route.{i}.",
+      "Device.Thread.MLE.{i}.Dataset.{i}.",
+      "Device.Thread.MLE.{i}.Dataset.{i}.SecurityPolicy.",
+      "Device.Thread.MLE.{i}.LeaderData.",
+      "Device.Thread.MLE.{i}.Stats.",
+      "Device.Thread.Node.{i}.",
+      "Device.Thread.Radio.{i}.",
+      "Device.Thread.Radio.{i}.Stats."
+    ],
+    "Time": [
+      "Device.Time.",
+      "Device.Time.Client.{i}.",
+      "Device.Time.Client.{i}.Authentication.",
+      "Device.Time.Client.{i}.Stats.",
+      "Device.Time.Server.{i}.",
+      "Device.Time.Server.{i}.Authentication.",
+      "Device.Time.Server.{i}.Stats."
+    ],
+    "TrustedElements": [
+      "Device.TrustedElements.",
+      "Device.TrustedElements.SIM.{i}.",
+      "Device.TrustedElements.SIM.{i}.Profile.{i}."
+    ],
+    "UPA": [
+      "Device.UPA.",
+      "Device.UPA.Diagnostics.",
+      "Device.UPA.Interface.{i}.",
+      "Device.UPA.Interface.{i}.ActiveNotch.{i}.",
+      "Device.UPA.Interface.{i}.AssociatedDevice.{i}.",
+      "Device.UPA.Interface.{i}.BridgeFor.{i}.",
+      "Device.UPA.Interface.{i}.Stats."
+    ],
+    "UPnP": [
+      "Device.UPnP.",
+      "Device.UPnP.Description.",
+      "Device.UPnP.Description.DeviceDescription.{i}.",
+      "Device.UPnP.Description.DeviceInstance.{i}.",
+      "Device.UPnP.Description.ServiceInstance.{i}.",
+      "Device.UPnP.Device.",
+      "Device.UPnP.Device.Capabilities.",
+      "Device.UPnP.Discovery.",
+      "Device.UPnP.Discovery.Device.{i}.",
+      "Device.UPnP.Discovery.RootDevice.{i}.",
+      "Device.UPnP.Discovery.Service.{i}."
+    ],
+    "USB": [
+      "Device.USB.",
+      "Device.USB.Interface.{i}.",
+      "Device.USB.Interface.{i}.Stats.",
+      "Device.USB.Port.{i}.",
+      "Device.USB.USBHosts.",
+      "Device.USB.USBHosts.Host.{i}.",
+      "Device.USB.USBHosts.Host.{i}.Device.{i}.",
+      "Device.USB.USBHosts.Host.{i}.Device.{i}.Configuration.{i}.",
+      "Device.USB.USBHosts.Host.{i}.Device.{i}.Configuration.{i}.Interface.{i}."
+    ],
+    "USPServices": [
+      "Device.USPServices.",
+      "Device.USPServices.Trust.{i}.",
+      "Device.USPServices.USPService.{i}."
+    ],
+    "UnixDomainSockets": [
+      "Device.UnixDomainSockets.",
+      "Device.UnixDomainSockets.UnixDomainSocket.{i}."
+    ],
+    "UserInterface": [
+      "Device.UserInterface.",
+      "Device.UserInterface.HTTPAccess.{i}.",
+      "Device.UserInterface.HTTPAccess.{i}.Session.{i}.",
+      "Device.UserInterface.LocalDisplay.",
+      "Device.UserInterface.Messages.",
+      "Device.UserInterface.RemoteAccess."
+    ],
+    "Users": [
+      "Device.Users.",
+      "Device.Users.Group.{i}.",
+      "Device.Users.Role.{i}.",
+      "Device.Users.SupportedShell.{i}.",
+      "Device.Users.User.{i}."
+    ],
+    "VXLAN": [
+      "Device.VXLAN.",
+      "Device.VXLAN.Filter.{i}.",
+      "Device.VXLAN.Tunnel.{i}.",
+      "Device.VXLAN.Tunnel.{i}.Interface.{i}.",
+      "Device.VXLAN.Tunnel.{i}.Interface.{i}.Stats.",
+      "Device.VXLAN.Tunnel.{i}.Stats."
+    ],
+    "WWC": [
+      "Device.WWC.",
+      "Device.WWC.AccessNetwork.{i}.",
+      "Device.WWC.AccessNetwork.{i}.GUTI.",
+      "Device.WWC.URSP.{i}.",
+      "Device.WWC.URSP.{i}.TrafficDescriptor.{i}.",
+      "Device.WWC.URSP.{i}.TrafficDescriptor.{i}.RouteSelectionDescriptor.{i}.",
+      "Device.WWC.URSP.{i}.TrafficDescriptor.{i}.RouteSelectionDescriptor.{i}.NetworkSlice."
+    ],
+    "WiFi": [
+      "Device.WiFi.",
+      "Device.WiFi.AccessPoint.{i}.",
+      "Device.WiFi.AccessPoint.{i}.AC.{i}.",
+      "Device.WiFi.AccessPoint.{i}.AC.{i}.Stats.",
+      "Device.WiFi.AccessPoint.{i}.ANQP.",
+      "Device.WiFi.AccessPoint.{i}.Accounting.",
+      "Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.",
+      "Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.Stats.",
+      "Device.WiFi.AccessPoint.{i}.Interworking.",
+      "Device.WiFi.AccessPoint.{i}.Passpoint.",
+      "Device.WiFi.AccessPoint.{i}.Passpoint.OSU.",
+      "Device.WiFi.AccessPoint.{i}.Security.",
+      "Device.WiFi.AccessPoint.{i}.WPS.",
+      "Device.WiFi.DataElements.",
+      "Device.WiFi.DataElements.AssociationEvent.",
+      "Device.WiFi.DataElements.AssociationEvent.AssociationEventData.{i}.",
+      "Device.WiFi.DataElements.AssociationEvent.AssociationEventData.{i}.WiFi6Capabilities.",
+      "Device.WiFi.DataElements.DisassociationEvent.",
+      "Device.WiFi.DataElements.DisassociationEvent.DisassociationEventData.{i}.",
+      "Device.WiFi.DataElements.FailedConnectionEvent.",
+      "Device.WiFi.DataElements.FailedConnectionEvent.FailedConnectionEventData.{i}.",
+      "Device.WiFi.DataElements.Network.",
+      "Device.WiFi.DataElements.Network.Device.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.AFCAvailableSpectrum.",
+      "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.APMLDConfig.",
+      "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.APMLDConfig.TIDToOpClassPolicy.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.AffiliatedAP.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.LinkToOpClassMap.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.STAMLD.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.STAMLD.{i}.AffiliatedSTA.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.STAMLD.{i}.STAMLDConfig.",
+      "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.STAMLD.{i}.STATIDLinkMap.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.STAMLD.{i}.WiFi7Capabilities.",
+      "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.TIDLinkMap.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.AnticipatedChannelUsage.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.AnticipatedChannelUsage.{i}.Entry.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.AnticipatedChannels.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.BackhaulDown.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.CACStatus.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.CACStatus.{i}.CACActiveChannel.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.CACStatus.{i}.CACAvailableChannel.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.CACStatus.{i}.CACNonOccupancyChannel.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Default8021Q.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.IEEE1905Security.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.MultiAPDevice.",
+      "Device.WiFi.DataElements.Network.Device.{i}.MultiAPDevice.Backhaul.",
+      "Device.WiFi.DataElements.Network.Device.{i}.MultiAPDevice.Backhaul.CurrentOperatingClassProfile.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.MultiAPDevice.Backhaul.Stats.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.LatencyTestResult.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.MUConfig.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.MUStats.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.MultiAPSteering.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.QMDescriptor.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.HaLowCapabilities.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.MultiAPSTA.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.MultiAPSTA.SteeringHistory.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.MultiAPSTA.SteeringSummaryStats.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.TIDQueueSizes.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.WiFi6Capabilities.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.SetQoSManagementInput.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.ThroughputTestResult.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BackhaulSta.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CACCapability.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CACCapability.CACMethod.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CACCapability.CACMethod.{i}.OpClassChannels.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.AKMBackhaul.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.AKMFrontHaul.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.CapableOperatingClassProfile.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.HaLowCapabilities.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi6APRole.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi6bSTARole.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7APRole.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7APRole.EMLMRFreqSeparation.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7APRole.EMLSRFreqSeparation.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7APRole.NSTRFreqSeparation.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7APRole.STRFreqSeparation.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7bSTARole.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7bSTARole.EMLMRFreqSeparation.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7bSTARole.EMLSRFreqSeparation.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7bSTARole.NSTRFreqSeparation.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Capabilities.WiFi7bSTARole.STRFreqSeparation.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CurrentOperatingClassProfile.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.DisAllowedOpClassChannels.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.MultiAPRadio.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.OpClassPreference.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanCapability.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanCapability.OpClassChannels.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanResult.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanResult.{i}.OpClassScan.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanResult.{i}.OpClassScan.{i}.ChannelScan.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanResult.{i}.OpClassScan.{i}.ChannelScan.{i}.NeighborBSS.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.SpatialReuse.",
+      "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.UnassociatedSTA.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.SPRule.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.SSIDtoVIDMapping.{i}.",
+      "Device.WiFi.DataElements.Network.Device.{i}.WPS.",
+      "Device.WiFi.DataElements.Network.Device.{i}.bSTAMLD.",
+      "Device.WiFi.DataElements.Network.Device.{i}.bSTAMLD.bSTAMLDConfig.",
+      "Device.WiFi.DataElements.Network.MultiAPSteeringSummaryStats.",
+      "Device.WiFi.DataElements.Network.PreferredBackhauls.{i}.",
+      "Device.WiFi.DataElements.Network.ProvisionedDPP.{i}.",
+      "Device.WiFi.DataElements.Network.SSID.{i}.",
+      "Device.WiFi.DataElements.Network.STABlock.{i}.",
+      "Device.WiFi.DataElements.Network.STABlock.{i}.Schedule.{i}.",
+      "Device.WiFi.EndPoint.{i}.",
+      "Device.WiFi.EndPoint.{i}.AC.{i}.",
+      "Device.WiFi.EndPoint.{i}.AC.{i}.Stats.",
+      "Device.WiFi.EndPoint.{i}.Profile.{i}.",
+      "Device.WiFi.EndPoint.{i}.Profile.{i}.Security.",
+      "Device.WiFi.EndPoint.{i}.Security.",
+      "Device.WiFi.EndPoint.{i}.Stats.",
+      "Device.WiFi.EndPoint.{i}.WPS.",
+      "Device.WiFi.MultiAP.",
+      "Device.WiFi.MultiAP.APDevice.{i}.",
+      "Device.WiFi.MultiAP.APDevice.{i}.Radio.{i}.",
+      "Device.WiFi.MultiAP.APDevice.{i}.Radio.{i}.AP.{i}.",
+      "Device.WiFi.MultiAP.APDevice.{i}.Radio.{i}.AP.{i}.AssociatedDevice.{i}.",
+      "Device.WiFi.MultiAP.APDevice.{i}.Radio.{i}.AP.{i}.AssociatedDevice.{i}.Stats.",
+      "Device.WiFi.MultiAP.APDevice.{i}.Radio.{i}.AP.{i}.AssociatedDevice.{i}.SteeringHistory.{i}.",
+      "Device.WiFi.MultiAP.APDevice.{i}.Radio.{i}.AP.{i}.AssociatedDevice.{i}.SteeringSummaryStats.",
+      "Device.WiFi.MultiAP.SteeringSummaryStats.",
+      "Device.WiFi.Radio.{i}.",
+      "Device.WiFi.Radio.{i}.Stats.",
+      "Device.WiFi.SSID.{i}.",
+      "Device.WiFi.SSID.{i}.Stats."
+    ],
+    "XMPP": [
+      "Device.XMPP.",
+      "Device.XMPP.Connection.{i}.",
+      "Device.XMPP.Connection.{i}.Server.{i}.",
+      "Device.XMPP.Connection.{i}.Stats."
+    ],
+    "XPON": [
+      "Device.XPON.",
+      "Device.XPON.ONU.{i}.",
+      "Device.XPON.ONU.{i}.ANI.{i}.",
+      "Device.XPON.ONU.{i}.ANI.{i}.Stats.",
+      "Device.XPON.ONU.{i}.ANI.{i}.TC.",
+      "Device.XPON.ONU.{i}.ANI.{i}.TC.Alarms.",
+      "Device.XPON.ONU.{i}.ANI.{i}.TC.Authentication.",
+      "Device.XPON.ONU.{i}.ANI.{i}.TC.GEM.",
+      "Device.XPON.ONU.{i}.ANI.{i}.TC.GEM.Port.{i}.",
+      "Device.XPON.ONU.{i}.ANI.{i}.TC.GEM.Port.{i}.PM.",
+      "Device.XPON.ONU.{i}.ANI.{i}.TC.ONUActivation.",
+      "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.",
+      "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.GEM.",
+      "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.OMCI.",
+      "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.PHY.",
+      "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.PLOAM.",
+      "Device.XPON.ONU.{i}.ANI.{i}.TC.PerformanceThresholds.",
+      "Device.XPON.ONU.{i}.ANI.{i}.Transceiver.{i}.",
+      "Device.XPON.ONU.{i}.EthernetUNI.{i}.",
+      "Device.XPON.ONU.{i}.EthernetUNI.{i}.Stats.",
+      "Device.XPON.ONU.{i}.SoftwareImage.{i}."
+    ],
+    "ZigBee": [
+      "Device.ZigBee.",
+      "Device.ZigBee.Discovery.",
+      "Device.ZigBee.Discovery.AreaNetwork.{i}.",
+      "Device.ZigBee.Interface.{i}.",
+      "Device.ZigBee.Interface.{i}.AssociatedDevice.{i}.",
+      "Device.ZigBee.Interface.{i}.Stats.",
+      "Device.ZigBee.ZDO.{i}.",
+      "Device.ZigBee.ZDO.{i}.ApplicationEndpoint.{i}.",
+      "Device.ZigBee.ZDO.{i}.ApplicationEndpoint.{i}.SimpleDescriptor.",
+      "Device.ZigBee.ZDO.{i}.Binding.{i}.",
+      "Device.ZigBee.ZDO.{i}.ComplexDescriptor.",
+      "Device.ZigBee.ZDO.{i}.Group.{i}.",
+      "Device.ZigBee.ZDO.{i}.Network.",
+      "Device.ZigBee.ZDO.{i}.Network.Neighbor.{i}.",
+      "Device.ZigBee.ZDO.{i}.NodeDescriptor.",
+      "Device.ZigBee.ZDO.{i}.NodeManager.",
+      "Device.ZigBee.ZDO.{i}.NodeManager.RoutingTable.{i}.",
+      "Device.ZigBee.ZDO.{i}.PowerDescriptor.",
+      "Device.ZigBee.ZDO.{i}.Security.",
+      "Device.ZigBee.ZDO.{i}.UserDescriptor."
+    ]
+  }
+}

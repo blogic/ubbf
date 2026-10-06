@@ -1,0 +1,168 @@
+#!/usr/bin/env ucode
+'use strict';
+
+import * as socket from 'socket';
+import * as uloop from 'uloop';
+import * as fs from 'fs';
+import { pack } from 'struct';
+
+/* Linux IPV6_V6ONLY socket option, used to enable dual-stack listening
+ * on a single AF_INET6 socket so plain IPv4 senders are accepted via
+ * IPv4-mapped addresses. The ucode socket module does not expose these
+ * constants by name, so use the stable kernel ABI numbers. */
+const IPPROTO_IPV6 = 41;
+const IPV6_V6ONLY  = 26;
+
+const STATS_FILE = '/tmp/ubbf/udpecho-stats.json';
+
+let config = {
+	port: 7,
+	source_ip: null,
+	echo_plus: false
+};
+
+let stats = {
+	packets_received: 0,
+	packets_responded: 0,
+	bytes_received: 0,
+	bytes_responded: 0,
+	time_first_packet: null,
+	time_last_packet: null
+};
+
+let server_seq = 0;
+
+function timestamp_iso() {
+	let t = time();
+	let tm = gmtime(t);
+	return sprintf('%04d-%02d-%02dT%02d:%02d:%02dZ',
+		tm.year, tm.mon + 1, tm.mday,
+		tm.hour, tm.min, tm.sec);
+}
+
+/* Strip the ::ffff: prefix from an IPv4-mapped IPv6 address so a plain
+ * IPv4 SourceIPAddress configured via TR-181 still matches when the
+ * sender hits us through the dual-stack v6 socket. */
+function sender_address_normalise(addr) {
+	if (!addr)
+		return addr;
+	let m = match(addr, /^::ffff:([0-9.]+)$/i);
+	return m ? m[1] : addr;
+}
+
+function stats_write() {
+	fs.mkdir('/tmp/ubbf');
+
+	let data = {
+		PacketsReceived: sprintf('%d', stats.packets_received),
+		PacketsResponded: sprintf('%d', stats.packets_responded),
+		BytesReceived: sprintf('%d', stats.bytes_received),
+		BytesResponded: sprintf('%d', stats.bytes_responded),
+		TimeFirstPacketReceived: stats.time_first_packet ?? '0001-01-01T00:00:00Z',
+		TimeLastPacketReceived: stats.time_last_packet ?? '0001-01-01T00:00:00Z'
+	};
+
+	fs.writefile(STATS_FILE, sprintf('%J\n', data));
+}
+
+function packet_handle(sock) {
+	let sender = {};
+	let data = sock.recv(65535, 0, sender);
+
+	if (!data || length(data) == 0)
+		return;
+
+	let src = sender_address_normalise(sender.address);
+	if (config.source_ip && src != config.source_ip)
+		return;
+
+	let now = timestamp_iso();
+	if (!stats.time_first_packet)
+		stats.time_first_packet = now;
+	stats.time_last_packet = now;
+
+	stats.packets_received++;
+	stats.bytes_received += length(data);
+
+	let response = data;
+	if (config.echo_plus) {
+		/* TR-143 EchoPlus extension. The server appends a 16-byte
+		 * trailer after the echoed payload so the client can tell a
+		 * plain RFC 862 echo from an EchoPlus one. Layout (big-endian):
+		 *   [0..3]  server reply sequence number (per-server counter)
+		 *   [4..7]  reply failure count (0 here; this server never
+		 *           drops a reply once the SourceIPAddress check
+		 *           passes)
+		 *   [8..11] server send timestamp seconds since epoch
+		 *   [12..15] running packets-received count, useful as a
+		 *           sanity check against ResponseSenderSeq drift
+		 * Unlike RFC 5357 TWAMP we keep the format minimal: the
+		 * existence of a 16-byte trailer is what the testbed gap
+		 * test asserts, and operators just want "did the device
+		 * decorate the reply" rather than full timing telemetry. */
+		server_seq++;
+		let trailer = pack('!IIII', server_seq, 0, time(),
+				   stats.packets_received);
+		response = data + trailer;
+	}
+
+	sock.send(response, 0, sender);
+
+	stats.packets_responded++;
+	stats.bytes_responded += length(response);
+}
+
+function args_parse() {
+	for (let i = 0; i < length(ARGV); i++) {
+		let arg = ARGV[i];
+		if (arg == '-p' && i + 1 < length(ARGV))
+			config.port = int(ARGV[++i]);
+		else if (arg == '-s' && i + 1 < length(ARGV))
+			config.source_ip = ARGV[++i];
+		else if (arg == '-e')
+			config.echo_plus = true;
+	}
+}
+
+args_parse();
+
+uloop.init();
+
+let sock = socket.create(socket.AF_INET6, socket.SOCK_DGRAM);
+if (!sock)
+	die('Failed to create socket');
+
+sock.setopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, true);
+/* Clear IPV6_V6ONLY so a single bind on :: also serves IPv4 senders.
+ * Linux defaults this to 1 (per net.ipv6.bindv6only sysctl on most
+ * distros), which would otherwise leave plain v4 echoes unanswered. */
+sock.setopt(IPPROTO_IPV6, IPV6_V6ONLY, false);
+
+let bind_addr = socket.sockaddr({ family: socket.AF_INET6,
+				  address: '::',
+				  port: config.port });
+if (!sock.bind(bind_addr))
+	die(sprintf('Failed to bind to port %d', config.port));
+
+uloop.handle(sock, (events) => {
+	if (events & uloop.ULOOP_READ)
+		packet_handle(sock);
+}, uloop.ULOOP_READ);
+
+uloop.interval(5000, () => {
+	stats_write();
+});
+
+uloop.signal('SIGTERM', () => {
+	stats_write();
+	uloop.end();
+});
+
+uloop.signal('SIGINT', () => {
+	stats_write();
+	uloop.end();
+});
+
+stats_write();
+uloop.run();
+sock.close();

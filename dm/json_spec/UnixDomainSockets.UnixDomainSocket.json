@@ -1,0 +1,47 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.UnixDomainSockets.UnixDomainSocket.{i}.",
+  "object": {
+    "path": "Device.UnixDomainSockets.UnixDomainSocket.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "UnixDomainSocketNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.16"
+      },
+      {
+        "name": "Mode",
+        "access": "readOnly",
+        "description": "Describes how the Unix Domain Socket must be used.",
+        "type": "string",
+        "enumerations": [
+          "Listen",
+          "Connect"
+        ]
+      },
+      {
+        "name": "Path",
+        "access": "readOnly",
+        "description": "File path of the Unix Domain Socket. Example: /tmp/broker_controller_path",
+        "type": "string",
+        "maxLength": 4096
+      }
+    ],
+    "description": "This object contains parameters relating to a UnixDomainSocket configuration.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

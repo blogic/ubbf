@@ -1,0 +1,69 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Hosts.AccessControl.{i}.Schedule.{i}.",
+  "object": {
+    "path": "Device.Hosts.AccessControl.{i}.Schedule.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ScheduleNumberOfEntries",
+    "version": "2.14",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.14"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Day",
+        "access": "readWrite",
+        "description": "{{list|the days for which access is enabled}} {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ]
+      },
+      {
+        "name": "StartTime",
+        "access": "readWrite",
+        "description": "Start time of the enable schedule in hh:mm format. [hh] refers to a zero-padded hour between 00 and 23. [mm] refers to a zero-padded minute between 00 and 59. Start time is in local time zone.",
+        "type": "string",
+        "maxLength": 5,
+        "pattern": ""
+      },
+      {
+        "name": "Duration",
+        "access": "readWrite",
+        "description": "The duration, in {{units}}, which the access is enabled. If the {{param|StartTime}} is not defined, duration is the total time access is allowed during a calendar day. If a {{param|StartTime}} is defined, access is allowed for the {{param}} period starting from {{param|StartTime}}.",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      }
+    ],
+    "description": "{{deprecated|2.18|in favor of {{object|.Schedules.}}}} Each instance of this object provides a schedule where access is enabled.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

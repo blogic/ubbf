@@ -1,0 +1,88 @@
+{
+  "source_file": "tr-181-2-19-1-usp.xml",
+  "path": "Device.LocalAgent.Watchdog.{i}.",
+  "object": {
+    "path": "Device.LocalAgent.Watchdog.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "WatchdogNumberOfEntries",
+    "version": "2.18",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enable/Disable this {{object}} instance. If the {{object}} instance is disabled, the {{event|Watchdog!}} will not be invoked, even if there is a {{object|#.Subscription}} instance that references it. The {{param|RemainingTimerValue}} will be set to 0. If the {{object}} instance is set to enabled, the {{param|RemainingTimerValue}} will be set to the value of {{param|ReloadTimerValue}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "ReloadTimerValue",
+        "access": "readWrite",
+        "description": "Watchdog timer reload value in {{units}}. Every time the {{param|Reference}} value is updated, this {{param}} is used to reload the {{param|RemainingTimerValue}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RemainingTimerValue",
+        "access": "readOnly",
+        "description": "This value is decreased every {{units}}. When 0, the {{object}} timer expires, an {{event|Watchdog!}} event will be generated.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The operational status of the {{object}} instance. When the value of {{param|RemainingTimerValue}} becomes 0, this {{param}} will become {{enum|Expired}} and a {{event|Watchdog!}} event will be triggered. {{object}} will not be restarted, meaning that the {{param|RemainingTimerValue}} will stay at 0 until the {{command|Reset()}} command is invoked.",
+        "default": "Inactive",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Inactive",
+          "Active",
+          "Expired"
+        ]
+      },
+      {
+        "name": "Reference",
+        "access": "readWrite",
+        "description": "The {{param}} consists of a Path Name or Search Path that determines the element(s) of the data model that the {{object}} is applicable to. When more than one {{param}} is used, the Watchdog timer will only be stopped if all Parameters, referenced by {{param}} are updated. If one of the referenced Parameters is not updated, either with the same or different value, an {{event|Watchdog!}} will be generated. If all parameters, referenced by {{param}}, are updated, the {{param|RemainingTimerValue}} is set to the value of the {{param|ReloadTimerValue}}.",
+        "type": "string"
+      },
+      {
+        "name": "SeverityIndication",
+        "access": "readWrite",
+        "description": "Provides an indication of the severity which will be included in the generated {{event|Watchdog!}} event when the {{object}} instance expires.",
+        "default": "Info",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Info",
+          "Minor",
+          "Major",
+          "Critical"
+        ]
+      },
+      {
+        "name": "Controller",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|#.Controller}} instance that created {{object}}|delete}} The value of this parameter is automatically populated by the USP Agent upon {{object}} creation using the reference to the USP Controller that created the instance. The USP Controller referenced by this parameter also defines the set of permissions to use when evaluating the Watchdog. Furthermore, only the USP Controller referenced by this parameter will receive a {{event|Watchdog!}} Event (assuming it has an associated Subscription), even if another USP Controller has an associated Subscription.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Controller.",
+          "targetType": "row"
+        },
+        "version": "2.18"
+      }
+    ],
+    "description": "Each {{object}} instance of this table represents a Watchdog Event. A {{object}} instance is used to detect the lack of an expected update of a parameter value within a certain time window {{param|ReloadTimerValue}}. In case this timer expires, meaning {{param|RemainingTimerValue}} becomes 0, a notification event {{event|Watchdog!}}, will be sent to the {{param|Controller}}. This is because timely parameter updates are required, e.g. for SLA or security reasons.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

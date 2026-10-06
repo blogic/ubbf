@@ -1,0 +1,83 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.AL.Interface.{i}.Link.{i}.Metric.",
+  "object": {
+    "path": "Device.IEEE1905.AL.Interface.{i}.Link.{i}.Metric.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "IEEE802dot1Bridge",
+        "access": "readOnly",
+        "description": "Indicates whether or not the 1905 link includes one or more IEEE 802.1 bridges. If {{false}}, the 1905 link does not include an IEEE 802.1 bridge. If {{true}}, the 1905 link does include one or more IEEE 802.1 bridges.",
+        "type": "boolean"
+      },
+      {
+        "name": "PacketErrors",
+        "access": "readOnly",
+        "description": "Estimated number of lost {{units}} on the transmit side of the link {{bibref|IEEE1905.1a|Table 6-18: 1905 transmitter link metrics}} during a measurement period.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "PacketErrorsReceived",
+        "access": "readOnly",
+        "description": "Estimated number of lost {{units}} on the receive side of the link {{bibref|IEEE1905.1a|Table 6-20: 1905 receiver link metrics}} during a measurement period.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "TransmittedPackets",
+        "access": "readOnly",
+        "description": "Estimated number of {{units}} sent to the Neighbor on this {{object|##.Link}}, in the same measurement period used to estimate {{param|PacketErrors}}.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "PacketsReceived",
+        "access": "readOnly",
+        "description": "Estimated number of {{units}} received from this Neighbor on this {{object|##.Link}} {{bibref|IEEE1905.1a|Table 6-20: 1905 receiver link metrics}}, in the same measurement period used to estimate {{param|PacketErrors}}.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "MACThroughputCapacity",
+        "access": "readOnly",
+        "description": "The maximum MAC throughput in {{units}} between this {{object|###.Interface}} and the Neighbor on this {{object|##.Link}} that is estimated at this {{object|###.Interface}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LinkAvailability",
+        "access": "readOnly",
+        "description": "The estimated average {{units}} of time that the {{object|##.Link}} is available for data transmissions.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 100,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "PHYRate",
+        "access": "readOnly",
+        "description": "The Physical Layer (PHY) rate in {{units}} between this {{object|###.Interface}} and the Neighbor on this {{object|##.Link}} that is estimated at this {{object|###.Interface}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "RSSI",
+        "access": "readOnly",
+        "description": "The estimated Received Signal Strength Indicator (RSSI) ratio in {{units}} between this {{object|###.Interface}} and the Neighbor on this {{object|##.Link}} that is estimated at the receive side of this {{object|###.Interface}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255,
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "This object represents the metrics for this {{object|##.Link}} as defined in {{bibref|IEEE1905.1a|Tables 6-18: 1905 transmitter link metrics and Table 6-20: 1905 receiver link metrics}}.",
+    "children": []
+  }
+}

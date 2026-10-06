@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv6.",
+  "object": {
+    "path": "Device.DHCPv6.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ClientNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The Dynamic Host Configuration Protocol (DHCP) IPv6 object {{bibref|RFC8415}}. This entire object applies to IPv6 only. It contains the {{object|Client}} and {{object|Server}} objects.",
+    "children": []
+  }
+}

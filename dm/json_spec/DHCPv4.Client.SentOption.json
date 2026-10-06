@@ -1,0 +1,56 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv4.Client.{i}.SentOption.{i}.",
+  "object": {
+    "path": "Device.DHCPv4.Client.{i}.SentOption.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "SentOptionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this SentOption table entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Tag",
+        "access": "readWrite",
+        "description": "Option tag as defined in {{bibref|RFC2132}}.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 254
+      },
+      {
+        "name": "Value",
+        "access": "readWrite",
+        "description": "A hexbinary encoded option value.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "minLength": 0,
+        "maxLength": 255
+      }
+    ],
+    "description": "Each instance of this object represents a DHCP option that MUST, if enabled, be sent in DHCP client requests. All sent DHCP options MUST be listed.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

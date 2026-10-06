@@ -1,0 +1,82 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SessionManagement.PDU.{i}.",
+  "object": {
+    "path": "Device.SessionManagement.PDU.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "PDUNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "PTI",
+        "access": "readOnly",
+        "description": "Procedure transaction identity. See {{bibref|3GPP-TS.24.501|Clause 9.6}}.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 254
+      },
+      {
+        "name": "SSC",
+        "access": "readOnly",
+        "description": "Session and Service Continuity (SSC) Mode: Indicates that the traffic of the matching application shall be routed via a PDU Session supporting the included SSC Mode. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.16}}",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 3
+      },
+      {
+        "name": "SessionAMBRDownlink",
+        "access": "readOnly",
+        "description": "Downlink Aggregate Maximum Bit Rate in {{units}}. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.14}}.",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "SessionAMBRUplink",
+        "access": "readOnly",
+        "description": "Uplink Aggregate Maximum Bit Rate in {{units}}. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.14}}.",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "RQTimerValue",
+        "access": "readOnly",
+        "description": "Reflective QoS timeout in {{units}}. See {{bibref|3GPP-TS.24.501|Clause 9.11.2.3}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AlwaysOn",
+        "access": "readOnly",
+        "description": "Always on PDU session indication. The purpose of the Always-on PDU session indication information element is to indicate whether a PDU session is established as an always-on PDU session. See {{bibref|3GPP-TS.24.501|clause 9.11.4.3}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "QoSRuleNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "QoSFlowNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Contains all 5G specific attributes needed to establish a PDU session.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

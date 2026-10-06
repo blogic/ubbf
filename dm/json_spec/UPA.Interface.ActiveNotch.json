@@ -1,0 +1,56 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.UPA.Interface.{i}.ActiveNotch.{i}.",
+  "object": {
+    "path": "Device.UPA.Interface.{i}.ActiveNotch.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ActiveNotchNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the active notch entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "StartFreq",
+        "access": "readWrite",
+        "description": "The initial frequency (in {{units}}) of a notch enabled in the spectrum of the local interface.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "StopFreq",
+        "access": "readWrite",
+        "description": "The final frequency (in {{units}}) of a notch enabled in the spectrum of the local interface.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Depth",
+        "access": "readWrite",
+        "description": "The depth (in {{units}}) of a notch enabled in the spectrum of the local interface.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object contains the list of active notches of the UPA interface. A UPA device can have notches in its spectrum, where no power is transmitted in a given part of the spectrum. These notches are typically located in amateur radio bands, to avoid interference. Note: All {{object}} entries can be enabled/disabled as a group using the {{param|#.ActiveNotchEnable}} parameter.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

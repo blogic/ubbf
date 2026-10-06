@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.DisassociationEvent.",
+  "object": {
+    "path": "Device.WiFi.DataElements.DisassociationEvent.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "DisassociationEventDataNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}} {{deprecated|2.17|because a corresponding USP event is defined instead}} {{obsoleted|2.19}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object contains the events generated when an Associated Device (STA) disassociates from a BSS.",
+    "children": []
+  }
+}

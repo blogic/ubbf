@@ -1,0 +1,62 @@
+{
+  "source_file": "tr-181-2-19-1-usp.xml",
+  "path": "Parameter.{i}.",
+  "object": {
+    "path": "Parameter.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "",
+    "parameters": [
+      {
+        "name": "Reference",
+        "access": "readOnly",
+        "description": "{{reference}} This is the parameter being reported by the Periodic Statistics mechanism.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "parameter"
+        }
+      },
+      {
+        "name": "Values",
+        "access": "readOnly",
+        "description": "{{list}} Each entry indicates the value of the referenced parameter, as determined by {{param|##.Parameter.{i}.SampleMode}}, during the sample interval. The statistics values in this comma-separated list MUST be in time order, with the oldest one first and the most recent one last. If the {{param|##.Parameter.{i}.SampleMode}} parameter is not present, or is inappropriate for the referenced parameter, the statistics values MUST be collected in Current mode.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "SampleSeconds",
+        "access": "readOnly",
+        "description": "{{list}} Each entry indicates the number of {{units}} during which data was collected for this parameter during the sample interval. Individual {{param}} values can be less than {{param|##.SampleInterval}}, for several reasons, including: : Any of the reasons for which {{param|##.SampleSeconds}} values might be less than {{param|##.SampleInterval}}. : The parameter doesn't exist, or was created or deleted during a sample interval.",
+        "list": true,
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SuspectData",
+        "access": "readOnly",
+        "description": "{{list}} Each entry is 0 if the sampled value is believed to be valid, or 1 if an event that might affect the validity of the sampled value occurred during the sample interval. For example, if the parameter value were to be reset during the sample interval then it would be appropriate to set {{param}} to 1.",
+        "list": true,
+        "type": "unsignedInt",
+        "maxInclusive": 1
+      },
+      {
+        "name": "Failures",
+        "access": "readOnly",
+        "description": "Counts the number of times (since this object instance was last enabled) that a newly-calculated sample value (accounting for {{param|##.Parameter.{i}.SampleMode}}) transitioned from the \"in range\" state to the \"out of range\" state, or between the \"out of range (low)\" and \"out of range (high)\" states. The states are defined as follows: * \"in range\" : current value is greater than {{param|##.Parameter.{i}.LowThreshold}} and less than {{param|##.Parameter.{i}.HighThreshold}}. * \"out of range\" : current value is less than or equal to {{param|##.Parameter.{i}.LowThreshold}}, or greater than or equal to {{param|##.Parameter.{i}.HighThreshold}}. * \"out of range (low)\" : current value is less than or equal to {{param|##.Parameter.{i}.LowThreshold}}. * \"out of range (high)\" : current value is greater than or equal to {{param|##.Parameter.{i}.HighThreshold}}. Note that, if {{param|##.Parameter.{i}.LowThreshold}} and {{param|##.Parameter.{i}.HighThreshold}} are both the same, the threshold/failure mechanism is disabled, so the value of this parameter will not increment. This parameter can be incremented at any time during a sample interval, and might be incremented more than once during a single sample interval. For this reason, the CPE SHOULD place a locally specified limit on the frequency at which it will notify the Controller of such changes. Parameters of non-numeric types cannot support the threshold/failure mechanism. The value of this parameter MUST be ignored for such parameters.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Periodic statistics parameter table for the report sent by this event. This table contains entries for parameters whose values were sampled.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Reference"
+      ]
+    }
+  }
+}

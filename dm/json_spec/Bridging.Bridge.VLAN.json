@@ -1,0 +1,55 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Bridging.Bridge.{i}.VLAN.{i}.",
+  "object": {
+    "path": "Device.Bridging.Bridge.{i}.VLAN.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "VLANNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this VLAN table entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "Human-readable name for this VLAN table entry.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "VLANID",
+        "access": "readWrite",
+        "description": "VLAN ID of the entry.",
+        "type": "int",
+        "minInclusive": 1,
+        "maxInclusive": 4094
+      }
+    ],
+    "description": "Bridge VLAN table. If this table is supported, if MUST contain an entry for each VLAN known to the Bridge. This table only applies to an 802.1Q {{bibref|802.1Q-2011}} Bridge.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

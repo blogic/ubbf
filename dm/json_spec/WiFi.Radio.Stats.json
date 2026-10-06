@@ -1,0 +1,220 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.Radio.{i}.Stats.",
+  "object": {
+    "path": "Device.WiFi.Radio.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "BytesSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} transmitted out of the interface, including framing characters.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "BytesReceived",
+        "access": "readOnly",
+        "description": "The total number of {{units}} received on the interface, including framing characters.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "PacketsSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} transmitted out of the interface.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "PacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of {{units}} received on the interface.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ErrorsSent",
+        "access": "readOnly",
+        "description": "The total number of outbound {{units}} that could not be transmitted because of errors.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ErrorsReceived",
+        "access": "readOnly",
+        "description": "The total number of inbound {{units}} that contained errors preventing them from being delivered to a higher-layer protocol.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "DiscardPacketsSent",
+        "access": "readOnly",
+        "description": "The total number of outbound {{units}} which were chosen to be discarded even though no errors had been detected to prevent their being transmitted. One possible reason for discarding such a packet could be to free up buffer space.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "DiscardPacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of inbound {{units}} which were chosen to be discarded even though no errors had been detected to prevent their being delivered. One possible reason for discarding such a packet could be to free up buffer space.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "CtsReceived",
+        "access": "readOnly",
+        "description": "The total number of Request To Send (RTS) control frames that received a Clear To Send (CTS) response.",
+        "type": "dataType:StatsCounter64",
+        "version": "2.14"
+      },
+      {
+        "name": "NoCtsReceived",
+        "access": "readOnly",
+        "description": "The total number of Request To Send (RTS) control frames that did not receive a Clear To Send (CTS) response.",
+        "type": "dataType:StatsCounter64",
+        "version": "2.14"
+      },
+      {
+        "name": "FrameHeaderError",
+        "access": "readOnly",
+        "description": "The total number of received packets for which the PHY was able to correlate the preamble but not the header.",
+        "type": "dataType:StatsCounter64",
+        "version": "2.14"
+      },
+      {
+        "name": "GoodPLCPReceived",
+        "access": "readOnly",
+        "description": "The total number of received frames with a good Physical Layer Convergence Protocol (PLCP) header.",
+        "type": "dataType:StatsCounter64",
+        "version": "2.14"
+      },
+      {
+        "name": "DPacketOtherMACReceived",
+        "access": "readOnly",
+        "description": "The total number of Wi-Fi data packets received from other Basic Service Sets (BSSs), with a good Frame Check Sequence (FCS) and not matching the receiver address, meaning that that the frame is received at the MAC layer but is addressed to a different MAC.",
+        "type": "dataType:StatsCounter64",
+        "version": "2.14"
+      },
+      {
+        "name": "MPacketOtherMACReceived",
+        "access": "readOnly",
+        "description": "The total number of Wi-Fi management packets received from other Basic Service Sets (BSSs), with a good Frame Check Sequence (FCS) and not matching the receiver address, meaning that that the frame is received at the MAC layer but is addressed to a different MAC.",
+        "type": "dataType:StatsCounter64",
+        "version": "2.14"
+      },
+      {
+        "name": "CPacketOtherMACReceived",
+        "access": "readOnly",
+        "description": "The total number of Wi-Fi control packets received from other Basic Service Sets (BSSs), with a good Frame Check Sequence (FCS) and not matching the receiver address, meaning that that the frame is received at the MAC layer but is addressed to a different MAC.",
+        "type": "dataType:StatsCounter64",
+        "version": "2.14"
+      },
+      {
+        "name": "CtsOtherMACReceived",
+        "access": "readOnly",
+        "description": "The total number of received Clear to Send (CTS) packets not addressed to the MAC address of this receiver.",
+        "type": "dataType:StatsCounter64",
+        "version": "2.14"
+      },
+      {
+        "name": "RtsOtherMACReceived",
+        "access": "readOnly",
+        "description": "The total number of received Request to Send (RTS) frames not addressed to the MAC address of this receiver.",
+        "type": "dataType:StatsCounter64",
+        "version": "2.14"
+      },
+      {
+        "name": "PLCPErrorCount",
+        "access": "readOnly",
+        "description": "The number of packets that were received with a detected Physical Layer Convergence Protocol (PLCP) header error.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "FCSErrorCount",
+        "access": "readOnly",
+        "description": "The number of packets that were received with a detected FCS error. This parameter is based on dot11FCSErrorCount from {{bibref|802.11-2012|Annex C}}.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "InvalidMACCount",
+        "access": "readOnly",
+        "description": "The number of packets that were received with a detected invalid MAC header error.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "PacketsOtherReceived",
+        "access": "readOnly",
+        "description": "The number of packets that were received, but which were destined for a MAC address that is not associated with this interface.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "Noise",
+        "access": "readOnly",
+        "description": "An indicator of average noise strength received at this radio, measured in {{units}}. This measurement of non-IEEE 802.11 noise power is made by sampling the channel when virtual carrier sense indicates idle and this radio is neither transmitting nor receiving a frame. If the instance of this {{object}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Noise}}.",
+        "type": "int",
+        "version": "2.12"
+      },
+      {
+        "name": "TotalChannelChangeCount",
+        "access": "readOnly",
+        "description": "The total number of times that the {{param|#.Channel}} has changed since the {{object|#}} entered its current operating state.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "ManualChannelChangeCount",
+        "access": "readOnly",
+        "description": "The number of times that the {{param|#.Channel}} has changed due to manual channel selection since the {{object|#}} entered its current operating state.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "AutoStartupChannelChangeCount",
+        "access": "readOnly",
+        "description": "The number of times that the {{param|#.Channel}} has changed due to automatic channel selection procedure launched at radio startup since the {{object|#}} entered its current operating state.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "AutoUserChannelChangeCount",
+        "access": "readOnly",
+        "description": "The number of times that the {{param|#.Channel}} has changed due to automatic channel selection procedure triggered by the user (e.g. via a GUI) since the {{object|#}} entered its current operating state.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "AutoRefreshChannelChangeCount",
+        "access": "readOnly",
+        "description": "The number of times that the {{param|#.Channel}} has changed due to automatic channel selection procedure triggered by the {{param|#.AutoChannelRefreshPeriod}} timer since the {{object|#}} entered its current operating state.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "AutoDynamicChannelChangeCount",
+        "access": "readOnly",
+        "description": "The number of times that the {{param|#.Channel}} has changed due to automatic channel selection procedure dynamically triggered to adjust to environmental interference since the {{object|#}} entered its current operating state.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "AutoDFSChannelChangeCount",
+        "access": "readOnly",
+        "description": "The number of times that the {{param|#.Channel}} has changed due to automatic channel selection procedure triggered by DFS {{bibref|ETSIBRAN}} since the {{object|#}} entered its current operating state.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      }
+    ],
+    "description": "Throughput statistics for this interface. The CPE MUST reset the interface's Stats parameters (unless otherwise stated in individual object or parameter descriptions) either when the interface becomes operationally down due to a previous administrative down (i.e. the interface's {{param|#.Status}} parameter transitions to a down state after the interface is disabled) or when the interface becomes administratively up (i.e. the interface's {{param|#.Enable}} parameter transitions from {{false}} to {{true}}). Administrative and operational interface status is discussed in {{bibref|TR-181i2|section 4.2.2}}. Packet counters here count 802.11 WiFi frames. See {{bibref|TR-181i2|Appendix III}} for further details.",
+    "children": []
+  }
+}

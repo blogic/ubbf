@@ -1,0 +1,44 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WWC.URSP.{i}.",
+  "object": {
+    "path": "Device.WWC.URSP.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "URSPNumberOfEntries",
+    "version": "2.14",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.14"
+      },
+      {
+        "name": "Precedence",
+        "access": "readOnly",
+        "description": "The precedence value of URSP rule field is used to specify the precedence of the URSP rule among all URSP rules in the URSP. The precedence value in the range from 0 to 255 (decimal). The higher the value of the precedence value field, the lower the precedence of the URP rule is. Multiple URSP rules in the URSP shall not have the same precedence value.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "TrafficDescriptorNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "User equipment Router Selection Policy (URSP) is a table of rules used to determine which network slice and data network to route a PDU over. Typically a 5G-RG would search the URSP table in precedence order matching the traffic descriptor types against the service it was setting up. For example a 5G-RG would search for 'connection capabilities' matching 'ims' in order to establish a dedicated PDU session for telephony. See {{bibref|3GPP-TS.24.526|Clause 5.2}} for a full description of the URSP data elements.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

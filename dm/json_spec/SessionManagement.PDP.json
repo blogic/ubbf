@@ -1,0 +1,116 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SessionManagement.PDP.{i}.",
+  "object": {
+    "path": "Device.SessionManagement.PDP.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "PDPNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "TrafficClass",
+        "access": "readOnly",
+        "description": "Indicates the type of application for which the PDP session is optimised. See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Conversational",
+          "Streaming",
+          "Interactive",
+          "Background",
+          "SubscribedValue"
+        ]
+      },
+      {
+        "name": "UpstreamMaxBitRate",
+        "access": "readOnly",
+        "description": "Upstream Maximum Bit Rate in {{units}}. See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}.",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "DownstreamMaxBitRate",
+        "access": "readOnly",
+        "description": "Downstream Maximum Bit Rate in {{units}}. See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}.",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "UpstreamGuaranteedBitRate",
+        "access": "readOnly",
+        "description": "Upstream Guaranteed Bit Rate in {{units}}. See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}.",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "DownstreamGuaranteedBitRate",
+        "access": "readOnly",
+        "description": "Downstream Guaranteed Bit Rate in {{units}}. See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}.",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "DeliveryOrder",
+        "access": "readOnly",
+        "description": "Indicates whether the PDP session shall provide in-sequence SDU delivery or not. See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "No",
+          "Yes",
+          "SubscribedValue"
+        ]
+      },
+      {
+        "name": "MaximumSDUSize",
+        "access": "readOnly",
+        "description": "Indicates the maximum allowed SDU size in octets. See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SDUErrorRatio",
+        "access": "readOnly",
+        "description": "Indicates the target value for the fraction of SDUs lost or detected as erroneous. SDUs. SDU error ratio is defined only for conforming traffic. The value is specified as \"mEe\". As an example a target residual bit error ratio of 5\u202210-3 would be specified as \"5E3\", \"0E0\" means subscribed value See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}.",
+        "type": "string",
+        "maxLength": 10
+      },
+      {
+        "name": "ResidualBitErrorRatio",
+        "access": "readOnly",
+        "description": "Indicates the target value for the undetected bit error ratio in the delivered SDUs. If no error detection is requested, Residual bit error ratio indicates the bit error ratio in the delivered SDUs. The value is specified as \"mEe\". As an example a target residual bit error ratio of 5\u202210-3 would be specified as \"5E3\" \"0E0\" means subscribed value See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}.",
+        "type": "string",
+        "maxLength": 10
+      },
+      {
+        "name": "DeliveryOfErroneousSDUs",
+        "access": "readOnly",
+        "description": "Indicates whether SDUs detected as erroneous shall be delivered or not. See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "No",
+          "Yes",
+          "NoDetect",
+          "SubscribedValue"
+        ]
+      },
+      {
+        "name": "TransferDelay",
+        "access": "readOnly",
+        "description": "indicates the targeted time between request to transfer an SDU at one SAP to its delivery at the other SAP, in {{units}}. See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Contains all 3G specific attributes needed to establish a PDP Context. See {{bibref|3GPP-TS.24.008|Clause 10.5.6.5}}",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Alarms.",
+  "object": {
+    "path": "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Alarms.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "TemperatureHigh",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the internal temperature exceeds the high alarm level.",
+        "type": "boolean"
+      },
+      {
+        "name": "TemperatureLow",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the internal temperature is below the low alarm level.",
+        "type": "boolean"
+      },
+      {
+        "name": "VccHigh",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the internal supply voltage exceeds the high alarm level.",
+        "type": "boolean"
+      },
+      {
+        "name": "VccLow",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the internal supply voltage is below the low alarm level.",
+        "type": "boolean"
+      },
+      {
+        "name": "TxBiasHigh",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the TX Bias current exceeds the high alarm level.",
+        "type": "boolean"
+      },
+      {
+        "name": "TxBiasLow",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the TX Bias current is below the low alarm level.",
+        "type": "boolean"
+      },
+      {
+        "name": "TxPowerHigh",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the TX output power exceeds the high alarm level.",
+        "type": "boolean"
+      },
+      {
+        "name": "TxPowerLow",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the TX output power is below the low alarm level.",
+        "type": "boolean"
+      },
+      {
+        "name": "RxPowerHigh",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the Received Power exceeds the high alarm level.",
+        "type": "boolean"
+      },
+      {
+        "name": "RxPowerLow",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the Received Power is below the low alarm level.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object contains the state of the SFP internal Diagnostic Alarms Flags {{bibref|SFF-8472|Table 9-17}}.",
+    "children": []
+  }
+}

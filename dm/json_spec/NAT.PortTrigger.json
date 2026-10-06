@@ -1,0 +1,174 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.NAT.PortTrigger.{i}.",
+  "object": {
+    "path": "Device.NAT.PortTrigger.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "PortTriggerNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.16"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the Port Trigger",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this {{object}} entry.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Inactive",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Origin",
+        "access": "writeOnceReadOnly",
+        "description": "Indicates the owner of the {{object}} instance. Note: This parameter was changed to writeOnceReadOnly in the Device:2.18 version.",
+        "default": "Controller",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "User",
+          "System",
+          "Controller"
+        ]
+      },
+      {
+        "name": "Description",
+        "access": "readWrite",
+        "description": "Human-readable description associated with this {{object}} entry.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "Specifies the incoming L3 interface to which this port trigger applies. Typically this will be the LAN interface.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "Trigger Port, the port number which is used to start the port trigger rule.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "PortEndRange",
+        "access": "readWrite",
+        "description": "Indicates the last port of the port range that starts with {{param|Port}} which is used to start the port trigger rule. A value of zero (0) indicates that no port range is specified, i.e. that the range consists only of {{param|Port}}. If {{param|Port}} is zero, the value of this parameter MUST be ignored. If specified, the value of this parameter MUST be greater than or equal to the value of {{param|Port}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "AutoDisableDuration",
+        "access": "readWrite",
+        "description": "Number of {{units}} the port trigger MUST be active. When the {{param}} is expired new connections are no longer allowed, active connections SHOULD not be terminated.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ActivationDate",
+        "access": "readOnly",
+        "description": "Indicates when the port trigger was enabled. When the port trigger is no longer active. Note: This parameter was demoted to readOnly in the Device:2.18 version.",
+        "default": "0001-01-01T00:00:00Z",
+        "defaultType": "object",
+        "type": "dateTime"
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "The protocol of the trigger port.",
+        "type": "string",
+        "enumerations": [
+          "TCP",
+          "UDP"
+        ]
+      },
+      {
+        "name": "ScheduleRef",
+        "access": "readWrite",
+        "description": "Each reference provides a schedule where time based access can be enabled. When {{param}} is {{empty}} the {{object}} is not scheduled, and the {{param|Enable}} defines the operational state.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Schedules.Schedule.",
+          "targetType": "row"
+        },
+        "version": "2.18"
+      },
+      {
+        "name": "Log",
+        "access": "readWrite",
+        "description": "Enable or disable logging, in a {{object|.DeviceInfo.VendorLogFile}}, of packets matching this {{object}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.19"
+      },
+      {
+        "name": "LogRef",
+        "access": "readWrite",
+        "description": "Specifies the logging rules for this {{object}} entry. The {{param|Log}} parameter MUST be set to {{true}} for this setting to take effect. When {{param|Log}} is {{true}} and {{param}} is {{empty}} or contains an invalid reference, the system MUST treat the configuration as an error and set {{param|Status}} to {{enum|Error_Misconfigured|Status}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Firewall.Log.",
+          "targetType": "row"
+        },
+        "version": "2.19"
+      },
+      {
+        "name": "RuleNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.16"
+      }
+    ],
+    "description": "Firewall PortTrigger table.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IPv6Address.{i}.",
+  "object": {
+    "path": "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IPv6Address.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "IPv6AddressNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "MAC Address.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "IPv6Address",
+        "access": "readOnly",
+        "description": "IPv6 Address.",
+        "type": "dataType:IPv6Address"
+      },
+      {
+        "name": "IPv6AddressType",
+        "access": "readOnly",
+        "description": "The IPv6 Address Type of this {{param|IPv6Address}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Unknown",
+          "LinkLocal",
+          "DHCP",
+          "Static",
+          "SLAAC"
+        ]
+      },
+      {
+        "name": "IPv6AddressOrigin",
+        "access": "readOnly",
+        "description": "\"::\" or the IPv6 address of the origin of this IPv6 address.",
+        "type": "dataType:IPv6Address"
+      }
+    ],
+    "description": "This object represents represents all IPv6 addresses reported for a MAC address (AL or interface) in a Higher Layer response message for the IEEE1905Device as defined in {{bibref|IEEE1905.1a|Table 6-34: IPv6 type TLV}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "MACAddress",
+        "IPv6Address"
+      ]
+    }
+  }
+}

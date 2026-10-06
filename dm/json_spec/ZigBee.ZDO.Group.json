@@ -1,0 +1,54 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.ZigBee.ZDO.{i}.Group.{i}.",
+  "object": {
+    "path": "Device.ZigBee.ZDO.{i}.Group.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "GroupNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the use of this group on the device.",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "GroupId",
+        "access": "readWrite",
+        "description": "The Group Identifier for this object as defined in {{bibref|ZigBee2007|table 2.25 Group Table Entry Format}}.",
+        "type": "dataType:ZigBeeNetworkAddress"
+      },
+      {
+        "name": "EndpointList",
+        "access": "readWrite",
+        "description": "The list of application endpoints assigned as a member of this {{object}} object.",
+        "list": true,
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.ApplicationEndpoint.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "The {{object}} object describes the configuration capabilities related to maintaining a ZigBee Device's Group Table as defined in {{bibref|ZigBee2007|section 2.5.2.7 Group Manager}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "GroupId"
+      ]
+    }
+  }
+}

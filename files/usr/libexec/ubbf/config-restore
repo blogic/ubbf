@@ -1,0 +1,27 @@
+#!/usr/bin/ucode --
+'use strict';
+
+// Applies a downloaded configuration file over the live data model. The
+// USP side reaches config_apply_safe() from the VendorConfigFile Restore
+// command; CWMP arrives here instead, because cwmpd has already fetched
+// the file and hands it to scripts/apply.sh.
+
+import { config_apply_safe } from 'ubbf.utils.config';
+import { log_init, log_info, log_err } from 'ubbf.utils.logging';
+
+log_init('ubbf-config-restore');
+
+let source = ARGV[0];
+if (!source) {
+	warn('usage: config-restore <file>\n');
+	exit(1);
+}
+
+let result = config_apply_safe(source);
+if (!result?.success) {
+	log_err('restore failed: %s', result?.error ?? 'unknown error');
+	exit(1);
+}
+
+log_info('restored configuration from %s', source);
+exit(0);

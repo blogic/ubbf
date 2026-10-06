@@ -1,0 +1,87 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IP.",
+  "object": {
+    "path": "Device.IP.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "IPv4Capable",
+        "access": "readOnly",
+        "description": "Indicates whether the device is IPv4 capable.",
+        "type": "boolean"
+      },
+      {
+        "name": "IPv4Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the IPv4 stack, and so the use of IPv4 on the device. This affects only layer 3 and above. When {{false}}, IP interfaces that had been operationally up and passing IPv4 packets will now no longer be able to do so, and will be operationally down (unless also attached to an enabled IPv6 stack).",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "IPv4Status",
+        "access": "readOnly",
+        "description": "Indicates the status of the IPv4 stack. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "IPv6Capable",
+        "access": "readOnly",
+        "description": "Indicates whether the device is IPv6 capable. Note: If {{false}}, it is expected that IPv6-related parameters, enumeration values, etc will not be implemented by the device.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "IPv6Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the IPv6 stack, and so the use of IPv6 on the device. This affects only layer 3 and above. When {{false}}, IP interfaces that had been operationally up and passing IPv6 packets will now no longer be able to do so, and will be operationally down (unless also attached to an enabled IPv4 stack).",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "IPv6Status",
+        "access": "readOnly",
+        "description": "Indicates the status of the IPv6 stack. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "ULAPrefix",
+        "access": "readWrite",
+        "description": "The ULA /48 prefix {{bibref|RFC4193|Section 3}}.",
+        "type": "dataType:IPv6Prefix",
+        "version": "2.12"
+      },
+      {
+        "name": "ActivePortNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "InterfaceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "IP object that contains the {{object|Interface}}, {{object|ActivePort}}, and {{object|Diagnostics}} objects.",
+    "children": []
+  }
+}

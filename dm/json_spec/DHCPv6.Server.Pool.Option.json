@@ -1,0 +1,69 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv6.Server.Pool.{i}.Option.{i}.",
+  "object": {
+    "path": "Device.DHCPv6.Server.Pool.{i}.Option.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "OptionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Tag",
+        "access": "readWrite",
+        "description": "Option tag (code) {{bibref|RFC8415|Section 21.1}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Value",
+        "access": "readWrite",
+        "description": "A hexbinary encoded option value.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "minLength": 0,
+        "maxLength": 65535
+      },
+      {
+        "name": "PassthroughClient",
+        "access": "readWrite",
+        "description": "{{reference}} Indicates whether this {{object}} entry is configured for passthrough. If {{param}} is specified, and the referenced client (since boot) has received a value from an associated upstream DHCPv6 server for the given {{param|Tag}} option, then the referenced client's option value will be sent instead of {{param|Value}}. Otherwise, {{param|Value}} will be sent. {{empty}} indicates that passthrough is not configured for this {{object}} entry.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "###.Client.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "This object specifies the DHCPv6 options that MUST, if enabled, be offered to clients whose DHCPv6 requests are associated with this pool. If {{param|PassthroughClient}} is specified, and the referenced client has a value for a given option then the {{param|PassthroughClient}} option value will be sent instead of {{param|Value}}. Otherwise, {{param|Value}} will be sent.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

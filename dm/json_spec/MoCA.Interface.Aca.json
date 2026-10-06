@@ -1,0 +1,16 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MoCA.Interface.{i}.Aca.",
+  "object": {
+    "path": "Device.MoCA.Interface.{i}.Aca.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [],
+    "description": "This diagnostic test corresponds to the MoCA ACA (Alternate Channel Assessment) operation.",
+    "children": []
+  }
+}

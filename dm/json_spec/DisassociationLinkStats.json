@@ -1,0 +1,53 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "DisassociationLinkStats.{i}.",
+  "object": {
+    "path": "DisassociationLinkStats.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "The MAC address of the affiliated STA whose link stats are being reported.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "BytesSent",
+        "access": "readOnly",
+        "description": "The total number of bytes transmitted to the affiliated STA.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BytesReceived",
+        "access": "readOnly",
+        "description": "The total number of bytes received from the affiliated STA.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "PacketsSent",
+        "access": "readOnly",
+        "description": "The total number of packets transmitted to the affiliated STA.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "PacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of packets received from the affiliated STA.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "ErrorsSent",
+        "access": "readOnly",
+        "description": "The number of packets which could not be transmitted to the affiliated STA because of errors.",
+        "type": "dataType:StatsCounter64"
+      }
+    ],
+    "description": "This object describes the final per link stats of each affiliated STA on disassociation. Applies only to Multi-Link Device (MLD) links. EasyMesh {{bibref|EasyMesh}} source: Affiliated STA Traffic Stats.",
+    "children": []
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.AffiliatedAP.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.AffiliatedAP.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "AffiliatedAPNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "BSSID",
+        "access": "readOnly",
+        "description": "The BSSID of the affiliated AP. This should be set to one of the values of {{param|##.Radio.{i}.BSS.{i}.BSSID}}. {{bibref|EasyMesh}} source: Agent AP MLD Configuration TLV.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "LinkID",
+        "access": "readOnly",
+        "description": "The Link ID assigned to this affiliated AP. {{bibref|EasyMesh}} source: Agent AP MLD Configuration TLV.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 15
+      },
+      {
+        "name": "RUID",
+        "access": "readOnly",
+        "description": "The Radio unique identifier (RUID) of the Radio that this affiliated AP is operating on. {{bibref|EasyMesh}} source: Agent AP MLD Configuration TLV.",
+        "type": "base64"
+      },
+      {
+        "name": "DisabledSubChannels",
+        "access": "readOnly",
+        "description": "Disabled Subchannel Bitmap subfield from the EHT Operation element in transmitted Management frames. Null value or not present for stations. {{bibref|EasyMesh}} source: Static Puncturing Configuration TLV.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "PacketsSent",
+        "access": "readOnly",
+        "description": "The number of packets transmitted by the Affiliated AP. Note: this counter counts only MLD traffic through this BSSID, not legacy (non-MLD) traffic. {{bibref|EasyMesh}} source: Associated STA Traffic Stats TLV.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "PacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of packets received from the affiliated STAs by this Affiliated AP. {{bibref|EasyMesh}} source: Associated STA Traffic Stats TLV.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "UnicastBytesSent",
+        "access": "readOnly",
+        "description": "Total number of unicast bytes transmitted to MLD STAs associated with the affiliated AP. {{bibref|EasyMesh}} source: Affiliated AP Metrics TLV.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "UnicastBytesReceived",
+        "access": "readOnly",
+        "description": "Total number of unicast bytes received from MLD STAs associated with the affiliated AP. {{bibref|EasyMesh}} source: Affiliated AP Metrics TLV.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ErrorsSent",
+        "access": "readOnly",
+        "description": "The number of packets which could not be transmitted by the Affiliated AP due to errors. This counter counts only MLD traffic through this BSSID, not legacy (non-MLD) traffic. {{bibref|EasyMesh}} source: Affiliated AP Metrics TLV.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "MulticastBytesSent",
+        "access": "readOnly",
+        "description": "Total multicast bytes transmitted to MLD STAs associated with the affiliated AP. {{bibref|EasyMesh}} source: Affiliated AP Metrics TLV.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "MulticastBytesReceived",
+        "access": "readOnly",
+        "description": "Total multicast bytes received from MLD STAs associated with the affiliated AP. {{bibref|EasyMesh}} source: Affiliated AP Metrics TLV.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "BroadcastBytesSent",
+        "access": "readOnly",
+        "description": "Total broadcast bytes transmitted to MLD STAs associated with the affiliated AP. {{bibref|EasyMesh}} source: Affiliated AP Metrics TLV.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "BroadcastBytesReceived",
+        "access": "readOnly",
+        "description": "Total broadcast bytes received from MLD STAs associated with the affiliated AP. {{bibref|EasyMesh}} source: Affiliated AP Metrics TLV.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "EstServiceParametersBE",
+        "access": "readOnly",
+        "description": "Estimated Service Parameters information field for AC=BE, defined per {{bibref|802.11-2020|Figure 9-637}} and referenced in {{bibref|EasyMesh|Section 17.2.22}}.",
+        "type": "base64",
+        "minLength": 0,
+        "maxLength": 3
+      },
+      {
+        "name": "EstServiceParametersBK",
+        "access": "readOnly",
+        "description": "Estimated Service Parameters information field for AC=BK, defined per {{bibref|802.11-2020|Figure 9-637}} and referenced in {{bibref|EasyMesh|Section 17.2.22}}.",
+        "type": "base64",
+        "minLength": 0,
+        "maxLength": 3
+      },
+      {
+        "name": "EstServiceParametersVI",
+        "access": "readOnly",
+        "description": "Estimated Service Parameters information field for AC=VI, defined per {{bibref|802.11-2020|Figure 9-637}} and referenced in {{bibref|EasyMesh|Section 17.2.22}}.",
+        "type": "base64",
+        "minLength": 0,
+        "maxLength": 3
+      },
+      {
+        "name": "EstServiceParametersVO",
+        "access": "readOnly",
+        "description": "Estimated Service Parameters information field for AC=VO, defined per {{bibref|802.11-2020|Figure 9-637}} and referenced in {{bibref|EasyMesh|Section 17.2.22}}.",
+        "type": "base64",
+        "minLength": 0,
+        "maxLength": 3
+      }
+    ],
+    "description": "The Access Points (APs) affiliated to the AP MLD. {{bibref|EasyMesh}} Source: Agent AP MLD Configuration TLV. Counters in this object only include MLD traffic.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "BSSID"
+      ]
+    }
+  }
+}

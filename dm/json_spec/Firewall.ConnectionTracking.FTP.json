@@ -1,0 +1,38 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Firewall.ConnectionTracking.FTP.",
+  "object": {
+    "path": "Device.Firewall.ConnectionTracking.FTP.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the connection tracking support for the FTP protocol (FTP ALG).",
+        "type": "boolean"
+      },
+      {
+        "name": "Ports",
+        "access": "readWrite",
+        "description": "Port numbers of the FTP servers that need to be monitored.",
+        "list": true,
+        "type": "int",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Loose",
+        "access": "readWrite",
+        "description": "The FTP protocol can enable a user to connect a FTP server to another FTP server. This could lead to a hole in the DMZ and it is therefore recommended to disable this feature.",
+        "type": "boolean"
+      }
+    ],
+    "description": "Tracking FTP connections is difficult due to the requirement for specialized helpers to handle them, along with the complexities of masquerading and Network Address Translation. This involves supporting FTP on Layer 3 with independent connection tracking.",
+    "children": []
+  }
+}

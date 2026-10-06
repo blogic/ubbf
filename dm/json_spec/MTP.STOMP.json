@@ -1,0 +1,45 @@
+{
+  "source_file": "tr-181-2-19-0-localagent.xml",
+  "path": "MTP.{i}.STOMP.",
+  "object": {
+    "path": "MTP.{i}.STOMP.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Reference",
+        "access": "readWrite",
+        "description": "A reference to the STOMP Connection used by this Agent when communicating via the STOMP MTP.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".STOMP.Connection.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Destination",
+        "access": "readWrite",
+        "description": "The STOMP destination where the Agent will be listening to incoming USP messages.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string"
+      },
+      {
+        "name": "DestinationFromServer",
+        "access": "readOnly",
+        "description": "The STOMP destination contained in the subscribe-dest header of the CONNECTED STOMP Frame. If the Agent doesn't receive a subscribe-dest header in the CONNECTED STOMP Frame, then the value of this Parameter MUST be set to {{empty}}. If this parameter's value is not empty then this is the STOMP destination address for this Agent, but if the value is empty the {{param|Destination}} Parameter contains the STOMP destination address for this Agent.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string"
+      }
+    ],
+    "description": "If the USP Endpoint uses the STOMP Message Transfer Protocol (MTP), then this object contains STOMP Client specific configuration parameters related to how the Agent communicates with the STOMP Server.",
+    "children": []
+  }
+}

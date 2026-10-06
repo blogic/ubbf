@@ -1,0 +1,56 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv6.Client.{i}.SentOption.{i}.",
+  "object": {
+    "path": "Device.DHCPv6.Client.{i}.SentOption.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "SentOptionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Tag",
+        "access": "readWrite",
+        "description": "Option tag (code) {{bibref|RFC8415|Section 21.1}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Value",
+        "access": "readWrite",
+        "description": "A hexbinary encoded option data {{bibref|RFC8415|Section 21.1}}. Note: The length of the option data is ''option-len'' octets, as specified in {{bibref|RFC8415|Section 21.1}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "minLength": 0,
+        "maxLength": 65535
+      }
+    ],
+    "description": "The top-level options and option values (including any encapsulated options) that the client will send to the server. This table is intended only for options that are not part of the basic operation of the protocol, and whose values are simple, do not often change and are not modeled elsewhere. For example, it is appropriate for OPTION_USER_CLASS (whose value is a list of user classes) but is not appropriate for OPTION_RECONF_MSG (which is part of the protocol), OPTION_IA_NA (which is modeled via {{param|#.RequestAddresses}}) or OPTION_RAPID_COMMIT (which is modeled via {{param|#.RapidCommit}}).",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

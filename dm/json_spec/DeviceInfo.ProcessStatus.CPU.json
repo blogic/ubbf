@@ -1,0 +1,167 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.ProcessStatus.CPU.{i}.",
+  "object": {
+    "path": "Device.DeviceInfo.ProcessStatus.CPU.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "CPUNumberOfEntries",
+    "version": "2.18",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.18"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "Name of this CPU. This text MUST be sufficient to distinguish this CPU from other CPUs.",
+        "type": "string",
+        "maxLength": 256,
+        "version": "2.18"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the CPU utilization monitoring.",
+        "default": "false",
+        "defaultType": "implementation",
+        "type": "boolean",
+        "version": "2.18"
+      },
+      {
+        "name": "UpTime",
+        "access": "readOnly",
+        "description": "Time in {{units}} since the CPU was last restarted.",
+        "type": "unsignedInt",
+        "version": "2.18"
+      },
+      {
+        "name": "UserModeUtilization",
+        "access": "readOnly",
+        "description": "CPU utilization, in {{units}}, rounded to the nearest whole {{units}}, while executing at the user level. This includes utilization across all cores. This value is calculated the same way as {{param|CPUUtilization}}. See {{param|CPUUtilization}} description for more details.",
+        "type": "unsignedInt",
+        "maxInclusive": 100,
+        "version": "2.18"
+      },
+      {
+        "name": "SystemModeUtilization",
+        "access": "readOnly",
+        "description": "CPU utilization, in {{units}}, rounded to the nearest whole {{units}}, while executing at the system/kernel level. Note that this includes the time spent servicing interrupts as well. This includes utilization across all cores. This value is calculated the same way as {{param|CPUUtilization}}. See {{param|CPUUtilization}} description for more details.",
+        "type": "unsignedInt",
+        "maxInclusive": 100,
+        "version": "2.18"
+      },
+      {
+        "name": "IdleModeUtilization",
+        "access": "readOnly",
+        "description": "CPU utilization, in {{units}}, rounded to the nearest whole {{units}}, while the CPU was idle. This value is calculated the same way as {{param|CPUUtilization}}. See {{param|CPUUtilization}} description for more details.",
+        "type": "unsignedInt",
+        "maxInclusive": 100,
+        "version": "2.18"
+      },
+      {
+        "name": "CPUUtilization",
+        "access": "readOnly",
+        "description": "CPU utilization, in {{units}}, rounded to the nearest whole {{units}}. The CPU Utilization is calculated as a moving window average of {{param|NumSamples}} CPU utilization samples collected at the {{param|PollInterval}}. For example, the CPU utilization is calculated as follows: CPU Utilization = (sample1 + sample2 + ... + sampleN)/N where N is the number of CPU usage samples as represented by {{param|NumSamples}} and sample1, sample2, ..., sampleN are CPU usage samples collected at every {{param|PollInterval}} seconds. This parameter, which reflects system and user mode CPU utilization, is used to determine if the CPU is in critical condition. This value includes system mode and user mode utilization i.e., everything except idle mode utilization.",
+        "type": "unsignedInt",
+        "maxInclusive": 100,
+        "version": "2.18"
+      },
+      {
+        "name": "PollInterval",
+        "access": "readWrite",
+        "description": "The interval, measured in {{units}}, over which the CPU usage is polled. If the value is 0 then the device selects its own polling interval. If the value is greater than 0 then the device MUST use this value as the poll interval.",
+        "default": "5",
+        "defaultType": "implementation",
+        "type": "unsignedInt",
+        "version": "2.18"
+      },
+      {
+        "name": "NumSamples",
+        "access": "readWrite",
+        "description": "This parameter indicates the number of CPU usage samples that is needed to calculate the average CPU utilization and populate the {{param|CPUUtilization}}",
+        "default": "30",
+        "defaultType": "implementation",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 300,
+        "version": "2.18"
+      },
+      {
+        "name": "CriticalRiseThreshold",
+        "access": "readWrite",
+        "description": "CPU utilization rise threshold {{units}} value. If the {{param|CPUUtilization}} exceeds the rise threshold value and the {{param|CriticalFallTimeStamp}} is greater than {{param|CriticalRiseTimeStamp}} (indicating that critical condition is reached), the following takes place: * The {{param|CriticalRiseTimeStamp}} is updated to the current time * A log is generated into the vendor log file referenced by {{object|###.DeviceInfo.VendorLogFile}} indicating critical condition is reached if the {{param|EnableCriticalLog}} is {{true}}. The logs generated should indicate the {{param|Name}} as well as the {{param|CriticalRiseTimeStamp}} of the CPU. * A {{event|CPUCriticalState!}} event is generated along with CPU Utilization indicating critical condition is reached.",
+        "default": "80",
+        "defaultType": "implementation",
+        "type": "unsignedInt",
+        "maxInclusive": 100,
+        "version": "2.18"
+      },
+      {
+        "name": "CriticalFallThreshold",
+        "access": "readWrite",
+        "description": "CPU utilization fall threshold {{units}} value. If the {{param|CPUUtilization}} falls below fall threshold value and {{param|CriticalRiseTimeStamp}} is greater than {{param|CriticalFallTimeStamp}} (indicating that critical condition is no longer present), the following takes place: * The {{param|CriticalFallTimeStamp}} is updated to current time * A log is generated into the vendor log file referenced by {{object|###.DeviceInfo.VendorLogFile}} indicating the clearing of critical condition if the {{param|EnableCriticalLog}} is {{true}}. The logs generated should indicate the {{param|Name}} as well as the {{param|CriticalFallTimeStamp}} of the CPU.",
+        "default": "60",
+        "defaultType": "implementation",
+        "type": "unsignedInt",
+        "maxInclusive": 100,
+        "version": "2.18"
+      },
+      {
+        "name": "CriticalRiseTimeStamp",
+        "access": "readOnly",
+        "description": "Last date and time when the critical condition was reached. See {{param|CriticalRiseThreshold}} description for more details.",
+        "type": "dateTime",
+        "version": "2.18"
+      },
+      {
+        "name": "CriticalFallTimeStamp",
+        "access": "readOnly",
+        "description": "Last date and time when the critical condition is no longer present. See {{param|CriticalFallThreshold}} description for more details.",
+        "type": "dateTime",
+        "version": "2.18"
+      },
+      {
+        "name": "EnableCriticalLog",
+        "access": "readWrite",
+        "description": "This parameter indicates whether a critical log needs to be generated in the vendor log file. * If the value of {{param}} is {{true}}, then a critical log is generated in the vendor log file. * If the value of {{param}} is {{false}}, then no critical log is generated in the vendor log file.",
+        "default": "false",
+        "defaultType": "implementation",
+        "type": "boolean",
+        "version": "2.18"
+      },
+      {
+        "name": "VendorLogFileRef",
+        "access": "readOnly",
+        "description": "The reference to {{object|###.DeviceInfo.VendorLogFile}} is automatically constructed and the {{object|###.DeviceInfo.VendorLogFile}} is populated with the information based on {{param|FilePath}}. E.g. When {{param|FilePath}} = ''file:///var/log/messages''. The following entry is automatically added to {{object|###.DeviceInfo.VendorLogFile}}: ''file:///var/log/messages''.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".DeviceInfo.VendorLogFile.",
+          "targetType": "row"
+        },
+        "version": "2.18"
+      },
+      {
+        "name": "FilePath",
+        "access": "readWrite",
+        "description": "Destination path and filename of where to create and keep the log files which MUST use the uri scheme file {{bibref|RFC8089|The file URI Scheme}}. This file is related to {{param|EnableCriticalLog}}.",
+        "type": "string",
+        "version": "2.18"
+      }
+    ],
+    "description": "Each instance in the table represents a CPU on this device. Here CPU can imply main CPU (where system software is executed) or hardware/network acceleration CPU (responsible for data plane traffic).",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Name"
+      ]
+    }
+  }
+}

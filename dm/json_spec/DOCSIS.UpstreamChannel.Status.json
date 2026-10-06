@@ -1,0 +1,71 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DOCSIS.UpstreamChannel.{i}.Status.",
+  "object": {
+    "path": "Device.DOCSIS.UpstreamChannel.{i}.Status.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "TxPower",
+        "access": "readOnly",
+        "description": "This attribute represents the operational CM transmit power for this SC-QAM upstream channel, in {{units}}. In order for this attribute to provide consistent information under all circumstances, a 3.1 CM will report the average total power for the SC-QAM channel the same as was done for DOCSIS 3.0, regardless of whether it is operating with a 3.1 or a 3.0 CMTS. The value that is reported was referred to as Pr in the DOCSIS 3.0 PHY Spec.",
+        "type": "unknown"
+      },
+      {
+        "name": "T3Timeouts",
+        "access": "readOnly",
+        "description": "This attribute denotes the number of times counter T3 expired in the CM for this upstream channel. Discontinuities in the value of this counter can occur at re-initialization of the managed system. See {{bibref|RFC2863}}.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "T4Timeouts",
+        "access": "readOnly",
+        "description": "This attribute denotes the number of times counter T4 expired in the CM for this upstream channel. Discontinuities in the value of this counter can occur at re-initialization of the managed system. See {{bibref|RFC2863}}.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "RangingAborteds",
+        "access": "readOnly",
+        "description": "This attribute denotes the number of times the ranging process was aborted by the CMTS. Discontinuities in the value of this counter can occur at re-initialization of the managed system. See {{bibref|RFC2863}}.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ModulationType",
+        "access": "readOnly",
+        "description": "This attribute indicates modulation type status currently used by the CM for this upstream channel. Since this object specifically identifies PHY Layer mode, the shared upstream channel type \"tdmaAndAtdma\" is not permitted. See {{bibref|RFC2863}}.",
+        "type": "dataType:DocsisUpstreamType"
+      },
+      {
+        "name": "EqData",
+        "access": "readOnly",
+        "description": "This attribute indicates the pre-equalization data for the specified upstream Channel on this CM after convolution with data indicated in the RNG-RSP. This data is valid when docsIfUpChannelPreEqEnable RFC 4546 is set to {{true}}. See {{bibref|RFC2863}} and {{bibref|RFC4546}}.",
+        "type": "dataType:DocsEqualizerData"
+      },
+      {
+        "name": "T3Exceededs",
+        "access": "readOnly",
+        "description": "This attribute denotes the number of times for excessive T3 timeouts. Discontinuities in the value of this counter can occur at re-initialization of the managed system. See {{bibref|RFC2863}}.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "IsMuted",
+        "access": "readOnly",
+        "description": "This attribute denotes whether the upstream channel is muted. See {{bibref|CM-SP-MULPIv3.0}}, Media Access Control specification.",
+        "type": "boolean"
+      },
+      {
+        "name": "RangingStatus",
+        "access": "readOnly",
+        "description": "This attribute denotes the ranging state of the CM. See {{bibref|CM-SP-MULPIv3.0}}, Media Access Control specification.",
+        "type": "dataType:RangingState"
+      }
+    ],
+    "description": "This object provides Upstream channel information previously available in the SNMP table docsIfCmStatusTable.",
+    "children": []
+  }
+}

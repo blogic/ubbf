@@ -1,0 +1,24 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "OpClass.{i}.Channel.{i}.",
+  "object": {
+    "path": "OpClass.{i}.Channel.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Channel",
+        "access": "readOnly",
+        "description": "The Channel number of the Channel that is requested to be scanned.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      }
+    ],
+    "description": "The Channels for which this channel scan is requested.",
+    "children": []
+  }
+}

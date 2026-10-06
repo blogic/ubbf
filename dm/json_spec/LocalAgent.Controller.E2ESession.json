@@ -1,0 +1,142 @@
+{
+  "source_file": "tr-181-2-19-1-usp.xml",
+  "path": "Device.LocalAgent.Controller.{i}.E2ESession.",
+  "object": {
+    "path": "Device.LocalAgent.Controller.{i}.E2ESession.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enable/Disable this {{object}} instance. When {{true}}, Session Context is used when exchanging USP Records with the remote endpoint represented by this {{object|##.Controller.{i}}} object instance. When {{false}}, Session Context is not used when exchanging USP Records with the remote endpoint represented by this {{object|##.Controller.{i}}} object instance. {{deprecated|2.15|because it is replaced by {{param|SessionMode}}}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SessionMode",
+        "access": "readWrite",
+        "description": "The desired usage mode of an End-to-End Session Context with this particular Controller.",
+        "type": "string",
+        "enumerations": [
+          "Require",
+          "Allow",
+          "Forbid"
+        ],
+        "version": "2.15"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current status of the Session Context.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Negotiating",
+          "Down"
+        ]
+      },
+      {
+        "name": "SessionExpiration",
+        "access": "readWrite",
+        "description": "The duration in {{units}} in which the current Session Context will expire since the last session-related activity (e.g., Message sent or received, Session Context start or restart). A value of 0 means session expiration is disabled.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0
+      },
+      {
+        "name": "SessionRetryMinimumWaitInterval",
+        "access": "readWrite",
+        "description": "Configures the first retry wait interval, in {{units}}, as specified in {{bibref|TR-369|Section \"Failure Handling in the Session Context\"}}. A value of 5 corresponds to the default behavior that is described in {{bibref|TR-369}}. The USP Agent MUST use a random value between {{param}} and ({{param}} * {{param|SessionRetryIntervalMultiplier}} / 1000) as the first retry wait interval. Other values in the retry pattern MUST be calculated using this value as a starting point.",
+        "default": "5",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "SessionRetryIntervalMultiplier",
+        "access": "readWrite",
+        "description": "Configures the retry interval multiplier as specified in {{bibref|TR-369|Section \"Failure Handling in the Session Context\"}}. This value is expressed in units of 0.001. Hence the values of the multiplier range between 1.000 and 65.535. A value of 2000 corresponds to the default behavior that is described in {{bibref|TR-369}}. The USP Agent MUST use a random value between {{param|SessionRetryMinimumWaitInterval}} and ({{param|SessionRetryMinimumWaitInterval}} * {{param}} / 1000) as the first retry wait interval. Other values in the retry pattern MUST be calculated using this value as a starting point.",
+        "default": "2000",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1000,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "CurrentRetryCount",
+        "access": "readOnly",
+        "description": "The current retry count of the Session Context. When zero (0), the Session Context is not in a retry state.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SegmentedPayloadChunkSize",
+        "access": "readWrite",
+        "description": "The maximum size, in {{units}}, of the Record (payload(s) and headers) that can be transmitted to the remote endpoint. The smallest size, which can be configured is 512 bytes. A value of 0 means that the segmentation function is effectively disabled. {{deprecated|2.16|because it is replaced by {{param|MaxUSPRecordSize}}}} {{obsoleted|2.18}} {{deleted|2.19}}",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "ranges": [
+          [
+            0,
+            0
+          ],
+          [
+            512,
+            null
+          ]
+        ]
+      },
+      {
+        "name": "MaxUSPRecordSize",
+        "access": "readWrite",
+        "description": "The maximum size allowed by the MTP, in {{units}}, a USP Record (payload(s) and header fields) that can be transmitted to the remote endpoint. When a size is set, a payload too large to transfer is segmented into smaller payloads according to the maximal size the USP Record can be. The smallest size, which can be configured, is 512 bytes. A value of 0 means that the segmentation function of payloads is effectively disabled.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "ranges": [
+          [
+            0,
+            0
+          ],
+          [
+            512,
+            null
+          ]
+        ],
+        "version": "2.16"
+      },
+      {
+        "name": "MaxRetransmitTries",
+        "access": "readWrite",
+        "description": "The maximum times that a USP Endpoint attempts to retransmit the requested USP Record to the remote endpoint. If the maximum tries is met for any requested USP Record, the USP Endpoint will restart the E2E Session. A value of -1 means that the USP Endpoint will always attempt to retransmit the requested USP Record. A value of 0 means that the USP Endpoint will not attempt to retransmit the requested USP Record and will restart the E2E Session.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 10
+      },
+      {
+        "name": "PayloadSecurity",
+        "access": "readWrite",
+        "description": "The security mechanism to use when exchanging the payload of the Record with the remote endpoint.",
+        "default": "TLS",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Plaintext",
+          "TLS"
+        ]
+      }
+    ],
+    "description": "The {{object}} object represents the End to End (E2E) Session Context functionality for this {{object|##.Controller.{i}}} object instance.",
+    "children": []
+  }
+}

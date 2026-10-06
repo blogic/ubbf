@@ -1,0 +1,42 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Routing.Babel.MACKeySet.{i}.",
+  "object": {
+    "path": "Device.Routing.Babel.MACKeySet.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "MACKeySetNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.15"
+      },
+      {
+        "name": "DefaultApply",
+        "access": "readWrite",
+        "description": "A Boolean flag indicating whether this {{object}} instance is to be applied to all new {{object|#.InterfaceSetting.}} instances. If {{true}}, this {{object}} instance applies to all new {{object|#.InterfaceSetting.}} instances at the time they are created and a reference to this {{object}} is included in the {{param|#.InterfaceSetting.{i}.InterfaceMACKeySets}} parameter. If {{false}}, this {{object}} is not applied to new {{object|#.InterfaceSetting.}} instances when they are created.",
+        "type": "boolean"
+      },
+      {
+        "name": "MACKeyNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object provides parameters related to use of the HMAC security mechanism {{bibref|RFC8967}} to sign and verify Babel packets.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

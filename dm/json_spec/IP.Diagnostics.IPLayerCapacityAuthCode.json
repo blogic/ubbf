@@ -1,0 +1,38 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IP.Diagnostics.IPLayerCapacityAuthCode.{i}.",
+  "object": {
+    "path": "Device.IP.Diagnostics.IPLayerCapacityAuthCode.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "256",
+    "enableParameter": "",
+    "numEntriesParameter": "IPLayerCapacityAuthCodeNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "AuthenticationKey",
+        "access": "readWrite",
+        "description": "A passphrase that is used by the client to authenticate with the server.",
+        "secured": true,
+        "type": "string",
+        "version": "2.19"
+      }
+    ],
+    "description": "Authentication Code table containing list of keys to be used by the client when connecting to the server.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

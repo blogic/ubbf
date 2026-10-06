@@ -1,0 +1,35 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MoCA.Interface.{i}.QoS.",
+  "object": {
+    "path": "Device.MoCA.Interface.{i}.QoS.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "EgressNumFlows",
+        "access": "readOnly",
+        "description": "The number of QoS flows that this interface has from the MoCA network. This parameter is based on ''mocaIfEgressNodeNumFlows'' from {{bibref|MOCA11-MIB}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IngressNumFlows",
+        "access": "readOnly",
+        "description": "The number of QoS flows that this interface has onto the MoCA network. This parameter is based on ''mocaIfIngressNodeNumFlows'' from {{bibref|MOCA11-MIB}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "FlowStatsNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The QoS object provides information on MoCA parameterized QoS for this interface {{bibref|MoCAv1.1}}.",
+    "children": []
+  }
+}

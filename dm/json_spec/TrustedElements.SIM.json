@@ -1,0 +1,182 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.TrustedElements.SIM.{i}.",
+  "object": {
+    "path": "Device.TrustedElements.SIM.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "SIMNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "Status",
+        "access": "readWrite",
+        "description": "The current status of the SIM.",
+        "type": "string",
+        "enumerations": [
+          "None",
+          "Available",
+          "Valid",
+          "Blocked",
+          "Error"
+        ]
+      },
+      {
+        "name": "IMSI",
+        "access": "readOnly",
+        "description": "International Mobile Subscriber Identity represented as a string with either 14 or 15 digits (digits 0-9). The first 3 digits are the mobile country code (MCC), which are followed by the mobile network code (MNC), either 2 digits (European standard) or 3 digits (North American standard), followed by the mobile subscription identification number (MSIN).",
+        "type": "string",
+        "minLength": 14,
+        "maxLength": 15,
+        "pattern": "[0-9]{14,15}"
+      },
+      {
+        "name": "ICCID",
+        "access": "readOnly",
+        "description": "Integrated Circuit Card Identifier represented as a string of up to 20 digits (digits 0-9). The number is composed of the following parts: * Major industry identifier (MII), 2 fixed digits, 89 for telecommunication purposes. * Country code, 1\u20133 digits, as defined by ITU-T recommendation {{bibref|ITU-E.164}}. * identifier, 1\u20134 digits. * Individual account identification number. Its length is variable, but every number under one IIN will have the same length. * Single check digit calculated from the other digits using the Luhn algorithm. For cards using an ICCID according to {{bibref|ITU-E.118}} the maximum length is 19 Digits, for GSM cards 20 digits.",
+        "type": "string",
+        "minLength": 6,
+        "maxLength": 20,
+        "pattern": "[0-9]{6,20}"
+      },
+      {
+        "name": "MSISDN",
+        "access": "readOnly",
+        "description": "Mobile Subscriber Integrated Service Digital Network Number, a number uniquely identifying a subscription in a GSM, UMTS, or LTE mobile network. {{bibref|ITU-E.164}}",
+        "type": "string",
+        "minLength": 14,
+        "maxLength": 15,
+        "pattern": "[0-9]{14,15}"
+      },
+      {
+        "name": "SMSC",
+        "access": "readWrite",
+        "description": "The SMSC (SMS Center address) is part of the mobile network provider's configuration and is included on the SIM card or in the network provisioning package when the phone is initialized.",
+        "type": "string"
+      },
+      {
+        "name": "EID",
+        "access": "readOnly",
+        "description": "Reports the unique identifier for the eUICC (Embedded Universal Integrated Circuit Card), which is a built-in SIM that can store multiple carrier profiles and be updated remotely.",
+        "type": "string"
+      },
+      {
+        "name": "ProfileNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ESIMProfileAddStatus",
+        "access": "readOnly",
+        "description": "Reports the operational status of the last network initiated Profile Add attempt for the embedded SIM (eSIM). The ESIM prefix indicates that this parameter is related to eSIM functionality.",
+        "type": "string"
+      },
+      {
+        "name": "ESIMClassEnabledProfile",
+        "access": "readOnly",
+        "description": "References the currently activated {{object|Profile.}}.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "Profile.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ESIMTestMode",
+        "access": "readOnly",
+        "description": "Allows the cellular network to enable or disable the Test profile. When set to {{true}}, any currently active profile is disabled, and the {{param|ESIMClassEnabledProfile}} is ignored. When set to {{false}}, the previously active profile is re-enabled.",
+        "type": "boolean"
+      },
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "The current type of the SIM card.",
+        "type": "string",
+        "enumerations": [
+          "None",
+          "USIM",
+          "eSIM"
+        ]
+      },
+      {
+        "name": "GID1",
+        "access": "readOnly",
+        "description": "A hexadecimal identifier used to differentiate between different SIM card tariffs or derive APNs. For more details, refer to {{bibref|3GPP-TS.31.102}}.",
+        "type": "string"
+      },
+      {
+        "name": "Usage",
+        "access": "readOnly",
+        "description": "Indicates the usage of the SIM instance.",
+        "type": "string",
+        "enumerations": [
+          "UICC",
+          "DRM",
+          "WWC",
+          "CA"
+        ]
+      },
+      {
+        "name": "PINCheck",
+        "access": "readWrite",
+        "description": "Controls the PIN verification of the USIM card.",
+        "type": "string",
+        "enumerations": [
+          "OnNetworkAccess",
+          "Reboot",
+          "Off"
+        ]
+      },
+      {
+        "name": "PIN",
+        "access": "readWrite",
+        "description": "Allows the Controller to change the USIM PIN used for SIM card activation.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 4
+      },
+      {
+        "name": "ProtectionScheme",
+        "access": "readOnly",
+        "description": "Protection Scheme Field\u2014This field is a 4-bit value ranging 0\u201315, which identifies the protection scheme used to generate the SUCI. The following values are currently defined: - Null Scheme\u20140x00 - Profile <A>\u20140x1 - Profile <B>\u20140x2 - Other Values (3\u201315)\u2014Reserved for future use",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 15
+      },
+      {
+        "name": "HomeNetworkPublicKeyID",
+        "access": "readOnly",
+        "description": "Home Network Public Key ID Field\u2014This field is an 8-bit value ranging 0\u2013255, which identifies the public key provisioned by the Home Public Land Mobile Network (HPLMN) and used for SUPI protection. When the Null Scheme is used, this field is set to 0.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "RoutingIndicator",
+        "access": "readOnly",
+        "description": "Routing Indicator Field\u2014This field is a numerical value consisting of 1\u20134 decimal digits. It's assigned by the home network operator and securely provisioned within the SIM/eSIM profile.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 9999
+      }
+    ],
+    "description": "This object models SIM (Subscriber Identity Module) parameters for the interface, including support for eSIM (embedded SIM) functionality.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

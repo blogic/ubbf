@@ -1,0 +1,282 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SoftwareModules.ExecEnv.{i}.",
+  "object": {
+    "path": "Device.SoftwareModules.ExecEnv.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ExecEnvNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Indicates whether or not this {{object}} is enabled. Disabling an enabled Execution Environment stops it, while enabling a disabled Execution Environment starts it. When an Execution Environment is disabled, Deployment Units installed to that Execution Environment will be unaffected, but any Execution Units currently running on that Execution Environment will automatically transition to {{enum|Idle|#.ExecutionUnit.{i}.Status}}. If an Update or Uninstall operation is attempted on a {{object|#.DeploymentUnit}} that is to be applied against a disabled {{object}}, that operation fails and the associated event will contain a FaultStruct for that operation. Disabling an Execution Environment could place the device in a non-manageable state. For example, if the operating system itself was modeled as an {{object}} and a Controller disabled it, the Agent might be terminated leaving the device unmanageable.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the status of this {{object}}.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Error",
+          "Disabled",
+          "Restarting"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "A Name provided by the device that adequately distinguishes this {{object}} from all other {{object}} instances.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "Indicates the complete type and specification version of this {{object}}.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "InitialRunLevel",
+        "access": "readWrite",
+        "description": "The run level that this {{object}} will be in upon startup (whether that is caused by a device Boot or the Execution Environment starting). Run levels dictate which Execution Units will be started. Execution Units will be started if {{param|CurrentRunLevel}} is greater than or equal to {{param|#.ExecutionUnit.{i}.RunLevel}} and {{param|#.ExecutionUnit.{i}.AutoStart}} is {{true}}. If the value of {{param|CurrentRunLevel}} is -1, then the value of this parameter is irrelevant when read and setting its value has no impact on the Run Level of this {{object}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "CurrentRunLevel",
+        "access": "readOnly",
+        "description": "The run level that this {{object}} is currently operating in. This value is altered by executing the {{command|SetRunLevel()}} command. Upon startup (whether that is caused by a device Boot or the Execution Environment starting) {{param}} will be equal to {{param|InitialRunLevel}}, unless Run Levels are not supported by this {{object}} in which case {{param}} will be -1. Run levels dictate which Execution Units will be started. Execution Units will be started if {{param}} is greater than or equal to {{param|#.ExecutionUnit.{i}.RunLevel}} and {{param|#.ExecutionUnit.{i}.AutoStart}} is {{true}}. If {{param}} is -1 then Run Levels are not supported by this {{object}} and setting {{param|InitialRunLevel}} or executing the command {{command|SetRunLevel()}} will not impact the Run Level of this {{object}}.",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "InitialExecutionUnitRunLevel",
+        "access": "readWrite",
+        "description": "Indicates the initial value on creation for {{param|#.ExecutionUnit.{i}.RunLevel}} for all Execution Unit instances associated with this {{object}}. If the value of {{param|CurrentRunLevel}} is -1, then the value of this parameter is irrelevant when read and setting its value has no impact on the Run Level of any Execution Unit.",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535,
+        "version": "2.12"
+      },
+      {
+        "name": "Vendor",
+        "access": "readOnly",
+        "description": "The vendor that produced this {{object}}.",
+        "type": "string",
+        "maxLength": 128
+      },
+      {
+        "name": "Version",
+        "access": "readOnly",
+        "description": "The Version of this {{object}} as specified by the Vendor that implemented this {{object}}, not the version of the specification.",
+        "type": "string",
+        "maxLength": 32
+      },
+      {
+        "name": "ParentExecEnv",
+        "access": "readOnly",
+        "description": "Represents the parent {{object}} of this {{object}}. If this value is {{empty}} then this is the Primary Execution Environment.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.ExecEnv.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "AllocatedDiskSpace",
+        "access": "readOnly",
+        "description": "The amount of disk space measured in {{units}} allocated to this ExecEnv. A value of -1 indicates that this parameter is not applicable. This value can be altered by executing the {{command|ModifyConstraints()}} command.",
+        "default": "-1",
+        "defaultType": "implementation",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "AllocatedMemory",
+        "access": "readOnly",
+        "description": "The amount of physical RAM measured in {{units}} allocated to this ExecEnv. A value of -1 indicates that this parameter is not applicable. This value can be altered by executing the {{command|ModifyConstraints()}} command.",
+        "default": "-1",
+        "defaultType": "implementation",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "AllocatedCPUPercent",
+        "access": "readOnly",
+        "description": "The percentage of CPU time allocated to this ExecEnv, i.e. the percentage of the whole CPU (all cores) which is available to the parent ExecEnv (the primary firmware \"owns\" 100{{units}} of CPU). A value of -1 indicates that this parameter is not applicable. This value can be altered by executing the {{command|ModifyConstraints()}} command.",
+        "default": "-1",
+        "defaultType": "implementation",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 100,
+        "version": "2.16"
+      },
+      {
+        "name": "AvailableDiskSpace",
+        "access": "readOnly",
+        "description": "The amount of disk space measured in {{units}} currently available to this {{object}}. This value changes as the {{object|#.ExecutionUnit}} instances associated with this {{object}} consumes disk space. A value of -1 MUST be used for {{object}} instances where this parameter is not applicable.",
+        "type": "int",
+        "minInclusive": -1,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "AvailableMemory",
+        "access": "readOnly",
+        "description": "The amount of physical RAM measured in {{units}} currently available to this {{object}}. This value changes as the {{object|#.ExecutionUnit}} instances associated with this {{object}} are started/stopped and consume the physical RAM. A value of -1 MUST be used for {{object}} instances where this parameter is not applicable.",
+        "type": "int",
+        "minInclusive": -1,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "AvailableCPUPercent",
+        "access": "readOnly",
+        "description": "The fraction (in {{units}}) of CPU time currently available to this {{object}}. This value changes as the {{object|#.ExecutionUnit}} instances associated with this {{object}} are started/stopped and consume the CPU. A value of -1 MUST be used for {{object}} instances where this parameter is not applicable.",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 100,
+        "version": "2.16"
+      },
+      {
+        "name": "ActiveExecutionUnits",
+        "access": "readOnly",
+        "description": "Represents the {{object|#.ExecutionUnit}} instances currently running on this {{object}}. This parameter only contains {{object|#.ExecutionUnit}} instances that currently have a {{param|#.ExecutionUnit.{i}.Status}} of {{enum|Active|#.ExecutionUnit.{i}.Status}}.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.ExecutionUnit.",
+          "targetType": "row"
+        },
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ProcessorRefList",
+        "access": "readOnly",
+        "description": "Represents the processors that this {{object}} has available to it. {{deprecated|2.18|because the referenced object,{{object|##.DeviceInfo.Processor.}}, is deprecated.}}",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.DeviceInfo.Processor.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "CreatedAt",
+        "access": "readOnly",
+        "description": "The time and date at which this {{object}} was created. If the {{object}} is provided by the primary firmware of the device then this parameter SHOULD be set to {{null}}.",
+        "type": "dateTime",
+        "version": "2.16"
+      },
+      {
+        "name": "ExecEnvClassRef",
+        "access": "readOnly",
+        "description": "The {{object|#.ExecEnvClass}} of which this {{object}} is an instance.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.ExecEnvClass.",
+          "targetType": "row"
+        },
+        "version": "2.16"
+      },
+      {
+        "name": "ApplicationDataNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.16"
+      },
+      {
+        "name": "RestartReason",
+        "access": "readOnly",
+        "description": "This parameter is set each time the {{object}} is restarted. It is cleared each time that parameter {{param|Enable}} is set {{false}} for any reason other than a restart of the {{object}}. If the restart was the result of invoking the {{command|Restart()}} command then the value will be taken from the Reason parameter of the command.",
+        "type": "string",
+        "maxLength": 256,
+        "version": "2.16"
+      },
+      {
+        "name": "RestartCount",
+        "access": "readOnly",
+        "description": "The number of times the {{object}} has been restarted since it was last disabled.",
+        "type": "unsignedInt",
+        "version": "2.16"
+      },
+      {
+        "name": "LastRestarted",
+        "access": "readOnly",
+        "description": "The time at which the {{object}} was last restarted. Initially this parameter is set to the Unknown Time (0001-01-01T00:00:00Z).",
+        "type": "dateTime",
+        "version": "2.16"
+      },
+      {
+        "name": "Signers",
+        "access": "readWrite",
+        "description": "If the device stores the acceptable public keys for signing in X.509 certificates, this parameter identifies which certificates contain public keys which can be used to verify the signature of a DeploymentUnit. Not all devices will use X.509 certificates to store the public keys. In devices which do not use X.509 certificates for this purpose, this parameter will be empty.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "Device.Security.Certificate.",
+          "targetType": "row"
+        },
+        "version": "2.16"
+      },
+      {
+        "name": "AvailableRoles",
+        "access": "readOnly",
+        "description": "The roles which are available to Deployment Units installed into this {{object}}. Only the listed roles may be assigned to any DeploymentUnit. If this parameter is missing or {{empty}} then no roles will be assigned to any DeploymentUnit installed into this {{object}}.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "Device.LocalAgent.ControllerTrust.Role.",
+          "targetType": "row"
+        },
+        "version": "2.16"
+      },
+      {
+        "name": "AvailableAccessInterfaces",
+        "access": "readOnly",
+        "description": "Represents the network interface through which the outgoing traffic from the ExecutionUnit running in this {{object}} may be allowed. This value can be altered by executing the {{command|ModifyAvailableAccessInterfaces()}}.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".IP.Interface.",
+          "targetType": "row"
+        },
+        "version": "2.17"
+      },
+      {
+        "name": "AvailableUserRoles",
+        "access": "readOnly",
+        "description": "The User Roles which are available to Deployment Units installed into this {{object}}. Only the listed User Roles may be assigned to a DeploymentUnit. If this parameter is missing or {{empty}} then no User Roles will be available to Deployment Units installed into this {{object}}.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "Device.Users.Role.",
+          "targetType": "row"
+        },
+        "version": "2.18"
+      }
+    ],
+    "description": "The Execution Environments that are available on the device, along with their properties and configurable settings.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

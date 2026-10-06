@@ -1,0 +1,47 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IEEE1905Neighbor.{i}.",
+  "object": {
+    "path": "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IEEE1905Neighbor.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "IEEE1905NeighborNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "LocalInterface",
+        "access": "readOnly",
+        "description": "{{reference}}",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IEEE1905Device.{i}.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "NeighborDeviceId",
+        "access": "readOnly",
+        "description": "1905 AL MAC Address of the Neighbor.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "MetricNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object represents an instance of an {{object}} for the {{object|##.IEEE1905Device}}. These values are from the Topology response message as defined in {{bibref|IEEE1905.1a|Table 6-15: 1905 neighbor device TLV}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "LocalInterface",
+        "NeighborDeviceId"
+      ]
+    }
+  }
+}

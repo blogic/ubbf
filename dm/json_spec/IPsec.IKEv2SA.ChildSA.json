@@ -1,0 +1,61 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IPsec.IKEv2SA.{i}.ChildSA.{i}.",
+  "object": {
+    "path": "Device.IPsec.IKEv2SA.{i}.ChildSA.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ChildSANumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the child SA pair.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "InboundSPI",
+        "access": "readOnly",
+        "description": "The inbound child SA's Security Parameter Index (SPI).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "OutboundSPI",
+        "access": "readOnly",
+        "description": "The outbound child SA's Security Parameter Index (SPI).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "CreationTime",
+        "access": "readOnly",
+        "description": "The date and time when the child SA was created.",
+        "type": "dateTime"
+      }
+    ],
+    "description": "Represents a child Security Association (SA) pair, i.e. an inbound child SA and an outbound child SA.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "InboundSPI"
+      ]
+    }
+  }
+}

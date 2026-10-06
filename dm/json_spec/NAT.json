@@ -1,0 +1,50 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.NAT.",
+  "object": {
+    "path": "Device.NAT.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "InterfaceSettingNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PortMappingNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxNumberOfPortMappings",
+        "access": "readOnly",
+        "description": "The maximum number of port mappings that can exist at any given time. If the value of this parameter is 0, then it means that the device doesn't have a limit to the number of port mappings that can exist.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "PortTriggerNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.16"
+      },
+      {
+        "name": "MaxNumberOfPortTriggers",
+        "access": "readOnly",
+        "description": "The maximum number of port triggers that can exist at any given time. If the value of this parameter is 0, then it means that the device doesn't have a limit to the number of port mappings that can exist.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      }
+    ],
+    "description": "Properties for Network Address Translation (NAT). The entire {{object}} object only applies to IPv4.",
+    "children": []
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DSL.BondingGroup.{i}.BondedChannel.{i}.",
+  "object": {
+    "path": "Device.DSL.BondingGroup.{i}.BondedChannel.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "BondedChannelNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Channel",
+        "access": "readOnly",
+        "description": "{{reference}}This is the channel that is being bonded. This is read-only because bonding is expected to be configured by the CPE, not by the Controller.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "                   ##.Channel.                   ###.FAST.Line.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "DSL bonded channel table. Each table entry represents a bonded channel within the bonding group, and is associated with exactly one {{object|##.Channel}} instance or one {{object|###.FAST.Line}} instance. There MUST be an instance of {{object}} for each DSL channel or FAST line that is bonded. When a {{object|##.Channel}} or {{object|###.FAST.Line}} is no longer bonded, then the CPE MUST delete the corresponding {{object}} instance. However, when a bonded {{object|##.Channel}} or {{object|###.FAST.Line}} becomes disabled, the channel remains bonded and so the corresponding {{object}} instance MUST NOT be deleted.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

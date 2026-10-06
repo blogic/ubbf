@@ -1,0 +1,155 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.HPNA.Interface.{i}.QoS.FlowSpec.{i}.",
+  "object": {
+    "path": "Device.HPNA.Interface.{i}.QoS.FlowSpec.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "FlowSpecNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the table entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this entry. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "TrafficClasses",
+        "access": "readWrite",
+        "description": "{{list}} This list identifies the set of traffic classes associated with this flow spec.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "listMaxLength": 256,
+        "type": "unsignedInt"
+      },
+      {
+        "name": "FlowType",
+        "access": "readWrite",
+        "description": "Flow type. {{enum}}",
+        "default": "BE",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "CBR",
+          "VBR",
+          "VBR-NRT",
+          "BE"
+        ]
+      },
+      {
+        "name": "Priority",
+        "access": "readWrite",
+        "description": "Flow queue network priority. Priority 0 is the lowest priority.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 7
+      },
+      {
+        "name": "Latency",
+        "access": "readWrite",
+        "description": "Maximum latency of the flow (expressed in {{units}}). Value 0 means no latency requirements.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 999
+      },
+      {
+        "name": "Jitter",
+        "access": "readWrite",
+        "description": "Maximum jitter of the flow (expressed in {{units}}). Value 0 means no jitter requirements.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 999
+      },
+      {
+        "name": "PacketSize",
+        "access": "readWrite",
+        "description": "Typical packet size. Value 0 means undefined packet size.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0
+      },
+      {
+        "name": "MinRate",
+        "access": "readWrite",
+        "description": "Minimum required rate in Kbps. Value 0 means no MinRate requirements.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AvgRate",
+        "access": "readWrite",
+        "description": "Average required rate in Kbps. Value 0 means no AvgRate requirements.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxRate",
+        "access": "readWrite",
+        "description": "Maximum required rate in Kbps. Value 0 means no MaxRate requirements.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PER",
+        "access": "readWrite",
+        "description": "The desired packet error rate (expressed in 1E-8, e.g. PER of 1.27E-6 will be presented as 127). Value 0 means no PER requirements.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Timeout",
+        "access": "readWrite",
+        "description": "Flow inactivity tear down timeout (expressed in {{units}}). Value 0 means unlimited timeout.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Flow specification table. The {{object|####.QoS.Classification}} table is used to classify ingress traffic, where {{param|####.QoS.Classification.{i}.TrafficClass}} is one of the classification result outputs. This ''TrafficClass'' value can be used to look up the appropriate {{object}} entry (i.e. the {{object}} entry whose {{param|TrafficClasses}} list contains a matching traffic class). For enabled table entries, if {{param|TrafficClasses}} is {{empty}} then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.ZigBee.ZDO.{i}.ComplexDescriptor.",
+  "object": {
+    "path": "Device.ZigBee.ZDO.{i}.ComplexDescriptor.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "DescriptorAvailable",
+        "access": "readOnly",
+        "description": "When {{true}}, the Complex Descriptor recorded has been received from the target device.",
+        "type": "boolean"
+      },
+      {
+        "name": "Language",
+        "access": "readOnly",
+        "description": "Specifies the ISO 639-1 language code as defined in {{bibref|ISO639-1}}.",
+        "type": "string"
+      },
+      {
+        "name": "CharacterSet",
+        "access": "readOnly",
+        "description": "Specifies the ISO 646 character set as defined in {{bibref|ISO646-1991}}.",
+        "type": "string"
+      },
+      {
+        "name": "ManufacturerName",
+        "access": "readOnly",
+        "description": "Specifies the name of the manufacturer of the ZigBee device.",
+        "type": "string"
+      },
+      {
+        "name": "ModelName",
+        "access": "readOnly",
+        "description": "Specifies the name of the manufacturer's model of the ZigBee device.",
+        "type": "string"
+      },
+      {
+        "name": "SerialNumber",
+        "access": "readOnly",
+        "description": "Specifies the manufacturer's serial number of the ZigBee device.",
+        "type": "string"
+      },
+      {
+        "name": "DeviceURL",
+        "access": "readOnly",
+        "description": "Specifies the {{datatype}} through which more information relating to the ZigBee device can be obtained.",
+        "type": "dataType:URL"
+      },
+      {
+        "name": "Icon",
+        "access": "readOnly",
+        "description": "The icon field contains an octet string which carries the data for an icon that can represent the ZigBee device. The format of the icon MUST be a 32-by-32-pixel PNG image.",
+        "type": "hexBinary",
+        "maxLength": 65535
+      },
+      {
+        "name": "IconURL",
+        "access": "readOnly",
+        "description": "Specifies the {{datatype}} through which the icon for the ZigBee device can be obtained.",
+        "type": "dataType:URL"
+      }
+    ],
+    "description": "The {{object}} object is an optional descriptor that describes extended capabilities of the ZigBee device as defined in {{bibref|ZigBee2007|section 2.3.2.6 Complex Descriptor}}.",
+    "children": []
+  }
+}

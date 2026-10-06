@@ -1,0 +1,65 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SSH.Server.{i}.AccessLog.{i}.",
+  "object": {
+    "path": "Device.SSH.Server.{i}.AccessLog.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "AccessLogNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "TimeStamp",
+        "access": "readOnly",
+        "description": "The date and time when the SSH login attempt occurred.",
+        "type": "dateTime"
+      },
+      {
+        "name": "User",
+        "access": "readOnly",
+        "description": "The username provided during the SSH access attempt.",
+        "type": "string"
+      },
+      {
+        "name": "IPAddress",
+        "access": "readOnly",
+        "description": "The IP address of the client that attempted to access the SSH server.",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "Port",
+        "access": "readOnly",
+        "description": "The port number of the client that attempted to access the SSH server.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Represents the outcome or status of the SSH access attempt or session. The parameter indicates whether the attempt was successful or encountered an error.",
+        "type": "string",
+        "enumerations": [
+          "SuccessfulLogin",
+          "FailedLogin",
+          "Error"
+        ]
+      }
+    ],
+    "description": "This table logs each SSH login attempt made on the device. When the number of entries reaches the maximum specified by {{param|#.MaxAccessLogEntries}}, the oldest entry (determined by {{param|TimeStamp}}) will be deleted and a new entry will be created for the newest login attempt.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

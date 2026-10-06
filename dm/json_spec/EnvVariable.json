@@ -1,0 +1,31 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "EnvVariable.{i}.",
+  "object": {
+    "path": "EnvVariable.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Key",
+        "access": "readOnly",
+        "description": "The Environment variable name that needs to be passed to the Execution unit when the execution unit is activated.",
+        "type": "string",
+        "maxLength": 2048
+      },
+      {
+        "name": "Value",
+        "access": "readOnly",
+        "description": "The Environment variable value associated with the name that needs to be passed to the Execution unit it is activated.",
+        "type": "string",
+        "maxLength": 2048
+      }
+    ],
+    "description": "This parameter describes the {{object|###.ExecutionUnit.{i}.EnvVariable}} instances which should be present after the update in any {{object|###.ExecutionUnit}} created by this DeploymentUnit. This table supersedes any {{object|###.ExecutionUnit.{i}.EnvVariable}} instances which may have been present before the update.",
+    "children": []
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PCP.",
+  "object": {
+    "path": "Device.PCP.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the PCP stack. If the stack is disabled then the status of any enabled {{object|Client}} entries will change to {{enum|StackDisabled|Client.{i}.Status}}.",
+        "type": "boolean",
+        "version": "2.16"
+      },
+      {
+        "name": "SupportedVersions",
+        "access": "readOnly",
+        "description": "{{list}} Each list item denotes a PCP version supported by the PCP Client. Currently known versions are 0, 1 and 2. This parameter is based on Version from {{bibref|RFC6887}}.",
+        "list": true,
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "PreferredVersion",
+        "access": "readWrite",
+        "description": "This is the version to be used in the first exchange with a new PCP Server. The factory default MUST be the highest supported version, as described in {{bibref|RFC6887|Section 9}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "OptionList",
+        "access": "readOnly",
+        "description": "{{list}} The list of the PCP Options supported by the PCP Client.",
+        "list": true,
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 254
+      },
+      {
+        "name": "ClientNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Properties for Port Control Protocol (PCP) {{bibref|RFC6887}}. See the PCP Theory of Operation {{bibref|TR-181i2|Appendix XIV}} for a description of the working of this PCP data model.",
+    "children": []
+  }
+}

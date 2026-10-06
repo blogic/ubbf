@@ -1,0 +1,33 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.AL.Interface.{i}.VendorProperties.{i}.",
+  "object": {
+    "path": "Device.IEEE1905.AL.Interface.{i}.VendorProperties.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "VendorPropertiesNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "OUI",
+        "access": "readOnly",
+        "description": "Organizationally unique identifier of a manufacturer of this {{object|##.Interface}}. Represented as a six hexadecimal-digit value using all upper-case letters and including any leading zeros according to {{bibref|IEEE1905.1a|Table 5-20: VendorSpecificInfo information element}}. {{pattern}}",
+        "type": "string",
+        "minLength": 6,
+        "maxLength": 6,
+        "pattern": "[0-9A-F]{6}"
+      },
+      {
+        "name": "Information",
+        "access": "readOnly",
+        "description": "A hexbinary string used to to provide vendor specific information about this {{object|##.Interface}}. This is the value of the vendorSpecificInfo parameter defined in {{bibref|IEEE1905.1a|Table 5-20: VendorSpecificInfo information element}}.",
+        "type": "hexBinary",
+        "maxLength": 65535
+      }
+    ],
+    "description": "This object defines the vendor specific properties (vendorSpecificInfo field) of this {{object|##.Interface}} as defined in {{bibref|IEEE1905.1a|Table 5-2: intfDescriptor elements}}.",
+    "children": []
+  }
+}

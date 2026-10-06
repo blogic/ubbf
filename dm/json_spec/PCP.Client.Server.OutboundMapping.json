@@ -1,0 +1,157 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PCP.Client.{i}.Server.{i}.OutboundMapping.{i}.",
+  "object": {
+    "path": "Device.PCP.Client.{i}.Server.{i}.OutboundMapping.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "OutboundMappingNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} instance.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this entry. {{enum}} The {{enum|Error_PCPErrorCodeReceived}} value indicates that the PCP Client received an error code from the PCP Server. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_PCPErrorCodeReceived",
+          "Error"
+        ]
+      },
+      {
+        "name": "ErrorCode",
+        "access": "readOnly",
+        "description": "Provides the PCP Error code when {{param|Status}} is {{enum|Error_PCPErrorCodeReceived|Status}}. Error code values are defined in {{bibref|RFC6887|Section 7.4}}.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 255
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Origin",
+        "access": "readOnly",
+        "description": "Mechanism via which the mapping was requested. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Internal",
+          "UPnP_IWF",
+          "PCP_Proxy",
+          "Static"
+        ]
+      },
+      {
+        "name": "Lifetime",
+        "access": "readWrite",
+        "description": "Determines the time to live, in {{units}}, of this Outbound Mapping lease, i.e. the remaining time before this port mapping expires. A value of 0 means that the port mapping is permanent (referred to as a static mapping in {{bibref|RFC6887}}). When a dynamic Outbound Mapping lease expires, the CPE MUST automatically delete the corresponding {{object}} table entry.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SuggestedExternalIPAddress",
+        "access": "readWrite",
+        "description": "The external IPv4 or IPv6 Address that the PCP-controlled device will use to send outgoing packets covered by this mapping. This is useful for refreshing a mapping, especially after the PCP Server has lost state. If the PCP Client does not know the external address, or does not have a preference, it MUST use {{empty}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "SuggestedExternalPort",
+        "access": "readWrite",
+        "description": "The external port that the PCP-controlled device will use to send outgoing packets covered by this mapping. This is useful for refreshing a mapping, especially after the PCP Server has lost state. If the PCP Client does not know the external port, or does not have a preference, it MUST use 0.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "RemoteHostIPAddress",
+        "access": "readWrite",
+        "description": "The remote peer's IP address, as seen from the PCP Client, for this Outbound Mapping.",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "InternalPort",
+        "access": "readWrite",
+        "description": "The port on PCP Client WAN Interface that the PCP-controlled device SHOULD listen to for this mapping.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "RemotePort",
+        "access": "readWrite",
+        "description": "The remote peer's port, as seen from the PCP Client, for this Outbound Mapping.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "ProtocolNumber",
+        "access": "readWrite",
+        "description": "The protocol number of the {{object}}. Values are taken from the {{bibref|IANA-protocolnumbers}}. The value -1 means ''all protocols''.",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 255
+      },
+      {
+        "name": "ThirdPartyAddress",
+        "access": "readWrite",
+        "description": "Under certain conditions, the PCP Client can create a PCP mapping on behalf of another device, by using the THIRD_PARTY option, as specified in {{bibref|RFC6887|Section 7.3}}. In that case, {{param}} is the IP address of the device for which the PCP operation is requested. For non-third-party mappings, {{param}} SHOULD be {{empty}}.",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "Description",
+        "access": "readWrite",
+        "description": "User-readable description of this {{object}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "AssignedExternalIPAddress",
+        "access": "readOnly",
+        "description": "The external IP address returned by the PCP Server. The IP address that the PCP-controlled device uses to send outgoing packets corresponding to this mapping.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "AssignedExternalPort",
+        "access": "readOnly",
+        "description": "The external port returned by the PCP Server. The port that the PCP-controlled device uses to send outgoing packets corresponding to this mapping.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      }
+    ],
+    "description": "Outbound Mapping table. This table contains all Outbound Mappings requested by this PCP Client on this PCP Server. Such a mapping is created by a PCP request with OpCode PEER, as described in {{bibref|RFC6887|Section 12}}. These requests can be issued from internal device applications, from static configuration or from other LAN device applications via interworking functions such as UPnP IGD or PCP proxies. The {{param|Origin}} parameter indicates which mechanism requested the mapping. For non-{{enum|Static|Origin}} mappings (here ''Static'' refers to the mechanism that created the mapping, not to the {{param|Lifetime}}), the Controller MAY modify the {{param|Enable}} parameter but MUST NOT modify any other parameters in the mapping or its sub-objects.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

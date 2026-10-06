@@ -1,0 +1,151 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.SSID.{i}.",
+  "object": {
+    "path": "Device.WiFi.SSID.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "SSIDNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the interface. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}. If the instance of this {{object}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.Enabled}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.",
+        "default": "Down",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the interface as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state. If the instance of this {{object}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.LastChange}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Upstream",
+        "access": "readOnly",
+        "description": "Indicates whether the interface points towards the Internet ({{true}}) or towards End Devices ({{false}}). For example: * For an Internet Gateway Device, {{param}} will be {{true}} for all WAN interfaces and {{false}} for all LAN interfaces. * For a standalone WiFi Access Point that is connected via Ethernet to an Internet Gateway Device, {{param}} will be {{true}} for the Ethernet interface and {{false}} for the WiFi Radio interface. * For an End Device, {{param}} will be {{true}} for all interfaces. See {{param|#.Radio.{i}.Upstream}} for details of how the two ''Upstream'' parameters interact.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "BSSID",
+        "access": "readOnly",
+        "description": "The Basic Service Set ID. This is the MAC address of the access point, which can either be local (when this instance models an access point SSID) or remote (when this instance models an end point SSID). If the instance of this {{object}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.BSSID}}.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "The MAC address of this interface. If this instance models an access point SSID, {{param}} is the same as {{param|BSSID}}. Note: This is not necessarily the same as the Ethernet header source or destination MAC address, which is associated with the IP interface and is modeled via the {{param|##.Ethernet.Link.{i}.MACAddress}} parameter.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "SSID",
+        "access": "readWrite",
+        "description": "The current service set identifier in use by the connection. The SSID is an identifier that is attached to packets sent over the wireless LAN that functions as an ID for joining a particular radio network (BSS). If the instance of this {{object}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.SSID}}.",
+        "type": "string",
+        "maxLength": 32
+      },
+      {
+        "name": "MLDUnit",
+        "access": "readWrite",
+        "description": "MLD-BSS unit number specifying BSS across multiple radios that form a single Multi Link Device. Assigning the same MLD unit groups Basic Service Sets (BSS) across radios. A (default) value of -1 indicates that the interface is not part of any MLD.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "ranges": [
+          [
+            -1,
+            -1
+          ],
+          [
+            0,
+            24
+          ]
+        ],
+        "version": "2.17"
+      },
+      {
+        "name": "ATFEnable",
+        "access": "readWrite",
+        "description": "Enables or disables Air Time Fairness (ATF).",
+        "type": "boolean",
+        "version": "2.14"
+      },
+      {
+        "name": "FlushATFTable",
+        "access": "readWrite",
+        "description": "After this parameter is set to true, the ATF configuration of the interface will be reset.",
+        "type": "boolean",
+        "version": "2.14"
+      },
+      {
+        "name": "SetATF",
+        "access": "readWrite",
+        "description": "Configures the ATF setting for all associated devices on an individual SSID. Expressed as {{units}} of airtime, such that no station should exceed this percentage.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 100,
+        "version": "2.14"
+      }
+    ],
+    "description": "WiFi SSID table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}), where table entries model the MAC layer. A WiFi SSID entry is typically stacked on top of a {{object|#.Radio}} object. WiFi SSID is also a multiplexing layer, i.e. more than one {{object}} can be stacked above a single {{object|#.Radio}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

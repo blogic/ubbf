@@ -1,0 +1,31 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PDU.Session.{i}.NetworkSlice.",
+  "object": {
+    "path": "Device.PDU.Session.{i}.NetworkSlice.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.14",
+    "parameters": [
+      {
+        "name": "SliceServiceType",
+        "access": "readOnly",
+        "description": "The Slice Service Type (SST). {{enum}} See {{bibref|3GPP-TS.23.501|Clause 5.15.2.2}}. {{deprecated|2.19| due to entire PDU object being moved to {{object|Device.SessionManagement.PDU.{i}}}}}",
+        "type": "dataType:SST",
+        "version": "2.14"
+      },
+      {
+        "name": "SliceDifferentiator",
+        "access": "readOnly",
+        "description": "The Slice differentiator is an optional number used to differentiate network slices with the same SST. See {{bibref|3GPP-TS.23.501|Clause 5.15.2.1}}. {{deprecated|2.19| due to entire PDU object being moved to {{object|Device.SessionManagement.PDU.{i}}}}}",
+        "type": "unsignedInt",
+        "version": "2.14"
+      }
+    ],
+    "description": "Describes a S-NSSAI Information element providing network slice specification. See {{bibref|3GPP-TS.24.501|Clause 9.11.2.8}} {{deprecated|2.19|because it has moved to {{object|Device.SessionManagement.PDU.{i}.NetworkSlice}}}}",
+    "children": []
+  }
+}

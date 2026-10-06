@@ -1,0 +1,241 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv6.Client.{i}.Retransmission.",
+  "object": {
+    "path": "Device.DHCPv6.Client.{i}.Retransmission.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.18",
+    "parameters": [
+      {
+        "name": "SolicitMaxDelay",
+        "access": "readWrite",
+        "description": "Maximum delay of first Solicit, expressed in {{units}}.",
+        "default": "1",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SolicitInitialTimeout",
+        "access": "readWrite",
+        "description": "Initial solicit, expressed in {{units}}.",
+        "default": "1",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SolicitMaxTimeout",
+        "access": "readWrite",
+        "description": "Maximum solicit timeout value, expressed in {{units}}.",
+        "default": "3600",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RequestInitialTimeout",
+        "access": "readWrite",
+        "description": "Initial request timeout, expressed in {{units}}.",
+        "default": "1",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RequestMaxTimeout",
+        "access": "readWrite",
+        "description": "Maximum request timeout, expressed in {{units}}.",
+        "default": "30",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RequestMaxRetry",
+        "access": "readWrite",
+        "description": "Maximum request retry attempts.",
+        "default": "10",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ConfirmMaxDelay",
+        "access": "readWrite",
+        "description": "Maximum delay of first confirm, expressed in {{units}}.",
+        "default": "1",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ConfirmInitialTimeout",
+        "access": "readWrite",
+        "description": "Initial confirm timeout, expressed in {{units}}.",
+        "default": "1",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ConfirmMaxTimeout",
+        "access": "readWrite",
+        "description": "Maximum confirm timeout, expressed in {{units}}.",
+        "default": "4",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ConfirmMaxDuration",
+        "access": "readWrite",
+        "description": "Maximum confirm duration, expressed in {{units}}.",
+        "default": "10",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RenewInitialTimeout",
+        "access": "readWrite",
+        "description": "Initial renew timeout, expressed in {{units}}.",
+        "default": "10",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RenewMaxTimeout",
+        "access": "readWrite",
+        "description": "Maximum renew timeout value, expressed in {{units}}.",
+        "default": "600",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RebindInitialTimeout",
+        "access": "readWrite",
+        "description": "Initial rebind timeout, expressed in {{units}}.",
+        "default": "10",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RebindMaxTimeout",
+        "access": "readWrite",
+        "description": "Maximum rebind timeout value, expressed in {{units}}.",
+        "default": "600",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "InformationRequestMaxDelay",
+        "access": "readWrite",
+        "description": "Maximum delay of first information-request, expressed in {{units}}.",
+        "default": "1",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "InformationRequestInitialTimeout",
+        "access": "readWrite",
+        "description": "Initial information-request timeout, expressed in {{units}}.",
+        "default": "1",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "InformationRequestMaxTimeout",
+        "access": "readWrite",
+        "description": "Maximum information-request timeout, expressed in {{units}}.",
+        "default": "3600",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ReleaseInitialTimeout",
+        "access": "readWrite",
+        "description": "Initial Release timeout, expressed in {{units}}.",
+        "default": "1",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ReleaseMaxAttempts",
+        "access": "readWrite",
+        "description": "Maximum release retry attempts.",
+        "default": "4",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DeclineInitialTimeout",
+        "access": "readWrite",
+        "description": "Initial Decline timeout, expressed in {{units}}.",
+        "default": "1",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DeclineMaxAttempts",
+        "access": "readWrite",
+        "description": "Maximum decline retry attempts.",
+        "default": "4",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ReconfigureInitialTimeout",
+        "access": "readWrite",
+        "description": "Initial reconfigure timeout, expressed in {{units}}.",
+        "default": "2",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ReconfigureMaxAttempts",
+        "access": "readWrite",
+        "description": "Maximum reconfigure attempts.",
+        "default": "8",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "HopCountLimit",
+        "access": "readWrite",
+        "description": "Maximum hop count in a relay-forward message.",
+        "default": "32",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "InformationRefreshTime",
+        "access": "readWrite",
+        "description": "Default information refresh time, expressed in {{units}}.",
+        "default": "86400",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MinInformationRefreshTime",
+        "access": "readWrite",
+        "description": "Minimum information refresh time, expressed in {{units}}.",
+        "default": "600",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxWaitTime",
+        "access": "readWrite",
+        "description": "Maximum required time to wait for a response, expressed in {{units}}.",
+        "default": "60",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TimeoutRandomize",
+        "access": "readWrite",
+        "description": "The Randomization factor for the retransmission timeout, in {{units}}, as defined in {{bibref|RFC8415|15 Reliability of Client-Initiated Message Exchanges}}. E.g. a timeout of 1000ms with a randomization of 100 will end up between 900 and 1100 ms.",
+        "default": "100",
+        "defaultType": "object",
+        "type": "int"
+      }
+    ],
+    "description": "This object enables the configurion of the DHCPv6 retransmission behavior according to the guidelines described in {{bibref|RFC8415|Section 7.6}}.",
+    "children": []
+  }
+}

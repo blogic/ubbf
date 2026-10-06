@@ -1,0 +1,122 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DSLite.InterfaceSetting.{i}.",
+  "object": {
+    "path": "Device.DSLite.InterfaceSetting.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "InterfaceSettingNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enable or disable this {{object}} instance.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this entry. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "EndpointAssignmentPrecedence",
+        "access": "readWrite",
+        "description": "Indicates the preferred method to be used in assigning values to {{param|EndpointName}} when both static and dynamic values are available. See {{param|EndpointName}} for further clarification.",
+        "default": "DHCPv6",
+        "defaultType": "factory",
+        "type": "string",
+        "enumerations": [
+          "DHCPv6",
+          "Static"
+        ]
+      },
+      {
+        "name": "EndpointAddressTypePrecedence",
+        "access": "readWrite",
+        "description": "Indicates the preferred method to be used to assign the address of the DS-Lite Endpoint when both {{param|EndpointName}} and {{param|EndpointAddress}} values are available and the {{enum|Static|EndpointAssignmentPrecedence}} method is used. See {{param|EndpointName}} and {{param|EndpointAddress}} for further clarification.",
+        "type": "string",
+        "enumerations": [
+          "FQDN",
+          "IPv6Address"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "EndpointAddressInUse",
+        "access": "readOnly",
+        "description": "Indicates the address currently in use for the tunnel concentrator (remote endpoint). It is derived from the values of the {{param|EndpointAssignmentPrecedence}}, {{param|EndpointAddressTypePrecedence}}, {{param|EndpointName}} and {{param|EndpointAddress}} parameters. It is {{empty}} if no endpoint address is currently known.",
+        "type": "dataType:IPv6Address",
+        "version": "2.12"
+      },
+      {
+        "name": "EndpointName",
+        "access": "readWrite",
+        "description": "The Fully Qualified Domain Name (FQDN) of the tunnel concentrator (remote endpoint). This parameter is based on ''OPTION_DS_LITE_NAME'' from {{bibref|DSLite-options|Section 4}} and can be assigned statically (e.g. present in the factory default configuration or set by the Controller) or can be updated dynamically (via DHCPv6). If both statically and dynamically assigned, then {{param|EndpointAssignmentPrecedence}} indicates whether it is the static configuration or the DHCPv6 configuration that is actually applied to {{param}}. Note: {{param}} is only writable when {{param|EndpointAssignmentPrecedence}} is {{enum|Static|EndpointAssignmentPrecedence}}; otherwise, {{param}} is automatically configured via the DHCPv6 received option.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "EndpointAddress",
+        "access": "readWrite",
+        "description": "The address of the tunnel concentrator (remote endpoint). This parameter can only be assigned statically (e.g. present in the factory default configuration or set by the Controller).",
+        "type": "dataType:IPv6Address"
+      },
+      {
+        "name": "Origin",
+        "access": "readOnly",
+        "description": "Method used to assign {{param|EndpointAddressInUse}}.",
+        "type": "string",
+        "enumerations": [
+          "DHCPv6",
+          "Static"
+        ]
+      },
+      {
+        "name": "TunnelInterface",
+        "access": "readOnly",
+        "description": "{{reference}} This is an IP interface of ''Type'' {{enum|Tunnel|##.IP.Interface.{i}.Type}} that is logically the tunnel entry point for upstream IPv4 traffic and is also logically the tunnel exit point for downstream IPv4 traffic (i.e. the entry point for non-tunneled upstream IPv4 traffic to enter a tunnel and become tunneled, or conversely, the exit point for downstream IPv4 traffic leaving a tunnel after being un-tunneled). IPv4 traffic that enters {{param}} is expected to continue on through {{param|TunneledInterface}} from the LAN, and traffic from the WAN is expected to come from TunneledInterface into TunnelInterface. TunnelInterface is a logical interface that can allow for classification, marking (of IPv4 headers), and policing of IPv4 traffic that will be going over a DS-Lite tunnel. These functions are modeled in the Device.QoS object. Note: In DS-Lite, IPv4 packets arriving over one or more device LAN IP interfaces are logically fed into this {{param}}. Likewise, DS-Lite traffic from the WAN gets logically sent from this {{param}} to LAN IP interfaces.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "TunneledInterface",
+        "access": "readOnly",
+        "description": "{{reference}} This is an IP interface of ''Type'' {{enum|Tunneled|##.IP.Interface.{i}.Type}} that provides information about the IPv6 headers used to encapsulate the IPv4 packets. Encapsulated IPv4 traffic that enters {{param}} from the WAN is expected to continue on through {{param|TunnelInterface}}, and traffic from the LAN is expected to come from {{param|TunnelInterface}} into {{param}}. {{param}} is a logical interface that can allow for classification, marking (of IPv6 headers and VLAN tags), and policing of IPv6 packets that encapsulate IPv4 packets in DS-Lite traffic. These functions are modeled in the {{object|##.QoS}} object. Note: In DS-Lite, {{param}} traffic originating from the LAN logically feeds into a WAN-side IPv6 capable IP interface that the \"DSLite IPv4-in-IPv6 tunnel\" goes over. DS-Lite traffic that enters over this IPv6 WAN interface gets logically sent to this {{param}}.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "DSLite {{bibref|DSLite}} settings.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DOCSIS.SpectrumAnalysis.",
+  "object": {
+    "path": "Device.DOCSIS.SpectrumAnalysis.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "This attribute is used to enable or disable the spectrum analyzer feature. Setting this attribute to {{true}} triggers the CM to initiate measurements for the spectrum analyzer feature based on the other configuration attributes for the feature. By default, the feature is disabled unless explicitly enabled. Note that the feature may be disabled by the system under certain circumstances if the spectrum analyzer would affect critical services. In such a case, the attribute will return {{false}} when read, and will reject sets to {{true}} with an error. Once the feature is enabled, any change to this object's configuration might not be effective until the feature is re-enabled again. See {{bibref|CM-SP-CM-OSSIv3.1}}, Proactive Network Maintenance Information Model.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean"
+      },
+      {
+        "name": "InactivityTimeout",
+        "access": "readWrite",
+        "description": "This attribute controls the length of time (in {{units}}) after the last spectrum analysis measurement before the feature is automatically disabled. If set to a value of 0, the feature will remain enabled until it is explicitly disabled. See {{bibref|CM-SP-CM-OSSIv3.1}}, Proactive Network Maintenance Information Model.",
+        "default": "300",
+        "defaultType": "factory",
+        "type": "int",
+        "minInclusive": 0,
+        "maxInclusive": 86400
+      },
+      {
+        "name": "FirstSegmentCenterFrequency",
+        "access": "readWrite",
+        "description": "This attribute controls the center frequency (in {{units}}) of the first segment for the spectrum analysis measurement. The frequency bins for this segment lie symmetrically to the left and right of this center frequency. If the number of bins in a segment is odd, the segment center frequency lies directly on the center bin. If the number of bins in a segment is even, the segment center frequency lies halfway between two bins. Changing the value of this attribute may result in changes to the {{object|Result}} table. Note that if this parameter is set to an invalid value, the device may return an error, or may adjust the value of the parameter to the closest valid value. See {{bibref|CM-SP-CM-OSSIv3.1}}, Proactive Network Maintenance Information Model.",
+        "default": "93000000",
+        "defaultType": "factory",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LastSegmentCenterFrequency",
+        "access": "readWrite",
+        "description": "This attribute controls the center frequency (in {{units}}) of the last segment of the spectrum analysis measurement. The frequency bins for this segment lie symmetrically to the left and right of this center frequency. If the number of bins in a segment is odd, the segment center frequency lies directly on the center bin. If the number of bins in a segment is even, the segment center frequency lies halfway between two bins. The value of the {{param}} should be equal to the {{param|FirstSegmentCenterFrequency}} plus and integer number of segment spans as determined by the {{param|SegmentFrequencySpan}}. Changing the value of this attribute may result in changes to the {{object|Result}} table. Note that if this parameter is set to an invalid value, the device may return an error, or may adjust the value of the parameter to the closest valid value. See {{bibref|CM-SP-CM-OSSIv3.1}}, Proactive Network Maintenance Information Model.",
+        "default": "993000000",
+        "defaultType": "factory",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SegmentFrequencySpan",
+        "access": "readWrite",
+        "description": "This attribute controls the frequency span (in {{units}}) of each segment (instance) of the {{object|Result.{i}}} table. If set to a value of 0, then a default span will be chosen based on the hardware capabilities of the device. Segments are contiguous from the {{param|FirstSegmentCenterFrequency}} to the {{param|LastSegmentCenterFrequency}} and the center frequency for each successive segment is incremented by the {{param}}. The number of segments is ({{param|LastSegmentCenterFrequency}} - {{param|FirstSegmentCenterFrequency}})/{{param}} + 1. A segment is equivalent to an instance in the {{object|Result}} table. The chosen {{param}} affects the number of entries in {{object|Result}} table. A more granular {{param}} may adversely affect the amount of time needed to query the table entries in addition to possibly increasing the acquisition time. Changing the value of this attribute may result in changes to {{object|Result}} table. Note that if this parameter is set to an invalid value, the device may return an error, or may adjust the value of the parameter to the closest valid value. See {{bibref|CM-SP-CM-OSSIv3.1}}, Proactive Network Maintenance Information Model.",
+        "default": "7500000",
+        "defaultType": "factory",
+        "type": "unsignedInt",
+        "minInclusive": 1000000,
+        "maxInclusive": 900000000
+      },
+      {
+        "name": "NumBinsPerSegment",
+        "access": "readWrite",
+        "description": "This parameter controls the number of bins collected by the measurement performed for each segment (instance) in the {{object|Result}} table. Note that if this parameter is set to an invalid value, the device may return an error, or may adjust the value of the parameter to the closest valid value. See {{bibref|CM-SP-CM-OSSIv3.1}}, Proactive Network Maintenance Information Model.",
+        "default": "256",
+        "defaultType": "factory",
+        "type": "unsignedInt",
+        "minInclusive": 2,
+        "maxInclusive": 2048
+      },
+      {
+        "name": "EquivalentNoiseBandwidth",
+        "access": "readWrite",
+        "description": "This parameter allows the user to request an equivalent noise bandwidth (measured in {{units}}) for the resolution bandwidth filter used in the spectrum analysis. This corresponds to the spectral width of the window function used when performing a discrete Fourier transform for the analysis. The window function which corresponds to a value written to this parameter may be obtained by reading the value of {{param|WindowFunction}}. If an unsupported value is requested, the device may return an error, or choose the closest valid value to the one which is requested. If the closest value is chosen, then a subsequent read of this parameter will return the actual value which is in use. See {{bibref|CM-SP-CM-OSSIv3.1}}, Proactive Network Maintenance Information Model.",
+        "default": "150",
+        "defaultType": "factory",
+        "type": "unsignedInt",
+        "minInclusive": 50,
+        "maxInclusive": 500
+      },
+      {
+        "name": "WindowFunction",
+        "access": "readWrite",
+        "description": "This parameter controls or indicates the windowing function which will be used when performing the discrete Fourier transform for the analysis. The {{param}} and the Equivalent Noise Bandwidth are related. If a particular {{param}} is selected, then the {{param|EquivalentNoiseBandwidth}} for the function which is in use, will be reported by the {{param|EquivalentNoiseBandwidth}} parameter. Alternatively if an {{param|EquivalentNoiseBandwidth}} value is chosen then if a {{param}} function representing that {{param|EquivalentNoiseBandwidth}} is defined in the CM, that value will be reported in {{param}}, or a value of {{enum|Other}} will be reported. Use of \"modern\" windowing functions not yet defined will likely be reported as {{enum|Other}}. {{enum}} Note that all window functions may not be supported by all devices. If an attempt is made to set the object to an unsupported window function, or if writing of the WindowFunction is not supported, an error will be returned. See {{bibref|CM-SP-CM-OSSIv3.1}}, Proactive Network Maintenance Information Model.",
+        "type": "dataType:SpectrumAnalysisWindowFunction"
+      },
+      {
+        "name": "NumberOfAverages",
+        "access": "readWrite",
+        "description": "This parameter controls the number of averages that will be performed on spectral bins. The average will be computed using the 'leaky integrator' method, where: reported bin value = alpha*accumulated bin values + (1-alpha)*current bin value. Alpha is one minus the reciprocal of the number of averages. For example, if N=25, then alpha = 0.96. A value of 1 indicates no averaging. Re-writing the number of averages will restart the averaging process. If there are no accumulated values, the accumulators are made equal to the first measured bin amplitudes. If an attempt is made to set the parameter to an unsupported number of averages, an error will be returned. See {{bibref|CM-SP-CM-OSSIv3.1}}, Proactive Network Maintenance Information Model.",
+        "default": "1",
+        "defaultType": "factory",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 1000
+      },
+      {
+        "name": "ResultNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "children": []
+  }
+}

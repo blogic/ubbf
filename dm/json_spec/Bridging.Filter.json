@@ -1,0 +1,447 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Bridging.Filter.{i}.",
+  "object": {
+    "path": "Device.Bridging.Filter.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "FilterNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this Filter table entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this Filter table entry. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition. If the Bridge Port table is supported, but none of its entries correspond to {{param|Interface}}, or if such an entry exists but is disabled, {{param}} MUST NOT indicate {{enum|Enabled}}. If the Bridge VLAN table is supported, but none of its entries correspond to {{param|VLANIDFilter}}, or if such an entry exists but is disabled, {{param}} MUST NOT indicate {{enum|Enabled}}.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Bridge",
+        "access": "readWrite",
+        "description": "{{reference|a {{object|#.Bridge}} object in case of a 802.1D bridge or a {{object|#.Bridge.{i}.VLAN}} object in case of a 802.1Q bridge}} Note: either way, this identifies the bridge (because each bridge has a VLAN table). Defines the Bridge or Bridge VLAN to which ingress frames will be classified based upon matches of the classification criteria.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "                   #.Bridge.                   #.Bridge.{i}.VLAN.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Order",
+        "access": "readWrite",
+        "description": "{{datatype|expand}} For each ingress frame on the {{param|Interface}}, the highest ordered entry that matches the filter criteria is applied. All lower order entries are ignored.",
+        "type": "dataType:Order"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "{{reference}} This MUST relate to the same bridge as does {{param|Bridge}}. Defines the Bridge Port on which ingress frame classification will occur.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.Bridge.{i}.Port.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "DHCPType",
+        "access": "readWrite",
+        "description": "The DHCP protocol associated with the {{object}} instance. Affects only parameters that specify DHCP option values as filter criteria (all such parameter descriptions note this fact). {{enum}} If {{param}} is {{enum|DHCPv4}}, then {{object}} parameters that are DHCPv6-specific are ignored. If {{param}} is {{enum|DHCPv6}}, then {{object}} parameters that are DHCPv4-specific are ignored.",
+        "default": "DHCPv4",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "DHCPv4",
+          "DHCPv6"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "VLANIDFilter",
+        "access": "readWrite",
+        "description": "Classification criterion. The 802.1Q {{bibref|802.1Q-2011}} VLAN ID. For an 802.1D {{bibref|802.1D-2004}} Bridge, which has no concept of VLANs, the VLAN ID MUST be ''0''.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 4094
+      },
+      {
+        "name": "EthertypeFilterList",
+        "access": "readWrite",
+        "description": "Classification criterion. {{list}} Each list item represents an Ethertype value. Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on Ethertype.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "listMaxLength": 256,
+        "type": "unsignedInt"
+      },
+      {
+        "name": "EthertypeFilterExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, on ingress to the interfaces associated with this Filter, the Bridge is defined to admit only those packets that match one of the {{param|EthertypeFilterList}} entries (in either the Ethernet or SNAP Type header). If the {{param|EthertypeFilterList}} is empty, no packets are admitted. If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge is defined to admit all packets except those packets that match one of the {{param|EthertypeFilterList}} entries (in either the Ethernet or SNAP Type header). If the {{param|EthertypeFilterList}} is empty, packets are admitted regardless of Ethertype. Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on Ethertype.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SourceMACAddressFilterList",
+        "access": "readWrite",
+        "description": "Classification criterion. {{list|each representing a MAC Address}} Each list entry MAY optionally specify a bit-mask, where matching of a packet's MAC address is only to be done for bit positions set to one in the mask. If no mask is specified, all bits of the MAC Address are to be used for matching. For example, the list might be: ''01:02:03:04:05:06, 1:22:33:00:00:00/FF:FF:FF:00:00:00, 88:77:66:55:44:33'' Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC address.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "listMaxLength": 512,
+        "type": "string"
+      },
+      {
+        "name": "SourceMACAddressFilterExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, on ingress to the interfaces associated with this Filter, the Bridge admits only those packets whose source MAC Address matches one of the {{param|SourceMACAddressFilterList}} entries. If the {{param|SourceMACAddressFilterList}} is empty, no packets are admitted. If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose source MAC Address matches one of the {{param|SourceMACAddressFilterList}} entries. If the {{param|SourceMACAddressFilterList}} is empty, packets are admitted regardless of MAC address. Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC address.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DestMACAddressFilterList",
+        "access": "readWrite",
+        "description": "Classification criterion. {{list}} Each list item specifies a MAC Address. List items MAY optionally specify a bit-mask after the MAC Address, where matching of a packet's MAC address is only to be done for bit positions set to one in the mask. If no mask is specified, all bits of the MAC Address are to be used for matching. For example, the list might be: ''01:02:03:04:05:06, 1:22:33:00:00:00/FF:FF:FF:00:00:00, 88:77:66:55:44:33''",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "listMaxLength": 512,
+        "type": "string"
+      },
+      {
+        "name": "DestMACAddressFilterExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, on ingress to the interfaces associated with this Filter, the Bridge admits only those packets whose destination MAC Address matches one of the {{param|DestMACAddressFilterList}} entries. If the {{param|DestMACAddressFilterList}} is empty, no packets are admitted. If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose destination MAC Address matches one of the {{param|DestMACAddressFilterList}} entries. If the {{param|DestMACAddressFilterList}} is empty, packets are admitted regardless of MAC address.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SourceMACFromVendorClassIDFilter",
+        "access": "readWrite",
+        "description": "Classification criterion. A string used to identify one or more devices via DHCP for which MAC address filtering would subsequently apply. A device is considered matching if its DHCPv4 Vendor Class Identifier (Option 60 as defined in {{bibref|RFC2132}}) in the most recent DHCP lease acquisition or renewal matches the specified value according to the match criterion in {{param|SourceMACFromVendorClassIDMode}}. Case sensitive. This is a normal string, e.g. \"abc\" is represented as \"abc\" and not \"616263\" hex. However, if the value includes non-printing characters then such characters have to be represented using XML escapes, e.g. #x0a for line-feed. Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC address. Note: This parameter is DHCPv4-specific. It only applies when {{param|DHCPType}} is {{enum|DHCPv4|DHCPType}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 255
+      },
+      {
+        "name": "SourceMACFromVendorClassIDFilterv6",
+        "access": "readWrite",
+        "description": "Classification criterion. A hexbinary string used to identify one or more devices via DHCP for which MAC address filtering would subsequently apply. A device is considered matching if the most recent DHCPv6 Vendor Class Identifier (Option 16 as defined in {{bibref|RFC8415}}) was equal to the specified value. The option value is binary, so an exact match is REQUIRED. Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC address. Note: This parameter is DHCPv6-specific. It only applies when {{param|DHCPType}} is {{enum|DHCPv6|DHCPType}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "maxLength": 65535,
+        "version": "2.12"
+      },
+      {
+        "name": "SourceMACFromVendorClassIDFilterExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, on ingress to the interfaces associated with this Filter, the Bridge admits only those packets whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromVendorClassIDFilter}} (for {{enum|DHCPv4|DHCPType}}) or {{param|SourceMACFromVendorClassIDFilterv6}} (for {{enum|DHCPv6|DHCPType}}). If this corresponding filter parameter is {{empty}}, no packets are admitted. If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromVendorClassIDFilter}} (for {{enum|DHCPv4|DHCPType}}) or {{param|SourceMACFromVendorClassIDFilterv6}} (for {{enum|DHCPv6|DHCPType}}). If this corresponding filter parameter is {{empty}}, packets are admitted regardless of MAC address. Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC address",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SourceMACFromVendorClassIDMode",
+        "access": "readWrite",
+        "description": "{{param|SourceMACFromVendorClassIDFilter}} pattern match criterion. {{enum}} For example, if {{param|SourceMACFromVendorClassIDFilter}} is \"Example\" then an Option 60 value of \"Example device\" will match with this parameter values of {{enum|Prefix}} or {{enum|Substring}}, but not with {{enum|Exact}} or {{enum|Suffix}}. Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC address.",
+        "default": "Exact",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Exact",
+          "Prefix",
+          "Suffix",
+          "Substring"
+        ]
+      },
+      {
+        "name": "DestMACFromVendorClassIDFilter",
+        "access": "readWrite",
+        "description": "Classification criterion. A string used to identify one or more devices via DHCP for which MAC address filtering would subsequently apply. A device is considered matching if its DHCPv4 Vendor Class Identifier (Option 60 as defined in {{bibref|RFC2132}}) in the most recent DHCP lease acquisition or renewal matches the specified value according to the match criterion in {{param|DestMACFromVendorClassIDMode}}. Case sensitive. This is a normal string, e.g. \"abc\" is represented as \"abc\" and not say \"616263\" hex. However, if the value includes non-printing characters then such characters have to be represented using XML escapes, e.g. #x0a for line-feed. Note: This parameter is DHCPv4-specific. It only applies when {{param|DHCPType}} is {{enum|DHCPv4|DHCPType}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 255
+      },
+      {
+        "name": "DestMACFromVendorClassIDFilterv6",
+        "access": "readWrite",
+        "description": "Classification criterion. A hexbinary string used to identify one or more devices via DHCP for which MAC address filtering would subsequently apply. A device is considered matching if the most recent DHCPv6 Vendor Class Identifier (Option 16 as defined in {{bibref|RFC8415}}) was equal to the specified value. The option value is binary, so an exact match is REQUIRED. Note: This parameter is DHCPv6-specific. It only applies when {{param|DHCPType}} is {{enum|DHCPv6|DHCPType}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "maxLength": 65535,
+        "version": "2.12"
+      },
+      {
+        "name": "DestMACFromVendorClassIDFilterExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, on ingress to the interfaces associated with this Filter, the Bridge admits only those packets whose destination MAC Address matches that of a LAN device previously identified as described in {{param|DestMACFromVendorClassIDFilter}} (for {{enum|DHCPv4|DHCPType}}) or {{param|DestMACFromVendorClassIDFilterv6}} (for {{enum|DHCPv6|DHCPType}}). If this corresponding filter parameter is {{empty}}, no packets are admitted. If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose destination MAC Address matches that of a LAN device previously identified as described in {{param|DestMACFromVendorClassIDFilter}} (for {{enum|DHCPv4|DHCPType}}) or {{param|DestMACFromVendorClassIDFilterv6}} (for {{enum|DHCPv6|DHCPType}}). If this corresponding filter parameter is {{empty}}, packets are admitted regardless of MAC address.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DestMACFromVendorClassIDMode",
+        "access": "readWrite",
+        "description": "{{param|DestMACFromVendorClassIDFilter}} pattern match criterion. {{enum}} For example, if {{param|DestMACFromVendorClassIDFilter}} is ''Example'' then an Option 60 value of \"Example device\" will match with {{param}} values of {{enum|Prefix}} or {{enum|Substring}}, but not with {{enum|Exact}} or {{enum|Suffix}}.",
+        "default": "Exact",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Exact",
+          "Prefix",
+          "Suffix",
+          "Substring"
+        ]
+      },
+      {
+        "name": "SourceMACFromClientIDFilter",
+        "access": "readWrite",
+        "description": "Classification criterion. A hexbinary string used to identify one or more devices via DHCP for which MAC address filtering would subsequently apply. A device is considered matching if the most recent DHCP Client Identifier (via DHCP lease acquisition or renewal for DHCPv4) was equal to the specified value. The DHCP Client Identifier is Option 61 (as defined in {{bibref|RFC2132}}) for {{enum|DHCPv4|DHCPType}}, or is Option 1 (as defined in {{bibref|RFC8415}}) for {{enum|DHCPv6|DHCPType}}. The option value is binary, so an exact match is REQUIRED. Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC address. Note: DHCPv4 Option values are limited to a length of 255, while DHCPv6 Option values can have a maximum length of 65535. Note: This parameter is DHCP version neutral. The specific DHCP version in use with this parameter is indicated by {{param|DHCPType}}. Note: DHCPv6 Option 1 (Client Identifier) is sometimes referred to as ''DUID''.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "maxLength": 65535
+      },
+      {
+        "name": "SourceMACFromClientIDFilterExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, on ingress to the interfaces associated with this Filter, the Bridge admits only those packets whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromClientIDFilter}}. If {{param|SourceMACFromClientIDFilter}} is {{empty}}, no packets are admitted. If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromClientIDFilter}}. If the {{param|SourceMACFromClientIDFilter}} is {{empty}}, packets are admitted regardless of MAC address. Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC address.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DestMACFromClientIDFilter",
+        "access": "readWrite",
+        "description": "Classification criterion. A hexbinary string used to identify one or more devices via DHCP for which MAC address filtering would subsequently apply. A device is considered matching if the most recent DHCP Client Identifier (via DHCP lease acquisition or renewal for DHCPv4) was equal to the specified value. The DHCP Client Identifier is Option 61 (as defined in {{bibref|RFC2132}}) for {{enum|DHCPv4|DHCPType}}, or is Option 1 (as defined in {{bibref|RFC8415}}) for {{enum|DHCPv6|DHCPType}}. The option value is binary, so an exact match is REQUIRED. Note: DHCPv4 Option values are limited to a length of 255, while DHCPv6 Option values can have a maximum length of 65535. Note: This parameter is DHCP version neutral. The specific DHCP version in use with this parameter is indicated by {{param|DHCPType}}. Note: DHCPv6 Option 1 (Client Identifier) is sometimes referred to as ''DUID''.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "maxLength": 65535
+      },
+      {
+        "name": "DestMACFromClientIDFilterExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, on ingress to the interfaces associated with this Filter, the Bridge admits only those packets whose destination MAC Address matches that of a LAN device previously identified as described in {{param|DestMACFromClientIDFilter}}. If {{param|DestMACFromClientIDFilter}} is {{empty}}, no packets are admitted. If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose destination MAC Address matches that of a LAN device previously identified as described in {{param|DestMACFromClientIDFilter}}. If the {{param|DestMACFromClientIDFilter}} is {{empty}}, packets are admitted regardless of MAC address.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SourceMACFromUserClassIDFilter",
+        "access": "readWrite",
+        "description": "Classification criterion. A hexbinary string used to identify one or more devices via DHCP for which MAC address filtering would subsequently apply. A device is considered matching if the most recent DHCP User Class Identifier (via DHCP lease acquisition or renewal for DHCPv4) was equal to the specified value. The DHCP User Class Identifier is Option 77 (as defined in {{bibref|RFC3004}}) for {{enum|DHCPv4|DHCPType}}, or is Option 15 (as defined in {{bibref|RFC8415}}) for {{enum|DHCPv6|DHCPType}}. The option value is binary, so an exact match is REQUIRED. Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC address. Note: DHCPv4 Option values are limited to a length of 255, while DHCPv6 Option values can have a maximum length of 65535. Note: This parameter is DHCP version neutral. The specific DHCP version in use with this parameter is indicated by {{param|DHCPType}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "maxLength": 65535
+      },
+      {
+        "name": "SourceMACFromUserClassIDFilterExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, on ingress to the interfaces associated with this Filter, the Bridge admits only those packets whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromUserClassIDFilter}}. If {{param|SourceMACFromUserClassIDFilter}} is {{empty}}, no packets are admitted. If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose source MAC Address matches that of a LAN device previously identified as described in {{param|SourceMACFromUserClassIDFilter}}. If the {{param|SourceMACFromUserClassIDFilter}} is {{empty}}, packets are admitted regardless of MAC address. Note that neither 802.1D {{bibref|802.1D-2004}} nor 802.1Q {{bibref|802.1Q-2011}} support classification based on source MAC address.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DestMACFromUserClassIDFilter",
+        "access": "readWrite",
+        "description": "Classification criterion. A hexbinary string used to identify one or more devices via DHCP for which MAC address filtering would subsequently apply. A device is considered matching if the most recent DHCP User Class Identifier (via DHCP lease acquisition or renewal for DHCPv4) was equal to the specified value. The DHCP User Class Identifier is Option 77 (as defined in {{bibref|RFC3004}}) for {{enum|DHCPv4|DHCPType}}, or is Option 15 (as defined in {{bibref|RFC8415}}) for {{enum|DHCPv6|DHCPType}}. The option value is binary, so an exact match is REQUIRED. Note: DHCPv4 Option values are limited to a length of 255, while DHCPv6 Option values can have a maximum length of 65535. Note: This parameter is DHCP version neutral. The specific DHCP version in use with this parameter is indicated by {{param|DHCPType}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "maxLength": 65535
+      },
+      {
+        "name": "DestMACFromUserClassIDFilterExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, on ingress to the interfaces associated with this Filter, the Bridge admits only those packets whose destination MAC Address matches that of a LAN device previously identified as described in {{param|DestMACFromUserClassIDFilter}}. If {{param|DestMACFromUserClassIDFilter}} is {{empty}}, no packets are admitted. If {{true}}, on ingress to the interfaces associated with this Filter, the Bridge admits all packets except those packets whose destination MAC Address matches that of a LAN device previously identified as described in {{param|DestMACFromUserClassIDFilter}}. If the {{param|DestMACFromUserClassIDFilter}} is {{empty}}, packets are admitted regardless of MAC address.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DestIP",
+        "access": "readWrite",
+        "description": "Classification criterion. Destination IP address. {{empty}} indicates this criterion is not used for classification.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPAddress",
+        "version": "2.12"
+      },
+      {
+        "name": "DestMask",
+        "access": "readWrite",
+        "description": "Destination IP address mask, represented as an IP routing prefix using CIDR notation [RFC4632]. The IP address part MUST be {{empty}} (and, if specified, MUST be ignored).",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPPrefix",
+        "version": "2.12"
+      },
+      {
+        "name": "DestIPExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the (masked) DestIP entry, if specified. If {{true}}, the class includes all packets except those that match the (masked) DestIP entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "SourceIP",
+        "access": "readWrite",
+        "description": "Classification criterion. Source IP address. {{empty}} indicates this criterion is not used for classification.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPAddress",
+        "version": "2.12"
+      },
+      {
+        "name": "SourceMask",
+        "access": "readWrite",
+        "description": "Source IP address mask, represented as an IP routing prefix using CIDR notation [RFC4632]. The IP address part MUST be an empty string (and, if specified, MUST be ignored).",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPPrefix",
+        "version": "2.12"
+      },
+      {
+        "name": "SourceIPExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the (masked) {{param|SourceIP}} entry, if specified. If {{true}}, the class includes all packets except those that match the (masked) {{param|SourceIP}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "Classification criterion. Protocol number. A value of -1 indicates this criterion is not used for classification.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 255,
+        "version": "2.12"
+      },
+      {
+        "name": "ProtocolExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the {{param|Protocol}} entry, if specified. If {{true}}, the class includes all packets except those that match the {{param|Protocol}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "DestPort",
+        "access": "readWrite",
+        "description": "Classification criterion. Destination port number. A value of -1 indicates this criterion is not used for classification.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535,
+        "version": "2.12"
+      },
+      {
+        "name": "DestPortRangeMax",
+        "access": "readWrite",
+        "description": "Classification criterion. If specified, indicates the classification criterion is to include the port range from {{param|DestPort}} through {{param}} (inclusive). If specified, {{param}} MUST be greater than or equal to {{param|DestPort}}. A value of -1 indicates that no port range is specified.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535,
+        "version": "2.12"
+      },
+      {
+        "name": "DestPortExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the {{param|DestPort}} entry (or port range), if specified. If {{true}}, the class includes all packets except those that match the {{param|DestPort}} entry (or port range), if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "SourcePort",
+        "access": "readWrite",
+        "description": "Classification criterion. Source port number. A value of -1 indicates this criterion is not used for classification.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535,
+        "version": "2.12"
+      },
+      {
+        "name": "SourcePortRangeMax",
+        "access": "readWrite",
+        "description": "Classification criterion. If specified, indicates the classification criterion is to include the port range from {{param|SourcePort}} through {{param}} (inclusive). If specified, {{param}} MUST be greater than or equal to SourcePort. A value of -1 indicates that no port range is specified.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535,
+        "version": "2.12"
+      },
+      {
+        "name": "SourcePortExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the {{param|SourcePort}} entry (or port range), if specified. If {{true}}, the class includes all packets except those that match the {{param|SourcePort}} entry (or port range), if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.12"
+      }
+    ],
+    "description": "Filter table containing classification filter entries, each of which expresses a set of classification criterion to classify ingress frames as member of a {{object|#.Bridge}} instance or a {{object|#.Bridge.{i}.VLAN}} instance. Bridge VLAN classification only applies for 802.1Q {{bibref|802.1Q-2011}} Bridges. For enabled table entries, if {{param|Bridge}} or {{param|Interface}} is {{empty}} then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}. Several of this object's parameters specify DHCP option values. Some cases are version neutral (the parameter can apply to both DHCPv4 and DHCPv6), but in other cases the representation of the option is different for DHCPv4 and DHCPv6, so it is necessary to define separate DHCPv4-specific and DHCPv6-specific parameters. Therefore, an instance of this object that uses DHCP option values as filter criteria will be associated with either DHCPv4 or DHCPv6, as indicated by the {{param|DHCPType}} parameter.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

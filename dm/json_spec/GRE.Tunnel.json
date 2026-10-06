@@ -1,0 +1,114 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.GRE.Tunnel.{i}.",
+  "object": {
+    "path": "Device.GRE.Tunnel.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "TunnelNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the tunnel.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the tunnel.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "RemoteEndpoints",
+        "access": "readWrite",
+        "description": "The Fully Qualified Domain Name (FQDN) or IP address of the remote GRE tunnel endpoint. If more than one name/address is supplied, they will be tried in turn, i.e. they are in decreasing order of precedence.",
+        "list": true,
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "KeepAlivePolicy",
+        "access": "readWrite",
+        "description": "The mechanism used to keep the tunnel from timing out at the {{param|ConnectedRemoteEndpoint}}.",
+        "default": "None",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "ICMP",
+          "None"
+        ]
+      },
+      {
+        "name": "KeepAliveTimeout",
+        "access": "readWrite",
+        "description": "The tunnel keepalive timeout in {{units}}.",
+        "default": "10",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "KeepAliveThreshold",
+        "access": "readWrite",
+        "description": "Number of KeepAlive messages unacknowledged by the {{param|ConnectedRemoteEndpoint}} before the {{object}} is perceived failed.",
+        "default": "3",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DeliveryHeaderProtocol",
+        "access": "readWrite",
+        "description": "The protocol used for the delivery header.",
+        "type": "string",
+        "enumerations": [
+          "IPv4",
+          "IPv6"
+        ]
+      },
+      {
+        "name": "DefaultDSCPMark",
+        "access": "readWrite",
+        "description": "If the specified entries in the {{object|#.Filter}} table do not match this {{object}} object or an instance of the {{object|Interface}} object for this {{object}} object, then the value of this parameter is applied to the delivery header of the packets in this {{object}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ConnectedRemoteEndpoint",
+        "access": "readOnly",
+        "description": "The Fully Qualified Domain Name (FQDN) name or IP address of the connected remote GRE tunnel endpoint.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "InterfaceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "GRE Tunnel table, models the GRE Tunnel instance and represents the entry point and exit point of the tunnel in relation to the WAN interface. A {{object}} object has one or more {{object|Interface}} objects that further define the sessions or flows within the tunnel.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

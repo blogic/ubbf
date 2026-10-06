@@ -1,0 +1,96 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XPON.ONU.{i}.ANI.{i}.",
+  "object": {
+    "path": "Device.XPON.ONU.{i}.ANI.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ANINumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the interface. If disabled, the device should force the ONU state of this ANI to O1 (Initial state). This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}. Note: forcing the state to O1 implies the device disables the TX laser of the associated transceiver(s). It's not required to disable the RX part of the transceivers as well.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface. Although this object is not an interface object, it follows largely the conventions of {{bibref|TR-181i2|Section 4.2.2}}. The most important deviation is that LowerLayerDown is not a valid value. {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} becomes {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; more specifically, {{param}} should change to {{enum|Up}} if {{param|TC.ONUActivation.ONUState}} becomes O5; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.16"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the ANI entry as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "PONMode",
+        "access": "readOnly",
+        "description": "PON mode, defines the detected or configured PON mode of the ANI. {{enum}} {{object|Transceiver}} has a parameter of the same name. For proper operation, the PON mode of the transceiver(s) corresponding to this ANI must be equal to the PON mode of this ANI. But a user might e.g. accidentally insert a G-PON SFP while the PON mode of the ANI is XGS-PON.",
+        "type": "string",
+        "enumerations": [
+          "Unknown",
+          "G-PON",
+          "XG-PON",
+          "NG-PON2",
+          "XGS-PON"
+        ]
+      },
+      {
+        "name": "TransceiverNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SFPReferenceList",
+        "access": "readOnly",
+        "description": "Small-form Factor Pluggable (SFP) entries associated with this interface.",
+        "list": true,
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "###.SFPs.SFPCage.",
+          "targetType": "row"
+        },
+        "version": "2.19"
+      }
+    ],
+    "description": "Access Node Interface (ANI) table. An ANI models the xPON MAC/PHY as defined in the ITU-T PON standards. This object is not an interface object as described in {{bibref|TR-181i2|Section 4.2}}, but it has many of the same core parameters as an interface object, and they follow largely the same conventions. The most important deviations are: * This object does not have a LowerLayers parameter. * The value LowerLayerDown is not a valid value for its Status parameter. Because it's not an interface object, it does not occur in the {{object|###.InterfaceStack}} table.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

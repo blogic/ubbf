@@ -1,0 +1,39 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.EndPoint.{i}.Security.",
+  "object": {
+    "path": "Device.WiFi.EndPoint.{i}.Security.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ModesSupported",
+        "access": "readOnly",
+        "description": "{{list}} Indicates which security modes this {{object|#}} instance is capable of supporting.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "None",
+          "WEP-64",
+          "WEP-128",
+          "WPA-Personal",
+          "WPA2-Personal",
+          "WPA3-Personal",
+          "WPA-WPA2-Personal",
+          "WPA3-Personal-Transition",
+          "WPA-Enterprise",
+          "WPA2-Enterprise",
+          "WPA3-Enterprise",
+          "WPA-WPA2-Enterprise",
+          "OWE"
+        ]
+      }
+    ],
+    "description": "This object contains security related parameters that apply to a WiFi end point {{bibref|802.11-2007}}.",
+    "children": []
+  }
+}

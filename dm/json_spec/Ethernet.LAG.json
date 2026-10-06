@@ -1,0 +1,89 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Ethernet.LAG.{i}.",
+  "object": {
+    "path": "Device.Ethernet.LAG.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "LAGNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the interface. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.",
+        "default": "Down",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the interface as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}. {{param}} must reference to Device.Ethernet.Interface instances where Link Aggregation Group is configured by the CPE. For example, \"Device.Ethernet.Interface.1, Device.Ethernet.Interface.2\"",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "MACAddress",
+        "access": "readWrite",
+        "description": "MAC address of the Link Aggregation Interface.",
+        "type": "dataType:MACAddress"
+      }
+    ],
+    "description": "Ethernet Link Aggregation Group (LAG) table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}). Table entries model the Link Aggregation Sub-Layer as defined in {{bibref|802.3-2015}} and {{bibref|802.1AX-2014}}. It is expected that a {{object}} interface can only be stacked above {{object|#.Interface}} interfaces. The CPE can reject creation of additional LAG instances if this would exceed its capabilities.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

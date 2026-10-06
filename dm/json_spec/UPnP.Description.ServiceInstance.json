@@ -1,0 +1,78 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.UPnP.Description.ServiceInstance.{i}.",
+  "object": {
+    "path": "Device.UPnP.Description.ServiceInstance.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ServiceInstanceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ParentDevice",
+        "access": "readOnly",
+        "description": "{{reference|a {{object|#.DeviceInstance}} table entry}}",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.DeviceInstance.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ServiceId",
+        "access": "readOnly",
+        "description": "The value of the UPnP serviceId element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the service. If the UPnP serviceId is not provided by the UPnP service, this {{object}} MUST be deleted.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ServiceDiscovery",
+        "access": "readOnly",
+        "description": "{{reference|a {{object|##.Discovery.Service}} table entry}} This {{param}} value can be {{empty}} because the referenced object has been deleted or the CPE was unable to retrieve the Description Document due to some out-of-band error. The determination to delete this {{object}} or use {{empty}} is implementation specific.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.Discovery.Service.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ServiceType",
+        "access": "readOnly",
+        "description": "The value of the UPnP serviceType element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the service.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "SCPDURL",
+        "access": "readOnly",
+        "description": "The value of the UPnP SCPDURL element in the Device Description Document for this {{object}} and MUST be an absolute {{datatype}}. The way to obtain an absolute URL from the SCPDURL element is specified in {{bibref|UPnP-DAv1}} and {{bibref|UPnP-DAv11}}. If the SCPDURL is not provided by the device then this value MUST be {{empty}}.",
+        "type": "dataType:URL"
+      },
+      {
+        "name": "ControlURL",
+        "access": "readOnly",
+        "description": "The value of the UPnP controlURL element in the Device Description Document for this {{object}} and MUST be an absolute {{datatype}}. The way to obtain an absolute URL from the controlURL element is specified in {{bibref|UPnP-DAv1}} and {{bibref|UPnP-DAv11}}. If the controlURL is not provided by the device then this value MUST be {{empty}}",
+        "type": "dataType:URL"
+      },
+      {
+        "name": "EventSubURL",
+        "access": "readOnly",
+        "description": "The value of the UPnP eventSubURL element in the Device Description Document for this {{object}} and MUST be an absolute {{datatype}}. The way to obtain an absolute URL from the eventSubURLL element is specified in {{bibref|UPnP-DAv1}} and {{bibref|UPnP-DAv11}}. If the eventSubURL is not provided by the device then this value MUST be {{empty}}",
+        "type": "dataType:URL"
+      }
+    ],
+    "description": "This table contains the information from Device Description Document retrieved for a discovered UPnP service.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "ParentDevice",
+        "ServiceId"
+      ]
+    }
+  }
+}

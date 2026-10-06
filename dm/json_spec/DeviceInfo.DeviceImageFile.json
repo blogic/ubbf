@@ -1,0 +1,50 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.DeviceImageFile.{i}.",
+  "object": {
+    "path": "Device.DeviceInfo.DeviceImageFile.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "DeviceImageNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Location",
+        "access": "readOnly",
+        "description": "The location of the device that represents the image as the user looks at the front of the device in its typical orientation (e.g., on-end, flat).",
+        "type": "string",
+        "enumerations": [
+          "Front",
+          "Back",
+          "Left",
+          "Right",
+          "Top",
+          "Bottom"
+        ]
+      },
+      {
+        "name": "Image",
+        "access": "readOnly",
+        "description": "The device image in PNG, JPEG or GIF format.",
+        "type": "base64"
+      }
+    ],
+    "description": "This object describes an image of the device.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Location"
+      ]
+    }
+  }
+}

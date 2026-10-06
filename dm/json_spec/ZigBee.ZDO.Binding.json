@@ -1,0 +1,85 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.ZigBee.ZDO.{i}.Binding.{i}.",
+  "object": {
+    "path": "Device.ZigBee.ZDO.{i}.Binding.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "BindingTableNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the use of this binding on the device.",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "SourceEndpoint",
+        "access": "readWrite",
+        "description": "Specifies the source endpoint used in this binding entry.",
+        "type": "unsignedInt",
+        "maxInclusive": 240
+      },
+      {
+        "name": "SourceAddress",
+        "access": "readWrite",
+        "description": "Specifies the source address used in this binding entry.",
+        "type": "dataType:IEEE_EUI64"
+      },
+      {
+        "name": "ClusterId",
+        "access": "readWrite",
+        "description": "Specifies the cluster identifier used in this binding entry.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "DestinationAddressMode",
+        "access": "readWrite",
+        "description": "Specifies the type of destination address used for this binding entry. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Group",
+          "Endpoint"
+        ]
+      },
+      {
+        "name": "DestinationEndpoint",
+        "access": "readWrite",
+        "description": "Specifies the destination endpoint for the binding entry. The value of this field is valid when the value of the {{param|DestinationAddressMode}} is {{enum|Endpoint|DestinationAddressMode}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 240
+      },
+      {
+        "name": "IEEEDestinationAddress",
+        "access": "readWrite",
+        "description": "Specifies the IEEE destination address for this binding entry. The value of this field is valid when the value of the {{param|DestinationAddressMode}} is {{enum|Endpoint|DestinationAddressMode}}.",
+        "type": "dataType:IEEE_EUI64"
+      },
+      {
+        "name": "GroupDestinationAddress",
+        "access": "readWrite",
+        "description": "Specifies the group destination address for this binding entry. The value of this field is valid when the value of the {{param|DestinationAddressMode}} is {{enum|Group|DestinationAddressMode}}.",
+        "type": "dataType:ZigBeeNetworkAddress"
+      }
+    ],
+    "description": "The {{object}} object describes the configuration capabilities related to maintaining a ZigBee Device's Binding Table as defined in {{bibref|ZigBee2007|section 2.2.8.2 Binding}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

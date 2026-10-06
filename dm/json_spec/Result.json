@@ -1,0 +1,67 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Result.{i}.",
+  "object": {
+    "path": "Result.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Result Parameter to represent whether the NS Lookup was successful or not.",
+        "type": "string",
+        "enumerations": [
+          "Success",
+          "Error_DNSServerNotAvailable",
+          "Error_HostNameNotResolved",
+          "Error_Timeout",
+          "Error_Other"
+        ]
+      },
+      {
+        "name": "AnswerType",
+        "access": "readOnly",
+        "description": "Result parameter to represent whether the answer is Authoritative or not.",
+        "type": "string",
+        "enumerations": [
+          "None",
+          "Authoritative",
+          "NonAuthoritative"
+        ]
+      },
+      {
+        "name": "HostNameReturned",
+        "access": "readOnly",
+        "description": "Result parameter to represent the fully qualified name for the Host Name in the calling parameter (e.g. HostName.DomainName); if no response was provided, then this parameter is {{empty}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "IPAddresses",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the IP Address results returned by the NS Lookup; if no response was provided, then this parameter is {{empty}}.",
+        "list": true,
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "DNSServerIP",
+        "access": "readOnly",
+        "description": "Result parameter to represent the actual DNS Server IP address that the NS Lookup used.",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "ResponseTime",
+        "access": "readOnly",
+        "description": "Response time (for the first response packet) in {{units}}, or 0 if no response was received.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Results from the most recent invocation of the test, one instance per repetition.",
+    "children": []
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.MultiAP.APDevice.{i}.",
+  "object": {
+    "path": "Device.WiFi.MultiAP.APDevice.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "APDeviceNumberOfEntries",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "A unique identifier for this particular device within the Wi-Fi network. {{deprecated|2.15|because it has been replaced by {{param|##.DataElements.Network.Device.{i}.ID}}}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "Manufacturer",
+        "access": "readOnly",
+        "description": "The manufacturer of the Access Point device (human readable string). {{deprecated|2.15|because this information will be part of Data Elements R2}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "string"
+      },
+      {
+        "name": "ManufacturerOUI",
+        "access": "readOnly",
+        "description": "Organizationally unique identifier of the Access Point device manufacturer. Represented as a six hexadecimal-digit value using all upper-case letters and including any leading zeros. {{pattern}} The value MUST be a valid OUI as defined in {{bibref|OUI}}. This value MUST remain fixed over the lifetime of the device, including across firmware updates.",
+        "type": "string",
+        "minLength": 6,
+        "maxLength": 6,
+        "pattern": "[0-9A-F]{6}"
+      },
+      {
+        "name": "ProductClass",
+        "access": "readOnly",
+        "description": "Identifier of the class of product for which the serial number applies. That is, for a given manufacturer, this parameter is used to identify the product or class of product over which the {{param|SerialNumber}} parameter is unique. This value MUST remain fixed over the lifetime of the device, including across firmware updates. {{deprecated|2.15|because this information will be part of Data Elements R2}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "SerialNumber",
+        "access": "readOnly",
+        "description": "Identifier of the particular Access Point device that is unique for the indicated class of product and manufacturer. This value MUST remain fixed over the lifetime of the device, including across firmware updates. {{deprecated|2.15|because this information will be part of Data Elements R2}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "SoftwareVersion",
+        "access": "readOnly",
+        "description": "A string identifying the software version currently installed in the Access Point device (i.e. version of the overall firmware). To allow version comparisons, this element SHOULD be in the form of dot-delimited integers, where each successive integer represents a more minor category of variation. For example, ''3.0.21'' where the components mean: ''Major.Minor.Build''. {{deprecated|2.15|because this information will be part of Data Elements R2}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastContactTime",
+        "access": "readOnly",
+        "description": "The last time that the Access Point device was contacted via the Multi-AP control protocol.",
+        "type": "dateTime"
+      },
+      {
+        "name": "AssocIEEE1905DeviceRef",
+        "access": "readOnly",
+        "description": "{{param}} is a reference to the IEEE 1905.1 Network Topology Device. Since IEEE 1905.1 is a common protocol used by Multi-AP Controllers for communications, this parameter allows the MultiAP portion of the data model to reference the associated IEEE 1905.1 portion of the data model.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "###.IEEE1905.AL.NetworkTopology.IEEE1905Device.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "BackhaulLinkType",
+        "access": "readOnly",
+        "description": "The medium being used to backhaul this Access Point Device to the Multi-AP Controller. The {{enum|None}} value is reserved for the {{object}} instance that represents the Multi-AP Controller. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "None",
+          "Wi-Fi",
+          "MoCA",
+          "Ethernet",
+          "G.hn",
+          "HPNA",
+          "HomePlug",
+          "UPA"
+        ]
+      },
+      {
+        "name": "BackhaulMACAddress",
+        "access": "readOnly",
+        "description": "The MAC Address of the Device on the network that is providing a Backhaul Link for this Access Point Device. {{empty}} is reserved for the {{object}} instance that represents the Multi-AP Controller.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "BackhaulBytesSent",
+        "access": "readOnly",
+        "description": "The total number of bytes transmitted across the backhaul medium (as identified by the value of the {{param|BackhaulLinkType}} parameter), including framing characters.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BackhaulBytesReceived",
+        "access": "readOnly",
+        "description": "The total number of bytes received across the backhaul medium (as identified by the value of the {{param|BackhaulLinkType}} parameter), including framing characters.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BackhaulLinkUtilization",
+        "access": "readOnly",
+        "description": "Current utilization (expressed in {{units}}) of the medium (as identified by the value of the {{param|BackhaulLinkType}} parameter) being used to backhaul this Access Point device to the Multi-AP Controller. A value of 0 is used for the {{object}} instance that represents the Access Point on the Multi-AP Controller.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "BackhaulSignalStrength",
+        "access": "readOnly",
+        "description": "An indicator of radio signal strength of the backhaul link of the Access Point (AP) to the Multi-AP Controller, measured in {{units}}. RCPI threshold is encoded per {{bibref|802.11-2020|Table 9-176}}. The value of this parameter is indeterminate if the value of the {{param|BackhaulLinkType}} parameter is anything other than {{enum|Wi-Fi|BackhaulLinkType}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "RadarDetections",
+        "access": "readOnly",
+        "description": "{{list}} List items represent channels in the non-occupancy list due to radars detected by Dynamic Frequency Selection (DFS) Channel Availability Check (CAC).",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "unsignedInt",
+        "version": "2.14"
+      },
+      {
+        "name": "DFSEnable",
+        "access": "readWrite",
+        "description": "Enables or disables Dynamic Frequency Selection (DFS). {{deprecated|2.15|because this information will be part of Data Elements R2}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "boolean",
+        "version": "2.14"
+      },
+      {
+        "name": "RadioNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}} {{deprecated|2.15| because the {{object|Radio.{i}}} is being deprecated}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Each instance of this object represents an individual Access Point device in the Wi-Fi network. {{deprecated|2.15|because {{param|ManufacturerOUI}} and {{param|LastContactTime}} have moved to {{object|##.DataElements.Network.Device.{i}.MultiAPDevice}}, Backhaul parameters have moved to {{object|##.DataElements.Network.Device.{i}.MultiAPDevice.Backhaul}} and {{param|MACAddress}} is duplicated in {{param|##.DataElements.Network.Device.{i}.ID}}. All the rest are deprecated as noted}} {{obsoleted|2.17}} {{deleted|2.18}}",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "MACAddress"
+      ]
+    }
+  }
+}

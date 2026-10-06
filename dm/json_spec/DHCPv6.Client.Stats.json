@@ -1,0 +1,95 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv6.Client.{i}.Stats.",
+  "object": {
+    "path": "Device.DHCPv6.Client.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Solicit",
+        "access": "readOnly",
+        "description": "The total number of SOLICIT messages sent by the client, as defined in {{bibref|RFC8415|Dynamic Host Configuration Protocol for IPv6}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "Advertise",
+        "access": "readOnly",
+        "description": "The total number of ADVERTISE messages received by the client, as defined in {{bibref|RFC8415|Dynamic Host Configuration Protocol for IPv6}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "Request",
+        "access": "readOnly",
+        "description": "The total number of REQUEST messages sent by the client, as defined in {{bibref|RFC8415|Dynamic Host Configuration Protocol for IPv6}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "Confirm",
+        "access": "readOnly",
+        "description": "The total number of CONFIRM messages sent by the client, as defined in {{bibref|RFC8415|Dynamic Host Configuration Protocol for IPv6}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "Renew",
+        "access": "readOnly",
+        "description": "The total number of RENEW messages sent by the client, as defined in {{bibref|RFC8415|Dynamic Host Configuration Protocol for IPv6}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "Rebind",
+        "access": "readOnly",
+        "description": "The total number of REBIND messages sent by the client, as defined in {{bibref|RFC8415|Dynamic Host Configuration Protocol for IPv6}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "Reply",
+        "access": "readOnly",
+        "description": "The total number of REPLY messages received by the client, as defined in {{bibref|RFC8415|Dynamic Host Configuration Protocol for IPv6}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "Release",
+        "access": "readOnly",
+        "description": "The total number of RELEASE packets sent by the client, as defined in {{bibref|RFC8415|Dynamic Host Configuration Protocol for IPv6}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "Decline",
+        "access": "readOnly",
+        "description": "The total number of DECLINE messages sent by the client, as defined in {{bibref|RFC8415|Dynamic Host Configuration Protocol for IPv6}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "Reconfigure",
+        "access": "readOnly",
+        "description": "The total number of RECONFIGURE messages received by the client, as defined in {{bibref|RFC8415|Dynamic Host Configuration Protocol for IPv6}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "InformationRequest",
+        "access": "readOnly",
+        "description": "The total number of INFORMATION-REQUEST messages sent by the client, as defined in {{bibref|RFC8415|Dynamic Host Configuration Protocol for IPv6}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "DiscardedPackets",
+        "access": "readOnly",
+        "description": "The total number of DHCP packets discarded by the client. Packets can be discarded due to illegal message format and content, incorrect received bytes, etc.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "TransmitFailure",
+        "access": "readOnly",
+        "description": "The total number of DHCP messages that failed to transmit.",
+        "type": "dataType:StatsCounter64"
+      }
+    ],
+    "description": "Provide statistics for the embedded DHCPv6 Client.",
+    "children": []
+  }
+}

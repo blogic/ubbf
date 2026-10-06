@@ -1,0 +1,83 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.RadSecProxy.Realm.{i}.",
+  "object": {
+    "path": "Device.RadSecProxy.Realm.{i}.",
+    "access": "readWrite",
+    "minEntries": "1",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "RealmNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enable or disable this {{object}} instance.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this entry. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "Pattern",
+        "access": "readWrite",
+        "description": "Specifies the regular expression pattern against which the Username attribute in the Access-Request is matched to determine the corresponding Realm block. This is used to determine the {{param|Server}} to which the Access-Request should be forwarded. The format is implementation specific.",
+        "type": "string"
+      },
+      {
+        "name": "Server",
+        "access": "readWrite",
+        "description": "Specifies the server to which requests for this realm should be forwarded. If no server is configured, the RadSecProxy service will deny all Access-Requests for this realm.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.Server.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "AccountingServer",
+        "access": "readWrite",
+        "description": "Specifies the accounting Server. If no accounting Server is configured, the RadSecProxy service will silently ignore all Accounting-Requests for this realm unless {{param|AccountingResponse}} is set to {{true}}.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.Server.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "AccountingResponse",
+        "access": "readWrite",
+        "description": "Enable sending Accounting-Response instead of ignoring Accounting-Requests when no accounting servers are configured.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      }
+    ],
+    "description": "Realm block configuration of the RadSecProxy service as defined in {{bibref|RFC6614|Appendix B}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

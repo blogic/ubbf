@@ -1,0 +1,49 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.L2Neighbor.{i}.",
+  "object": {
+    "path": "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.L2Neighbor.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "L2NeighborNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "LocalInterface",
+        "access": "readOnly",
+        "description": "{{reference}}",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IEEE1905Device.{i}.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "NeighborInterfaceId",
+        "access": "readOnly",
+        "description": "MAC Address of the {{object}}.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "BehindInterfaceIds",
+        "access": "readOnly",
+        "description": "{{list}} Behind MAC Addresses of the {{object}}.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "dataType:MACAddress"
+      }
+    ],
+    "description": "This object represents an instance of an L2 Neighbor for the {{object|##.IEEE1905Device}}. These fields come from a Topology response message as defined in {{bibref|IEEE1905.1a|Table 6-41: L2 neighbor device TLV}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "LocalInterface",
+        "NeighborInterfaceId"
+      ]
+    }
+  }
+}

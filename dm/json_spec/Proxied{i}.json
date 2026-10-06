@@ -1,0 +1,22 @@
+{
+  "source_file": "tr-181-2-19-1-usp.xml",
+  "path": "Device.ProxiedDevice.{i}.",
+  "object": {
+    "path": "Device.ProxiedDevice.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ProxiedDeviceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [],
+    "description": "Each entry in the table is a ProxiedDevice object that is a mount point. Each ProxiedDevice represents distinct hardware Devices. ProxiedDevice objects are virtual and abstracted representation of functionality, that exists on hardware other than that which the Agent is running.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.OMCI.",
+  "object": {
+    "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.OMCI.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "BaselineMessagesReceived",
+        "access": "readOnly",
+        "description": "OMCI baseline message count. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ExtendedMessagesReceived",
+        "access": "readOnly",
+        "description": "OMCI extended message count. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "MICErrors",
+        "access": "readOnly",
+        "description": "Count of received OMCI messages with MIC errors. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "OMCI PM.",
+    "children": []
+  }
+}

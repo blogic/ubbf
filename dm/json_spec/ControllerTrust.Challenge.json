@@ -1,0 +1,106 @@
+{
+  "source_file": "tr-181-2-19-0-localagent.xml",
+  "path": "ControllerTrust.Challenge.{i}.",
+  "object": {
+    "path": "ControllerTrust.Challenge.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ChallengeNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Description",
+        "access": "readWrite",
+        "description": "The description of this {{object}} instance.",
+        "type": "string"
+      },
+      {
+        "name": "Role",
+        "access": "readWrite",
+        "description": "{{nolist}} Comma-separated list of strings, the (set of) role(s) appended (non-duplicate values only) to the value of the {{param|##.Controller.{i}.AssignedRole}} parameter.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Role.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enable/Disable this {{object}} instance.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Type",
+        "access": "readWrite",
+        "description": "The type of challenge that will be verified from the challenge response provided by the third-party through the Controller.",
+        "type": "string",
+        "enumerations": [
+          "Passphrase"
+        ]
+      },
+      {
+        "name": "Value",
+        "access": "readWrite",
+        "description": "The value of the challenge that is specific to the type of challenge.",
+        "secured": true,
+        "type": "base64"
+      },
+      {
+        "name": "ValueType",
+        "access": "readWrite",
+        "description": "The media type with a format as defined by {{bibref|RFC6838}} of the content of the {{param|Value}} parameter.",
+        "type": "string",
+        "enumerations": [
+          "text/plain",
+          "image/jpeg"
+        ]
+      },
+      {
+        "name": "Instruction",
+        "access": "readWrite",
+        "description": "The instruction that is provided to the external party by the Controller requesting the challenge.",
+        "type": "base64"
+      },
+      {
+        "name": "InstructionType",
+        "access": "readWrite",
+        "description": "The media type with a format as defined by {{bibref|RFC6838}} of the content of the {{param|Instruction}} parameter.",
+        "type": "string",
+        "enumerations": [
+          "text/plain",
+          "image/jpeg",
+          "text/html"
+        ]
+      },
+      {
+        "name": "Retries",
+        "access": "readWrite",
+        "description": "The number of consecutive failed {{template|USP-CHALLENGE-RESPONSE}} attempts against this {{object}} instance (as determined by the {{template|USP-REQUEST-CHALLENGE}}.ChallengeRef associated with {{template|USP-CHALLENGE-RESPONSE}}.ChallengeID parameters) that are allowed before a {{param|LockoutPeriod}} is started for this {{object}} instance. Counts of failed attempts for a {{object}} instance are reset after a successful {{template|USP-CHALLENGE-RESPONSE}} for the {{object}} instance or after a started {{param|LockoutPeriod}} expires.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LockoutPeriod",
+        "access": "readWrite",
+        "description": "Once the {{param|Retries}} value has been reached by failed {{template|USP-CHALLENGE-RESPONSE}} attempts against this {{object}} instance (as determined by the {{template|USP-REQUEST-CHALLENGE}}.ChallengeRef associated with {{template|USP-CHALLENGE-RESPONSE}}.ChallengeID parameters), the value of this parameter represents the amount of time (in {{units}}) that the Agent will prevent any {{template|USP-CHALLENGE-RESPONSE}} or {{template|USP-REQUEST-CHALLENGE}} against this {{object}} instance from succeeding. Any attempt to issue a {{template|USP-REQUEST-CHALLENGE}} or {{template|USP-CHALLENGE-RESPONSE}} command where the associated {{template|USP-REQUEST-CHALLENGE}}.ChallengeRef points to this {{object}} instance during the lockout period will result in an Error response with 7002 as the error code. When a started lockout period has expired, the count of failed attempts for this {{object}} instance will be reset. If the Agent chooses to delete {{template|USP-CHALLENGE-RESPONSE}}.ChallengeID values for a locked out {{object}}, the Agent can send the 7004 error code for values it does not recognize. A value of zero means that a lockout period doesn't apply and the {{template|USP-REQUEST-CHALLENGE}} command can be attempted without the need to wait between failed challenges.",
+        "default": "30",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": 0
+      }
+    ],
+    "description": "Each instance of this table represents information that is used to challenge a Controller in order to assign a Role to the Controller or to determine the authenticity of a Certificate. The Controller requests a type of challenge from an Agent using the RequestChallenge command. The Agent returns the value of the {{param|Instruction}} for that type of challenge to the Controller which the Controller then provides a third-party. The third-party responds to the Instruction which the Controller then sends to the Agent using the ChallengeResponse command. The Agent verifies the response to the Challenges and executes an implementation specific Agent logic in order to establish trust with the Controller. This could include (but is not limited to): *Assignment of roles to the Controller is done by appending the non-duplicate roles of the {{param|Role}} parameter to the value of the {{param|##.Controller.{i}.AssignedRole}} parameter. *Use the Controller's certificate to which the challenge response was received in order to authenticate the identity of the Controller.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

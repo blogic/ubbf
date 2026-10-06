@@ -1,0 +1,44 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.UPA.Interface.{i}.BridgeFor.{i}.",
+  "object": {
+    "path": "Device.UPA.Interface.{i}.BridgeFor.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "BridgeForNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "MAC address of the device.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "Port",
+        "access": "readOnly",
+        "description": "Internal bridge associated port.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      }
+    ],
+    "description": "This object represents the bridge table of the UPA interface. Each instance is a bridge table entry. It shows the MAC addresses of the remote UPA devices with their associated port number, and the MAC addresses of the end-devices (PCs, STBs, routers, etc) connected to Ethernet port of the powerline adapters with their associated logical port. In this way the system identifies to which UPA device an external device is connected to.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

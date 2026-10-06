@@ -1,0 +1,131 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.",
+  "object": {
+    "path": "Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ScheduleNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} instance. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "Name of the schedule.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "State",
+        "access": "readOnly",
+        "description": "The current operational state of the Schedule. Only one instance of the schedule is active. An active schedule is defined where the {{param}} parameter has a value of {{enum|Running|State}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Enabled",
+          "Suppressed",
+          "Disabled",
+          "Running"
+        ]
+      },
+      {
+        "name": "Start",
+        "access": "readWrite",
+        "description": "{{reference|a {{object|##.Event}} object that is used define the event to start an occurrence of this {{object}}}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.Event.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "End",
+        "access": "readWrite",
+        "description": "{{reference|a {{object|##.Event}} object that is used define the event to gracefully terminate all actions associated with an occurrence of this {{object}}}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.Event.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Duration",
+        "access": "readWrite",
+        "description": "When the {{param}} value is not 0, this parameter is used define the duration, in {{units}}, where after this duration all actions associated with an occurrence of this {{object}} are gracefully terminated.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Tags",
+        "access": "readWrite",
+        "description": "{{list|each entry represents tags that are to be reported together with the measurement results.}}",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "SuppressionTags",
+        "access": "readWrite",
+        "description": "{{list|representing the suppression tags to be matched}}",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "ExecutionMode",
+        "access": "readWrite",
+        "description": "This parameter describes the execution method to apply to this schedule for the associated Actions. {{enum}}",
+        "default": "Pipelined",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Sequential",
+          "Parallel",
+          "Pipelined"
+        ]
+      },
+      {
+        "name": "LastInvocation",
+        "access": "readOnly",
+        "description": "Date and time, based on {{bibref|RFC3339}}, in UTC that the {{object}} was invoked by the measurement agent.",
+        "type": "dateTime"
+      },
+      {
+        "name": "Storage",
+        "access": "readOnly",
+        "description": "The amount of secondary storage, in {{units}}, allocated to an instance of this {{object}}. The value of this parameter reflects the amount of allocated physical storage and not the storage used by logical data records. For example the secondary storage can be the storage allocated in a file system holding temporary data.",
+        "type": "unsignedLong",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ActionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object represents a schedule that is associated with a set of scheduled actions to be performed by a measurement agent. Note: Actions of an occurrence of this {{object}} are gracefully terminated by the defining either the {{param|End}} or {{param|Duration}} parameters. Only one of these parameters may be defined at a time.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

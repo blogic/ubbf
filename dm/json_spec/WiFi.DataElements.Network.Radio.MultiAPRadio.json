@@ -1,0 +1,25 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.MultiAPRadio.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.MultiAPRadio.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "RadarDetections",
+        "access": "readOnly",
+        "description": "{{list}} List items represent channels in the non-occupancy list due to radars detected by Dynamic Frequency Selection (DFS) Channel Availability Check (CAC). {{deprecated|2.18|because it was superseded by {{object|##.CACStatus.{i}.}}.}}",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object represents an individual Access Point Radio in the Wi-Fi network.",
+    "children": []
+  }
+}

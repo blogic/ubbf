@@ -1,0 +1,78 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.AccessPoint.{i}.AC.{i}.Stats.",
+  "object": {
+    "path": "Device.WiFi.AccessPoint.{i}.AC.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "BytesSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} transmitted in this access category, including framing characters.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BytesReceived",
+        "access": "readOnly",
+        "description": "The total number of {{units}} received in this access category, including framing characters.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "PacketsSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} transmitted in this access category.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "PacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of {{units}} received in this access category.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "ErrorsSent",
+        "access": "readOnly",
+        "description": "The total number of outbound {{units}} in this access category that could not be transmitted because of errors. These might be due to the number of retransmissions exceeding the retry limit, or from other causes.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ErrorsReceived",
+        "access": "readOnly",
+        "description": "The total number of inbound {{units}} in this access category that contained errors preventing them from being delivered to a higher-layer protocol.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "DiscardPacketsSent",
+        "access": "readOnly",
+        "description": "The total number of outbound {{units}} in this access category which were chosen to be discarded even though no errors had been detected to prevent their being transmitted. One possible reason for discarding such a packet could be to free up buffer space.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "DiscardPacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of inbound {{units}} in this access category which were chosen to be discarded even though no errors had been detected to prevent their being delivered. One possible reason for discarding such a packet could be to free up buffer space.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "RetransCount",
+        "access": "readOnly",
+        "description": "The total number of transmitted {{units}} in this access category which were retransmissions. Two retransmissions of the same packet results in this counter incrementing by two.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "OutQLenHistogram",
+        "access": "readOnly",
+        "description": "{{list}} Histogram of the total length of the transmit queue of this access category in packets (1 packet, 2 packets, etc.) according to the intervals defined by {{param|#.OutQLenHistogramIntervals}}, with samples taken each {{param|#.OutQLenHistogramSampleInterval}}. Example: \"12,5,1,0,2,0,0,1\".",
+        "list": true,
+        "type": "string"
+      }
+    ],
+    "description": "This object contains statistics for different 802.11e access categories (priorities). Packet counters here count 802.11 WiFi frames. If there are not separate stats for each access category, (e.g., 802.11e is not used and there is only one queue), then only access category 0 = BE applies (e.g., the statistics for the single queue are in access category 0 = BE). The CPE MUST reset the Access Point's Stats parameters (unless otherwise stated in individual object or parameter descriptions) either when the Access Point becomes operationally down due to a previous administrative down (i.e. the Access Point's Status parameter transitions to a Disabled state) or when the Access Point becomes administratively up (i.e. the Access Point's Enable parameter transitions from false to true). Administrative and operational status is discussed in {{bibref|TR-181i2|Section 4.2.2}}.",
+    "children": []
+  }
+}

@@ -1,0 +1,211 @@
+#!/usr/bin/ucode
+'use strict';
+
+import * as uloop from 'uloop';
+import * as uci from 'uci';
+import * as pcp from 'pcp';
+import { log_init, log_info, log_err } from 'ubbf.utils.logging';
+
+log_init('ubbf-pcp');
+
+let contexts = {};
+let flows = {};
+let timer;
+
+/**
+ * @param {object} ctx_entry
+ * @param {number} timeout_ms
+ */
+function timer_schedule(ctx_entry, timeout_ms) {
+	if (timeout_ms < 100)
+		timeout_ms = 100;
+	if (timeout_ms > 30000)
+		timeout_ms = 30000;
+
+	if (ctx_entry.timer)
+		ctx_entry.timer.set(timeout_ms);
+}
+
+/**
+ * @param {string} server_section
+ * @param {object} flow_ref
+ * @param {object} info
+ */
+function flow_state_update(server_section, flow_ref, info) {
+	log_info('flow state change: %s -> %s (ext=%s:%d)',
+		server_section, info.status,
+		info.external_ip ?? '', info.external_port ?? 0);
+}
+
+/**
+ * @param {string} name - UCI section name
+ * @param {object} server - UCI section values
+ */
+function server_setup(name, server) {
+	let addr = server.address;
+	if (!addr)
+		return;
+
+	let ctx = pcp.create();
+	if (!ctx) {
+		log_err('failed to create PCP context for %s', name);
+		return;
+	}
+
+	let server_id = ctx.add_server(addr);
+	if (server_id == null) {
+		log_err('failed to add server %s', addr);
+		ctx.close();
+		return;
+	}
+
+	ctx.set_flow_change_cb(function(flow, info) {
+		flow_state_update(name, flow, info);
+	});
+
+	let fd = ctx.socket();
+
+	let entry = {
+		name,
+		ctx,
+		server_id,
+		flows: {},
+	};
+
+	if (fd >= 0) {
+		entry.fd_handle = uloop.handle(fd, function(flags) {
+			let timeout = ctx.pulse();
+			timer_schedule(entry, timeout);
+		}, uloop.ULOOP_READ);
+	}
+
+	let timeout = ctx.pulse();
+	entry.timer = uloop.timer(timeout, function() {
+		let next = ctx.pulse();
+		timer_schedule(entry, next);
+	});
+
+	contexts[name] = entry;
+	log_info('server %s: %s (id=%d, fd=%d)', name, addr, server_id, fd);
+}
+
+/**
+ * @param {string} name - UCI section name
+ * @param {object} mapping - UCI section values
+ */
+function mapping_setup(name, mapping) {
+	let server_name = mapping.server;
+	let entry = contexts[server_name];
+
+	if (!entry) {
+		log_err('mapping %s references unknown server %s', name, server_name);
+		return;
+	}
+
+	let port = +mapping.internal_port;
+	let proto = +mapping.protocol;
+	let lifetime = +mapping.lifetime;
+
+	if (!port || !(proto >= -1 && proto <= 255) || proto == 0) {
+		log_err('mapping %s: invalid internal_port/protocol (%s/%s)',
+			name, mapping.internal_port ?? '', mapping.protocol ?? '');
+		return;
+	}
+
+	// TR-181 ProtocolNumber -1 means all protocols; PCP encodes that as protocol 0 (RFC 6887)
+	if (proto == -1)
+		proto = 0;
+
+	let opts = {};
+
+	if (mapping.third_party)
+		opts.third_party = mapping.third_party;
+
+	let filter_opts = [];
+	for (let f in (type(mapping.filter) == 'array') ? mapping.filter : []) {
+		let parts = split(f, '/');
+		if (length(parts) != 2)
+			continue;
+		push(filter_opts, { ...opts, filter_ip: parts[0], filter_prefix: +parts[1] });
+	}
+
+	// libpcpnatpmp carries one FILTER option per flow and RFC 6887
+	// filters are additive, so each Filter row gets its own flow
+	let opt_sets = length(filter_opts) ? filter_opts : [opts];
+
+	let flow_list = [];
+	for (let o in opt_sets) {
+		let flow = entry.ctx.new_flow(port, proto, lifetime, o);
+		if (!flow) {
+			log_err('failed to create flow for mapping %s', name);
+			continue;
+		}
+		push(flow_list, flow);
+	}
+
+	if (!length(flow_list))
+		return;
+
+	entry.flows[name] = flow_list;
+	flows[name] = { flows: flow_list, server: server_name, instance: mapping.instance };
+
+	let timeout = entry.ctx.pulse();
+	timer_schedule(entry, timeout);
+
+	log_info('mapping %s: port=%d proto=%d lifetime=%d', name, port, proto, lifetime);
+}
+
+function config_load() {
+	let cursor = uci.cursor('/var/run/uci');
+	if (!cursor) {
+		log_err('failed to open UCI cursor');
+		return false;
+	}
+
+	cursor.load('pcp');
+
+	let servers = {};
+	let mappings = {};
+
+	cursor.foreach('pcp', 'server', (s) => {
+		servers[s['.name']] = s;
+	});
+
+	cursor.foreach('pcp', 'mapping', (s) => {
+		mappings[s['.name']] = s;
+	});
+
+	for (let name, server in servers)
+		server_setup(name, server);
+
+	for (let name, mapping in mappings)
+		mapping_setup(name, mapping);
+
+	return true;
+}
+
+function cleanup() {
+	for (let name, entry in contexts) {
+		if (entry.timer)
+			entry.timer.cancel();
+		if (entry.fd_handle)
+			entry.fd_handle.delete();
+		entry.ctx.close(true);
+	}
+
+	contexts = {};
+	flows = {};
+}
+
+uloop.init();
+
+if (!config_load()) {
+	log_err('failed to load configuration');
+	exit(1);
+}
+
+log_info('started with %d server(s)', length(keys(contexts)));
+
+uloop.run();
+
+cleanup();

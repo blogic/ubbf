@@ -1,0 +1,35 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "PreferredBackhauls.{i}.",
+  "object": {
+    "path": "PreferredBackhauls.{i}.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "BackhaulMACAddress",
+        "access": "readOnly",
+        "description": "The MAC address of the BSS, or similar Ethernet interface, on this preferred backhaul link.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "bSTAMACAddress",
+        "access": "readOnly",
+        "description": "The MAC address of the backhaul STA (bSTA), or similar Ethernet interface, on this preferred backhaul link.",
+        "type": "dataType:MACAddress"
+      }
+    ],
+    "description": "Indicates preferred backhaul links for EasyMesh {{bibref|EasyMesh}} backhaul. Consists of a table of pairs of MAC addresses. For a WI-Fi connection pair, an entry contains the BSSID and bSTA MAC address. For a wired connection pair, an entry contains the interface MAC addresses. This command applies to all EasyMesh Agent devices in the Wi-Fi network. Status is to be returned after implementation or failed implementation on all agents/devices/APs in this Multi-AP network.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "bSTAMACAddress"
+      ]
+    }
+  }
+}

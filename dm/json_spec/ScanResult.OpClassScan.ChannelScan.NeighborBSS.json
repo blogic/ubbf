@@ -1,0 +1,185 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "ScanResult.{i}.OpClassScan.{i}.ChannelScan.{i}.NeighborBSS.{i}.",
+  "object": {
+    "path": "ScanResult.{i}.OpClassScan.{i}.ChannelScan.{i}.NeighborBSS.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "BSSID",
+        "access": "readOnly",
+        "description": "The BSSID indicated by the neighboring BSS.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "SSID",
+        "access": "readOnly",
+        "description": "The SSID indicated by the neighboring BSS.",
+        "type": "string"
+      },
+      {
+        "name": "SignalStrength",
+        "access": "readOnly",
+        "description": "An indicator of radio signal strength (RSSI) of the Beacon or Probe Response frames of the neighboring BSS as received by the radio measured in {{units}}. (RSSI is encoded per {{bibref|802.11-2020|Table 9-176}}). Reserved: 221 - 255.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "ChannelBandwidth",
+        "access": "readOnly",
+        "description": "Indicates the maximum bandwidth at which the neighboring BSS is operating. e.g. \"1\" or \"2\" or \"4\" or \"8\"\u201d or \"16\" or \"20\" or \"40\" or \"80\" or \"80+80\" or \"160\" or \"320\" MHz.",
+        "type": "string"
+      },
+      {
+        "name": "ChannelUtilization",
+        "access": "readOnly",
+        "description": "The channel utilization reported by the neighboring BSS per the BSS Load element if present in Beacon or Probe Response frames, as defined by {{bibref|802.11-2020|Section 9.4.2.27}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "StationCount",
+        "access": "readOnly",
+        "description": "The number of Associated Devices (STA) reported by this neighboring BSS per the BSS Load element if present in Beacon or Probe Response frames as defined by {{bibref|802.11-2020|Section 9.4.2.27}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MLDMACAddress",
+        "access": "readOnly",
+        "description": "The Multi-Link Device (MLD) MAC address of the Multi-Link Operation (MLO) capable access point this neighboring BSS is affiliated to. Null if the neighboring BSS is not an affiliated AP.",
+        "type": "dataType:MACAddress",
+        "version": "2.17"
+      },
+      {
+        "name": "ReportingBSSID",
+        "access": "readOnly",
+        "description": "The BSSID of the reporting BSSID if different from {{param|BSSID}}. This will be set if the NeigborBSS was discovered through, for example, a Reduced Neighbor Report. EasyMesh {{bibref|EasyMesh}} source: Channel Scan Result TLV.",
+        "type": "dataType:MACAddress",
+        "version": "2.17"
+      },
+      {
+        "name": "MultiBSSID",
+        "access": "readOnly",
+        "description": "Indicates if the neighboring BSS is part of a MultiBSSID set and may be a non-transmitted BSSID.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "BSSLoadElementPresent",
+        "access": "readOnly",
+        "description": "Set to true if the neighbour BSS Beacon/Probe Responses include a BSSLoad Element as defined in {{bibref|802.11-2020|Section 9.4.2.28}}.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "BSSColor",
+        "access": "readOnly",
+        "description": "Set to the BSS Color from the BSS Color Information field in the BSS's HE Operation element.",
+        "type": "unsignedInt",
+        "maxInclusive": 63,
+        "version": "2.17"
+      },
+      {
+        "name": "SecurityModeEnabled",
+        "access": "readOnly",
+        "description": "The type of encryption the neighboring WiFi SSID advertises. The {{enum|WEP}} value indicates either WEP-64 or WEP-128. The {{enum|WPA}} value is the same as WPA-Personal. The {{enum|WPA2}} value is the same as WPA2-Personal. The {{enum|WPA-WPA2}} value is the same as WPA-WPA2-Personal. The {{enum|WPA3-SAE}} value is the same as WPA3-Personal. The {{enum|WPA2-PSK-WPA3-SAE}} value is the same as WPA3-Personal-Transition.",
+        "type": "string",
+        "enumerations": [
+          "None",
+          "WEP",
+          "WPA",
+          "WPA2",
+          "WPA-WPA2",
+          "WPA-Enterprise",
+          "WPA2-Enterprise",
+          "WPA-WPA2-Enterprise",
+          "WPA3-SAE",
+          "WPA2-PSK-WPA3-SAE",
+          "WPA3-Enterprise",
+          "OWE"
+        ]
+      },
+      {
+        "name": "EncryptionMode",
+        "access": "readOnly",
+        "description": "The type of encryption the neighboring WiFi SSID advertises. When {{param|SecurityModeEnabled}} is one of {{enum|WPA3-SAE|SecurityModeEnabled}}, {{enum|WPA2-PSK-WPA3-SAE|SecurityModeEnabled}}, or {{enum|WPA3-Enterprise|SecurityModeEnabled}}, {{enum|TKIP}} is not valid, and should not be in the list.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "TKIP",
+          "AES"
+        ]
+      },
+      {
+        "name": "SupportedStandards",
+        "access": "readOnly",
+        "description": "{{list}} List items indicate which IEEE 802.11 standards this {{object}} instance can support simultaneously, in the frequency band specified by {{param|#.Channel}}. {{enum}} Each value indicates support for the indicated standard.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "a",
+          "b",
+          "g",
+          "n",
+          "ac",
+          "ax",
+          "be"
+        ]
+      },
+      {
+        "name": "OperatingStandards",
+        "access": "readOnly",
+        "description": "{{list}} List items indicate which IEEE 802.11 standard that is detected for this {{object}}. Each value indicates support for the indicated standard. For example, a value of \"g,b\" (or \"b,g\" - order is not important) means that the 802.11g standard {{bibref|802.11g-2003}} is used with a backwards-compatible mode for 802.11b {{bibref|802.11b-1999}}. A value of \"g\" means that only the 802.11g standard can be used.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "BasicDataTransferRates",
+        "access": "readOnly",
+        "description": "{{list}} Basic data transmit rates (in Mbps) for the SSID. For example, if {{param}} is \"1,2\", this indicates that the SSID is operating with basic rates of 1 Mbps and 2 Mbps.",
+        "list": true,
+        "listMaxLength": 256,
+        "type": "string"
+      },
+      {
+        "name": "SupportedDataTransferRates",
+        "access": "readOnly",
+        "description": "{{list}} Data transmit rates (in Mbps) for unicast frames at which the SSID will permit a station to connect. For example, if {{param}} is \"1,2,5.5\", this indicates that the SSID will only permit connections at 1 Mbps, 2 Mbps and 5.5 Mbps.",
+        "list": true,
+        "listMaxLength": 256,
+        "type": "string"
+      },
+      {
+        "name": "SupportedNSS",
+        "access": "readOnly",
+        "description": "The maximum number of spatial streams (NSS) that can be supported.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DTIMPeriod",
+        "access": "readOnly",
+        "description": "The number of beacon intervals (measured in {{units}}) that elapse between transmission of Beacon frames containing a TIM element whose DTIM count field is 0. This value is transmitted in the DTIM Period field of beacon frames. {{bibref|802.11-2020}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "BeaconPeriod",
+        "access": "readOnly",
+        "description": "Time interval (in {{units}}) between transmitting beacons.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The neighboring BSS discovered by a Radio during a channel scan. For MLDs, {{param|MLDMACAddress}} identifies the APMLD for which this NeighborBSS.{i}. is an affilated AP, other affiliated APs in this {{object}} have the same value of {{param|MLDMACAddress}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "BSSID"
+      ]
+    }
+  }
+}

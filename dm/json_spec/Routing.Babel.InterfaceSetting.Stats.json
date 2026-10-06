@@ -1,0 +1,53 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Routing.Babel.InterfaceSetting.{i}.Stats.",
+  "object": {
+    "path": "Device.Routing.Babel.InterfaceSetting.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "SentMcastHello",
+        "access": "readOnly",
+        "description": "A count of the number of multicast Hello packets sent on this interface.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "SentMcastUpdate",
+        "access": "readOnly",
+        "description": "A count of the number of multicast update packets sent on this interface.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "SentUcastHello",
+        "access": "readOnly",
+        "description": "A count of the number of unicast Hello packets sent on this interface.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "SentUcastUpdate",
+        "access": "readOnly",
+        "description": "A count of the number of unicast update packets sent on this interface.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "SentIHU",
+        "access": "readOnly",
+        "description": "A count of the number of IHU (\"I Heard You\") packets sent on this interface.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "ReceivedPackets",
+        "access": "readOnly",
+        "description": "A count of the number of Babel packets received on this interface.",
+        "type": "dataType:StatsCounter64"
+      }
+    ],
+    "description": "This object provides statistics parameters for this interface.",
+    "children": []
+  }
+}

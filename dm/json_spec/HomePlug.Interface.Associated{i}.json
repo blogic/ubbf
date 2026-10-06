@@ -1,0 +1,67 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.HomePlug.Interface.{i}.AssociatedDevice.{i}.",
+  "object": {
+    "path": "Device.HomePlug.Interface.{i}.AssociatedDevice.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "AssociatedDeviceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "MAC address of remote HomePlug device. It is used to uniquely identify and easily correlate with the connected remote HomePlug device.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "TxPhyRate",
+        "access": "readOnly",
+        "description": "The PHY transmit Rate (expressed in {{units}}) to this remote device.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RxPhyRate",
+        "access": "readOnly",
+        "description": "The PHY receive Rate (expressed in {{units}}) from this remote device.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SNRPerTone",
+        "access": "readOnly",
+        "description": "{{list}} List items indicate Signal to Noise Ratio (SNR) per tone from this remote device (expressed in {{units}}).",
+        "list": true,
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AvgAttenuation",
+        "access": "readOnly",
+        "description": "Average attenuation from this remote device (expressed in {{units}}).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "EndStationMACs",
+        "access": "readOnly",
+        "description": "{{list}} List items represent MAC addresses of end stations bridged by the remote HomePlug device. For example: \"11:22:33:AA:BB:CC, 22:33:44:DD:EE:66\"",
+        "list": true,
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "Active",
+        "access": "readOnly",
+        "description": "Whether or not this device is currently present in the HomePlug network. The ability to list inactive nodes is OPTIONAL. If the CPE includes inactive nodes in this table, {{param}} MUST be set to {{false}} for each inactive node. The length of time an inactive node remains listed in this table is a local matter to the CPE.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This table contains information about other HomePlug devices connected to this HomePlug interface.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "MACAddress"
+      ]
+    }
+  }
+}

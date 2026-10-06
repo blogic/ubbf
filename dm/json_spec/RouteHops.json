@@ -1,0 +1,43 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "RouteHops.{i}.",
+  "object": {
+    "path": "RouteHops.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Host",
+        "access": "readOnly",
+        "description": "Result parameter indicating the Host Name if DNS is able to resolve or IP Address of a hop along the discovered route.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "HostAddress",
+        "access": "readOnly",
+        "description": "If this parameter is not {{empty}} it will contain the last IP address of the host returned for this hop and the {{param|Host}} will contain the Host Name returned from the reverse DNS query.",
+        "type": "string"
+      },
+      {
+        "name": "ErrorCode",
+        "access": "readOnly",
+        "description": "Contains the error code returned for this hop. This code is directly from the ICMP CODE field.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RTTimes",
+        "access": "readOnly",
+        "description": "{{list}} Each list item contains one or more round trip times in {{units}} (one for each repetition) for this hop. A list item of 0 indicates that the corresponding response was not received. Round trip times of less than 1 {{units}} MUST be rounded up to 1. The number of list entries is determined by the value of {{param|#.NumberOfTries}}.",
+        "list": true,
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Contains the array of hop results returned. If a route could not be determined, this array will be empty",
+    "children": []
+  }
+}

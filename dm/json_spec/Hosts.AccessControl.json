@@ -1,0 +1,108 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Hosts.AccessControl.{i}.",
+  "object": {
+    "path": "Device.Hosts.AccessControl.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "AccessControlNumberOfEntries",
+    "version": "2.14",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.14"
+      },
+      {
+        "name": "Origin",
+        "access": "writeOnceReadOnly",
+        "description": "Indicates the owner of the {{object}} instance. Note: This parameter was changed to writeOnceReadOnly in the Device:2.18 version.",
+        "default": "Controller",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "User",
+          "System",
+          "Controller"
+        ],
+        "version": "2.17"
+      },
+      {
+        "name": "PhysAddress",
+        "access": "readWrite",
+        "description": "Unique physical identifier of the device. For many layer 2 technologies this is typically a MAC address.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "PhysAddressMask",
+        "access": "readWrite",
+        "description": "Mask to be applied on {{param|PhysAddress}}. When set to 'FF:FF:FF:FF:FF:FF' the access control rule is applicable to a single host. Other possible values 'FF:FF:FF:00:00:00' to apply access control to a specific OUI. When {{empty}} is set, no mask will be applied and the {{param|PhysAddress}} MUST be used as is.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 64,
+        "version": "2.17"
+      },
+      {
+        "name": "HostName",
+        "access": "readWrite",
+        "description": "Any user defined name for the device.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "AccessPolicy",
+        "access": "readWrite",
+        "description": "Allows or denies access for a device. If {{param}} is set to \"Allow\", device access is allowed based on the {{object|.Schedules.Schedule}} objects referenced by the {{param|ScheduleRef}} parameter. Access is enabled if there is no {{object|.Schedules.Schedule}} object referenced by the {{param|ScheduleRef}} parameter. If {{param}} is set to \"Deny\", {{object|.Schedules.Schedule}} objects referenced by the {{param|ScheduleRef}} parameter are ignored and no access is allowed for the device.",
+        "default": "Allow",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Allow",
+          "Deny"
+        ]
+      },
+      {
+        "name": "ScheduleRef",
+        "access": "readWrite",
+        "description": "Each reference provides a schedule where time based access can be enabled. When {{param}} is {{empty}} the {{object}} is not scheduled, and the {{param|Enable}} defines the operational state.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Schedules.Schedule.",
+          "targetType": "row"
+        },
+        "version": "2.18"
+      },
+      {
+        "name": "ScheduleNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{deprecated|2.18|in favor of {{object|.Schedules.}}}} {{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Every instance of this object provides access control for a LAN device. Access is allowed if no instance of {{object}} is defined for a device. If access is not allowed, then the LAN device cannot access the broadband network.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

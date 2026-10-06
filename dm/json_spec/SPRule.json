@@ -1,0 +1,53 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "SPRule.{i}.",
+  "object": {
+    "path": "SPRule.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "ID",
+        "access": "readOnly",
+        "description": "Service prioritization rule Identifier.",
+        "type": "unsignedInt",
+        "version": "2.15"
+      },
+      {
+        "name": "Precedence",
+        "access": "readOnly",
+        "description": "Rule Precedence - higher number means higher priority.",
+        "type": "unsignedInt",
+        "maxInclusive": 254,
+        "version": "2.15"
+      },
+      {
+        "name": "Output",
+        "access": "readOnly",
+        "description": "Rule Output. The value of, or method used to select the 802.1Q C-TAG Priority Code Point (PCP) output value.",
+        "type": "unsignedInt",
+        "maxInclusive": 9,
+        "version": "2.15"
+      },
+      {
+        "name": "AlwaysMatch",
+        "access": "readOnly",
+        "description": "Indicates if the rule always matches.",
+        "type": "boolean",
+        "version": "2.15"
+      }
+    ],
+    "description": "This object describes a list of service prioritization (SP) rules {{bibref|EasyMesh}}. If this input is not provided, then existing {{object|##.Device.{i}.SPRule.{i}.}} apply.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "ID"
+      ]
+    }
+  }
+}

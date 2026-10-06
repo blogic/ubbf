@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MAP.",
+  "object": {
+    "path": "Device.MAP.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables MAP.",
+        "type": "boolean"
+      },
+      {
+        "name": "DomainNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The Mapping of Address and Port (MAP) object {{bibref|RFC7597}} {{bibref|RFC7599}} {{bibref|RFC7598}}. This object applies only to gateway devices that support IPv4 on the LAN side, include a {{object|#.NAT}}, and typically have only IPv6 connectivity on the WAN side. See the MAP Theory of Operation {{bibref|TR-181i2|Appendix XV}} for a description of the working of this MAP data model.",
+    "children": []
+  }
+}

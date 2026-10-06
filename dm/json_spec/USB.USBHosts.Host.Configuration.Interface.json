@@ -1,0 +1,51 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.USB.USBHosts.Host.{i}.Device.{i}.Configuration.{i}.Interface.{i}.",
+  "object": {
+    "path": "Device.USB.USBHosts.Host.{i}.Device.{i}.Configuration.{i}.Interface.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "InterfaceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "InterfaceNumber",
+        "access": "readOnly",
+        "description": "Number of this interface (from USB interface descriptor).",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "InterfaceClass",
+        "access": "readOnly",
+        "description": "Class Code as assigned by USB-IF. When 0x00, each interface specifies its own class code. When 0xFF, the class code is vendor specified.",
+        "type": "hexBinary",
+        "maxLength": 1
+      },
+      {
+        "name": "InterfaceSubClass",
+        "access": "readOnly",
+        "description": "Subclass code (assigned by USB-IF).",
+        "type": "hexBinary",
+        "maxLength": 1
+      },
+      {
+        "name": "InterfaceProtocol",
+        "access": "readOnly",
+        "description": "Protocol code (assigned by USB-IF).",
+        "type": "hexBinary",
+        "maxLength": 1
+      }
+    ],
+    "description": "Table of device interface descriptors.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "InterfaceNumber"
+      ]
+    }
+  }
+}

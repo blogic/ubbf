@@ -1,0 +1,64 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.VendorConfigFile.{i}.",
+  "object": {
+    "path": "Device.DeviceInfo.VendorConfigFile.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "VendorConfigFileNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "Name of the vendor configuration file. If the CPE is able to obtain the name of the configuration file from the file itself, then the value of this parameter MUST be set to that name. Otherwise, if the CPE can extract the file name from the URL used to download the configuration file, then the value of this parameter MUST be set to that name. {{template|VENDORCONFIGFILE-NAME}}",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Version",
+        "access": "readOnly",
+        "description": "A string identifying the configuration file version currently used in the CPE. If the CPE is able to obtain the version of the configuration file from the file itself, then the value of this parameter MUST be set to the obtained value. Otherwise, the value of this parameter MUST be {{empty}}.",
+        "type": "string",
+        "maxLength": 16
+      },
+      {
+        "name": "Date",
+        "access": "readOnly",
+        "description": "Date and time when the content of the current version of this vendor configuration file was first applied by the CPE.",
+        "type": "dateTime"
+      },
+      {
+        "name": "Description",
+        "access": "readOnly",
+        "description": "A description of the vendor configuration file (human-readable string).",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "UseForBackupRestore",
+        "access": "readOnly",
+        "description": "When {{true}}, this parameter indicates that this {{object}} instance is to be used for backup and restoration purposes. Note: The backup and restore operations may require the use of multiple {{object}} instances. In this scenario the mechanism for determining the order and combination of {{object}} instances used for backup and restoration purposes is implementation specific.",
+        "type": "boolean",
+        "version": "2.12"
+      }
+    ],
+    "description": "Every instance of this object is a Vendor Configuration File, and contains parameters associated with the Vendor Configuration File. This table of Vendor Configuration Files is for information only and does not allow the Controller to operate on these files in any way. {{template|VENDORCONFIGFILE-DESC}}",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

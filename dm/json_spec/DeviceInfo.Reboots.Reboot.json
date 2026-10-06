@@ -1,0 +1,63 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.Reboots.Reboot.{i}.",
+  "object": {
+    "path": "Device.DeviceInfo.Reboots.Reboot.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "RebootNumberOfEntries",
+    "version": "2.18",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.18"
+      },
+      {
+        "name": "TimeStamp",
+        "access": "readOnly",
+        "description": "The time when the reboot occurred.",
+        "type": "dateTime"
+      },
+      {
+        "name": "FirmwareUpdated",
+        "access": "readOnly",
+        "description": "{{true}} if the Device was rebooted as a result of a firmware update; otherwise {{false}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Cause",
+        "access": "readOnly",
+        "description": "The cause of the boot.",
+        "type": "string",
+        "enumerations": [
+          "LocalReboot",
+          "RemoteReboot",
+          "FactoryReset",
+          "LocalFactoryReset",
+          "RemoteFactoryReset"
+        ]
+      },
+      {
+        "name": "Reason",
+        "access": "readOnly",
+        "description": "The reason of the boot (e.g. power on reset, watchdog, overheat, FAN fault, web userinterface, ...).",
+        "default": "Unknown",
+        "defaultType": "implementation",
+        "type": "string"
+      }
+    ],
+    "description": "Each table entry represents a reboot reason that is stored on the device. When the maximum {{object}} entries as indicated by {{param|#.MaxRebootEntries}} are reached, the next boot entry overrides the object with the oldest {{param|TimeStamp}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

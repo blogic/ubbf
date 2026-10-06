@@ -1,0 +1,143 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.UPnP.Description.DeviceInstance.{i}.",
+  "object": {
+    "path": "Device.UPnP.Description.DeviceInstance.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "DeviceInstanceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "UDN",
+        "access": "readOnly",
+        "description": "Unique Device Name of this device represented as a UUID for the device. This value is extracted from the UDN element in the Device Description Document with the leading uuid: removed.",
+        "type": "dataType:UUID"
+      },
+      {
+        "name": "ParentDevice",
+        "access": "readOnly",
+        "description": "{{reference|a {{object}} table entry (if this is an embedded device) or {{empty}} (if this is a root device)}}",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.DeviceInstance.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "DiscoveryDevice",
+        "access": "readOnly",
+        "description": "{{reference|a {{object|##.Discovery.RootDevice}} table entry (if this is a root device) or a {{object|##.Discovery.Device}} table entry (if this is an embedded device)}} This {{param}} value can be {{empty}} because the referenced object has been deleted or the CPE was unable to retrieve the Description Document due to some out-of-band error. The determination to delete this {{object}} or use {{empty}} is implementation specific.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "                   ##.Discovery.Device.                   ##.Discovery.RootDevice.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "DeviceType",
+        "access": "readOnly",
+        "description": "The value of the UPnP deviceType element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "FriendlyName",
+        "access": "readOnly",
+        "description": "The value of the UPnP friendlyName element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.",
+        "type": "string",
+        "maxLength": 128
+      },
+      {
+        "name": "DeviceCategory",
+        "access": "readOnly",
+        "description": "Each list item is the value of an element in the Device Description Document for this {{object}} that indicates a device category (e.g. \"AV_TV\" and \"AV_Recorder\"), or the value is {{empty}} if no such element is provided by the device. Note: It is assumed that the ''htip:X_DeviceCategory'' Device Description Document element is used for HTIP (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and {{bibref|G.9973}}. Standard HTIP device categories are defined in {{bibref|JJ-300.01}}. In this case, the maximum length of the list is 127 and of each item is 31, and any non-HTIP device categories SHOULD NOT conflict with standard HTIP device categories. Note: {{param}} is different from {{param|DeviceType}} and is included here for the purpose of HTIP usage.",
+        "list": true,
+        "type": "string",
+        "version": "2.12"
+      },
+      {
+        "name": "Manufacturer",
+        "access": "readOnly",
+        "description": "The value of the UPnP manufacturer element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.",
+        "type": "string",
+        "maxLength": 128
+      },
+      {
+        "name": "ManufacturerOUI",
+        "access": "readOnly",
+        "description": "The value of an element in the Device Description Document for this {{object}} that indicates the manufacturer OUI if this value is provided by the device; or {{empty}} if this value is not provided by the device. {{pattern}} Note: It is assumed that the ''htip:X_ManufacturerOUI'' element is used for HTIP (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and {{bibref|G.9973}}.",
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 6,
+        "pattern": "",
+        "version": "2.12"
+      },
+      {
+        "name": "ManufacturerURL",
+        "access": "readOnly",
+        "description": "The value of the UPnP manufacturerURL element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.",
+        "type": "dataType:URL"
+      },
+      {
+        "name": "ModelDescription",
+        "access": "readOnly",
+        "description": "The value of the UPnP modelDescription element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ModelName",
+        "access": "readOnly",
+        "description": "The value of the UPnP modelName element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "ModelNumber",
+        "access": "readOnly",
+        "description": "The value of the UPnP modelNumber element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "ModelURL",
+        "access": "readOnly",
+        "description": "The value of the UPnP modelURL element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.",
+        "type": "dataType:URL"
+      },
+      {
+        "name": "SerialNumber",
+        "access": "readOnly",
+        "description": "The value of the UPnP serialNumber element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.",
+        "type": "string",
+        "maxLength": 128
+      },
+      {
+        "name": "UPC",
+        "access": "readOnly",
+        "description": "The value of the UPnP UPC element in the Device Description Document for this {{object}}, or {{empty}} if this value is not provided by the device.",
+        "type": "string",
+        "maxLength": 12
+      },
+      {
+        "name": "PresentationURL",
+        "access": "readOnly",
+        "description": "The value of the UPnP presentationURL element in the Device Description Document for this {{object}} and MUST be an absolute URL. The way to obtain an absolute URL from the presentationURL element is specified in {{bibref|UPnP-DAv1}} and {{bibref|UPnP-DAv11}}. If the presentationURL is not provided by the device then this value MUST be {{empty}}.",
+        "type": "dataType:URL"
+      }
+    ],
+    "description": "This table contains the information from Device Description Document retrieved for a discovered UPnP root or embedded device.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "UDN"
+      ]
+    }
+  }
+}

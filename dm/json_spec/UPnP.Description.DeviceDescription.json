@@ -1,0 +1,49 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.UPnP.Description.DeviceDescription.{i}.",
+  "object": {
+    "path": "Device.UPnP.Description.DeviceDescription.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "DeviceDescriptionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "URLBase",
+        "access": "readOnly",
+        "description": "The value extracted from the URLBase element in the Device Description Document of the discovered root device. If the URLBase element in the root device's Device Description Document is empty or absent, the {{datatype}} from which the device description was retrieved (e.g. the LOCATION from the SSDP message) is utilized as the URLBase. Note: the URLBase element is not recommended by {{bibref|UPnP-DAv1}} and is not permitted by {{bibref|UPnP-DAv11}}, so the value of {{param}} will usually be the URL from which the device description was retrieved.",
+        "type": "dataType:URL"
+      },
+      {
+        "name": "SpecVersion",
+        "access": "readOnly",
+        "description": "The UPnP Device Architecture version extracted from the specVersion element in the Device Description Document of the discovered root device. The {{param}} is encoded as \"major revison.minor revision\". {{pattern}}",
+        "type": "string",
+        "maxLength": 256,
+        "pattern": "\\d+\\.\\d+"
+      },
+      {
+        "name": "Host",
+        "access": "readOnly",
+        "description": "Includes the Host table entries associated with the root device from which the device description was retrieved.",
+        "list": true,
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "###.Hosts.Host.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "This table contains information read from the Device Description Document of discovered root devices. The CPE MAY, but need not, retain some or all of the information in this table after the associated SSDP advertisement (objects in the UPnP.Discovery. object tables) expires. In case the SSDP advertisement expires and the CPE deletes the related instances from the tables in UPnP.Discovery., the reference to such instances MUST be set to the empty string.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "URLBase"
+      ]
+    }
+  }
+}

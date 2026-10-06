@@ -1,0 +1,433 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Firewall.Chain.{i}.Rule.{i}.",
+  "object": {
+    "path": "Device.Firewall.Chain.{i}.Rule.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "RuleNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this {{object}} entry. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Order",
+        "access": "readWrite",
+        "description": "{{datatype|expand}} For each packet, the highest ordered entry that matches the rule criteria is applied. All lower order entries are ignored.",
+        "type": "dataType:Order"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Description",
+        "access": "readWrite",
+        "description": "Human-readable description associated with this {{object}} entry.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Target",
+        "access": "readWrite",
+        "description": "Action to perform for traffic matching this {{object}} entry. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "Drop",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Drop",
+          "Accept",
+          "Reject",
+          "Return",
+          "TargetChain"
+        ]
+      },
+      {
+        "name": "TargetChain",
+        "access": "readWrite",
+        "description": "Specifies the chain to process when {{param|Target}} equals {{enum|TargetChain|Target}}. If there are no matching rules in the referenced chain, processing continues with the next rule in this chain (if any). In other words, {{enum|TargetChain|Target}} behaves like a subroutine call. {{empty}} indicates no {{param}} is specified. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Log",
+        "access": "readWrite",
+        "description": "Enable or disable logging, in a {{object|.DeviceInfo.VendorLogFile}}, of packets matching this {{object}}. If the {{object}} is not ''Static'' (as explained in the object description), whether changes to this parameter persist across re-boot is a local matter to the CPE.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "LogRef",
+        "access": "readWrite",
+        "description": "Specifies the logging rules for this {{object}} entry. The {{param|Log}} parameter MUST be set to {{true}} for this setting to take effect. When {{param|Log}} is {{true}} and {{param}} is {{empty}} or contains an invalid reference, the system MUST treat the configuration as an error and set {{param|Status}} to {{enum|Error_Misconfigured|Status}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Firewall.Log.",
+          "targetType": "row"
+        },
+        "version": "2.19"
+      },
+      {
+        "name": "CreationDate",
+        "access": "readOnly",
+        "description": "Date and time when this {{object}} entry was created.",
+        "type": "dateTime"
+      },
+      {
+        "name": "ExpiryDate",
+        "access": "readWrite",
+        "description": "The time at which this {{object}} entry will expire, or {{null}} if not known. For an infinite lifetime, the parameter value MUST be 9999-12-31T23:59:59Z. The only value that MUST be supported is 9999-12-31T23:59:59Z (i.e. support for rules that expire is OPTIONAL). When a rule expires, the CPE MUST automatically terminate that rule and MUST automatically delete the corresponding {{object}} table entry. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "9999-12-31T23:59:59Z",
+        "defaultType": "object",
+        "type": "dateTime"
+      },
+      {
+        "name": "SourceInterface",
+        "access": "readWrite",
+        "description": "{{object}} criterion. {{reference}} This specifies the ingress interface associated with the entry. It MAY be a layer 1, 2 or 3 interface, however, the types of interfaces for which Rules can be instantiated is a local matter to the CPE. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "SourceInterfaceExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the rule matches only those packets that match the {{param|SourceInterface}} entry, if specified. If {{true}}, the rule matches all packets except those that match the {{param|SourceInterface}} entry, if specified. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SourceAllInterfaces",
+        "access": "readWrite",
+        "description": "{{object}} criterion. This specifies that all ingress interfaces are associated with the entry. If {{true}}, the values of {{param|SourceInterface}} and {{param|SourceInterfaceExclude}} are ignored since all ingress interfaces are indicated. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DestInterface",
+        "access": "readWrite",
+        "description": "{{object}} criterion. {{reference}} This specifies the egress interface associated with the entry. It MAY be a layer 1, 2 or 3 interface, however, the types of interfaces for which Rules can be instantiated is a local matter to the CPE. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "DestInterfaceExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the rule matches only those packets that match the {{param|DestInterface}} entry, if specified. If {{true}}, the rule matches all packets except those that match the {{param|DestInterface}} entry, if specified. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DestAllInterfaces",
+        "access": "readWrite",
+        "description": "{{object}} criterion. This specifies that all egress interfaces are associated with the entry. If {{true}}, the values of {{param|DestInterface}} and {{param|DestInterfaceExclude}} are ignored since all ingress interfaces are indicated. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "IPVersion",
+        "access": "readWrite",
+        "description": "Specifies the IP protocol version, following the definitions in {{bibref|IANA-ipversionnumbers}}. Valid values are: {{range}}. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "ranges": [
+          [
+            4,
+            4
+          ],
+          [
+            6,
+            6
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "DestIP",
+        "access": "readWrite",
+        "description": "{{object}} criterion. Destination IP address. {{empty}} indicates this criterion is not used for matching. Note that Firewall rules are applied after any {{object|###.NAT}} processing, so if NAT is enabled on the source interface this is always the translated address. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "DestMask",
+        "access": "readWrite",
+        "description": "Destination IP address mask, represented as an IP routing prefix using CIDR notation [RFC4632]. The IP address part MUST be {{empty}} (and, if specified, MUST be ignored).",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPPrefix"
+      },
+      {
+        "name": "DestIPExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the rule matches only those packets that match the (masked) {{param|DestIP}} entry, if specified. If {{true}}, the rule matches all packets except those that match the (masked) {{param|DestIP}} entry, if specified. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DestMatchSet",
+        "access": "readWrite",
+        "description": "{{object}} criterion. Destination Match Set, Matches packets if their destination is found in the designated {{object|##.Set.}} reference. {{empty}} indicates this criterion is not used for matching.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.Set.",
+          "targetType": "row"
+        },
+        "version": "2.18"
+      },
+      {
+        "name": "DestMatchSetExclude",
+        "access": "readWrite",
+        "description": "{{object}} criterion. Destination Exclude Match Set, Matches packets if their destination is not found in the designated {{object|##.Set.}} reference. {{empty}} indicates this criterion is not used for matching.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.Set.",
+          "targetType": "row"
+        },
+        "version": "2.18"
+      },
+      {
+        "name": "SourceIP",
+        "access": "readWrite",
+        "description": "{{object}} criterion. Source IP address. {{empty}} indicates this criterion is not used for matching. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "SourceMask",
+        "access": "readWrite",
+        "description": "Source IP address mask, represented as an IP routing prefix using CIDR notation [RFC4632]. The IP address part MUST be {{empty}} (and, if specified, MUST be ignored).",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPPrefix"
+      },
+      {
+        "name": "SourceIPExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the rule matches only those packets that match the (masked) {{param|SourceIP}} entry, if specified. If {{true}}, the rule matches all packets except those that match the (masked) {{param|SourceIP}} entry, if specified. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SourceMatchSet",
+        "access": "readWrite",
+        "description": "{{object}} criterion. Source Match Set, Matches packets if their source is found in the designated {{object|##.Set.}} reference. {{empty}} indicates this criterion is not used for matching.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.Set.",
+          "targetType": "row"
+        },
+        "version": "2.18"
+      },
+      {
+        "name": "SourceMatchSetExclude",
+        "access": "readWrite",
+        "description": "{{object}} criterion. Source Exclude Match Set, Matches packets if their source is not found in the designated {{object|##.Set.}} reference. {{empty}} indicates this criterion is not used for matching.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.Set.",
+          "targetType": "row"
+        },
+        "version": "2.18"
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "{{object}} criterion. Protocol number. A value of -1 indicates this criterion is not used for matching. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 255
+      },
+      {
+        "name": "ProtocolExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the rule matches only those packets that match the {{param|Protocol}} entry, if specified. If {{true}}, the rule matches all packets except those that match the {{param|Protocol}} entry, if specified. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DestPort",
+        "access": "readWrite",
+        "description": "{{object}} criterion. Destination port number. A value of -1 indicates this criterion is not used for matching. Note that Firewall rules are applied after any {{object|###.NAT}} processing, so if NAT is enabled on the source interface this is always the translated port number. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "DestPortRangeMax",
+        "access": "readWrite",
+        "description": "{{object}} criterion. If specified, indicates the {{object}} criterion is to include the port range from {{param|DestPort}} through {{param}} (inclusive). If specified, {{param}} MUST be greater than or equal to {{param|DestPort}}. A value of -1 indicates that no port range is specified. Note that Firewall rules are applied after any {{object|###.NAT}} processing, so if NAT is enabled on the source interface this is always the translated port number. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "DestPortExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the rule matches only those packets that match the {{param|DestPort}} entry (or port range), if specified. If {{true}}, the rule matches all packets except those that match the {{param|DestPort}} entry (or port range), if specified. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SourcePort",
+        "access": "readWrite",
+        "description": "{{object}} criterion. Source port number. A value of -1 indicates this criterion is not used for matching. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "SourcePortRangeMax",
+        "access": "readWrite",
+        "description": "{{object}} criterion. If specified, indicates the {{object}} criterion is to include the port range from {{param|SourcePort}} through {{param}} (inclusive). If specified, {{param}} MUST be greater than or equal to {{param|SourcePort}}. A value of -1 indicates that no port range is specified. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "SourcePortExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the rule matches only those packets that match the {{param|SourcePort}} entry (or port range), if specified. If {{true}}, the rule matches all packets except those that match the {{param|SourcePort}} entry (or port range), if specified. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DSCP",
+        "access": "readWrite",
+        "description": "{{object}} criterion. DiffServ codepoint (defined in {{bibref|RFC2474}}). If set to a Class Selector Codepoint (defined in {{bibref|RFC2474}}), all DSCP values that match the first 3 bits will be considered a valid match. A value of -1 indicates this criterion is not used for matching. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 63
+      },
+      {
+        "name": "DSCPExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the rule matches only those packets that match the {{param|DSCP}} entry, if specified. If {{true}}, the rule matchess all packets except those that match the {{param|DSCP}} entry, if specified. This parameter can only be modified if the {{object}} is ''Static'' (as explained in the object description).",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "ConnectionState",
+        "access": "readWrite",
+        "description": "Matches only packets according to the following connection states. {{empty}} indicates this criterion is not used for matching.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "INVALID",
+          "NEW",
+          "RELATED",
+          "ESTABLISHED"
+        ],
+        "version": "2.16"
+      },
+      {
+        "name": "SourceMAC",
+        "access": "readWrite",
+        "description": "Source MAC address. {{empty}} indicates this criterion is not used for matching.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:MACAddress",
+        "version": "2.16"
+      },
+      {
+        "name": "SourceMACExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the rule matches only those packets that match the {{param|SourceMAC}} entry, if specified. If {{true}}, the rule matches all packets except those that match the {{param|SourceMAC}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.16"
+      }
+    ],
+    "description": "Firewall Rule table. Each entry defines a Firewall packet selection rule. The {{param|Target}} parameter defines the action to perform for traffic matching this rule: the packet can be dropped, accepted, rejected or passed to another {{object|#}}. This table MUST NOT contain dynamic Firewall rules associated with {{enum|Stateful|##.Type}} Firewall sessions. All entries are created by the creator of the parent {{object|#}}, as indicated by its {{param|#.Creator}} parameter. {{object}} entries in a {{object|#}} with a {{param|#.Creator}} of {{enum|Defaults|#.Creator}}, {{enum|ACS|#.Creator}}, {{enum|UserInterface|#.Creator}} or (maybe) {{enum|Other|#.Creator}} are referred to as ''Static'' {{object}}s. Whether or not a {{object}} in a {{object|#}} with {{param|#.Creator}} {{enum|Other|#.Creator}} is regarded as ''Static'' is a local matter to the CPE. Some of this object's parameter descriptions refer to whether a {{object}} is ''Static'' when specifying whether or not the parameter value can be modified. For enabled table entries, if {{param|SourceInterface}} is not a valid reference and {{param|SourceAllInterfaces}} is {{false}}, or if {{param|DestInterface}} is not a valid reference and {{param|DestAllInterfaces}} is {{false}}, then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

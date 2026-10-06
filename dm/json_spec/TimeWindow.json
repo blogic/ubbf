@@ -1,0 +1,55 @@
+{
+  "source_file": "tr-181-2-19-1-usp.xml",
+  "path": "TimeWindow.{i}.",
+  "object": {
+    "path": "TimeWindow.{i}.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "5",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "",
+    "parameters": [
+      {
+        "name": "Start",
+        "access": "readOnly",
+        "description": "Start of this time window as an offset in {{units}} after invoking the command. An offset is used in order to avoid a dependence on absolute time.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "End",
+        "access": "readOnly",
+        "description": "End of this time window as an offset in {{units}} after invoking the command. An offset is used in order to avoid a dependence on absolute time.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Mode",
+        "access": "readOnly",
+        "description": "Specifies when within this time window the Agent is permitted to activate the specified firmware image.",
+        "type": "string",
+        "enumerations": [
+          "AnyTime",
+          "Immediately",
+          "WhenIdle",
+          "ConfirmationNeeded"
+        ]
+      },
+      {
+        "name": "UserMessage",
+        "access": "readOnly",
+        "description": "A message that informs the user of a request to activate a new firmware image. The Agent MAY use this message when seeking confirmation from the user, e.g. when {{param|Mode}} is {{enum|ConfirmationNeeded|Mode}}. When there is no need for such a message, it SHOULD be {{empty}} and MUST be ignored.",
+        "type": "string"
+      },
+      {
+        "name": "MaxRetries",
+        "access": "readOnly",
+        "description": "The maximum number of retries for activating the firmware image before regarding the transfer as having failed. Refers only to this time window (each time window can specify its own value). A value of 0 means \u201cNo retries are permitted\u201d. A value of -1 means \u201cthe Agent determines the number of retries\u201d, i.e. that the Agent can use its own retry policy, not that it has to retry forever. Only applicable when the {{param|Mode}} input argument is {{enum|ConfirmationNeeded|Mode}}, otherwise this input argument MUST be ignored.",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 10
+      }
+    ],
+    "description": "The time window(s) that dictate when the Agent activates the firmware image. An Agent MUST be able to accept a request with either one or two {{object}} instances. The time windows MUST NOT overlap, i.e. if there are two time windows, the second window\u2019s Start value has to be greater than or equal to the first window\u2019s End value.",
+    "children": []
+  }
+}

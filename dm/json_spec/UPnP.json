@@ -1,0 +1,77 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.UPnP.Device.",
+  "object": {
+    "path": "Device.UPnP.Device.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables/Disables UPnP support.",
+        "type": "boolean"
+      },
+      {
+        "name": "UPnPMediaServer",
+        "access": "readWrite",
+        "description": "Enables/Disables UPnP Media Server.",
+        "type": "boolean"
+      },
+      {
+        "name": "UPnPMediaRenderer",
+        "access": "readWrite",
+        "description": "Enables/Disables UPnP Media Renderer.",
+        "type": "boolean"
+      },
+      {
+        "name": "UPnPWLANAccessPoint",
+        "access": "readWrite",
+        "description": "Enables/Disables UPnP Wireless Access Point.",
+        "type": "boolean"
+      },
+      {
+        "name": "UPnPQoSDevice",
+        "access": "readWrite",
+        "description": "Enables/Disables UPnP QoS Device.",
+        "type": "boolean"
+      },
+      {
+        "name": "UPnPQoSPolicyHolder",
+        "access": "readWrite",
+        "description": "Enables/Disables UPnP QoS Policy Holder.",
+        "type": "boolean"
+      },
+      {
+        "name": "UPnPIGD",
+        "access": "readWrite",
+        "description": "Enables/Disables UPnP IGD.",
+        "type": "boolean"
+      },
+      {
+        "name": "UPnPDMBasicMgmt",
+        "access": "readWrite",
+        "description": "Enables/Disables UPnP-DM Basic Management.",
+        "type": "boolean"
+      },
+      {
+        "name": "UPnPDMConfigurationMgmt",
+        "access": "readWrite",
+        "description": "Enables/Disables UPnP-DM Configuration Management.",
+        "type": "boolean"
+      },
+      {
+        "name": "UPnPDMSoftwareMgmt",
+        "access": "readWrite",
+        "description": "Enables/Disables UPnP-DM Software Management.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object defines the UPnP devices and UPnP services that are implemented by the CPE.",
+    "children": []
+  }
+}

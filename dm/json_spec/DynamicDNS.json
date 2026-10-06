@@ -1,0 +1,37 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DynamicDNS.",
+  "object": {
+    "path": "Device.DynamicDNS.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ClientNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ServerNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SupportedServices",
+        "access": "readOnly",
+        "description": "List of Dynamic DNS service names that are supported by the CPE.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string"
+      }
+    ],
+    "description": "Properties for Dynamic DNS.",
+    "children": []
+  }
+}

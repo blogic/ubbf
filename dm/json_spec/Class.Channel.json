@@ -1,0 +1,32 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Class.{i}.Channel.{i}.",
+  "object": {
+    "path": "Class.{i}.Channel.{i}.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Channel",
+        "access": "readOnly",
+        "description": "Single channel number of an available channel in the given operating class.",
+        "list": true,
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "Preference",
+        "access": "readOnly",
+        "description": "The preference for this channel, as defined in {{bibref|EasyMesh|17.2.13}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 15
+      }
+    ],
+    "description": "This object contains a table of requested channels and channel preferences {{bibref|EasyMesh|17.2.13}}.",
+    "children": []
+  }
+}

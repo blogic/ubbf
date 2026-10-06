@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-19-1-usp.xml",
+  "path": "Device.Standby.",
+  "object": {
+    "path": "Device.Standby.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "NetworkAware",
+        "access": "readOnly",
+        "description": "Indicates that the device is capable of maintaining a network connection and responding to communications via the network connection while in a standby state.",
+        "type": "boolean"
+      },
+      {
+        "name": "TimerAware",
+        "access": "readOnly",
+        "description": "Indicates that the device is capable of maintaining and responding to timers while in a standby state.",
+        "type": "boolean"
+      }
+    ],
+    "description": "Capabilities of a Device as it pertains to entering a standby state.",
+    "children": []
+  }
+}

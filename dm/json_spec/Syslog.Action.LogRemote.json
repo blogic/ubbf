@@ -1,0 +1,99 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Syslog.Action.{i}.LogRemote.",
+  "object": {
+    "path": "Device.Syslog.Action.{i}.LogRemote.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the LogRemote functionality.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Status of the remote log destination.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Unreachable",
+          "Error"
+        ],
+        "version": "2.19"
+      },
+      {
+        "name": "Address",
+        "access": "readWrite",
+        "description": "Host name or IP address of the remote server.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string"
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "Protocol to be used to deliver the syslog messages to the remote server. Note: This parameter was promoted to readWrite in the Device:2.18 version.",
+        "type": "string",
+        "enumerations": [
+          "TCP",
+          "UDP",
+          "TLS"
+        ]
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "Port number of the remote server.",
+        "default": "514",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Certificate",
+        "access": "readWrite",
+        "description": "Specifies the client certificate that must be presented to the remote server for mutual authentication. This certificate is used to authenticate the client by the remote server, ensuring that the remote server is communicating with a trusted client. The client certificate must be issued by a trusted Certificate Authority (CA) and should match the client's private key. This parameter is applicable only when a TLS session is being used.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.Certificate.",
+          "targetType": "row"
+        },
+        "version": "2.17"
+      },
+      {
+        "name": "CABundle",
+        "access": "readWrite",
+        "description": "Specifies the group of CA certificate(s) that the client must use to validate the certificate presented by the remote server. These CA certificates form a trust chain that the server certificate must match, ensuring that only servers with trusted certificates can establish a connection. This parameter supports multiple CA certificates to accommodate different server certificate issuers. This parameter is applicable only when a TLS session is being used.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.CABundle.",
+          "targetType": "row"
+        },
+        "version": "2.19"
+      },
+      {
+        "name": "PeerVerify",
+        "access": "readWrite",
+        "description": "Ensures authentic and secure connections by validating entity credentials such as certificates or tokens. Only applicable when {{param|Protocol}} is set to {{enum|TLS|Protocol}}. In order to validate a certificate, the entire certificate chain, including the CA certificate, must be valid. If any certificate in the chain is found to be invalid, the syslog service must reject the connection.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object describes the configuration parameters for forwarding syslog messages to remote relays or collectors.",
+    "children": []
+  }
+}

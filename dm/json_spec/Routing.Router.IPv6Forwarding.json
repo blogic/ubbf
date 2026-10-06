@@ -1,0 +1,139 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Routing.Router.{i}.IPv6Forwarding.{i}.",
+  "object": {
+    "path": "Device.Routing.Router.{i}.IPv6Forwarding.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "IPv6ForwardingNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the status of the forwarding entry. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Type",
+        "access": "readWrite",
+        "description": "Specifies the forwarding entry type. Based on {{bibref|RFC8349}}",
+        "default": "Normal",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Normal",
+          "Receive",
+          "Blackhole",
+          "Unreachable",
+          "Prohibit"
+        ],
+        "version": "2.16"
+      },
+      {
+        "name": "DestIPPrefix",
+        "access": "readWrite",
+        "description": "Destination IPv6 prefix. {{empty}} indicates that it matches all destination prefixes (i.e. equivalent to \"::/0\"). All bits to the right of the prefix MUST be zero, e.g. 2001:edff:fe6a:f76::/64. Routes with a 128-bit prefix length (/128) are host routes for a specific IPv6 destination, e.g. 2001:db8:28:2:713e:a426:d167:37ab/128.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPv6Prefix"
+      },
+      {
+        "name": "ForwardingPolicy",
+        "access": "readWrite",
+        "description": "Identifier of a set of classes or flows that have the corresponding {{param}} value as defined in the {{object|###.QoS}} object. A value of -1 indicates no {{param}} is specified. If specified, this forwarding entry is to apply only to traffic associated with the specified classes and flows.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "NextHop",
+        "access": "readWrite",
+        "description": "IPv6 address of the next hop. Only one of {{param}} and {{param|Interface}} SHOULD be configured for a route. {{empty}} indicates no {{param}} is specified. If both are configured, {{param}} and {{param|Interface}} MUST be consistent with each other.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPv6Address"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "{{reference}} Specifies the egress layer 3 interface associated with this entry. Example: ''Device.IP.Interface.1''. Only one of {{param|NextHop}} and {{param}} SHOULD be configured for a route. {{empty}} indicates no {{param}} is specified. If both are configured, {{param|NextHop}} and {{param}} MUST be consistent with each other. For a route that was configured by setting {{param|NextHop}} but not {{param}}, read access to {{param}} MUST return the full hierarchical parameter name for the route's egress interface.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "###.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Origin",
+        "access": "readOnly",
+        "description": "Protocol via which the IPv6 forwarding rule was learned. {{enum}}",
+        "default": "Static",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "DHCPv6",
+          "OSPF",
+          "RA",
+          "RIPng",
+          "3GPP-NAS",
+          "Static"
+        ]
+      },
+      {
+        "name": "ForwardingMetric",
+        "access": "readWrite",
+        "description": "Forwarding metric. A value of -1 indicates this metric is not used.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "ExpirationTime",
+        "access": "readOnly",
+        "description": "The time at which the route will expire, or {{null}} if not known. For an infinite lifetime, the parameter value MUST be 9999-12-31T23:59:59Z. {{param}} is provided by an underlying dynamic routing protocol, e.g. by an {{bibref|RFC4191}} route information option.",
+        "default": "9999-12-31T23:59:59Z",
+        "defaultType": "object",
+        "type": "dateTime"
+      }
+    ],
+    "description": "Layer 3 IPv6 forwarding table. In addition to statically configured routes, this table MUST include dynamic routes learned through layer 3 routing protocols, including RIPng, OSPF, DHCPv6, 3GPP-NAS, and RA. The CPE MAY reject attempts to delete or modify a dynamic route entry. For each incoming packet, the layer 3 forwarding decision is conceptually made as follows: * Only enabled table entries with a matching {{param|ForwardingPolicy}} are considered, i.e. those that either do not specify a {{param|ForwardingPolicy}}, or else specify a {{param|ForwardingPolicy}} that matches that of the incoming packet. * Next, table entries that also have a matching destination prefix are considered, and the matching entry with the longest prefix length is applied to the packet (i.e. the entry with the most specific network). An unspecified destination address is a wild-card and always matches, but with a prefix length of zero. For enabled table entries, if {{param|Interface}} is not a valid reference to an IPv6-capable interface (that is attached to the IPv6 stack), then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}. This object is based on ''inetCidrRouteTable'' from {{bibref|RFC4292}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

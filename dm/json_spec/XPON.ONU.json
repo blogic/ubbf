@@ -1,0 +1,68 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XPON.ONU.{i}.",
+  "object": {
+    "path": "Device.XPON.ONU.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ONUNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this ONU. If disabled, the ONU should prevent user traffic from flowing, suppress notifications, and power down as much as possible.",
+        "type": "boolean"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the ONU as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Version",
+        "access": "readOnly",
+        "description": "This attribute identifies the version of the ONU as defined by the vendor. This parameter is based on ''Version'' from {{bibref|G.988|Section 9.1.1}}.",
+        "type": "string",
+        "maxLength": 14
+      },
+      {
+        "name": "EquipmentID",
+        "access": "readOnly",
+        "description": "This attribute may be used to identify the specific type of ONU. This parameter is based on ''Equipment ID'' from {{bibref|G.988|Section 9.1.2}}.",
+        "type": "string",
+        "maxLength": 20
+      },
+      {
+        "name": "SoftwareImageNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "EthernetUNINumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ANINumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object models one xPON interface or ONU as specified by the ITU based PON standards.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Name"
+      ]
+    }
+  }
+}

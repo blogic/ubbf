@@ -1,0 +1,28 @@
+{
+  "source_file": "tr-181-2-19-1-usp.xml",
+  "path": "Device.LocalAgent.Controller.{i}.TransferCompletePolicy.",
+  "object": {
+    "path": "Device.LocalAgent.Controller.{i}.TransferCompletePolicy.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ResultTypeFilter",
+        "access": "readWrite",
+        "description": "Indicates the transfer results that MUST be included when the USP Agent notifies a USP Controller of file transfers. Transfer results omitted from this list MUST NOT be included when the USP Agent notifies a USP Controller.",
+        "type": "string",
+        "enumerations": [
+          "Success",
+          "Failure",
+          "Both"
+        ]
+      }
+    ],
+    "description": "The policy defined in this object determines the conditions under which the USP Agent notifies a USP Controller, that has an appropriate Subscription, of the completion of file transfers.",
+    "children": []
+  }
+}

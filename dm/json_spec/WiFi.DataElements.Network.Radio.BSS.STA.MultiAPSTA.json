@@ -1,0 +1,36 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.MultiAPSTA.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.MultiAPSTA.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "AssociationTime",
+        "access": "readOnly",
+        "description": "Date and time in UTC when the device was associated. If the instance of this {{object}} is the same as {{object|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.}}, then this parameter is the same as {{param|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.AssociationTime}}. {{deprecated|2.18|because it was essentially the same as {{param|#.LastConnectTime}}.}}",
+        "type": "dateTime"
+      },
+      {
+        "name": "Noise",
+        "access": "readOnly",
+        "description": "An indicator of the average radio noise plus interference power measured on the uplink from the Associated Device (STA) to the Access Point (AP). Encoded as defined for ANPI in {{bibref|802.11-2020|Section 11.10.9.4}}. If the instance of this {{object}} is the same as {{object|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.}}, then this parameter is the same as {{param|Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.Noise}}. {{deprecated|2.18|because it should be the same as {{param|###.Noise}}.}}",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "SteeringHistoryNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The summary of statistics and operations for an individual STA on the Wi-Fi network. The counters contained in {{object}} are all reset on reboot.",
+    "children": []
+  }
+}

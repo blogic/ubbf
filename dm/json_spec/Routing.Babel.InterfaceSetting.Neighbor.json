@@ -1,0 +1,93 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Routing.Babel.InterfaceSetting.{i}.Neighbor.{i}.",
+  "object": {
+    "path": "Device.Routing.Babel.InterfaceSetting.{i}.Neighbor.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "NeighborNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "NeighborAddress",
+        "access": "readOnly",
+        "description": "IP address the neighbor sends packets from.",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "HelloMCastHistory",
+        "access": "readOnly",
+        "description": "The multicast Hello history of whether or not the multicast Hello packets prior to {{param|ExpectedMCastHelloSeqno}} were received. This is a binary sequence where the most recently received Hello is expressed as a \"1\" placed in the left-most bit, with prior bits shifted right (and \"0\" bits placed between prior Hello bits and the most recent Hello bit for any not-received Hellos). This value is displayed using hex digits. See {{bibref|RFC8966|Section A.1}}.",
+        "type": "hexBinary"
+      },
+      {
+        "name": "HelloUCastHistory",
+        "access": "readOnly",
+        "description": "The unicast Hello history of whether or not the unicast Hello packets prior to {{param|ExpectedUCastHelloSeqno}} were received. This is a binary sequence where the most recently received Hello is expressed as a \"1\" placed in the left-most bit, with prior bits shifted right (and \"0\" bits placed between prior Hello bitss and the most recent Hello bit for any not-received Hellos). This value is displayed using hex digits. See {{bibref|RFC8966|Section A.1}}.",
+        "type": "hexBinary"
+      },
+      {
+        "name": "TXCost",
+        "access": "readOnly",
+        "description": "Transmission cost value from the last IHU (\"I Heard You\") packet received from this neighbor, or maximum value (as defined in {{bibref|RFC8966|Section 3.4.2}}) to indicate the IHU hold timer for this neighbor has expired.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "ExpectedMCastHelloSeqno",
+        "access": "readOnly",
+        "description": "Expected multicast Hello sequence number of next Hello to be received from this neighbor. If multicast Hello packets are not expected, or processing of multicast packets is not enabled, this MUST be -1. Note {{bibref|RFC9046}} specifies a 16-bit unsigned integer with NULL value to represent no processed or expected multicast Hello packets.",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "ExpectedUCastHelloSeqno",
+        "access": "readOnly",
+        "description": "Expected unicast Hello sequence number of next Hello to be received from this neighbor. If unicast Hello packets are not expected, or processing of unicast packets is not enabled, this MUST be -1.",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "UnicastHelloSeqno",
+        "access": "readOnly",
+        "description": "The current sequence number in use for unicast Hellos sent to this neighbor. If unicast Hello packets are not being sent, this MUST be -1.",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "UnicastHelloInterval",
+        "access": "readOnly",
+        "description": "The current interval in {{units}} used for unicast Hellos sent to this neighbor.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "RXCost",
+        "access": "readOnly",
+        "description": "Reception cost calculated for this neighbor. This value is usually derived from the Hello history, which may be combined with other data, such as statistics maintained by the link layer. The {{param}} is sent to a neighbor in each IHU (\"I Heard You\") packet. See {{bibref|RFC8966|Section 3.4.3}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Cost",
+        "access": "readOnly",
+        "description": "Link cost is computed from the values maintained by a Babel implementation in its neighbor table as defined in {{bibref|RFC8966|Section3.2.4}}: the statistics kept about the reception of Hellos and the transmission cost computed from received IHU packets. See {{bibref|RFC8966|Section 3.4.3}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      }
+    ],
+    "description": "This object provides parameters related to neighbor devices that Babel packets are received from and sent to.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "NeighborAddress"
+      ]
+    }
+  }
+}

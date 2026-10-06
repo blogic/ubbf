@@ -1,0 +1,74 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.EndPoint.{i}.Profile.{i}.",
+  "object": {
+    "path": "Device.WiFi.EndPoint.{i}.Profile.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ProfileNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this Profile. When there are multiple WiFi EndPoint Profiles, e.g. each instance supports a different SSID and/or different security configuration, this parameter can be used to control which of the instances are currently enabled.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the status of this Profile. {{enum}} The {{enum|Active}} value is reserved for the instance that is actively connected. The {{enum|Available}} value represents an instance that is not currently active, but is also not disabled or in error. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Active",
+          "Available",
+          "Error",
+          "Disabled"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "SSID",
+        "access": "readWrite",
+        "description": "The profile identifier in use by the connection. The SSID is an identifier that is attached to packets sent over the wireless LAN that functions as an ID for joining a particular radio network (BSS).",
+        "type": "string",
+        "maxLength": 32
+      },
+      {
+        "name": "Location",
+        "access": "readWrite",
+        "description": "Location of the profile. This value serves as a reminder from the user, describing the location of the profile. For example: \"Home\", \"Office\", \"Neighbor House\", \"Airport\", etc. An empty string is also valid.",
+        "type": "string"
+      },
+      {
+        "name": "Priority",
+        "access": "readWrite",
+        "description": "The profile Priority defines one of the criteria used by the End Point to automatically select the \"best\" AP when several APs with known profiles are simultaneously available for association. In this situation, the End Point has to select the AP with the higher priority in its profile. If there are several APs with the same priority, providing different SSID or the same SSID, then the wireless end point has to select the APs according to other criteria like signal quality, SNR, etc. 0 is the highest priority.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      }
+    ],
+    "description": "EndPoint Profile table.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SFPs.Mgmt.SFF8472.{i}.",
+  "object": {
+    "path": "Device.SFPs.Mgmt.SFF8472.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "SFF8472NumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The internal name used to identify this SFP instance.",
+        "type": "string"
+      }
+    ],
+    "description": "This object describes an SFP in a cage or the SFF present that can be managed as per SFF-8472 standard.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

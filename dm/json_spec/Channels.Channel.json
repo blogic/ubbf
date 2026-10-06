@@ -1,0 +1,36 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Channels.Channel.{i}.",
+  "object": {
+    "path": "Channels.Channel.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "DestinationMACAddress",
+        "access": "readOnly",
+        "description": "MAC address of the destination node of the link being measured.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "SNR",
+        "access": "readOnly",
+        "description": "The result of an SNR test performed over the channel. It is formatted as a comma-separated list of N/M unsigned integers that represents the result of Signal-to-Noise-Ratio measurement (in {{units}}) averaging in groups of M subcarriers. The number N depends on the bandplan used by the node and corresponds to the OFDM control parameter N of each medium as defined in {{bibref|G.9964}}. The number M corresponds to the parameter {{param|##.SNRGroupLength}}.",
+        "list": true,
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Per-channel G.hn performance monitoring results during the current sample interval. Each table entry contains the results collected from the channel between a G.hn interface (as indicated by {{param|##.DiagnoseMACAddress}}) and a G.hn interface indicated by {{param|DestinationMACAddress}})",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "DestinationMACAddress"
+      ]
+    }
+  }
+}

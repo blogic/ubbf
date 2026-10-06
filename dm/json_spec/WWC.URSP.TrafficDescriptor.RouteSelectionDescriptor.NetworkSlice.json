@@ -1,0 +1,31 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WWC.URSP.{i}.TrafficDescriptor.{i}.RouteSelectionDescriptor.{i}.NetworkSlice.",
+  "object": {
+    "path": "Device.WWC.URSP.{i}.TrafficDescriptor.{i}.RouteSelectionDescriptor.{i}.NetworkSlice.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.14",
+    "parameters": [
+      {
+        "name": "SliceServiceType",
+        "access": "readOnly",
+        "description": "The Slice Service Type (SST). {{enum}} See {{bibref|3GPP-TS.23.501|Clause 5.15.2.2}}.",
+        "type": "dataType:SST",
+        "version": "2.14"
+      },
+      {
+        "name": "SliceDifferentiator",
+        "access": "readOnly",
+        "description": "The Slice differentiator is an optional number used to differentiate network slices with the same SST. See {{bibref|3GPP-TS.23.501|Clause 5.15.2.1}}.",
+        "type": "unsignedInt",
+        "version": "2.14"
+      }
+    ],
+    "description": "Describes a S-NSSAI Information element providing network slice specification. See {{bibref|3GPP-TS.24.501|Clause 9.11.2.8}}",
+    "children": []
+  }
+}

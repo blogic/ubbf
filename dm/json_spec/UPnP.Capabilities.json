@@ -1,0 +1,89 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.UPnP.Device.Capabilities.",
+  "object": {
+    "path": "Device.UPnP.Device.Capabilities.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "UPnPArchitecture",
+        "access": "readOnly",
+        "description": "Numeric value indicating the major version of the supported UPnP architecture. If UPnP 1.1 is supported the value is 1. If UPnP 2.0 is supported the value is 2. A value of 0 indicates no UPnP support.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UPnPArchitectureMinorVer",
+        "access": "readOnly",
+        "description": "Numeric value indicating the minor version of the supported UPnP architecture. If UPnP 1.1 is supported the value is 1. If UPnP 2.0 is supported the value is 0. If {{param|UPnPArchitecture}} is 0 then this parameter SHOULD be ignored.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UPnPMediaServer",
+        "access": "readOnly",
+        "description": "Numeric value indicating the supported revision for UPnP Media Server. A value of 0 indicates no support.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UPnPMediaRenderer",
+        "access": "readOnly",
+        "description": "Numeric value indicating the supported revision for UPnP Media Renderer. A value of 0 indicates no support.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UPnPWLANAccessPoint",
+        "access": "readOnly",
+        "description": "Numeric value indicating the supported revision for UPnP Wireless Access Point. A value of 0 indicates no support.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UPnPBasicDevice",
+        "access": "readOnly",
+        "description": "Numeric value indicating the supported revision for UPnP Basic Device. A value of 0 indicates no support.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UPnPQoSDevice",
+        "access": "readOnly",
+        "description": "Numeric value indicating the supported revision for UPnP Qos Device. A value of 0 indicates no support.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UPnPQoSPolicyHolder",
+        "access": "readOnly",
+        "description": "Numeric value indicating the supported revision for UPnP Qos Policy Holder. A value of 0 indicates no support.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UPnPIGD",
+        "access": "readOnly",
+        "description": "Numeric value indicating the supported revision for UPnP IGD. A value of 0 indicates no support.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UPnPDMBasicMgmt",
+        "access": "readOnly",
+        "description": "Numeric value indicating the supported revision for UPnP-DM Basic Management. A value of 0 indicates no support.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UPnPDMConfigurationMgmt",
+        "access": "readOnly",
+        "description": "Numeric value indicating the supported revision for UPnP-DM Configuration Management. A value of 0 indicates no support.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UPnPDMSoftwareMgmt",
+        "access": "readOnly",
+        "description": "Numeric value indicating the supported revision for UPnP-DM Software Management. A value of 0 indicates no support.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object defines what UPnP capabilities this device has.",
+    "children": []
+  }
+}

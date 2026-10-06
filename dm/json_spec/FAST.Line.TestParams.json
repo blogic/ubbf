@@ -1,0 +1,105 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FAST.Line.{i}.TestParams.",
+  "object": {
+    "path": "Device.FAST.Line.{i}.TestParams.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "SNRGds",
+        "access": "readOnly",
+        "description": "Reports the number of sub-carriers in any one sub-carrier group used to represent the downstream SNR(f) values. Valid values are 1, 2, 4, and 8. Note: In ITU-T G.9701-2014, the only valid value is G = 1. See clause 7.10.8.2 ITU-T Recommendation {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SNRGus",
+        "access": "readOnly",
+        "description": "Reports the number of sub-carriers in any one sub-carrier group used to represent the upstream SNR(f) values. Valid values are 1, 2, 4, and 8. Note: In ITU-T G.9701-2014, the only valid value is G = 1. See clause 7.10.8.5 ITU-T Recommendation {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SNRpsds",
+        "access": "readOnly",
+        "description": "{{list}} Reports the downstream SNR(f) values. A special value indicates that no measurement could be done for this sub-carrier group because it is out of the downstream MEDLEY set or its transmit power is zero. The number of elements will depend on the value of SNRGds. Interpretation of the values is as defined in clause 11.4.1.2.2.of ITU-T Rec. {{bibref|G.9701}}. Note: See clause 7.10.8.3 of ITU-T Recommendation {{bibref|G.997.2}}.",
+        "list": true,
+        "listMaxLength": 2047,
+        "type": "int",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SNRpsus",
+        "access": "readOnly",
+        "description": "{{list}} Reports the upstream SNR(f) values. A special value indicates that no measurement could be done for this sub-carrier group because it is out of the downstream MEDLEY set or its transmit power is zero. The number of elements will depend on the value of SNRGds. Interpretation of the values is as defined in clause 11.4.1.2.2.of ITU-T Rec. {{bibref|G.9701}}. Note: See clause 7.10.8.6 of ITU-T Recommendation {{bibref|G.997.2}}.",
+        "list": true,
+        "listMaxLength": 2047,
+        "type": "string",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SNRMTds",
+        "access": "readOnly",
+        "description": "Reports the number of symbols used to measure the downstream SNR(f) values. The valid values 0..65535. Note: See clause 7.10.8.1 of ITU-T Recommendation {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SNRMTus",
+        "access": "readOnly",
+        "description": "Reports the number of symbols used to measure the upstream SNR(f) values. The valid values 0..65535. Note: See clause 7.10.8.4 of ITU-T Recommendation {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ACTINP",
+        "access": "readOnly",
+        "description": "Reports the actual INP against SHINE as defined in clause 11.4.1.1.7/{{bibref|G.9701}}. A special value indicates an actual INP against SHINE of 2047 symbols or higher. The valid values are 0..2046 and 2047 is the special value. Note: See ITU-T Recommendation {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "NFEC",
+        "access": "readOnly",
+        "description": "Reports the DTU FEC codeword length (expressed in 1 byte unit) as defined in clause 9.3/{{bibref|G.9701}}. The valid range is 32..255. Note: See clause 7.11.4.1 ITU-T Recommendation {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "RFEC",
+        "access": "readOnly",
+        "description": "Reports the DTU FEC codeword redundancy as defined in clause 9.3/{{bibref|G.9701}}. Note: See ITU-T Recommendation {{bibref|G.997.2}}.",
+        "type": "int",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "UpstreamCurrRate",
+        "access": "readOnly",
+        "description": "Reports the current physical layer aggregate data rate (expressed in {{units}}) of the upstream FAST as defined in clause 11.4.1.1.1/{{bibref|G.9701}}. The current physical layer aggregate data rate (expressed in Kbps) of the upstream FAST connection. The valid values are 0..4294967295(0 to 232-1 kbit/s).",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "DownstreamCurrRate",
+        "access": "readOnly",
+        "description": "Reports the current physical layer aggregate data rate (expressed in {{units}}) of the upstream FAST as defined in clause 11.4.1.1.1/{{bibref|G.9701}}. The current physical layer aggregate data rate (expressed in Kbps) of the downstream FAST connection. The valid values are 0..4294967295(0 to 232-1 kbit/s).",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ACTINPREIN",
+        "access": "readOnly",
+        "description": "Reports the actual INP against REIN as defined in clause 11.4.1.1.8/{{bibref|G.9701}}. A special value indicates an actual INP against REIN of 63 symbols or higher. The valid range is 0..62 symbols, and 63 is the special value.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "This object contains the FAST line test parameters that are available during the L0 (i.e., Showtime) state.",
+    "children": []
+  }
+}

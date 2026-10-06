@@ -1,0 +1,76 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.BASAPM.MeasurementEndpoint.{i}.",
+  "object": {
+    "path": "Device.BASAPM.MeasurementEndpoint.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "MeasurementEndpointNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} instance. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "MeasurementAgent",
+        "access": "readWrite",
+        "description": "{{reference|a {{object|##.LMAP.MeasurementAgent}} object that is associated with this measurement endpoint.}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.LMAP.MeasurementAgent.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "DeviceOwnership",
+        "access": "readWrite",
+        "description": "This parameter describes the ownership of the device that hosts the measurement endpoint. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "ISP",
+          "Customer"
+        ]
+      },
+      {
+        "name": "OperationalDomain",
+        "access": "readWrite",
+        "description": "This parameter describes the operational domain for this measurement endpoint",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "InternetDomain",
+        "access": "readWrite",
+        "description": "The top level Internet domain used to identify this measurement endpoint.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "UseMeasurementEndpointInReports",
+        "access": "readWrite",
+        "description": "If the value of this parameter is {{false}} then the Measurement Endpoint MUST not be included in measurement reports.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object represents the measurement endpoint that provides additional contextual information regarding the measurement agent.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

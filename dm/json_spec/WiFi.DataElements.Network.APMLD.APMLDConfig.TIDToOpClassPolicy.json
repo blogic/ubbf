@@ -1,0 +1,58 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.APMLDConfig.TIDToOpClassPolicy.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.APMLDConfig.TIDToOpClassPolicy.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "TIDToOpClassPolicyNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "This parameter indicates whether the TID-to-Link mapping entry is enabled for Multi-Link Operation (MLO) on the access point (AP). When set to \"true\", the mapping between the specified Traffic Identifier (TID), direction, and required Operating Class will be active, and the TID-to-Link mapping policy will be applied during Multi-Link operations. When set to \"false\", the entry will be ignored.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "TID",
+        "access": "readWrite",
+        "description": "The traffic identifier (TID) for this mapping. This {{param}} is a unique key for this table.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "OpClass",
+        "access": "readWrite",
+        "description": "{{list}} The Operating class of an available channel, from {{bibref|802.11ax|Table E-4}}. The TID can be mapped to any link using a radio with a current operating class within this list.",
+        "list": true,
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "Direction",
+        "access": "readWrite",
+        "description": "The direction of the traffic flow from the perspective the APMLD. {{enum}} This {{param}} is a unique key for this table.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down"
+        ]
+      }
+    ],
+    "description": "Table of Traffic Identifier (TID) to Operating Class to be used as a policy when configuring TID-to-Link Mapping in the Multi-Link Operation (MLO) capable access point (AP). Each table entry describes the mapping between a particular TID and direction and the required current Operating Class for any link to be used for this TID when constructing a TID-to-Link Map {{bibref|EasyMesh|Section 20.2.8}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "TID",
+        "Direction"
+      ]
+    }
+  }
+}

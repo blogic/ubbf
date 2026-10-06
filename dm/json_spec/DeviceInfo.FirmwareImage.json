@@ -1,0 +1,73 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.FirmwareImage.{i}.",
+  "object": {
+    "path": "Device.DeviceInfo.FirmwareImage.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "FirmwareImageNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "Firmware/software image name. Descriptive text of the image or filename. The value of {{param}} is {{empty}} if {{param|Status}} is anything other than {{enum|Active|Status}}, {{enum|Available|Status}}, {{enum|InstallationFailed|Status}}, or {{enum|ActivationFailed|Status}}.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Version",
+        "access": "readOnly",
+        "description": "A string identifying the version of the firmware image represented by this {{object}}. Whenever this firmware image is active (ie, the device has booted this firmware image), the value of the {{param|#.SoftwareVersion}} parameter MUST be the same as the value contained in this parameter. To allow version comparisons, this element SHOULD be in the form of dot-delimited integers, where each successive integer represents a more minor category of variation. For example, 3.0.21 where the components mean: ''Major.Minor.Build''. The value of {{param}} is {{empty}} if {{param|Status}} is anything other than {{enum|Available|Status}}, {{enum|InstallationFailed|Status}}, or {{enum|ActivationFailed|Status}}.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Available",
+        "access": "readWrite",
+        "description": "Specifies whether or not this particular firmware image can be used by the Agent. An Agent will only attempt to boot this particular firmware image if this parameter value is set to {{true}}. This value MUST be set to {{true}} by the device whenever a new firmware image is installed. This value cannot be set to {{false}} if the firmware image is active or is referenced by the {{param|#.BootFirmwareImage}} parameter. Firmware image instances cannot be deleted, so a Controller MAY use this parameter to subsequently mark a particular firmware as being invalid, which will prevent the Agent from attempting to boot it.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Status of the firmware image, as determined by the Agent. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "NoImage",
+          "Active",
+          "Downloading",
+          "Validating",
+          "Available",
+          "DownloadFailed",
+          "ValidationFailed",
+          "InstallationFailed",
+          "ActivationFailed"
+        ]
+      },
+      {
+        "name": "BootFailureLog",
+        "access": "readOnly",
+        "description": "If the Agent is unable to boot into this firmware image, when specified, the Agent can use this parameter to record some information as to why the boot failed. If the Agent successfully boots into this firmware, the value of this parameter SHOULD be {{empty}}. When a new firmware image is installed into this object instance, this parameter MUST be cleared. The length of this string is defined as implementation-specific by the Agent.",
+        "type": "string"
+      }
+    ],
+    "description": "Top-level object for mapping firmware images. This is a static table \u2013 the number of object instances in this table is defined by the firmware that is currently running.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

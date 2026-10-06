@@ -1,0 +1,87 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MQTT.Broker.{i}.Bridge.{i}.Subscription.{i}.",
+  "object": {
+    "path": "Device.MQTT.Broker.{i}.Bridge.{i}.Subscription.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "SubscriptionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Setting Enable to {{true}} activates the handling of this subscription instance. In case of incoming directions ({{param|Direction}} is either {{enum|in|Direction}} or {{enum|both|Direction}}) the topic is subscribed over the bridge at the remote MQTT broker with a MQTT SUBSCRIBE message if {{param}} is set to {{true}} or unsubscribed from the remote MQTT broker with a MQTT UNSUBSCRIBE message if the value is set to {{false}}. The actual status of the subscription is indicated with {{param|Status}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the status of this subscription. {{enum}} The {{enum|Enabled}} value indicates that the this subscription is active. In case of incoming directions ({{param|Direction}} is either {{enum|in|Direction}} or {{enum|both|Direction}}) the topic was successfully subscribed with the remote MQTT broker. The {{enum|Disabled}} value indicates that this subscription is not used. The {{enum|Error}} value indicates that an error occurred (e.g. an subscription could not be made with the remote MQTT broker) and the subscription is not in use.",
+        "type": "string",
+        "enumerations": [
+          "Enabled",
+          "Disabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "Topic",
+        "access": "readWrite",
+        "description": "Name of the subscribed topic. Topic names may contain wildcards according to the rules specified in {{bibref|MQTT311|section Appendix A}}, {{bibref|MQTT311|section 4.7}} or {{bibref|MQTT50|4.7}}.",
+        "type": "string",
+        "maxLength": 65535
+      },
+      {
+        "name": "Direction",
+        "access": "readWrite",
+        "description": "The direction of the subscription. {{enum}}.",
+        "type": "string",
+        "enumerations": [
+          "out",
+          "in",
+          "both"
+        ]
+      },
+      {
+        "name": "QoS",
+        "access": "readWrite",
+        "description": "The MQTT QoS level assigned with the subscription (see {{bibref|MQTT311|section 4.1}}, {{bibref|MQTT311|section 4.3}}) or {{bibref|MQTT50|4.3}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 2
+      },
+      {
+        "name": "LocalPrefix",
+        "access": "readWrite",
+        "description": "The local prefix is used for remapping received topics to the local topics of the MQTT broker and to select the topics to be sent over bridge to the remote MQTT broker. * In incoming direction ({{param|Direction}} is either {{enum|in|Direction}} or {{enum|both|Direction}}): : For remote topics received over the bridge the MQTT broker adds the LocalPrefix in front of the received topic, before processing it. :: '' '' : ''Example:'' :: Topic is \"/bus/+\", LocalPrefix is \"/local\", Direction is \"in\" :: MQTT broker receives message with topic \"/bus/tr181\" over bridge => MQTT broker uses topic \"/local/bus/tr181\" for internal processing * In outgoing direction ({{param|Direction}} is either {{enum|out|Direction}} or {{enum|both|Direction}}): : For selection of the topics to be sent over the bridge the MQTT broker uses the combination of {{param}} and {{param|Topic}} to match the topics to be sent over bridge, and removes the {{param}} from the selected topic before sending it over the bridge. :: '' '' : ''Example:'' :: Topic is \"/bus/+\", LocalPrefix is \"/local\", Direction is \"out\" :: MQTT broker receives message with topic \"/local/bus/tr181\" from a MQTT client => MQTT broker sends topic \"/bus/tr181\" to remote MQTT broker",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "RemotePrefix",
+        "access": "readWrite",
+        "description": "The remote prefix is used for remapping topics to the remote MQTT broker topic lists. * In incoming direction ({{param|Direction}} is either {{enum|in|Direction}} or {{enum|both|Direction}}): : For remote topics received over the bridge the MQTT broker removes the remote prefix topic from the received topic (before handling the {{param|LocalPrefix}}), before processing it. :: '' '' : ''Example:'' :: Topic is \"/bus/+\", LocalPrefix is \"/local\", RemotePrefix is \"/remote\", Direction is \"in\" :: MQTT broker receives message with topic \"/remote/bus/tr181\" over bridge => MQTT broker uses topic \"/local/bus/tr181\" for internal processing : During activation of the bridge, the MQTT broker prepends the {{param|Topic}} with {{param}} topic and subscribes to the remote MQTT broker with it, in order to receive all applicable remote topics. :: '' '' : ''Example:'' :: Topic is \"/bus/+\", RemotePrefix is \"/remote\", Direction is \"in\" :: MQTT broker sends a subscription to the remote MQTT broker with the topic \"/remote/bus/+\". * In outgoing direction ({{param|Direction}} is either {{enum|out|Direction}} or {{enum|both|Direction}}): : For all topics to be sent over the bridge ({{param|Direction}} is either {{enum|out|Direction}} or {{enum|both|Direction}}), the RemotePrefix will be prepended to the topic after the {{param|LocalPrefix}} has been processed and before sending the message over the bridge. :: '' '' : ''Example:'' :: Topic is \"/bus/+\", LocalPrefix is \"/local\", RemotePrefix is \"/remote\" Direction is \"out\" :: MQTT broker receives message with topic \"/local/bus/tr181\" from a MQTT client => MQTT broker sends topic \"/remote/bus/tr181\" to remote MQTT broker",
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "List of MQTT subscriptions handled over the bridge.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

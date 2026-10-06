@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PDU.",
+  "object": {
+    "path": "Device.PDU.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.14",
+    "parameters": [
+      {
+        "name": "SessionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}} {{deprecated|2.19|because it is no longer a top level object}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The logical connection between the 5G-RG and data network is the Protocol Data Unit (PDU). The Device.PDU subtree describes each PDU sessions properties together with the QoS rules specific to that PDU session. {{deprecated|2.19|because it is no longer a top level object}}",
+    "children": []
+  }
+}

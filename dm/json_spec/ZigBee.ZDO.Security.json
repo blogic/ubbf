@@ -1,0 +1,46 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.ZigBee.ZDO.{i}.Security.",
+  "object": {
+    "path": "Device.ZigBee.ZDO.{i}.Security.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "TrustCenterAddress",
+        "access": "readOnly",
+        "description": "Specifies the IEEE address of a special device trusted by devices within a ZigBee network to distribute keys for the purpose of network and end-to-end application configuration management.",
+        "type": "dataType:IEEE_EUI64"
+      },
+      {
+        "name": "SecurityLevel",
+        "access": "readOnly",
+        "description": "Specifies how an outgoing frame is to be secured, how an incoming frame purportedly has been secured; it also indicates whether or not the payload is encrypted and to what extent data authenticity over the frame is provided, as reflected by the length of the message integrity code (MIC). {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "None",
+          "MIC-32",
+          "MIC-64",
+          "MIC-128",
+          "ENC",
+          "ENC-MIC-32",
+          "ENC-MIC-64",
+          "ENC-MIC-128"
+        ]
+      },
+      {
+        "name": "TimeOutPeriod",
+        "access": "readOnly",
+        "description": "The period of time, in {{units}}, that this ZigBee device will wait for an expected security protocol frame.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      }
+    ],
+    "description": "The {{object}} object provides the configuration capabilities needed to perform the Security Management functionality defined in {{bibref|ZigBee2007|section 4 Security Management}}.",
+    "children": []
+  }
+}

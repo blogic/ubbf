@@ -1,0 +1,54 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "APMLDNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "MLDMACAddress",
+        "access": "readOnly",
+        "description": "The Multi-Link Device (MLD) MAC Address of the MLO Capable access point (AP). {{bibref|EasyMesh}} Source: Agent AP MLD Configuration TLV.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "TIDLinkMapNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AffiliatedAPNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "STAMLDNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LinkToOpClassMapNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.19"
+      }
+    ],
+    "description": "Table of Multi-Link Operation (MLO) capable Access Points (APs) on this EasyMesh Agent or Single AP device. {{bibref|EasyMesh}} source: Agent AP MLD Configuration TLV.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "MLDMACAddress"
+      ]
+    }
+  }
+}

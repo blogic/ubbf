@@ -1,0 +1,54 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv4.Server.Pool.{i}.StaticAddress.{i}.",
+  "object": {
+    "path": "Device.DHCPv4.Server.Pool.{i}.StaticAddress.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "StaticAddressNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the StaticAddress table entry. Disabling an entry does not return the IP address to the pool.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Chaddr",
+        "access": "readWrite",
+        "description": "Hardware address (MAC address) of the physical interface of the DHCP client.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "Yiaddr",
+        "access": "readWrite",
+        "description": "IPv4 address to be assigned by the DHCP server to the DHCP client with the specified hardware address (MAC address).",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPv4Address"
+      }
+    ],
+    "description": "DHCP static address table. Entries in this table correspond to what {{bibref|RFC2131}} calls \"manual allocation\", where a client's IP address is assigned by the network administrator, and DHCP is used simply to convey the assigned address to the client. Each instance of this object specifies a hardware address (MAC address) and an IP address within the pool. When serving from this pool, this IP address MUST, if available, be assigned to the DHCP client with this hardware address, and MUST NOT be assigned to any other client. Note that it is possible that an IP address in this table is present in one or more of the other conditional serving pools, in which case it is possible that such an address will be assigned to a different client.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

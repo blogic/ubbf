@@ -1,0 +1,79 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.TrustedElements.SIM.{i}.Profile.{i}.",
+  "object": {
+    "path": "Device.TrustedElements.SIM.{i}.Profile.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ProfileNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "Indicates the profile name.",
+        "type": "string"
+      },
+      {
+        "name": "IMSI",
+        "access": "readOnly",
+        "description": "International Mobile Subscriber Identity represented as a string with either 14 or 15 digits (digits 0-9). The first 3 digits are the mobile country code (MCC), which are followed by the mobile network code (MNC), either 2 digits (European standard) or 3 digits (North American standard), followed by the mobile subscription identification number (MSIN).",
+        "type": "string",
+        "minLength": 14,
+        "maxLength": 15,
+        "pattern": "[0-9]{14,15}"
+      },
+      {
+        "name": "ICCID",
+        "access": "readOnly",
+        "description": "Indicates the profile ICCID.",
+        "type": "string"
+      },
+      {
+        "name": "State",
+        "access": "readOnly",
+        "description": "Indicates the profile state.",
+        "type": "string",
+        "enumerations": [
+          "Active",
+          "Inactive"
+        ]
+      },
+      {
+        "name": "Class",
+        "access": "readOnly",
+        "description": "Indicates the profile class.",
+        "type": "string",
+        "enumerations": [
+          "Provisioning",
+          "Test",
+          "Operational",
+          "Unknown"
+        ]
+      },
+      {
+        "name": "GID1",
+        "access": "readOnly",
+        "description": "Differentiate e.g. different tariffs of SIM card, derive APNs etc. (as ASCII Hex dump)",
+        "type": "string"
+      }
+    ],
+    "description": "Profile table for SIM.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

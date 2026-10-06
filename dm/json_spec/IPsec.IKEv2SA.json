@@ -1,0 +1,129 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IPsec.IKEv2SA.{i}.",
+  "object": {
+    "path": "Device.IPsec.IKEv2SA.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "IKEv2SANumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the IKEv2 SA.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Tunnel",
+        "access": "readOnly",
+        "description": "The associated {{object|#.Tunnel}} instance. {{reference}} Note that {{param}} is a unique key, i.e only one {{object}} instance is associated with a given {{object|#.Tunnel}} instance. During rekeying {{bibref|RFC5996|Section 2.8}}, a new IKEv2 SA is created and inherits the existing IKEv2 SA's child SAs, then the old IKEv2 SA is deleted. From the management point of view the new and old IKEv2 SAs are the same SA and MUST be modeled using the same {{object}} instance.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Tunnel.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "LocalAddress",
+        "access": "readOnly",
+        "description": "The local IP address that this IKEv2 SA was negotiated with. This is assigned via IKEv2 and will also be available via the associated {{object|#.Tunnel}}'s {{param|#.Tunnel.{i}.TunnelInterface}} {{object|##.IP.Interface.{i}.IPv4Address}} or {{object|##.IP.Interface.{i}.IPv6Address}} table (as appropriate).",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "RemoteAddress",
+        "access": "readOnly",
+        "description": "The IP address of the peer that this IKEv2 SA was negotiated with. This will be the IP address of one of the security gateways configured via {{param|#.Profile.{i}.RemoteEndpoints}}.",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "EncryptionAlgorithm",
+        "access": "readOnly",
+        "description": "The encryption algorithm applied to traffic carried by this IKEv2 SA. This will be one of the {{param|#.Profile.{i}.IKEv2AllowedEncryptionAlgorithms}} from the {{object|#.Profile}} instance via which this IKEv2 SA was created.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "EncryptionKeyLength",
+        "access": "readOnly",
+        "description": "The length of the encryption key in {{units}} used for the algorithm specified in the {{param|EncryptionAlgorithm}} parameter. The value is 0 if the key length is implicit in the specified algorithm or there is no encryption applied.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PseudoRandomFunction",
+        "access": "readOnly",
+        "description": "The pseudo-random function used by this IKEv2 SA. This will be one of the {{param|#.Profile.{i}.IKEv2AllowedPseudoRandomFunctions}} from the {{object|#.Profile}} instance via which this IKEv2 SA was created.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "IntegrityAlgorithm",
+        "access": "readOnly",
+        "description": "The integrity algorithm applied to the traffic carried by this IKEv2 SA. This will be one of the {{param|#.Profile.{i}.IKEv2AllowedIntegrityAlgorithms}} from the {{object|#.Profile}} instance via which this IKEv2 SA was created.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "DiffieHellmanGroupTransform",
+        "access": "readOnly",
+        "description": "The Diffie-Hellman Group used by this IKEv2 SA. This will be one of the {{param|#.Profile.{i}.IKEv2AllowedDiffieHellmanGroupTransforms}} from the {{object|#.Profile}} instance via which this IKEv2 SA was created.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "CreationTime",
+        "access": "readOnly",
+        "description": "When this IKEv2 SA was set up.",
+        "type": "dateTime"
+      },
+      {
+        "name": "NATDetected",
+        "access": "readOnly",
+        "description": "Whether NAT traversal is supported by the device and, if so, whether a NAT was detected.",
+        "type": "string",
+        "enumerations": [
+          "None",
+          "Local",
+          "Remote",
+          "Unsupported"
+        ]
+      },
+      {
+        "name": "ReceivedCPAttrNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ChildSANumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Represents an IKEv2 Security Association (SA), corresponding to an IKEv2 session. Instances are automatically created and deleted as IKEv2 SAs are created and deleted.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Tunnel"
+      ]
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.VendorLogFile.{i}.",
+  "object": {
+    "path": "Device.DeviceInfo.VendorLogFile.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "VendorLogFileNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "Name of the log file. Typically this will be the full file system path, but provided that it is guaranteed to be unique across current and future log files, it MAY be a shorter name derived from the file system path, or be derived via another mechanism.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "MaximumSize",
+        "access": "readOnly",
+        "description": "The maximum size of the log file in {{units}}. If the device doesn't know the maximum file size then {{param}} will be 0.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Persistent",
+        "access": "readOnly",
+        "description": "When {{true}}, the log file contents are preserved across a device reboot. When {{false}}, the log file contents will be purged when the device is rebooted.",
+        "type": "boolean"
+      }
+    ],
+    "description": "Each table entry represents a Vendor Log File. This table of log files is informational only and does not allow the Controller to operate on these files in any way.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

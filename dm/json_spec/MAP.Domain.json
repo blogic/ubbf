@@ -1,0 +1,140 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MAP.Domain.{i}.",
+  "object": {
+    "path": "Device.MAP.Domain.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "DomainNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the MAP domain.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the MAP domain. The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "TransportMode",
+        "access": "readWrite",
+        "description": "The transport mode to use. Corresponds to the {{bibref|RFC7598}} ''S46_CONT_MAPE'' and ''S46_CONT_MAPT'' container options.",
+        "default": "Translation",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Encapsulation",
+          "Translation"
+        ]
+      },
+      {
+        "name": "WANInterface",
+        "access": "readWrite",
+        "description": "The IP interface with which this MAP domain is associated. This will always be a NAT-ted upstream (WAN) interface. The ''End-user IPv6 prefix'' {{param|IPv6Prefix}} is one of this IP interface's prefixes. The ''MAP IPv6 address'' is derived from the ''End-user IPv6 prefix'' and is one of this IP interface's IP addresses, with an {{param|##.IP.Interface.{i}.IPv6Address.{i}.Origin}} of {{enum|MAP|##.IP.Interface.{i}.IPv6Address.{i}.Origin}}.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "IPv6Prefix",
+        "access": "readWrite",
+        "description": "The MAP domain's ''End-user IPv6 prefix''. This MUST reference one of {{param|WANInterface}}'s prefixes. If the Controller configures this prefix directly, the CPE MUST use the Controller-configured prefix. Otherwise, the CPE MUST select one of {{param|WANInterface}}'s prefixes; the selected prefix will typically have {{param|##.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} = {{enum|PrefixDelegation|##.IP.Interface.{i}.IPv6Prefix.{i}.Origin}}.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.IP.Interface.{i}.IPv6Prefix.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "BRIPv6Prefix",
+        "access": "readWrite",
+        "description": "The MAP Border Relay (BR) address or prefix. * For MAP-E this is the BR address and therefore MUST be a /128 {{bibref|RFC7597}}. Note this address can be an IPv6 anycast address. This address corresponds to the {{bibref|RFC7598}} ''OPTION_S46_BR'' (Border Relay) option. * For MAP-T this is the BR prefix {{bibref|RFC7599}}. This address prefix corresponds to the {{bibref|RFC7598}} ''OPTION_S46_DMR'' (Default Mapping Rule) option. Note: There will be a corresponding {{object|##.Routing.Router.{i}.IPv4Forwarding}} default rule.",
+        "type": "dataType:IPv6Prefix"
+      },
+      {
+        "name": "DSCPMarkPolicy",
+        "access": "readWrite",
+        "description": "DSCP with which to mark the outer IP header for traffic that is associated with this MAP domain. Downstream packets are never re-marked. Automatic DSCP marking behavior is a local matter to the device, possibly influenced by other Broadband Forum standards that it supports. * A value of -1 indicates copy from the incoming packet. * A value of -2 indicates automatic marking of DSCP.",
+        "type": "int",
+        "minInclusive": -2,
+        "maxInclusive": 63
+      },
+      {
+        "name": "PSIDOffset",
+        "access": "readWrite",
+        "description": "''Port-set ID'' (PSID) offset in {{units}}. The number of Port-sets is 2^{{param}}^. Corresponds to the {{bibref|RFC7598}} ''S46_PORTPARAMS'' (Port Parameters) option's ''offset'' field. {{deprecated|2.12|because details changed between drafting this data model and the RFC being published. This parameter has been moved to the proper location within the {{object|Rule.{i}.}} object}} {{obsoleted|2.14-2.17}} {{deleted|2.18}}",
+        "default": "6",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 15
+      },
+      {
+        "name": "PSIDLength",
+        "access": "readWrite",
+        "description": "The length in {{units}} of the ''Port-set id'' (PSID) configured in the {{param|PSID}} parameter. Corresponds to the {{bibref|RFC7598}} ''S46_PORTPARAMS'' (Port Parameters) option's ''PSID-len'' field. {{deprecated|2.12|because details changed between drafting this data model and the RFC being published. This parameter has been moved to the proper location within the {{object|Rule.{i}.}} object}} {{obsoleted|2.14-2.17}} {{deleted|2.18}}",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 16
+      },
+      {
+        "name": "PSID",
+        "access": "readWrite",
+        "description": "''Port-set ID'' (PSID) to use in preference to the value extracted from the ''Embedded Address'' (EA) bits. Only the high order {{param|PSIDLength}} bits of the {{param}} value are used, so the parameter is ignored when {{param|PSIDLength}} is zero. Corresponds to the {{bibref|RFC7598}} ''S46_PORTPARAMS'' (Port Parameters) option's ''PSID'' field. {{deprecated|2.12|because details changed between drafting this data model and the RFC being published. This parameter has been moved to the proper location within the {{object|Rule.{i}.}} object}} {{obsoleted|2.14-2.17}} {{deleted|2.18}}",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "IncludeSystemPorts",
+        "access": "readWrite",
+        "description": "Whether to include low-numbered (system) ports in the Port-sets. Normally ports in the range [0:2^(16-{{param|PSIDOffset|deleted}})^-1] are excluded, e.g. for the default {{param|PSIDOffset|deleted}} value of 6, ports [0:1023] are not included in the Port-sets. This parameter is related to {{bibref|RFC7597}}'s ''N'', which is defined as ''the number of ports (e.g., 1024) excluded from the lower end of the range''. The parameter is relevant only when {{param|PSIDOffset|deleted}} is 0; {{false}} corresponds to ''N=1024'' and {{true}} corresponds to ''N=0''. {{deprecated|2.15|because details changed between drafting this data model and the RFC being published. This parameter has been moved to the proper location within the {{object|Rule.{i}.}} object}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "RuleNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "MAP domain settings {{bibref|RFC7597}} {{bibref|RFC7599}}. Each instance models a MAP domain. MAP supports two transport modes, both of which use NAPT44 (modified to use a restricted port range): * MAP-E ({{param|TransportMode}} = {{enum|Encapsulation|TransportMode}}) uses an IPv4-in-IPv6 tunnel. * MAP-T ({{param|TransportMode}} = {{enum|Translation|TransportMode}}) uses stateless NAT64. Note: There is an n:1 relationship between a MAP domain and the associated {{param|WANInterface}}, i.e. in theory multiple MAP domains can be associated with a single WAN IP interface (each domain would have its own ''End-user IPv6 prefix'' and ''MAP IPv6 address''). Note: The {{object}} table includes unique key parameters that are strong references. If a strongly referenced object is deleted, the CPE will set the referencing parameter to {{empty}}. However, doing so under these circumstances might cause the updated {{object}} row to then violate the table's unique key constraint; if this occurs, the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and disable the offending {{object}} row.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

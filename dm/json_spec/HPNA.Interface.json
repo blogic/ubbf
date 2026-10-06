@@ -1,0 +1,225 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.HPNA.Interface.{i}.",
+  "object": {
+    "path": "Device.HPNA.Interface.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "InterfaceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the interface. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}. Because the interface includes layer 1, the {{enum|LowerLayerDown}} value SHOULD never be used.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the interface as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}. Note: Since {{object}} is a layer 1 interface, it is expected that {{param}} will not be used.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Upstream",
+        "access": "readOnly",
+        "description": "Indicates whether the interface points towards the Internet ({{true}}) or towards End Devices ({{false}}). For example: * For an Internet Gateway Device, {{param}} will be {{true}} for all WAN interfaces and {{false}} for all LAN interfaces. * For a standalone WiFi Access Point that is connected via Ethernet to an Internet Gateway Device, {{param}} will be {{true}} for the Ethernet interface and {{false}} for the WiFi Radio interface. * For an End Device, {{param}} will be {{true}} for all interfaces.",
+        "type": "boolean"
+      },
+      {
+        "name": "MaxBitRate",
+        "access": "readOnly",
+        "description": "The maximum upstream and downstream PHY bit rate supported by this interface (expressed in {{units}}).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "The MAC Address of the interface. Note: This is not necessarily the same as the Ethernet header source or destination MAC address, which is associated with the IP interface and is modeled via the {{param|##.Ethernet.Link.{i}.MACAddress}} parameter.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "FirmwareVersion",
+        "access": "readOnly",
+        "description": "This interface's firmware version.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "NodeID",
+        "access": "readOnly",
+        "description": "The Node ID of this interface.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IsMaster",
+        "access": "readOnly",
+        "description": "Whether this interface is the HPNA network master.",
+        "type": "boolean"
+      },
+      {
+        "name": "Synced",
+        "access": "readOnly",
+        "description": "Whether this interface is synchronized with the HPNA network master. If this interface is the HPNA network master, {{param}} MUST be {{true}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "TotalSyncTime",
+        "access": "readOnly",
+        "description": "Total time in {{units}} (since device reset) that this interface has been up and synchronized to the HPNA network master.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "NetworkUtilization",
+        "access": "readOnly",
+        "description": "Current HPNA network utilization (expressed in {{units}}).",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 1000
+      },
+      {
+        "name": "PossibleConnectionTypes",
+        "access": "readOnly",
+        "description": "{{list}} List items indicate the types of connections possible for this interface. {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "Phone",
+          "Coax"
+        ]
+      },
+      {
+        "name": "ConnectionType",
+        "access": "readWrite",
+        "description": "{{list}} Connection type(s) for which the HPNA protocol is active.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "PossibleSpectralModes",
+        "access": "readOnly",
+        "description": "{{list}} List items indicate the spectral modes possible for this interface. {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ]
+      },
+      {
+        "name": "SpectralMode",
+        "access": "readWrite",
+        "description": "Spectral mode for which the HPNA protocol is active.",
+        "type": "string"
+      },
+      {
+        "name": "MTU",
+        "access": "readWrite",
+        "description": "Maximum Transmission Unit for this HPNA interface (expressed in {{units}}).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "NoiseMargin",
+        "access": "readWrite",
+        "description": "The desired noise margin for which the local HPNA interface has been configured (expressed in {{units}}).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DefaultNonLARQPER",
+        "access": "readWrite",
+        "description": "The desired packet error rate for which the local HPNA interface has been configured (expressed in 1E-8, e.g. PER of 1.27E-6 will be presented as 127).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LARQEnable",
+        "access": "readWrite",
+        "description": "Enable or disable the Limited Automatic Repeat Request (LARQ) mechanism.",
+        "type": "boolean"
+      },
+      {
+        "name": "MinMulticastRate",
+        "access": "readWrite",
+        "description": "The minimum multicast (and broadcast) rate that can be negotiated on the HPNA network directly accessible via this interface (expressed in {{units}}).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "NegMulticastRate",
+        "access": "readOnly",
+        "description": "The negotiated multicast (and broadcast) rate on the HPNA network directly accessible via this interface (expressed in {{units}}).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MasterSelectionMode",
+        "access": "readWrite",
+        "description": "Master selection mode. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Automatic",
+          "ForceEndpoint",
+          "ForceMaster"
+        ]
+      },
+      {
+        "name": "AssociatedDeviceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}} This is the number of HPNA nodes that are directly accessible via this interface.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "HPNA interface table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}). Each table entry models the PHY and MAC levels of an HPNA interface {{bibref|G.9954}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

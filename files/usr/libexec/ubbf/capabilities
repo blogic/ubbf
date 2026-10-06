@@ -1,0 +1,114 @@
+#!/usr/bin/env ucode
+'use strict';
+
+import * as uci from 'uci';
+import { readfile, writefile, stat, mkdir, unlink } from 'fs';
+
+const valid_bands = [ '2g', '5g', '6g' ];
+
+function radios_extract(board, wireless_config) {
+	let radios = {};
+
+	for (let section_name, section_data in wireless_config) {
+		if (section_data['.type'] != 'wifi-device')
+			continue;
+
+		let path = section_data.path;
+		let band = section_data.band;
+		if (!path || !band || index(valid_bands, band) < 0)
+			continue;
+
+		let radio = { path, name: section_name };
+
+		if (section_data.radio != null)
+			radio.radio = int(section_data.radio);
+		if (section_data.num_global_macaddr)
+			radio.num_global_macaddr = int(section_data.num_global_macaddr);
+
+		for (let phy_name, phy_data in board?.wlan) {
+			if (phy_data.path != path)
+				continue;
+
+			let band_info = phy_data.info?.bands?.[uc(band)];
+			if (band_info?.modes)
+				radio.modes = band_info.modes;
+
+			break;
+		}
+
+		radios[band] = radio;
+	}
+
+	return radios;
+}
+
+function devices_extract(iface) {
+	if (!iface)
+		return [];
+
+	if (iface.device)
+		return [ iface.device ];
+
+	if (iface.ports)
+		return [ ...iface.ports ];
+
+	return [];
+}
+
+function network_extract(board) {
+	let network = board?.network;
+	if (!network)
+		return {};
+
+	return {
+		wan: devices_extract(network.wan),
+		lan: devices_extract(network.lan)
+	};
+}
+
+const runtime_defs = [
+	{ binary: '/sbin/uxc', name: 'uxc', vendor: 'openwrt.org',
+	  type: 'OCI Runtime', default_version: '0.3' },
+	{ binary: '/usr/bin/lxc-start', name: 'lxc', vendor: 'linuxcontainers.org',
+	  type: 'LXC', default_version: '6.0' },
+	{ binary: '/usr/bin/crun', name: 'crun', vendor: 'github.com/containers/crun',
+	  type: 'OCI Runtime', default_version: '1.17' },
+];
+
+function runtimes_detect() {
+	let runtimes = [];
+
+	for (let def in runtime_defs) {
+		if (!stat(def.binary))
+			continue;
+
+		push(runtimes, {
+			name: def.name,
+			vendor: def.vendor,
+			type: def.type,
+			version: def.default_version
+		});
+	}
+
+	return runtimes;
+}
+
+let board_json = readfile('/etc/board.json');
+let board = board_json ? json(board_json) : null;
+
+// Wifi detection writes the radios to /etc/config; the override directory holds
+// the rendered config, which has no radio after a render without capabilities.
+let cursor = uci.cursor('/etc/config', null, '');
+let wireless_config = cursor.load('wireless') ? cursor.get_all('wireless') : {};
+
+let capabilities = {
+	radios: radios_extract(board, wireless_config),
+	network: network_extract(board),
+	runtimes: runtimes_detect()
+};
+
+mkdir('/tmp/ubbf');
+if (writefile('/tmp/ubbf/capabilities.json', sprintf('%.J\n', capabilities)) == null)
+	exit(1);
+
+unlink('/etc/ubbf/capabilities.json');

@@ -1,0 +1,107 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.Alarms.",
+  "object": {
+    "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.Alarms.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "LOS",
+        "access": "readOnly",
+        "description": "Loss of signal. See {{bibref|G.984.3|Section 11.1.2}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "LOF",
+        "access": "readOnly",
+        "description": "Loss of frame. See {{bibref|G.984.3|Section 11.1.2}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "SF",
+        "access": "readOnly",
+        "description": "Signal failed. See {{bibref|G.984.3|Section 11.1.2}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "SD",
+        "access": "readOnly",
+        "description": "Signal degraded. See {{bibref|G.984.3|Section 11.1.2}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "LCDG",
+        "access": "readOnly",
+        "description": "Loss of GEM channel delineation. See {{bibref|G.984.3|Section 11.1.2}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "TF",
+        "access": "readOnly",
+        "description": "Transmitter failure. See {{bibref|G.984.3|Section 11.1.2}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "SUF",
+        "access": "readOnly",
+        "description": "Start-up failure. See {{bibref|G.984.3|Section 11.1.2}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "MEM",
+        "access": "readOnly",
+        "description": "Message error message. See {{bibref|G.984.3|Section 11.1.2}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "DACT",
+        "access": "readOnly",
+        "description": "Deactivate ONU-ID. See {{bibref|G.984.3|Section 11.1.2}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "DIS",
+        "access": "readOnly",
+        "description": "Disabled ONU. See {{bibref|G.984.3|Section 11.1.2}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "MIS",
+        "access": "readOnly",
+        "description": "Link mismatching. See {{bibref|G.984.3|Section 11.1.2}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "PEE",
+        "access": "readOnly",
+        "description": "When the ONU receives a PEE message. See {{bibref|G.984.3|Section 11.1.2}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "RDI",
+        "access": "readOnly",
+        "description": "Remote defect indication. See {{bibref|G.984.3|Section 11.1.2}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "LODS",
+        "access": "readOnly",
+        "description": "Loss of downstream synchronization. See {{bibref|G.9807.1|}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "ROGUE",
+        "access": "readOnly",
+        "description": "The ANI behaves rogue: it is not transmitting in a manner consistent with parameters specified in the ITU-T PON standards. Hence it can threaten all upstream transmissions on the PON, causing interference and disrupting communications of other ONUs on the PON. An example of rogue behavior is transmitting in the wrong timeslot. See: * {{bibref|G.9807.1|Section C.19}} * {{bibref|G.989.3|Section 19}}",
+        "type": "boolean"
+      }
+    ],
+    "description": "Alarms at TC level for this ANI.",
+    "children": []
+  }
+}

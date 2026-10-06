@@ -1,0 +1,72 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PDU.Session.{i}.QoSRule.{i}.",
+  "object": {
+    "path": "Device.PDU.Session.{i}.QoSRule.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "QoSRuleNumberOfEntries",
+    "version": "2.14",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.14"
+      },
+      {
+        "name": "Identifier",
+        "access": "readOnly",
+        "description": "The QoS rule identifier field is used to identify the QoS rule. {{deprecated|2.19|because it has moved to {{param|Device.SessionManagement.PDU.{i}.QoSRule.{i}.Identifier}}}}",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 255
+      },
+      {
+        "name": "Precedence",
+        "access": "readOnly",
+        "description": "The QoS rule precedence field is used to specify the precedence of the QoS rule among all QoS rules. The higher the value of the QoS rule precedence field, the lower the precedence of that QoS rule is. {{deprecated|2.19|because it has moved to {{param|Device.SessionManagement.PDU.{i}.QoSRule.{i}.Precedence}}}}",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "Segregation",
+        "access": "readOnly",
+        "description": "In the UE to network direction the segregation bit indicates whether the UE is requesting the network to bind service data flows described by the QoS rule to a dedicated QoS Flow. When {{true}} segregation is requested. {{deprecated|2.19|because it has moved to {{param|Device.SessionManagement.PDU.{i}.QoSRule.{i}.Segregation}}}}",
+        "type": "boolean"
+      },
+      {
+        "name": "QFI",
+        "access": "readOnly",
+        "description": "QoS Flow identifier. {{deprecated|2.19|because it has moved to {{param|Device.SessionManagement.PDU.{i}.QoSRule.{i}.QFI}}}}",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 63
+      },
+      {
+        "name": "DQR",
+        "access": "readOnly",
+        "description": "Default QoS rule flag. When {{true}} this QoS rule is the default QoS rule. {{deprecated|2.19|because it has moved to {{param|Device.SessionManagement.PDU.{i}.QoSRule.{i}.DQR}}}}",
+        "type": "boolean"
+      },
+      {
+        "name": "FilterNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}} {{deprecated|2.19|because it has moved to {{param|Device.SessionManagement.PDU.{i}.QoSRule.{i}.FilterNumberOfEntries}}}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object describes the PDU QoS Rule table. The purpose of the QoS Rule table is to assign a QFI to mark traffic based on a set of classification rules. The rules are set by the network operator and are specific for each PDU. For example: * A QoS Rule with a default used for general traffic has the following parameters. * QFI=1 * DQR=1 - Default rule * Filter 1 for rule * Direction=bidirectional * Type=1 - Match all * A QoS Rule matching a voice service. * QFI=32 * DQR=0 * Filter 1 for rule * Direction=bidirectional * Type=33 - Destination IPv6 range * Value=2001:8000/48 - Destination IPv6 range * Filter 2 for rule * Direction=bidirectional * Type=16 - Destination IPv4 address with netmask * Value=203.1.0.0 255.255.255.0 - Destination IPv4 address with netmask A full description can be found at {{bibref|3GPP-TS.24.501|clause 9.11.4.13}} QoS Rules {{deprecated|2.19|because it has moved to {{object|Device.SessionManagement.PDU.{i}.QoSRule.{i}}}}}",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

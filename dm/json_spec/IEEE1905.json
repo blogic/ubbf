@@ -1,0 +1,27 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.",
+  "object": {
+    "path": "Device.IEEE1905.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Version",
+        "access": "readOnly",
+        "description": "1905 profile version number of the AL as would be sent in a Higher Layer response message as defined in {{bibref|IEEE1905.1a|Table 6-37: 1905 profile version TLV}}.",
+        "type": "string",
+        "enumerations": [
+          "1905.1",
+          "1905.1a"
+        ]
+      }
+    ],
+    "description": "This object represents the management functions for the 1905 capabilities as defined in {{bibref|IEEE1905.1a}}.",
+    "children": []
+  }
+}

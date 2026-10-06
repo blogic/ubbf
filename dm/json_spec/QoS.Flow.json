@@ -1,0 +1,149 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.QoS.Flow.{i}.",
+  "object": {
+    "path": "Device.QoS.Flow.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "FlowNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this Flow table entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this Flow table entry. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Type",
+        "access": "readWrite",
+        "description": "URN identifying the type of flow to be associated with the specified policer. A set of defined URNs is given in {{bibref|TR-181i2|Annex A}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "TypeParameters",
+        "access": "readWrite",
+        "description": "Each entry is a name-value pair representing additional criteria to identify the flow type. The use and interpretation is specific to the particular FlowType URN.Encoded using the \"x-www-form-urlencoded\" content type defined in {{bibref|HTML4.01}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "Human-readable name associated with this entry in the Flow table.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "App",
+        "access": "readWrite",
+        "description": "{{reference}} Indicates the ''App'' table entry associated with this flow. {{empty}} indicates the flow table is not associated with any App table entry.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.App.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ForwardingPolicy",
+        "access": "readWrite",
+        "description": "Identifier of the forwarding policy associated with this flow.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TrafficClass",
+        "access": "readWrite",
+        "description": "Identifier of the traffic class associated with this flow.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Policer",
+        "access": "readWrite",
+        "description": "{{reference}} Indicates the ''Policer'' table entry for traffic that falls in this flow. {{empty}} indicates a null policer.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.Policer.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "DSCPMark",
+        "access": "readWrite",
+        "description": "DSCP to mark traffic with that falls into this flow. A value of -1 indicates no change from the incoming packet. A value of -2 indicates automatic marking of DSCP based upon the EthernetPriority value of the incoming packet as defined in {{bibref|TR-181i2|Annex A}}.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -2
+      },
+      {
+        "name": "EthernetPriorityMark",
+        "access": "readWrite",
+        "description": "Ethernet priority code (as defined in {{bibref|802.1Q-2011}}) to mark traffic with that falls into this flow. A value of -1 indicates no change from the incoming packet. A value of -2 indicates automatic marking of EthernetPriority based upon the DSCP value of the incoming packet as defined in {{bibref|TR-181i2|Annex A}}.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -2
+      },
+      {
+        "name": "InnerEthernetPriorityMark",
+        "access": "readWrite",
+        "description": "Ethernet priority code (as defined in {{bibref|802.1Q-2011}}) to mark the inner VLAN Tags with for traffic that falls into this flow. A value of -1 indicates no change from the incoming packet. A value of -2 indicates automatic marking of EthernetPriority based upon the DSCP value of the incoming packet as defined in {{bibref|TR-181i2|Annex A}}.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -2,
+        "version": "2.12"
+      }
+    ],
+    "description": "Flow table.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

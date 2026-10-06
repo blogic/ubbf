@@ -1,0 +1,71 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MQTT.Broker.{i}.Bridge.{i}.Server.{i}.",
+  "object": {
+    "path": "Device.MQTT.Broker.{i}.Bridge.{i}.Server.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ServerNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Priority",
+        "access": "readWrite",
+        "description": "The priority of this {{object}} that is used by the {{object|##.Bridge}} when determining the {{object}} to connect to. The {{object|##.Bridge}} MUST contact the {{object}} with the lowest-numbered priority that the {{object|##.Bridge}} can reach as defined in {{bibref|RFC2782}}. The selection of {{object}}s with the same {{param}} value utilizes the {{param|Weight}} parameter to determine which {{object}} is selected by the {{object|##.Bridge}}. This value is only used if {{param|##.Bridge.{i}.ServerSelectionAlgorithm}} is set to {{enum|Priority|##.Bridge.{i}.ServerSelectionAlgorithm}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Weight",
+        "access": "readWrite",
+        "description": "This parameter specifies a relative weight for entries with the same {{param|Priority}}. The mechanism is defined in {{bibref|RFC2782}}. A value of -1 indicates that the implementation of this parameter is specific to the Vendor. This value is only used if {{param|##.Bridge.{i}.ServerSelectionAlgorithm}} is set to {{enum|Priority|##.Bridge.{i}.ServerSelectionAlgorithm}}.",
+        "type": "long",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Address",
+        "access": "readWrite",
+        "description": "Fully Qualified Domain Name (FQDN) or IP address of the MQTT broker server this {{object|##.Bridge}} connects to. If the value of this parameter is a FQDN that resolves to multiple addresses then each address SHOULD be attempted (in an implementation-specific order) until a connection can be made or all addresses are exhausted, in which case the next {{object}} instance (based on rules defined over the selected {{param|##.Bridge.{i}.ServerSelectionAlgorithm}}) SHOULD be used.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "Port number of the MQTT broker server this {{object|##.Bridge}} connects to.",
+        "default": "1883",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      }
+    ],
+    "description": "Each {{object}} instance represents a MQTT bridge server to be used for a {{object|##.Bridge}}. A remote MQTT broker, which is connected by a MQTT bridge can be reachable via several host addresses each represented by its own {{object}} table entry. For an active MQTT bridge at least one enabled entry has to exist. If a MQTT bridge gets enabled by setting the parameter {{param|##.Bridge.{i}.Enable}} to {{true}}, which either has an empty {{object}} table or the {{object}} table only contains instances whose {{param|Enable}} is set to {{false}}, the {{param|##.Bridge.{i}.Status}} has to be set to {{enum|Error_Misconfigured|##.Bridge.{i}.Status}}. Any attempt to delete an instance, which is currently in use ({{param|##.Bridge.{i}.ServerConnection}} refers to the instance to be deleted), has to be rejected.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

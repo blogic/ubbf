@@ -1,0 +1,44 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LEDs.LED.{i}.CurrentCycleElement.",
+  "object": {
+    "path": "Device.LEDs.LED.{i}.CurrentCycleElement.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "CycleElementReference",
+        "access": "readOnly",
+        "description": "This object describes the current properties of the {{object|#.CycleElement.{i}}} object instance that is currently active. {{reference}} If the LED instances does not have a current cycle element active, this parameter MUST be set to {{empty}}.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.CycleElement.",
+          "targetType": "row"
+        },
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Color",
+        "access": "readOnly",
+        "description": "The color, formatted as RGB hexadecimal notation (e.g., FF0088), that is currently being displayed by the LED.",
+        "type": "hexBinary",
+        "minLength": 3,
+        "maxLength": 3,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Duration",
+        "access": "readOnly",
+        "description": "The remaining duration, in {{units}}, for this element of the cycle period.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "This object describes the status of the current cycle element for this LED.",
+    "children": []
+  }
+}

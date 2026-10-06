@@ -1,0 +1,47 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IPsec.Tunnel.{i}.Stats.",
+  "object": {
+    "path": "Device.IPsec.Tunnel.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "DecryptionErrors",
+        "access": "readOnly",
+        "description": "The total number of inbound {{units}} discarded due to ESP decryption errors.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "IntegrityErrors",
+        "access": "readOnly",
+        "description": "The total number of inbound {{units}} discarded due to integrity errors.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ReplayErrors",
+        "access": "readOnly",
+        "description": "The total number of inbound {{units}} discarded due to replay errors.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "PolicyErrors",
+        "access": "readOnly",
+        "description": "The total number of inbound {{units}} discarded due to policy errors.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "OtherReceiveErrors",
+        "access": "readOnly",
+        "description": "The total number of inbound {{units}} discarded due to errors other than decryption, integrity, replay or policy errors. This can include packets dropped due to a lack of receive buffers.",
+        "type": "dataType:StatsCounter32"
+      }
+    ],
+    "description": "Statistics for this IPsec tunnel, i.e. all traffic that has passed through the tunnel, including IKEv2 negotiation, IKEv2 SA and ChildSA traffic. The CPE MUST reset the tunnel's Stats parameters (unless otherwise stated in individual object or parameter descriptions) either when the tunnel becomes operationally down due to a previous administrative down (i.e. its associated {{param|###.IP.Interface.{i}.Status}} parameter transitions to a down state after the tunnel has been disabled) or when the tunnel becomes administratively up (i.e. its associated {{param|###.IP.Interface.{i}.Enable}} parameter transition from {{false}} to {{true}}). Note that this object does not include generic statistics that are available in the associated {{object|###.IP.Interface.{i}.Stats}} object.",
+    "children": []
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Bridging.Bridge.{i}.VLANPort.{i}.",
+  "object": {
+    "path": "Device.Bridging.Bridge.{i}.VLANPort.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "VLANPortNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "VLAN",
+        "access": "readWrite",
+        "description": "{{reference}} Specifies the VLAN for which port membership is expressed.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.VLAN.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "{{reference}} Specifies the bridge port that is member of the VLAN.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.Port.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Untagged",
+        "access": "readWrite",
+        "description": "Enables or disables untagged port membership to the VLAN and determines whether egress frames for this VLAN are sent untagged or tagged.",
+        "type": "boolean"
+      }
+    ],
+    "description": "Bridge VLAN egress port and untagged port membership table. This table only applies to an 802.1Q {{bibref|802.1Q-2011}} Bridge. Note: The {{object}} table includes unique key parameters that are strong references. If a strongly referenced object is deleted, the CPE will set the referencing parameter to {{empty}}. However, doing so under these circumstances might cause the updated {{object}} row to then violate the table's unique key constraint; if this occurs, the CPE MUST disable the offending {{object}} row.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

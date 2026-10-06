@@ -1,0 +1,167 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Routing.Babel.InterfaceSetting.{i}.",
+  "object": {
+    "path": "Device.Routing.Babel.InterfaceSetting.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "InterfaceSettingNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables Babel on this interface.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this entry. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the device to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.15"
+      },
+      {
+        "name": "InterfaceReference",
+        "access": "readOnly",
+        "description": "The {{object|###.IP.Interface}} object instance this Babel implementation is running over. The referenced interface object MUST have {{param|###.IP.Interface.{i}.IPv6Enable}} set to true.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "###.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "InterfaceMetricAlgorithm",
+        "access": "readOnly",
+        "description": "Indicates the metric computation algorithm used on this interface, from among the supported metric computation algorithms listed in {{param|#.SupportedMetricCompAlgorithms}}.",
+        "type": "string"
+      },
+      {
+        "name": "SplitHorizonEnabled",
+        "access": "readWrite",
+        "description": "Enables or disables the use of split horizon optimization when calculating metrics on this interface. Split horizon optimization is described in {{bibref|RFC8966|Section 3.7.4}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "McastHelloSeqno",
+        "access": "readOnly",
+        "description": "The current sequence number in use for multicast Hellos sent on this interface.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "McastHelloInterval",
+        "access": "readOnly",
+        "description": "The current interval (time in {{units}}) used for multicast Hellos sent on this interface.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "UpdateInterval",
+        "access": "readOnly",
+        "description": "The current interval (time in {{units}}) used for all updates (multicast or unicast) sent on this interface.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "MACEnabled",
+        "access": "readWrite",
+        "description": "Enables or disables the MAC security mechanism.",
+        "type": "boolean"
+      },
+      {
+        "name": "InterfaceMACKeySets",
+        "access": "readWrite",
+        "description": "{{object|#.MACKeySet.}} instances that apply to this {{object}} instance. When an {{object}} is created, all {{object|#.MACKeySet.}} instances with {{param|#.MACKeySet.{i}.DefaultApply}} of {{true}} will be included in this list.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.MACKeySet.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "MACVerify",
+        "access": "readWrite",
+        "description": "A Boolean flag indicating whether MACs in incoming Babel packets are required to be present and are verified. If this parameter is {{true}}, incoming packets are required to have a valid MAC.",
+        "type": "boolean"
+      },
+      {
+        "name": "DTLSEnabled",
+        "access": "readWrite",
+        "description": "Enables or disables the DTLS security mechanism.",
+        "type": "boolean"
+      },
+      {
+        "name": "InterfaceDTLSCertSets",
+        "access": "readWrite",
+        "description": "{{object|#.DTLSCertSet.}} instances that apply to this {{object}} instance. When an {{object}} is created, all {{object|#.DTLSCertSet.}} instances with {{param|#.DTLSCertSet.{i}.DefaultApply}} of {{true}} will be included in this list.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.DTLSCertSet.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "CachedInfoEnabled",
+        "access": "readWrite",
+        "description": "A Boolean flag indicating whether the cached_info extension is included in ClientHello and ServerHello packets (see {{bibref|RFC8968|Appendix A}}. The extension is included if {{true}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "DTLSCertPrefer",
+        "access": "readWrite",
+        "description": "Supported certificate types (from {{param|#.SupportedDTLSCertTypes}}), listed in order of preference. This list is used to populate the server_certificate_type extension in a ClientHello (see {{bibref|RFC8968|Appendix A}}). Values that are present with a non-empty {{param|#.DTLSCertSet.{i}.DTLSCert.{i}.CertPrivateKey}} in at least one instance of {{object|#.DTLSCertSet.{i}.DTLSCert.}} included in a {{object|#.DTLSCertSet.}} instance referenced by {{param|InterfaceDTLSCertSets}} will be used to populate the client_certificate_type extension in a Client Hello.",
+        "type": "string"
+      },
+      {
+        "name": "PacketLogEnable",
+        "access": "readWrite",
+        "description": "Enables or disables the logging of Babel packets into the {{param|PacketLog}} on this interface.",
+        "type": "boolean"
+      },
+      {
+        "name": "PacketLog",
+        "access": "readOnly",
+        "description": "A reference to a {{object|###.DeviceInfo.VendorLogFile}} instance that contains a timestamped log of packets received and sent on {{param|#.Constants.UDPPort}} on this interface. The {{bibref|LIBPCAP}} file format with .pcap file extension SHOULD be supported for packet log files. Logging is enabled/disabled by {{param|PacketLogEnable}}.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "###.DeviceInfo.VendorLogFile.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "NeighborNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object provides parameters related to the interfaces the Babel protocol is operating over and can act as a routing protocol for.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

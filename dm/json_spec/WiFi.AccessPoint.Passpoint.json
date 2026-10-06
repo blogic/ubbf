@@ -1,0 +1,49 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.AccessPoint.{i}.Passpoint.",
+  "object": {
+    "path": "Device.WiFi.AccessPoint.{i}.Passpoint.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or Disables Hotspot 2.0 indication on the access point.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Version",
+        "access": "readOnly",
+        "description": "Passpoint specification version as described in {{bibref|Passpoint|Table 5. Passpoint Specification version number definition}}.",
+        "type": "string",
+        "enumerations": [
+          "R1",
+          "R2",
+          "R3"
+        ]
+      },
+      {
+        "name": "OperatorFriendlyName",
+        "access": "readWrite",
+        "description": "Indicates that operator's preferred friendly name used for Online Sign Up purposes to the Passpoint hotspot operator for advertisement as described in {{bibref|Passpoint|Section 4.3}}.",
+        "type": "string",
+        "maxLength": 252
+      },
+      {
+        "name": "DGAFDisable",
+        "access": "readWrite",
+        "description": "Indicates the state of the Downstream group-addressed forwarding Disable bit in the HS2.0 Indication element as described in {{bibref|Passpoint|Section 5.2}}.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object describes Passpoint/HotSpot 2.0 elements as defined in {{bibref|Passpoint}}.",
+    "children": []
+  }
+}

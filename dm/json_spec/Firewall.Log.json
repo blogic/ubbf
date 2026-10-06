@@ -1,0 +1,68 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Firewall.Log.{i}.",
+  "object": {
+    "path": "Device.Firewall.Log.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "LogNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the firewall logging configuration for this entry.",
+        "type": "boolean"
+      },
+      {
+        "name": "Description",
+        "access": "readWrite",
+        "description": "Human-readable description associated with this entry.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Severity",
+        "access": "readWrite",
+        "description": "Specifies the severity level at which the message is logged.",
+        "default": "Debug",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Emergency",
+          "Alert",
+          "Critical",
+          "Error",
+          "Warning",
+          "Notice",
+          "Debug"
+        ]
+      },
+      {
+        "name": "Prefix",
+        "access": "readWrite",
+        "description": "Specifies the prefix that must be added to each logmessage. When {{param|.Firewall.Chain.{i}.Rule.{i}.LogRef}} specifies multiple {{object}} entries. The implementation may chose to combine both prefixes into one. When {{param}} is {{empty}} no prefix will be added to the log message. The maximum allowed {{param}} length is implementation specific.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string"
+      }
+    ],
+    "description": "Firewalls monitor network traffic and enforce security policies. To aid in debugging and troubleshooting potential issues, it's possible to capture specific information when certain rules are triggered. These captured details, known as traces, are then logged by the implementation for further analysis.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

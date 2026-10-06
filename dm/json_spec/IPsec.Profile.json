@@ -1,0 +1,218 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IPsec.Profile.{i}.",
+  "object": {
+    "path": "Device.IPsec.Profile.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ProfileNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "MaxChildSAs",
+        "access": "readWrite",
+        "description": "Controls the maximum number of child Security Association (SA) pairs that can be negotiated by a single IKEv2 session. If a new child SA pair is needed, but the current IKEv2 session already has {{param}} child SA pairs, an additional IKEv2 session (and therefore an additional IPsec tunnel) will be established. A value of 0 means no specific limit. Note that support for more than one child SA pair per IKEv2 session is OPTIONAL {{bibref|RFC5996|Section 1.3}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RemoteEndpoints",
+        "access": "readWrite",
+        "description": "The host name or IP address of the remote IPsec tunnel endpoint. If more than one name/address is supplied, they will be tried in turn, i.e. they are in decreasing order of precedence.",
+        "list": true,
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "ForwardingPolicy",
+        "access": "readWrite",
+        "description": "Identifier of the forwarding policy associated with traffic that is associated with this profile. The forwarding policy can be referenced by entries in the {{object|##.Routing.Router.{i}.IPv4Forwarding}} and {{object|##.Routing.Router.{i}.IPv6Forwarding}} tables, and therefore allows SPD selection criteria to influence the forwarding decision.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "The \"child\" security protocol. This is not to be confused with {{object|#.Filter}}.{{param|#.Filter.{i}.Protocol}}, which is an SPD selector that can select packets that already have AH or ESP headers. {{object}}.{{param}} selects whether AH or ESP will be used when encapsulating a packet.",
+        "default": "ESP",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "AH",
+          "ESP"
+        ]
+      },
+      {
+        "name": "IKEv2AuthenticationMethod",
+        "access": "readWrite",
+        "description": "IKEv2 CPE authentication method {{bibref|RFC5996|Section 2.15}}. {{reference|an enabled row in the {{object|##.Security.Certificate}} table or in another table that contains appropriate CPE credentials}} If {{empty}}, or the referenced row is disabled or deleted, the CPE chooses the authentication method based on local policy.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "IKEv2AllowedEncryptionAlgorithms",
+        "access": "readWrite",
+        "description": "Allowed IKEv2 encryption algorithms.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "ESPAllowedEncryptionAlgorithms",
+        "access": "readWrite",
+        "description": "Allowed ESP encryption algorithms.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "IKEv2AllowedPseudoRandomFunctions",
+        "access": "readWrite",
+        "description": "Allowed IKEv2 pseudo-random functions.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "IKEv2AllowedIntegrityAlgorithms",
+        "access": "readWrite",
+        "description": "Allowed IKEv2 integrity algorithms.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "AHAllowedIntegrityAlgorithms",
+        "access": "readWrite",
+        "description": "Allowed AH integrity algorithms {{bibref|IKEv2-params|Transform Type 3}} {{bibref|RFC4835|Section 3.2}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "ESPAllowedIntegrityAlgorithms",
+        "access": "readWrite",
+        "description": "Allowed ESP integrity algorithms {{bibref|IKEv2-params|Transform Type 3}} {{bibref|RFC4835|Section 3.1.1}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "IKEv2AllowedDiffieHellmanGroupTransforms",
+        "access": "readWrite",
+        "description": "Allowed IKEv2 Diffie-Hellman group transforms.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "IKEv2DeadPeerDetectionTimeout",
+        "access": "readWrite",
+        "description": "IKEv2 Dead Peer Detection (DPD) timeout in {{units}}. {{bibref|RFC5996|section 2.4}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IKEv2NATTKeepaliveTimeout",
+        "access": "readWrite",
+        "description": "IKEv2 NAT traversal (NAT-T) keepalive timeout in {{units}}. {{bibref|RFC3948|Section 4}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AntiReplayWindowSize",
+        "access": "readWrite",
+        "description": "The size of the AH or ESP Anti-Replay Window. {{bibref|RFC4302|Section B.2}} {{bibref|RFC4303|Section A2}} A value of 0 means that Sequence Number Verification is disabled.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DoNotFragment",
+        "access": "readWrite",
+        "description": "Controls the value of the ''Do Not Fragment'' (DF) bit. {{bibref|RFC4301|Section 8.1}}",
+        "type": "string",
+        "enumerations": [
+          "Set",
+          "Clear",
+          "Copy"
+        ]
+      },
+      {
+        "name": "DSCPMarkPolicy",
+        "access": "readWrite",
+        "description": "DSCP with which to mark the outer IP header for traffic that is associated with this IPsec channel. A value of -1 indicates copy from the incoming packet. A value of -2 indicates automatic marking of DSCP. De-tunneled packets are never re-marked. Automatic DSCP marking behavior is a local matter to the CPE, possibly influenced by other Broadband Forum standards that it supports.",
+        "type": "int",
+        "minInclusive": -2,
+        "maxInclusive": 63
+      },
+      {
+        "name": "IKEv2SATrafficLimit",
+        "access": "readWrite",
+        "description": "IKEv2 SA lifetime in {{units}}, or zero if there is no traffic constraint on its expiration. If both {{param}} and {{param|IKEv2SATimeLimit}} are non-zero, the IKEv2 SA is deleted when the first limit is reached.",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "IKEv2SATimeLimit",
+        "access": "readWrite",
+        "description": "IKEv2 SA lifetime in {{units}}, or zero if there is no time constraint on its expiration. If both {{param}} and {{param|IKEv2SATrafficLimit}} are non-zero, the IKEv2 SA is deleted when the first limit is reached.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IKEv2SAExpiryAction",
+        "access": "readWrite",
+        "description": "Action to take when an IKEv2 SA expires, whether as a result of hitting a traffic limit or a time limit.",
+        "type": "string",
+        "enumerations": [
+          "Renegotiate",
+          "Delete"
+        ]
+      },
+      {
+        "name": "ChildSATrafficLimit",
+        "access": "readWrite",
+        "description": "Child SA lifetime in {{units}}, or zero if there is no traffic constraint on its expiration. If both {{param}} and {{param|ChildSATimeLimit}} are non-zero, the child SA is deleted when the first limit is reached.",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "ChildSATimeLimit",
+        "access": "readWrite",
+        "description": "Child SA lifetime in {{units}}, or zero if there is no time constraint on its expiration. If both {{param}} and {{param|ChildSATrafficLimit}} are non-zero, the child SA is deleted when the first limit is reached.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ChildSAExpiryAction",
+        "access": "readWrite",
+        "description": "Action to take when a Child SA expires, whether as a result of hitting a traffic limit or a time limit.",
+        "type": "string",
+        "enumerations": [
+          "Renegotiate",
+          "Delete"
+        ]
+      },
+      {
+        "name": "SentCPAttrNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Profile table that represents the IPsec Security Policy Database (SPD) {{bibref|RFC4301|Section 4.4.1}} processing info. Each entry defines the IPsec treatment for packets that match the {{object|#.Filter}} entries that reference the entry.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.ZigBee.ZDO.{i}.Network.Neighbor.{i}.",
+  "object": {
+    "path": "Device.ZigBee.ZDO.{i}.Network.Neighbor.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "NeighborNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Neighbor",
+        "access": "readOnly",
+        "description": "Neighbor of this ZigBee device. The value MUST be the path name of a row in the ZigBee.ZDO table. If the referenced row is deleted then this entry MUST be deleted.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "LQI",
+        "access": "readOnly",
+        "description": "The LQI field specified link quality identification (LQI) for neighbor ZigBee device.",
+        "type": "unsignedInt",
+        "maxInclusive": 255,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Relationship",
+        "access": "readOnly",
+        "description": "The relationship between the neighbor and this device.{{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Parent",
+          "Child",
+          "PrevChild",
+          "Sibling",
+          "None"
+        ]
+      },
+      {
+        "name": "PermitJoin",
+        "access": "readOnly",
+        "description": "An indication of whether the neighbor device is accepting join requests.{{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Accepting",
+          "NotAccepting",
+          "Unknown"
+        ]
+      },
+      {
+        "name": "Depth",
+        "access": "readOnly",
+        "description": "The tree depth of the neighbor device. A value of 0x00 indicates that the device is the ZigBee coordinator for the network.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The {{object}} object provides the configuration capabilities needed to by a ZigBee Device to operate within a ZigBee Area Network as defined in {{bibref|ZigBee2007|section 2.5.2.4 Network Manager}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Neighbor"
+      ]
+    }
+  }
+}

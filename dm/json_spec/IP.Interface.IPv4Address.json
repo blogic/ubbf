@@ -1,0 +1,83 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IP.Interface.{i}.IPv4Address.{i}.",
+  "object": {
+    "path": "Device.IP.Interface.{i}.IPv4Address.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "IPv4AddressNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this IPv4 address.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this {{object}} table entry. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}} This parameter can only be modified if {{param|AddressingType}} is {{enum|Static|AddressingType}}.",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "IPAddress",
+        "access": "readWrite",
+        "description": "IPv4 address. This parameter can only be modified if the {{param|AddressingType}} is {{enum|Static|AddressingType}}.",
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "SubnetMask",
+        "access": "readWrite",
+        "description": "Subnet mask. This parameter can only be modified if the {{param|AddressingType}} is {{enum|Static|AddressingType}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "AddressingType",
+        "access": "readOnly",
+        "description": "Addressing method used to assign the IP address. {{enum}}",
+        "default": "Static",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "DHCP",
+          "IKEv2",
+          "AutoIP",
+          "IPCP",
+          "Static",
+          "3GPP-NAS"
+        ]
+      }
+    ],
+    "description": "IPv4 address table. Entries are auto-created and auto-deleted as IP addresses are added and deleted via DHCP, auto-IP, 3GPP-NAS (3GPP Non Access Stratum), or IPCP. Static entries are created and configured by the Controller.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

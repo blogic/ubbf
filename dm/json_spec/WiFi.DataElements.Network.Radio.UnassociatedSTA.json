@@ -1,0 +1,52 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.UnassociatedSTA.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.UnassociatedSTA.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "UnassociatedSTANumberOfEntries",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "The MAC address of the Non-AP STA.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "SignalStrength",
+        "access": "readOnly",
+        "description": "An indicator of radio signal strength (RCPI) of the uplink from the Non-AP STA - measured in {{units}}. RCPI is encoded per {{bibref|802.11-2020|Table 9-176}}, and described in {{bibref|EasyMesh|Section 10.3.2}}. Reserved: 221 - 255.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "OperatingClass",
+        "access": "readOnly",
+        "description": "Operating class on which this unassociated STA was last detected, per {{bibref|802.11ax|Table E-4}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 255,
+        "version": "2.17"
+      },
+      {
+        "name": "Channel",
+        "access": "readOnly",
+        "description": "Channel on which this unassociated STA was last detected.",
+        "type": "unsignedInt",
+        "maxInclusive": 255,
+        "version": "2.17"
+      }
+    ],
+    "description": "Each instance represents a station (STA) that has been discovered by the Radio but is not associated to any of the BSS operating on the Radio.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "MACAddress"
+      ]
+    }
+  }
+}

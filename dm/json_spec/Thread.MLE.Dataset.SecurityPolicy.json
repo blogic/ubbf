@@ -1,0 +1,42 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Thread.MLE.{i}.Dataset.{i}.SecurityPolicy.",
+  "object": {
+    "path": "Device.Thread.MLE.{i}.Dataset.{i}.SecurityPolicy.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "RotationTime",
+        "access": "readOnly",
+        "description": "The rotation time of the security policy.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Flags",
+        "access": "readOnly",
+        "description": "The flags indicates the current security policies for the Thread partition of the current dataset. The {{param}} is an ordered concatenation of case sensitive characters containing list elements (may be empty).",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "o",
+          "n",
+          "r",
+          "c",
+          "C",
+          "e",
+          "p",
+          "R"
+        ]
+      }
+    ],
+    "description": "The {{object}} provide an administrator a way to enable or disable certain security related behaviors.",
+    "children": []
+  }
+}

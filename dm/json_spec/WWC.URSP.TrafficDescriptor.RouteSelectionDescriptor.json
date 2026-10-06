@@ -1,0 +1,75 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WWC.URSP.{i}.TrafficDescriptor.{i}.RouteSelectionDescriptor.{i}.",
+  "object": {
+    "path": "Device.WWC.URSP.{i}.TrafficDescriptor.{i}.RouteSelectionDescriptor.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "RouteSelectionDescriptorNumberOfEntries",
+    "version": "2.14",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.14"
+      },
+      {
+        "name": "Precedence",
+        "access": "readOnly",
+        "description": "The precedence value of route selection descriptor field is used to specify the precedence of the route selection descriptor among all route selection descriptors in the URSP rule. The precedence value in the range from 0 to 255 (decimal). The higher the value of the precedence value field, the lower the precedence of the route selection descriptor is.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "SSC",
+        "access": "readOnly",
+        "description": "Session and Service Continuity (SSC) Mode: Indicates that the traffic of the matching application shall be routed via a PDU Session supporting the included SSC Mode. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.16}}.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 3
+      },
+      {
+        "name": "DNN",
+        "access": "readOnly",
+        "description": "The DNN value contains an APN as defined in {{bibref|3GPP-TS.23.003|Clause 9.1.1}}.",
+        "type": "string",
+        "maxLength": 100
+      },
+      {
+        "name": "PDUSessionType",
+        "access": "readOnly",
+        "description": "PDU session type. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.11}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "IPv4",
+          "IPv6",
+          "IPv4v6",
+          "Unstructured"
+        ]
+      },
+      {
+        "name": "AccessType",
+        "access": "readOnly",
+        "description": "The preferred access type for the PDU session. For a 5G-RG non-3GPP refers to any fixed access technology. See {{bibref|3GPP-TS.24.501|Clause 9.11.3.11}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "3GPP access",
+          "Non-3GPP access"
+        ]
+      }
+    ],
+    "description": "This object describes the URSP Route Selection Descriptor table which provides a table of data networks and network slices used in PDU establishment. Table entries are used in precedence order until a successful PDU session is established. See ((bibref|3GPP-TS.23.503|Annex A}} for an example URSP rule traversal.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

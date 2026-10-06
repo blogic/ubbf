@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Ghn.",
+  "object": {
+    "path": "Device.Ghn.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "InterfaceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "G.hn object that contains an {{object|Interface}} table for G.hn supported CPE. The ITU-T G.hn specifications {{bibref|G.9960}} and {{bibref|G.9961}} define Physical and MAC Layers for communication between two or more G.hn nodes in the home network over multiple wired media such as power line, phone line and coaxial cable.",
+    "children": []
+  }
+}

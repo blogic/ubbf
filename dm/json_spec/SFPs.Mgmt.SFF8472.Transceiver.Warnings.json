@@ -1,0 +1,77 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Warnings.",
+  "object": {
+    "path": "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Warnings.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "TemperatureHigh",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the internal temperature exceeds the high warning level.",
+        "type": "boolean"
+      },
+      {
+        "name": "TemperatureLow",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the internal temperature is below the low warning level.",
+        "type": "boolean"
+      },
+      {
+        "name": "VccHigh",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the internal supply voltage exceeds the high warning level.",
+        "type": "boolean"
+      },
+      {
+        "name": "VccLow",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the internal supply voltage is below the low warning level.",
+        "type": "boolean"
+      },
+      {
+        "name": "TxBiasHigh",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the TX Bias current exceeds the high warning level.",
+        "type": "boolean"
+      },
+      {
+        "name": "TxBiasLow",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the TX Bias current is below the low warning level.",
+        "type": "boolean"
+      },
+      {
+        "name": "TxPowerHigh",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the TX output power exceeds the high warning level.",
+        "type": "boolean"
+      },
+      {
+        "name": "TxPowerLow",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the TX output power is below the low warning level.",
+        "type": "boolean"
+      },
+      {
+        "name": "RxPowerHigh",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the Received Power exceeds the high warning level.",
+        "type": "boolean"
+      },
+      {
+        "name": "RxPowerLow",
+        "access": "readOnly",
+        "description": "Set to {{true}} when the Received Power is below the low warning level.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object contains the state of the SFP internal Diagnostic Warning Flags {{bibref|SFF-8472|Table 9-17}}. Warning flags indicate conditions outside the normally guaranteed bounds but not necessarily causes of immediate link failures. Certain warning flags may also be defined by the manufacturer as end-of-life indicators (such as for higher than expected bias currents in a constant power control loop). A flag is set for each warning that is active. Implementation is vendor specific. A SFP module has the ability to monitor and warn on a high or low readings for a number of situations. This ability is internal to the SFP and is part of the digital diagnostic interface common to many SFPs. The associated field changes from {{false}} to {{true}} to signal a warning and changes from {{true}} to {{false}} to indicate that the warning has cleared. It is recommended that detection of an asserted flag bit will be verified by a second read of the flag at least 100ms later.",
+    "children": []
+  }
+}

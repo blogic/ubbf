@@ -1,0 +1,16 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PPP.Interface.{i}.PPPoA.",
+  "object": {
+    "path": "Device.PPP.Interface.{i}.PPPoA.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [],
+    "description": "PPPoA object that functionally groups PPPoA related parameters. {{deprecated|2.12|because it contains no standard parameters and its existence causes confusion}} {{obsoleted|2.12}} {{deleted|2.15}}",
+    "children": []
+  }
+}

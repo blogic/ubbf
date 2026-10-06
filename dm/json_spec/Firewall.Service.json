@@ -1,0 +1,163 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Firewall.Service.{i}.",
+  "object": {
+    "path": "Device.Firewall.Service.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ServiceNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.16"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the firewall service instance.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this {{object}} entry.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "This specifies the incoming L3 interface to which the Service rule applies.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "DestPort",
+        "access": "readWrite",
+        "description": "Destination port number. A value of ''-1'' indicates this criterion is not used for matching.",
+        "default": "[-1]",
+        "defaultType": "object",
+        "list": true,
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "IPVersion",
+        "access": "readWrite",
+        "description": "Specifies the IP protocol version, following the definitions in {{bibref|IANA-ipversionnumbers}}. Valid values are: {{range}}.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "ranges": [
+          [
+            4,
+            4
+          ],
+          [
+            6,
+            6
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "version": "2.16"
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "Protocol number as specified in {{bibref|IANA-protocolnumbers}} For example: * ''6'' (TCP) * ''17'' (UDP) A value of ''-1'' indicates this criterion is not used for matching.",
+        "default": "[-1]",
+        "defaultType": "object",
+        "list": true,
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 255
+      },
+      {
+        "name": "ICMPType",
+        "access": "readWrite",
+        "description": "ICMP type as specified in {{bibref|RFC792}} for 'IPv4' and {{bibref|RFC4443}} for 'IPv6'. Only applicable when {{param|Protocol}} contains ''1'' (ICMP IPv4) or ''58'' (ICMP IPv6). A value of ''-1'' indicates this criterion is not used for matching.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 255
+      },
+      {
+        "name": "SourcePrefixes",
+        "access": "readWrite",
+        "description": "Only allow incoming connections that match one or more of the source IP addresses or prefixes that are specified in {{param}} for the applied service.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "dataType:IPPrefix"
+      },
+      {
+        "name": "Action",
+        "access": "readWrite",
+        "description": "Action to perform for traffic matching this {{object}} entry.",
+        "default": "Accept",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Drop",
+          "Accept",
+          "Reject"
+        ]
+      },
+      {
+        "name": "Log",
+        "access": "readWrite",
+        "description": "Enable or disable logging, in a {{object|.DeviceInfo.VendorLogFile}}, of packets matching this {{object}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.19"
+      },
+      {
+        "name": "LogRef",
+        "access": "readWrite",
+        "description": "Specifies the logging rules for this {{object}} entry. The {{param|Log}} parameter MUST be set to {{true}} for this setting to take effect. When {{param|Log}} is {{true}} and {{param}} is {{empty}} or contains an invalid reference, the system MUST treat the configuration as an error and set {{param|Status}} to {{enum|Error_Misconfigured|Status}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Firewall.Log.",
+          "targetType": "row"
+        },
+        "version": "2.19"
+      }
+    ],
+    "description": "Firewall Service object that is used for configuring the firewall for opening a port/protocol for a local network service. For example: * ''SSH Server'' * ''Web Server'' For enabled table entries, if {{param|Interface}}, {{param|DestPort}} and {{param|Protocol}} are {{empty}}, or if {{param|Interface}} is not a valid reference, then the table entry is inoperable and the device MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

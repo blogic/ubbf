@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FAST.",
+  "object": {
+    "path": "Device.FAST.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "LineNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object models FAST (defined in ITU Recommendation {{bibref|G.9701}}) lines. Each {{object|Line}} models a layer 1 FAST Line interface.",
+    "children": []
+  }
+}

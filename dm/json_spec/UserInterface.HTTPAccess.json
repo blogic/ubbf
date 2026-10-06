@@ -1,0 +1,225 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.UserInterface.HTTPAccess.{i}.",
+  "object": {
+    "path": "Device.UserInterface.HTTPAccess.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "HTTPAccessNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables/disables web interface.",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.16"
+      },
+      {
+        "name": "Order",
+        "access": "readWrite",
+        "description": "{{datatype|expand}} For each incoming connection, the highest ordered entry that matches the Host: HTTP header and path prefix is applied. All lower {{param}} entries are ignored.",
+        "type": "dataType:Order"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Status of web interface.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Error"
+        ]
+      },
+      {
+        "name": "AccessType",
+        "access": "readWrite",
+        "description": "This parameter describes the possible access types.",
+        "default": "LocalAccess",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "RemoteAccess",
+          "LocalAccess"
+        ]
+      },
+      {
+        "name": "AllowedRoles",
+        "access": "readWrite",
+        "description": "Only allow users, defined in {{object|.Users.User.}}, to access the web instance represented by this {{object}} instance that have the following roles assigned that are defined in {{object|.Users.Role.}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": ".Users.Role.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Certificate",
+        "access": "readWrite",
+        "description": "Specifies the server certificate to be presented by the server during the TLS handshake. This certificate is used to authenticate the server to remote clients, ensuring that the clients are connecting to a legitimate server. The server certificate must be issued by a trusted Certificate Authority (CA) and should match the server's private key. This parameter is applicable only when a TLS session is being used.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.Certificate.",
+          "targetType": "row"
+        },
+        "version": "2.16"
+      },
+      {
+        "name": "CABundle",
+        "access": "readWrite",
+        "description": "Specifies the group of CA certificate(s) that the server must use to validate the certificate presented by the remote client. These CA certificates form a trust chain that the client certificate must match, ensuring that only clients with trusted certificates can establish a connection. This parameter supports multiple CA certificates to accommodate different client certificate issuers. This parameter is applicable only when a TLS session is being used.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.CABundle.",
+          "targetType": "row"
+        },
+        "version": "2.19"
+      },
+      {
+        "name": "CACertificate",
+        "access": "readWrite",
+        "description": "Points to the CA certificate that must be used by the web interface. The {{param}} is used to validate the web client certificate. {{param|Protocol}} MUST be set to ''HTTPS'' {{deprecated|2.19|Replaced by {{param|CABundle}} which can now contain one or more reference.}}",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.Certificate.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "The IP or Logical Interface associated with the {{object}} entry. Example: * ''Device.IP.Interface.1'' * ''Device.Logical.Interface.1'' {{template|INTERFACE-ROUTING}}",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "Listen port number.",
+        "default": "443",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "Protocol being used.",
+        "type": "string"
+      },
+      {
+        "name": "AllowedHosts",
+        "access": "readWrite",
+        "description": "Specifies which hostnames are permitted to be served by the web interface. This could be done by comparing the Host: HTTP header in an incoming request which will result in the request being routed to this instance, in the case that the device supports Virtual Hosting. If this string is empty then this instance acts as a \"default\" host, i.e. it will handle requests for which the Host header does not match any other instance.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "AllowedPathPrefixes",
+        "access": "readWrite",
+        "description": "Each string must be a partial path which will result in an incoming request being routed to this instance.",
+        "default": "[/]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "AllowAllIPv4",
+        "access": "readWrite",
+        "description": "Allow access from any IPv4 address. The source prefixes defined in {{param|IPv4AllowedSourcePrefix}} will be ignored.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.18"
+      },
+      {
+        "name": "IPv4AllowedSourcePrefix",
+        "access": "readWrite",
+        "description": "Allow only access from the provided list of IPv4 prefixes. When {{param}} is set to {{empty}} and {{param|AllowAllIPv4}} is set to ''false'', no incoming connections are allowed. When {{param|AllowAllIPv4}} is set ''true'', {{param}} is ignored.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "version": "2.18"
+      },
+      {
+        "name": "AllowAllIPv6",
+        "access": "readWrite",
+        "description": "Allow access from any IPv6 address. The source prefixes defined in {{param|IPv6AllowedSourcePrefix}} will be ignored.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.18"
+      },
+      {
+        "name": "IPv6AllowedSourcePrefix",
+        "access": "readWrite",
+        "description": "Allow only access from the provided list of IPv6 prefixes. When {{param}} is set to {{empty}} and {{param|AllowAllIPv6}} is set to ''false'', no incoming connections are allowed. When {{param|AllowAllIPv6}} is set ''true'', {{param}} is ignored.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "version": "2.18"
+      },
+      {
+        "name": "AutoDisableDuration",
+        "access": "readWrite",
+        "description": "Indicates in {{units}} when the web interface will be automatically disabled. When ''0'' is specified, the web interface will not be automatically disabled. For example if the web interface is to be active for only 30 minutes, then this parameter would be set to 1800 {{units}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TimeLeft",
+        "access": "readOnly",
+        "description": "The number of {{units}} remaining before the web interface will be disabled. ''0'' means that the web interface is disabled or no {{param|AutoDisableDuration}} was specified. Example: The {{param|AutoDisableDuration}} parameter has been set to 1800 seconds and the web interface was enabled 600 seconds ago. This means that the {{param}} will return 1200 seconds, which is the remaining time before the web interface will be disabled.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ActivationDate",
+        "access": "readOnly",
+        "description": "Indicates when the web interface was enabled.",
+        "type": "dateTime"
+      },
+      {
+        "name": "SessionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "HTTPAccess is used for modeling the different web interfaces that may be either locally or remotely available in the device. For example with Software Modules it is possible to install multiple services that embed a web interface like a ''Video service'' or ''Photo service''. An instance of the {{object}} can model a web interface that is embedded in the device firmware or installed through a Software Modules management system. Access to the web interface MAY require user authentication. To have access authentication the device MUST support a {{object|.Users.User.}} object with at least one instance and an assigned relevant role in {{param|.Users.User.{i}.RoleParticipation}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

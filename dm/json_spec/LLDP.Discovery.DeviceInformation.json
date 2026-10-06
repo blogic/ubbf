@@ -1,0 +1,53 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LLDP.Discovery.Device.{i}.DeviceInformation.",
+  "object": {
+    "path": "Device.LLDP.Discovery.Device.{i}.DeviceInformation.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "DeviceCategory",
+        "access": "readOnly",
+        "description": "Each list item indicates a device category (e.g.\"AV_TV\" and \"AV_Recorder\"), or the value is {{empty}} if no device categories were provided. Note: It is assumed that this list might be used for HTIP (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and {{bibref|G.9973}}. Standard HTIP device categories are defined in {{bibref|JJ-300.01}}. In this case, the maximum length of the list is 127 and of each item is 31, and any non-HTIP device categories SHOULD NOT conflict with standard HTIP device categories.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "ManufacturerOUI",
+        "access": "readOnly",
+        "description": "The manufacturer OUI, which is included in the value of the ''LLDPDU's'' Organizationally Specific TLV (TLV Type = 127), or {{empty}} if no manufacturer OUI was provided. {{pattern}}",
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 6,
+        "pattern": ""
+      },
+      {
+        "name": "ModelName",
+        "access": "readOnly",
+        "description": "The model name, which is included in the value of the ''LLDPDU's'' Organizationally Specific TLV (TLV Type = 127), or {{empty}} if no model name was provided. Note: It is assumed that this string might be used for HTIP (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and {{bibref|G.9973}}.",
+        "type": "string",
+        "maxLength": 31
+      },
+      {
+        "name": "ModelNumber",
+        "access": "readOnly",
+        "description": "The model number, which is included in the value of the ''LLDPDU's'' Organizationally Specific TLV (TLV Type = 127), or {{empty}} if no model number was provided. Note: It is assumed that this string might be used for HTIP (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and {{bibref|G.9973}}.",
+        "type": "string",
+        "maxLength": 31
+      },
+      {
+        "name": "VendorSpecificNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The device information, which is included in the value of the ''LLDPDU's'' Organizationally Specific TLV (TLV Type = 127). Note: It is assumed that this object might be used for HTIP (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and {{bibref|G.9973}}. In this case, this table contains the Organizationally Specific TLV (TLV Type = 127) of ''LLDPDU'', in which the {{bibref|OUI}} in the third octet is E0271A (''TTC-OUI'') and the organizationally defined subtype in the sixth octet is 1 (''Device Information'').",
+    "children": []
+  }
+}

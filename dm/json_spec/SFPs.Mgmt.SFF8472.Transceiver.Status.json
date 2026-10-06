@@ -1,0 +1,98 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Status.",
+  "object": {
+    "path": "Device.SFPs.Mgmt.SFF8472.{i}.Transceiver.Status.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Temperature",
+        "access": "readOnly",
+        "description": "Internally measured module temperature measured in {{units}}. See {{bibref|SFF-8472|Table 9-16}}. A value of -274 indicates that a good reading could not be obtained.",
+        "type": "int",
+        "minInclusive": -274
+      },
+      {
+        "name": "Vcc",
+        "access": "readOnly",
+        "description": "Internally measured supply voltage in transceiver measured in {{units}}. See {{bibref|SFF-8472|Table 9-16}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "TxBias",
+        "access": "readOnly",
+        "description": "Internally measured TX Bias Current measured in {{units}}. See {{bibref|SFF-8472|Table 9-16}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TxPower",
+        "access": "readOnly",
+        "description": "Measured TX output power measured in {{units}}. See {{bibref|SFF-8472|Table 9-16}}.",
+        "type": "int"
+      },
+      {
+        "name": "RxPower",
+        "access": "readOnly",
+        "description": "Measured RX input power measured in {{units}}. See {{bibref|SFF-8472|Table 9-16}}.",
+        "type": "int"
+      },
+      {
+        "name": "TxDisableState",
+        "access": "readOnly",
+        "description": "The digital state of the TX Disable Input Pin. Updated within 100ms of change on pin. See {{bibref|SFF-8472|Table 9-16}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "SoftTxDisableSelect",
+        "access": "readOnly",
+        "description": "This optional status control bit allows software disable of laser. See {{bibref|SFF-8472|Table 9-16}}. Setting this flag {{true}} disables the laser. If Soft TX Disable is not implemented, the transceiver ignores the value of this bit. Default power up value is zero/low.",
+        "type": "boolean"
+      },
+      {
+        "name": "RS1State",
+        "access": "readOnly",
+        "description": "An optional digital state of SFP input pin AS(1) per {{bibref|SFF-8079}} or RS(1) per {{bibref|SFF-8431}}. Updated within 100ms of change on pin. See 0xA2 Byte 118, Bit 3 for Soft RS(1) Select control information. See {{bibref|SFF-8472|Table 9-16}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "RateSelectState",
+        "access": "readOnly",
+        "description": "An optional digital state of SFP input pin AS(0) Rate_Select State [aka. \u201cRS(0)\u201d]. Updated within 100ms of change on pin. Note: This pin is also known as AS(0) in {{bibref|SFF-8079}} and RS(0) in {{bibref|SFF-8431}}. See {{bibref|SFF-8472|Table 9-16}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "SoftRateSelectSelect",
+        "access": "readOnly",
+        "description": "Soft Rate_Select Select (aka. \u201cRS(0)\u201d). An optional Status or Control Bit. This flag allows software rate select control. Setting this flag {{true}} selects full bandwidth operation. This bit is logical OR with the hard Rate_Select, AS(0) or RS(0) pin value. Default at power up is logic zero/low. If Soft Rate Select is not implemented, the transceiver ignores the value of this bit. Note: Specific transceiver behaviors of this bit are identified in referenced documents. See {{bibref|SFF-8472|Table 9-16}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "TXFaultState",
+        "access": "readOnly",
+        "description": "An optional digital state of the TX Fault Output Pin. Updated within 100ms of change on pin. See {{bibref|SFF-8472|Table 9-16}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "RxLOSState",
+        "access": "readOnly",
+        "description": "An optional digital state of the RX_LOS Output Pin. Updated within 100ms of change on pin.",
+        "type": "boolean"
+      },
+      {
+        "name": "DataReadyBarState",
+        "access": "readOnly",
+        "description": "An optional flag that indicates the transceiver has achieved power up and data is ready. The flag remains high until data is ready to be read at which time the device sets the bit low. The default value SHOULD be false. See {{bibref|SFF-8472|Table 9-16}}.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object contains real time diagnostic and control values and status fields. See {{bibref|SFF-8472|Table 9-16}}. The CPE MUST reset the interface\u2019s Stats parameters (unless otherwise stated in individual object or parameter descriptions) either when the interface becomes operationally down due to a previous administrative down (i.e. the interface\u2019s Status parameter transitions to a down state after the interface is disabled) or when the interface becomes administratively up (i.e. the interface\u2019s Enable parameter transitions from false to true). Administrative and operational interface status is discussed in [Section 4.2.2/TR-181i2].",
+    "children": []
+  }
+}

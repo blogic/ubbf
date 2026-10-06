@@ -1,0 +1,37 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MoCA.Interface.{i}.AccessControl.{i}.",
+  "object": {
+    "path": "Device.MoCA.Interface.{i}.AccessControl.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "AccessControlNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this MAC address to be allowed to connect to the MoCA network.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "MACAddress",
+        "access": "readWrite",
+        "description": "If {{param|#.AccessControlEnable}} is set to {{true}}, MoCA Node with this MAC address is allowed to join the MoCA network. It is not guaranteed that the MoCA Node with this MAC address can form or join a network.",
+        "type": "dataType:MACAddress"
+      }
+    ],
+    "description": "MoCA interface MAC access control table. This table contains a list of MAC addresses that are allowed to connect to the MoCA network. In addition to being in this access control list, a MoCA Node must have the proper {{param|#.FreqCurrentMask}}, {{param|#.PrivacyEnabledSetting}}, and {{param|#.KeyPassphrase}} before the MoCA Node can form or join a MoCA network.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "MACAddress"
+      ]
+    }
+  }
+}

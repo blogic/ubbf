@@ -1,0 +1,30 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.ZigBee.ZDO.{i}.UserDescriptor.",
+  "object": {
+    "path": "Device.ZigBee.ZDO.{i}.UserDescriptor.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "DescriptorAvailable",
+        "access": "readOnly",
+        "description": "When {{true}}, the User Descriptor recorded has been received from the target device.",
+        "type": "boolean"
+      },
+      {
+        "name": "Description",
+        "access": "readOnly",
+        "description": "Specifies the information that allows the user to identify the ZigBee device using a user-friendly character string, such as \"Bedroom TV\" or \"Stairs light\".",
+        "type": "string",
+        "maxLength": 16
+      }
+    ],
+    "description": "The {{object}} object is an optional descriptor that describes user defined capabilities of the ZigBee device as defined in {{bibref|ZigBee2007|section 2.3.2.7 User Descriptor}}. The {{object}} object contains information that allows the user to identify the device using a user-friendly character string, such as \"Bedroom TV\" or \"Stairs Light\".",
+    "children": []
+  }
+}

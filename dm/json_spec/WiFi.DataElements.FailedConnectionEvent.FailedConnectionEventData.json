@@ -1,0 +1,48 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.FailedConnectionEvent.FailedConnectionEventData.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.FailedConnectionEvent.FailedConnectionEventData.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "FailedConnectionEventDataNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "BSSID",
+        "access": "readOnly",
+        "description": "The MAC Address of the logical BSS (BSSID) which is reporting the failed connection event.",
+        "type": "dataType:MACAddress",
+        "version": "2.17"
+      },
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "MAC Address identifying the associated device (STA) that has attempted to connect.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "StatusCode",
+        "access": "readOnly",
+        "description": "Status Code set to a non-zero value that indicates the reason for association or authentication failure as defined in {{bibref|802.11-2020|Table 9-50}}, or Status Code set to zero and {{param|ReasonCode}} provided.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ReasonCode",
+        "access": "readOnly",
+        "description": "Reason Code indicating the reason the STA was disassociated or deauthenticated as defined in {{bibref|802.11-2020|Table 9-49}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TimeStamp",
+        "access": "readOnly",
+        "description": "The time this event happened. Formatted with the date-and-time string format as defined in {{bibref|RFC3339|Section 3}}.",
+        "type": "dateTime"
+      }
+    ],
+    "description": "This object describes the data provided with a failed connection event {{deprecated|2.17|because a corresponding USP event is defined instead}} {{obsoleted|2.19}}",
+    "children": []
+  }
+}

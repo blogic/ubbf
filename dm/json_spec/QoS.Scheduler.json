@@ -1,0 +1,121 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.QoS.Scheduler.{i}.",
+  "object": {
+    "path": "Device.QoS.Scheduler.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "SchedulerNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this scheduler.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this scheduler. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.16"
+      },
+      {
+        "name": "Children",
+        "access": "readWrite",
+        "description": "{{list}} Each reference can be associated with another {{object|##.QoS.Queue.{i}}}, {{object|##.QoS.Shaper.{i}}}, {{object|##.QoS.Scheduler.{i}}} instance object. The references in this parameter are used to build a hierarchy.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        },
+        "version": "2.16"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "{{reference}} Specifies the egress interface for which the specified queue MUST exist. This MAY be a layer 1, 2 or 3 interface, however, the types of interfaces for which ''Queues'' can be instantiated is a local matter to the CPE.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "SchedulerAlgorithm",
+        "access": "readWrite",
+        "description": "Scheduling Algorithm used by scheduler.",
+        "default": "SP",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "WFQ",
+          "WRR",
+          "SP"
+        ]
+      },
+      {
+        "name": "ShapingRate",
+        "access": "readWrite",
+        "description": "Rate to shape this scheduler's traffic to. For leaky bucket (constant rate shaping), this is the constant rate. For token bucket (variable rate shaping), this is the average rate. If <= 100, in percent of the rate of the highest rate-constrained layer over which the packet will travel on egress. If > 100, in bits per second. A value of -1 indicates no shaping. Note: To be able to support higher bit rates, this parameter was changed to unsignedLong in the Device:2.18 version.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "long",
+        "minInclusive": -1
+      },
+      {
+        "name": "AssuredRate",
+        "access": "readWrite",
+        "description": "Minimum guaranteed rate to shape this scheduler's traffic to. Must be > 0 and < ShapingRate, for a valid rate. A value of -1 indicates the ShapingRate's value is not used. Note: To be able to support higher bit rates, this parameter was changed to unsignedLong in the Device:2.18 version.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "long",
+        "minInclusive": -1
+      },
+      {
+        "name": "DefaultQueue",
+        "access": "readWrite",
+        "description": "The value MUST be the Path Name for a {{object|##.QoS.Queue.{i}}} instance. If the referenced object is deleted, the parameter value MUST be set to an empty string.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "Scheduler table. Each entry is used to model a scheduler object.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

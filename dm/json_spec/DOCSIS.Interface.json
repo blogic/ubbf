@@ -1,0 +1,131 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DOCSIS.Interface.{i}.",
+  "object": {
+    "path": "Device.DOCSIS.Interface.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "InterfaceNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the interface. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.15"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the interface as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "The MAC Address of the interface.",
+        "type": "string"
+      },
+      {
+        "name": "CMTSAddress",
+        "access": "readOnly",
+        "description": "Identifies the CMTS that is believed to control this MAC domain. This will be the source address from SYNC, MAP, and other MAC-layer messages. If the CMTS is unknown, returns 00-00-00-00-00-00. See {{bibref|CM-SP-RFIv2.0|Section 8.2.2}}.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "Capabilities",
+        "access": "readOnly",
+        "description": "Identifies the capabilities of the MAC implementation at this interface. Note that packet transmission is always supported. Therefore, there is no specific bit required to explicitly indicate this capability.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "ATMCells",
+          "Concatenation"
+        ]
+      },
+      {
+        "name": "FirmwareVersion",
+        "access": "readOnly",
+        "description": "A string identifying the version of the modem firmware currently installed for this interface. This is applicable only when the modem firmware is separable from the overall CPE software.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "DOCSISVersion",
+        "access": "readOnly",
+        "description": "Indication of the DOCSIS capability of the device. See {{bibref|CM-SP-RFIv2.0|Annex G}}.",
+        "type": "string",
+        "enumerations": [
+          "DOCSIS10",
+          "DOCSIS11",
+          "DOCSIS20",
+          "DOCSIS30",
+          "DOCSIS31"
+        ]
+      },
+      {
+        "name": "MdCfgIpProvMode",
+        "access": "readOnly",
+        "description": "{{param}} specifies how the IP provisioning mode is configured. The CM relies upon the CMTS to facilitate the successful IP address acquisition independently of the MDD. {{enum}} See {{bibref|CM-SP-MULPIv3.0}}, IP Initialization Parameters TLV Section.",
+        "type": "string",
+        "enumerations": [
+          "IPv4Only",
+          "IPv6Only",
+          "HonorMDD"
+        ]
+      }
+    ],
+    "description": "DOCSIS Layer 2 (MAC) interface table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}). This table models the MAC level DOCSIS interface.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

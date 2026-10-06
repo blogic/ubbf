@@ -1,0 +1,282 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MoCA.Interface.{i}.AssociatedDevice.{i}.",
+  "object": {
+    "path": "Device.MoCA.Interface.{i}.AssociatedDevice.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "AssociatedDeviceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "The MAC address of the associated device's MoCA interface.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "NodeID",
+        "access": "readOnly",
+        "description": "The Node ID of this remote device. This parameter is based on ''mocaNodeIndex'' from {{bibref|MOCA11-MIB}}.",
+        "type": "dataType:MocaNodeID"
+      },
+      {
+        "name": "PreferredNC",
+        "access": "readOnly",
+        "description": "Whether this remote device is a preferred Network Coordinator (NC). This parameter is based on ''mocaNodePreferredNC'' from {{bibref|MOCA11-MIB}}.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean"
+      },
+      {
+        "name": "HighestVersion",
+        "access": "readOnly",
+        "description": "Identifies the highest MoCA version that this remote device supports. This element MUST be in the form of dot-delimited integers, where each successive integer represents a more minor category of variation. For example, 1.0, where the components mean major.minor revision number. {{pattern}} This parameter is based on ''mocaNodeMocaVersion'' from {{bibref|MOCA11-MIB}}.",
+        "type": "string",
+        "maxLength": 64,
+        "pattern": "\\d+(\\.\\d+)*"
+      },
+      {
+        "name": "PHYTxRate",
+        "access": "readOnly",
+        "description": "The PHY transmit rate (in {{units}}) to this remote device. This parameter is based on ''mocaMeshTxRate'' from {{bibref|MOCA11-MIB}}. This parameter MUST NOT be implemented for MoCA 2.0 because it doesn't map to a MIB object.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PHYRxRate",
+        "access": "readOnly",
+        "description": "The PHY receive rate (in {{units}}) from this remote device. This parameter MUST NOT be implemented for MoCA 2.0 because it doesn't map to a MIB object.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TxPowerControlReduction",
+        "access": "readOnly",
+        "description": "The reduction in transmitter level due to power control. This parameter is based on ''mocaNodeTxPowerReduction'' from {{bibref|MOCA11-MIB}}. {{deprecated|2.17|since it is replaced by {{param|Device.MoCA.Interface.{i}.Mesh.{i}.PowerReduction}}. See {{bibref|MOCA20-MIB}}}} {{obsoleted|2.19}}",
+        "type": "dataType:MocaDB"
+      },
+      {
+        "name": "RxPowerLevel",
+        "access": "readOnly",
+        "description": "The power level (in {{units}}) received at the MoCA interface from this remote device. This parameter is based on ''mocaNodeRxPower'' from {{bibref|MOCA11-MIB}}. {{deprecated|2.17|since it is replaced by {{param|Device.MoCA.Interface.{i}.Mesh.{i}.Power}}. See {{bibref|MOCA20-MIB}}}} {{obsoleted|2.19}}",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "TxBcastRate",
+        "access": "readOnly",
+        "description": "The broadcast PHY transmit rate from this remote device. This parameter is based on ''mocaNodeTxGcdRate'' from {{bibref|MOCA11-MIB}}.",
+        "type": "dataType:MocaPhyRate"
+      },
+      {
+        "name": "RxBcastPowerLevel",
+        "access": "readOnly",
+        "description": "The power level received at the MoCA interface from this remote device. This parameter is based on ''mocaNodeRxGcdPower'' from {{bibref|MOCA11-MIB}}.",
+        "type": "dataType:MocaDBm",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "TxPackets",
+        "access": "readOnly",
+        "description": "The number of packets transmitted to this remote device (Note: Includes Broadcast, Multicast and Unicast packets).",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "TxDrops",
+        "access": "readOnly",
+        "description": "The number of Unicast EPDUs received at the ECL, destined to the associated MoCA Node, and not transmitted by this MoCA interface.",
+        "type": "dataType:StatsCounter32",
+        "version": "2.17"
+      },
+      {
+        "name": "RxPackets",
+        "access": "readOnly",
+        "description": "The number of packets received from this remote device (Note: Includes Broadcast, Multicast and Unicast packets). This parameter is based on ''mocaNodeRxPackets'' from {{bibref|MOCA11-MIB}}.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "RxCorrected",
+        "access": "readOnly",
+        "description": "The number of Ethernet packets received by this MoCA interface that have errors and are corrected from the MoCA Node identified by {{param|MACAddress}}.",
+        "type": "dataType:StatsCounter64",
+        "version": "2.17"
+      },
+      {
+        "name": "RxErroredAndMissedPackets",
+        "access": "readOnly",
+        "description": "The number of errored and missed packets received from this remote device. This parameter is based on ''mocaNodeRxDrops'' from {{bibref|MOCA11-MIB}}.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "BondingCapable",
+        "access": "readOnly",
+        "description": "The MoCA Node identified by {{param|MACAddress}} supports Bonding if the value is {{true}}. The MoCA Node identified by {{param|MACAddress}} does not support Bonding if this value is {{false}}.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "QAM256Capable",
+        "access": "readOnly",
+        "description": "Whether this remote device supports the 256 QAM feature. This parameter is based on ''mocaNodeQAM256Capable'' from {{bibref|MOCA11-MIB}}. This parameter MUST NOT be implemented for MoCA 2.0 because it doesn't map to a MIB object.",
+        "type": "boolean"
+      },
+      {
+        "name": "PacketAggregationCapability",
+        "access": "readOnly",
+        "description": "The packet aggregation capability supported by the remote device. Standard values are 0 (no support), 6 (6 {{units}}) or 10 (10 {{units}}). This parameter is based on ''mocaNodePacketsAggrCapability'' from {{bibref|MOCA11-MIB}}. Note that this parameter maps to different MIB objects for MoCA 1.0/1.1 and MoCA 2.0. [XXX2: Need to modify the syntax to 'unsignedInt' because MoCA 2.0 requires a minimum of 20 packets and MoCA 2.5 requires a minimum of 80 packets.]",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RxSNR",
+        "access": "readOnly",
+        "description": "The signal to noise level received at this interface from this remote device. This parameter is based on ''mocaNodeSNR'' from {{bibref|MOCA11-MIB}}. {{deprecated|2.17|since it is replaced by {{param|Device.MoCA.Interface.{i}.Mesh.{i}.RxSNR}}. See {{bibref|MOCA20-MIB}}}} {{obsoleted|2.19}}",
+        "type": "dataType:MocaDB"
+      },
+      {
+        "name": "Active",
+        "access": "readOnly",
+        "description": "Whether or not this remote device is currently present in the MoCA network. The ability to list inactive nodes is OPTIONAL. If the CPE includes inactive nodes in this table, {{param}} MUST be set to {{false}} for each inactive node. The length of time an inactive node remains listed in this table is a local matter to the CPE.",
+        "type": "boolean"
+      },
+      {
+        "name": "SupportedIngressPqosFlows",
+        "access": "readOnly",
+        "description": "The number of Ingress PQoS Flows supported by this MoCA interface from the MoCA Node identified by {{param|MACAddress}}.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "SupportedEgressPqosFlows",
+        "access": "readOnly",
+        "description": "The number of Egress PQoS Flows supported by this MoCA interface from the MoCA Node identified by {{param|MACAddress}}.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "AggregationSize",
+        "access": "readOnly",
+        "description": "The maximum number of bytes that can be aggregated in a MoCA frame that this MoCA Node supports.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "AeNumber",
+        "access": "readOnly",
+        "description": "The maximum number of allocation elements, excluding the TAUs and the Dummy DAUs, in one MAP that this MoCA Node supports.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "PowerState",
+        "access": "readOnly",
+        "description": "Power State of the MoCA Node identified by the {{param|MACAddress}}.",
+        "type": "dataType:MocaPowerState",
+        "version": "2.17"
+      },
+      {
+        "name": "PowerStateCapability",
+        "access": "readOnly",
+        "description": "Power State capability of the MoCA Node identified by the {{param|MACAddress}}.",
+        "type": "dataType:MocaPowerState",
+        "version": "2.17"
+      },
+      {
+        "name": "PDelay",
+        "access": "readOnly",
+        "description": "Propagation delay measured in units of 10ns between the local MoCA Node and the MoCA Node identified by the {{param|MACAddress}}.",
+        "type": "int",
+        "version": "2.17"
+      },
+      {
+        "name": "EnhancedPrivacyCapable",
+        "access": "readOnly",
+        "description": "Indicates the MoCA Node identified by {{param|MACAddress}} supports MoCA 2 Enhanced Privacy if the value is {{true}}. Indicates the MoCA Node identified by {{param|MACAddress}} does not support MoCA 2 Enhanced Privacy if this value is {{false}}.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "LinkType",
+        "access": "readOnly",
+        "description": "Indicates the type of link used for unicast data transmissions between the managed MoCA Node and the MoCA Node identified by {{param|MACAddress}}.",
+        "type": "string",
+        "enumerations": [
+          "moca1PHY",
+          "primary",
+          "bonded",
+          "m25300MHz",
+          "m25400MHz",
+          "m25500MHz"
+        ],
+        "version": "2.17"
+      },
+      {
+        "name": "Moca25PhyCapable",
+        "access": "readOnly",
+        "description": "Indicates the MoCA Node identified by {{param|MACAddress}} supports MoCA 2.5 PHY if the value is {{true}}. Indicates the MoCA Node identified by {{param|MACAddress}} does not support MoCA 2.5 PHY if this value is {{false}}.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "RxPwrList",
+        "access": "readOnly",
+        "description": "Per channel list of Receive power levels in dBm from the MoCA Node identified by {{param|MACAddress}} to the managed MoCA Node. The power measurement should cover the preamble and/or at least a symbol time. The averaging method employed for this measurement is implementation specific and not specified. It is recommended but not required to utilize the LMO (Link Maintenance Operation) EVM probes for this measurement. The field numValues is a function of {{param|LinkType}}: * MoCA 1 PHY - 1 * Primary - 1 * Bonded - 2 * 300 MHz MoCA 2.5 PHY - 3 * 400 MHz MoCA 2.5 PHY - 4 * 500 MHz MoCA 2.5 PHY - 5 struct moca25NodePowerList { char numValues; // 1 octet (Number of Values to follow) struct { char power; // 1 octet (Rx Power Level in dBm) } [numValues]; };",
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 6,
+        "version": "2.17"
+      },
+      {
+        "name": "RxSNRList",
+        "access": "readOnly",
+        "description": "Per channel list of Average Receive Signal to Noise Ratio (SNR) across all available subcarriers based on the EVM probe from the MoCA Node identified by {{param|MACAddress}} to the managed MoCA Node. The field numValues is a function of {{param|LinkType}}: * MoCA 1 PHY - 1 * Primary - 1 * Bonded - 2 * 300 MHz MoCA 2.5 PHY - 3 * 400 MHz MoCA 2.5 PHY - 4 * 500 MHz MoCA 2.5 PHY - 5 struct moca25NodeRxSNRList { char numValues; // 1 octet (Number of Values to follow) struct { char snr; // 1 octet (Rx SNR in dB) } [numValues]; };",
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 6,
+        "version": "2.17"
+      },
+      {
+        "name": "TxPwrList",
+        "access": "readOnly",
+        "description": "Per channel list of Transmit power levels in dBm from the managed MoCA Node to the MoCA Node identified by {{param|MACAddress}}. The transmit power should be max power for the channel less the Transmit Power Control. The field numValues is a function of {{param|LinkType}}: * MoCA 1 PHY - 1 * Primary - 1 * Bonded - 2 * 300 MHz MoCA 2.5 PHY - 3 * 400 MHz MoCA 2.5 PHY - 4 * 500 MHz MoCA 2.5 PHY - 5 struct moca25NodePowerList { char numValues; // 1 octet (Number of Values to follow) struct { char power; // 1 octet (Tx Power Level in dBm) } [numValues]; };",
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 6,
+        "version": "2.17"
+      },
+      {
+        "name": "TxPwrReductionList",
+        "access": "readOnly",
+        "description": "Per channel list of Transmit Power Control (TPC) back-off in dB used for unicast transmissions from the managed MoCA Node to the MoCA Node identified by {{param|MACAddress}}. {{param}} is identical to the TPC back-off utilized for transmission from the TPC backoff parameter TX_POWER_ADJUSTMENT_100MHZ. The field numValues is a function of {{param|LinkType}}: * MoCA 1 PHY - 1 * Primary - 1 * Bonded - 2 * 300 MHz MoCA 2.5 PHY - 3 * 400 MHz MoCA 2.5 PHY - 4 * 500 MHz MoCA 2.5 PHY - 5 struct moca25NodeTxPwrReductionList { char numValues; // 1 octet (Number of Values to follow) struct { char tpc; // 1 octet (TPC in dB) } [numValues]; };",
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 6,
+        "version": "2.17"
+      },
+      {
+        "name": "EgressNodeNumFlows",
+        "access": "readOnly",
+        "description": "The number of PQoS flows in which this MoCA interface is an Egress Node for these PQoS flows.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "IngressNodeNumFlows",
+        "access": "readOnly",
+        "description": "The number of PQoS flows in which this MoCA interface is an Ingress Node for these PQoS flows.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      }
+    ],
+    "description": "This table contains information about other MoCA devices currently associated with this MoCA interface. Entries in this table cannot be created or deleted by the network management system. All entries are created or deleted by the device software.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "MACAddress"
+      ]
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LLDP.",
+  "object": {
+    "path": "Device.LLDP.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [],
+    "description": "This object contains Link Layer Discovery Protocol (LLDP) {{bibref|802.1AB-2009}} related objects and parameters.",
+    "children": []
+  }
+}

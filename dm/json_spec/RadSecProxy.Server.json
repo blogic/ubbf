@@ -1,0 +1,92 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.RadSecProxy.Server.{i}.",
+  "object": {
+    "path": "Device.RadSecProxy.Server.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ServerNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enable or disable this {{object}} instance.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this entry. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "Address",
+        "access": "readWrite",
+        "description": "Specifies the Fully Qualified Domain Name (FQDN) or IP address of the RADIUS server that the RadSecProxy service communicates with.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "Specifies the type (protocol) of the Server.",
+        "type": "string",
+        "enumerations": [
+          "UDP",
+          "TCP",
+          "TLS",
+          "DTLS"
+        ]
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "Specifies the port (UDP/TCP) to connect to. If omitted, UDP and TCP will default to 1812 while TLS and DTLS {{bibref|RFC9147}} will default to 2083.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Secret",
+        "access": "readWrite",
+        "description": "Specifies the shared RADIUS key with the client. This option is optional for TLS/DTLS and if omitted will default to \"radsec\". Note that using a secret other than \"radsec\" for TLS is a violation of the standard {{bibref|RFC6614}} and that the proposed standard for DTLS {{bibref|RFC9147}} stipulates that the secret must be \"radius/dtls\".",
+        "secured": true,
+        "type": "string"
+      },
+      {
+        "name": "TLS",
+        "access": "readWrite",
+        "description": "Specifies the TLS Block to be used for this server.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.TLS.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "Server block configuration of the RadSecProxy service.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

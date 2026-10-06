@@ -1,0 +1,16 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Ethernet.WoL.",
+  "object": {
+    "path": "Device.Ethernet.WoL.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.13",
+    "parameters": [],
+    "description": "This object provides access to the WoL (Wake on LAN) functionality.",
+    "children": []
+  }
+}

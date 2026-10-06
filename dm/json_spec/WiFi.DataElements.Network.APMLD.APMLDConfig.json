@@ -1,0 +1,54 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.APMLDConfig.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.APMLDConfig.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "EMLMREnabled",
+        "access": "readWrite",
+        "description": "Indicates if the Enhanced Multi-Link Multi-Radio (EMLMR) operation is enabled.",
+        "type": "boolean"
+      },
+      {
+        "name": "EMLSREnabled",
+        "access": "readWrite",
+        "description": "Indicates if Enhanced Multi-Link Single-Radio (EMLSR) operation is enabled.",
+        "type": "boolean"
+      },
+      {
+        "name": "STREnabled",
+        "access": "readWrite",
+        "description": "Indicates if Simultaneous Transmit and Receive (STR) operation is enabled.",
+        "type": "boolean"
+      },
+      {
+        "name": "NSTREnabled",
+        "access": "readWrite",
+        "description": "Indicates if Non-Simultaneous Transmit and Receive (NSTR) operation is enabled.",
+        "type": "boolean"
+      },
+      {
+        "name": "TIDLinkMapNegotiation",
+        "access": "readWrite",
+        "description": "Indicates if Traffic Identifier (TID) to Link Mapping Negotiation is enabled. {{bibref|EasyMesh}} source: TID-to-Link Mapping Policy TLV.",
+        "type": "boolean"
+      },
+      {
+        "name": "TIDToOpClassPolicyNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.19"
+      }
+    ],
+    "description": "This object describes the Wi-Fi 7 Multi-Link Operation (MLO) configuration of the Multi-Link Device (MLD) Access Point (AP), {{bibref|EasyMesh}} source: Agent AP MLD Configuration TLV.",
+    "children": []
+  }
+}

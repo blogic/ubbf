@@ -1,0 +1,224 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IPsec.Filter.{i}.",
+  "object": {
+    "path": "Device.IPsec.Filter.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "FilterNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this IPsec Filter table entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this IPsec Filter table entry. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Order",
+        "access": "readWrite",
+        "description": "{{datatype|expand}} For each packet, the highest ordered entry that matches the filter criteria is applied. All lower order entries are ignored.",
+        "type": "dataType:Order"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "SPD selection criterion. {{reference}} This specifies the ingress interface associated with the entry. It MAY be a layer 1, 2 or 3 interface. However, the types of interfaces for which filters can be instantiated is a local matter to the CPE.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "AllInterfaces",
+        "access": "readWrite",
+        "description": "SPD selection criterion. This specifies that all ingress interfaces are associated with the entry. If {{true}}, the value of {{param|Interface}} is ignored since all ingress interfaces are indicated.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DestIP",
+        "access": "readWrite",
+        "description": "SPD selection criterion. Destination IP address. {{empty}} indicates this criterion is not used, i.e. is ''ANY''.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "DestMask",
+        "access": "readWrite",
+        "description": "SPD selection criterion. Destination IP address mask. If not {{empty}}, only the indicated network portion of the {{param|DestIP}} address is to be used for selection. {{empty}} indicates that the full {{param|DestIP}} address is to be used for selection.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "DestIPExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the rule matches only those packets that match the (masked) {{param|DestIP}} entry, if specified. If {{true}}, the rule matches all packets except those that match the (masked) {{param|DestIP}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SourceIP",
+        "access": "readWrite",
+        "description": "SPD selection criterion. Source IP address. {{empty}} indicates this criterion is not used, i.e. is ''ANY''.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "SourceMask",
+        "access": "readWrite",
+        "description": "SPD selection criterion. Source IP address mask. If not {{empty}}, only the indicated network portion of the {{param|SourceIP}} address is to be used for selection. {{empty}} indicates that the full {{param|SourceIP}} address is to be used for selection.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "SourceIPExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the rule matches only those packets that match the (masked) {{param|SourceIP}} entry, if specified. If {{true}}, the rule matches all packets except those that match the (masked) {{param|SourceIP}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "SPD selection criterion. Protocol number. A value of -1 indicates this criterion is not used, i.e. is ''ANY''. Note that {{bibref|RFC4301}} refers to this as the ''Next Layer Protocol''. It is obtained from the IPv4 ''Protocol'' or the IPv6 ''Next Header'' fields.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 255
+      },
+      {
+        "name": "ProtocolExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the rule matches only those packets that match {{param|Protocol}}, if specified. If {{true}}, the rule matches all packets except those that match {{param|Protocol}}, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DestPort",
+        "access": "readWrite",
+        "description": "SPD selection criterion. Destination port number. A value of -1 indicates this criterion is not used, i.e. is ''ANY''. The value of this parameter is ignored for protocols that do not use ports, e.g. ICMP (1).",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "DestPortRangeMax",
+        "access": "readWrite",
+        "description": "SPD selection criterion. If specified, indicates a destination port address range from {{param|DestPort}} through {{param}} (inclusive), in which case {{param}} MUST be greater than or equal to {{param|DestPort}}. A value of -1 indicates that no destination port range is specified.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "DestPortExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the rule matches only those packets that match {{param|DestPort}} (or port range), if specified. If {{true}}, the rule matches all packets except those that match {{param|DestPort}} (or port range), if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SourcePort",
+        "access": "readWrite",
+        "description": "SPD selection criterion. Source port number. A value of -1 indicates this criterion is not used, i.e. is ''ANY''. The value of this parameter is ignored for protocols that do not use ports, e.g. ICMP (1).",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "SourcePortRangeMax",
+        "access": "readWrite",
+        "description": "SPD selection criterion. If specified, indicates a source port address range from {{param|SourcePort}} through {{param}} (inclusive), in which case {{param}} MUST be greater than or equal to {{param|SourcePort}}. A value of -1 indicates that no source port range is specified.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "SourcePortExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the rule matches only those packets that match {{param|SourcePort}} (or port range), if specified. If {{true}}, the rule matches all packets except those that match {{param|SourcePort}} (or port range), if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "ProcessingChoice",
+        "access": "readWrite",
+        "description": "Indicates how packets that match this rule will be processed {{bibref|RFC4301|Section 4.4.1}}.",
+        "default": "Bypass",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Discard",
+          "Bypass",
+          "Protect"
+        ]
+      },
+      {
+        "name": "Profile",
+        "access": "readWrite",
+        "description": "The profile that defines the IPsec treatment for matching packets. {{reference}} If {{param|ProcessingChoice}} is {{enum|Protect|ProcessingChoice}}, {{param}} MUST NOT be {{empty}}. In this case, if it ever becomes {{empty}}, e.g. because the referenced profile is deleted, this IPsec Filter table entry is invalid and {{param|Status}} MUST be set to {{enum|Error_Misconfigured|Status}}. If {{param|ProcessingChoice}} is not {{enum|Protect|ProcessingChoice}}, {{param}} is ignored. Any changes to the referenced profile will have an immediate effect on any established IPsec tunnels. Such changes will often force IKEv2 sessions and child SAs to be re-established.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Profile.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "Filter table that represents the IPsec Security Policy Database (SPD) {{bibref|RFC4301|Section 4.4.1}} selection criteria. Each (ordered) entry defines a set of selection criteria and references a {{object|#.Profile}} table entry that specifies how matching packets will be processed. SPD filtering is performed for all packets that might need to cross the IPsec boundary {{bibref|RFC4301|Section 3.1}}. Given that IPsec operates at the IP level, this means that SPD filtering conceptually occurs after bridging and before routing. For enabled table entries, if {{param|Interface}} is not a valid reference and {{param|AllInterfaces}} is {{false}}, then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

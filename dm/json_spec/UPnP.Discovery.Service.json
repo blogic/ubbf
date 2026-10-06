@@ -1,0 +1,91 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.UPnP.Discovery.Service.{i}.",
+  "object": {
+    "path": "Device.UPnP.Discovery.Service.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ServiceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of the UPnP embedded service. {{enum}} The ability to list inactive UPnP embedded services is OPTIONAL. The length of time an inactive service remains listed in this table is a local matter to the CPE.",
+        "type": "string",
+        "enumerations": [
+          "LeaseActive",
+          "LeaseExpired",
+          "ByebyeReceived"
+        ]
+      },
+      {
+        "name": "USN",
+        "access": "readOnly",
+        "description": "The value of the USN (Unique Service Name) header for this UPnP embedded service. This is of the following form: : ''uuid:device-UUID::urn:domain-name:service:serviceType:v''",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "LeaseTime",
+        "access": "readOnly",
+        "description": "The UPnP embedded service lease time in {{units}}, extracted from the CACHE-CONTROL header.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Location",
+        "access": "readOnly",
+        "description": "The value of the LOCATION header for this UPnP embedded service, which is the {{datatype}} of the root device's DDD (Device Description Document).",
+        "type": "dataType:URL"
+      },
+      {
+        "name": "Server",
+        "access": "readOnly",
+        "description": "The value of the SERVER header for this UPnP embedded service, which is a string of the following form: : ''OS/version UPnP/udaversion product/version'' where '''UPnP''' is a literal string, '''udaversion''' is the version of the UPnP Device Architecture.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Host",
+        "access": "readOnly",
+        "description": "Indicates the full path names of all Host table entries, whether active or inactive, that correspond to this UPnP embedded service.",
+        "list": true,
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "###.Hosts.Host.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "LastUpdate",
+        "access": "readOnly",
+        "description": "The date and time at which the last advertisement from this {{object}} was received.",
+        "type": "dateTime",
+        "version": "2.12"
+      },
+      {
+        "name": "ParentDevice",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|#.RootDevice}} or {{object|#.Device}} table entries that embeds this {{object}}}} This parameter is populated by extracting the \"device-UUID\" from the service's USN and matching the value against the root device or embedded device UUID value.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "                   #.RootDevice.                   #.Device.",
+          "targetType": "row"
+        },
+        "version": "2.12"
+      }
+    ],
+    "description": "UPnP embedded service table. This table contains an entry for each UPnP embedded service that has been discovered via SSDP.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "USN"
+      ]
+    }
+  }
+}

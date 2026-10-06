@@ -1,0 +1,41 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.MUConfig.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.MUConfig.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "DLOFDMAEnable",
+        "access": "readWrite",
+        "description": "Enable downlink (DL) Orthogonal Frequency-Division Multiple Access (OFDMA).",
+        "type": "boolean"
+      },
+      {
+        "name": "ULOFDMAEnable",
+        "access": "readWrite",
+        "description": "Enable uplink (UL) OFDMA.",
+        "type": "boolean"
+      },
+      {
+        "name": "DLMUMIMOEnable",
+        "access": "readWrite",
+        "description": "Enable DL Multi-User Multi-Input Multi-Output (MU-MIMO).",
+        "type": "boolean"
+      },
+      {
+        "name": "ULMUMIMOEnable",
+        "access": "readWrite",
+        "description": "Enable UL MU-MIMO.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object provides Multiuser (MU)-specific BSS configuration.",
+    "children": []
+  }
+}

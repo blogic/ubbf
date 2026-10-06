@@ -1,0 +1,49 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XMPP.Connection.{i}.Stats.",
+  "object": {
+    "path": "Device.XMPP.Connection.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ReceivedMessages",
+        "access": "readOnly",
+        "description": "The number of XMPP stanzas (iq, presence, or message) that have been received on this {{object|##.Connection}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TransmittedMessages",
+        "access": "readOnly",
+        "description": "The number of XMPP stanzas (iq, presence, or message) that have been transmitted by this {{object|##.Connection}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ReceivedErrorMessages",
+        "access": "readOnly",
+        "description": "The number of XMPP stanzas (iq, presence, or message) that have been received on this {{object|##.Connection}} where the type attribute had a value of \"error\".",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TransmittedErrorMessages",
+        "access": "readOnly",
+        "description": "The number of XMPP stanzas (iq, presence, or message) that have been transmitted by this {{object|##.Connection}} where the type attribute had a value of \"error\".",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "XMPP Connection statistics information for this resource.",
+    "children": []
+  }
+}

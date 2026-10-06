@@ -1,0 +1,410 @@
+{
+	"Device": {
+		"IP": {
+			"Interface": {
+				"1": {
+					"Enable": "true",
+					"Alias": "WAN",
+					"Name": "lte",
+					"LowerLayers": "Device.Cellular.Interface.1",
+					"Upstream": "true",
+					"Type": "Normal",
+					"IPv4Enable": "true",
+					"IPv6Enable": "true"
+				},
+				"2": {
+					"Enable": "true",
+					"Alias": "LAN",
+					"Name": "lan",
+					"LowerLayers": "Device.Bridging.Bridge.1.Port.1",
+					"Upstream": "false",
+					"Type": "Normal",
+					"IPv4Enable": "true",
+					"IPv6Enable": "true",
+					"IPv4Address": {
+						"1": {
+							"Enable": "true",
+							"Alias": "LanIPv4",
+							"IPAddress": "192.168.11.11",
+							"SubnetMask": "255.255.255.0",
+							"AddressingType": "Static"
+						}
+					},
+					"IPv6Address": {
+						"1": {
+							"Enable": "true",
+							"Alias": "LanIPv6",
+							"IPAddress": "",
+							"Origin": "PrefixDelegation",
+							"Prefix": "Device.IP.Interface.2.IPv6Prefix.1"
+						}
+					},
+					"IPv6Prefix": {
+						"1": {
+							"Enable": "true",
+							"Alias": "LanPrefix",
+							"Prefix": "",
+							"Origin": "PrefixDelegation",
+							"ParentPrefix": "Device.DHCPv6.Client.1.Server.1.Prefix.1",
+							"ChildPrefixBits": "60"
+						}
+					}
+				}
+			}
+		},
+		"Cellular": {
+			"RoamingEnabled": "false",
+			"Interface": {
+				"1": {
+					"USIM": {
+						"PIN": "9360"
+					}
+				}
+			},
+			"AccessPoint": {
+				"1": {
+					"Enable": "true",
+					"Alias": "lte",
+					"APN": "internet.telekom",
+					"Username": "telekom",
+					"Password": "tm",
+					"Interface": "Device.Cellular.Interface.1",
+					"IPVersion": "4",
+					"Type": "default"
+				}
+			}
+		},
+		"DHCPv4": {
+			"Server": {
+				"Enable": "true",
+				"Pool": {
+					"1": {
+						"Enable": "true",
+						"Alias": "LanPool",
+						"Interface": "Device.IP.Interface.2",
+						"MinAddress": "192.168.11.100",
+						"MaxAddress": "192.168.11.200",
+						"SubnetMask": "255.255.255.0",
+						"LeaseTime": "86400",
+						"DNSServers": "192.168.11.11",
+						"DomainName": "lan.local",
+						"IPRouters": "192.168.11.11"
+					}
+				}
+			}
+		},
+		"DHCPv6": {
+			"Client": {
+				"1": {
+					"Enable": "true",
+					"Alias": "WanDHCPv6Client",
+					"Interface": "Device.IP.Interface.1",
+					"RequestAddresses": "false",
+					"RequestPrefixes": "true"
+				}
+			},
+			"Server": {
+				"Enable": "true",
+				"Pool": {
+					"1": {
+						"Enable": "true",
+						"Alias": "LanDHCPv6Pool",
+						"Interface": "Device.IP.Interface.2",
+						"IANAEnable": "true",
+						"IAPDEnable": "true",
+						"IAPDAddLength": "0"
+					}
+				}
+			}
+		},
+		"RouterAdvertisement": {
+			"Enable": "true",
+			"InterfaceSetting": {
+				"1": {
+					"Enable": "true",
+					"Alias": "LanRA",
+					"Interface": "Device.IP.Interface.2",
+					"AdvManagedFlag": "true",
+					"AdvOtherConfigFlag": "true",
+					"MaxRtrAdvInterval": "600",
+					"MinRtrAdvInterval": "200",
+					"AdvDefaultLifetime": "1800",
+					"AdvPreferredRouterFlag": "Medium",
+					"RDNSS": "",
+					"DNSSL": ""
+				}
+			}
+		},
+		"Firewall": {
+			"Enable": "true",
+			"Config": "Advanced",
+			"AdvancedLevel": "Device.Firewall.Level.1",
+			"Level": {
+				"1": {
+					"Alias": "DefaultLevel",
+					"Name": "Default",
+					"Description": "Default firewall level",
+					"DefaultPolicy": "Drop"
+				}
+			},
+			"Chain": {
+				"1": {
+					"Enable": "true",
+					"Alias": "InputChain",
+					"Name": "INPUT",
+					"Rule": {
+						"1": {
+							"Enable": "true",
+							"Alias": "AllowLAN",
+							"SourceInterface": "Device.IP.Interface.2",
+							"Target": "Accept"
+						}
+					}
+				},
+				"2": {
+					"Enable": "true",
+					"Alias": "ForwardChain",
+					"Name": "FORWARD",
+					"Rule": {
+						"1": {
+							"Enable": "true",
+							"Alias": "LANtoWAN",
+							"SourceInterface": "Device.IP.Interface.2",
+							"DestInterface": "Device.IP.Interface.1",
+							"Target": "Accept"
+						}
+					}
+				}
+			}
+		},
+		"NAT": {
+			"InterfaceSetting": {
+				"1": {
+					"Enable": "true",
+					"Alias": "WanNAT",
+					"Interface": "Device.IP.Interface.1"
+				},
+				"2": {
+					"Enable": "false",
+					"Alias": "LanZone",
+					"Interface": "Device.IP.Interface.2"
+				}
+			}
+		},
+		"Time": {
+			"Enable": "true",
+			"LocalTimeZone": "CET-1CEST,M3.5.0,M10.5.0/3",
+			"Client": {
+				"1": {
+					"Enable": "true",
+					"Alias": "NTPClient",
+					"Servers": "0.pool.ntp.org,1.pool.ntp.org"
+				}
+			},
+			"Server": {
+				"1": {
+					"Enable": "true",
+					"Alias": "NTPServer",
+					"Interface": "Device.IP.Interface.2"
+				}
+			}
+		},
+		"WiFi": {
+			"Radio": {
+				"1": {
+					"Enable": "true",
+					"Alias": "Radio2G",
+					"Name": "radio0",
+					"OperatingFrequencyBand": "2.4GHz",
+					"OperatingStandards": "g,n,ax",
+					"Channel": "0",
+					"AutoChannelEnable": "true",
+					"OperatingChannelBandwidth": "20MHz",
+					"TransmitPower": "100"
+				},
+				"2": {
+					"Enable": "true",
+					"Alias": "Radio5G",
+					"Name": "radio1",
+					"OperatingFrequencyBand": "5GHz",
+					"OperatingStandards": "a,n,ac,ax",
+					"Channel": "0",
+					"AutoChannelEnable": "true",
+					"OperatingChannelBandwidth": "80MHz",
+					"TransmitPower": "100"
+				}
+			},
+			"SSID": {
+				"1": {
+					"Enable": "true",
+					"Alias": "SSID2G",
+					"Name": "wlan0",
+					"LowerLayers": "Device.WiFi.Radio.1",
+					"SSID": "MyNetwork_2G",
+					"MACAddress": ""
+				},
+				"2": {
+					"Enable": "true",
+					"Alias": "SSID5G",
+					"Name": "wlan1",
+					"LowerLayers": "Device.WiFi.Radio.2",
+					"SSID": "MyNetwork_5G",
+					"MACAddress": ""
+				}
+			},
+			"AccessPoint": {
+				"1": {
+					"Enable": "true",
+					"Alias": "AP2G",
+					"SSIDReference": "Device.WiFi.SSID.1",
+					"SSIDAdvertisementEnabled": "true",
+					"WMMEnable": "true",
+					"Security": {
+						"ModeEnabled": "WPA2-Personal",
+						"WPAEncryptionModes": "AESEncryption",
+						"PreSharedKey": "YourSecurePassword123"
+					}
+				},
+				"2": {
+					"Enable": "true",
+					"Alias": "AP5G",
+					"SSIDReference": "Device.WiFi.SSID.2",
+					"SSIDAdvertisementEnabled": "true",
+					"WMMEnable": "true",
+					"Security": {
+						"ModeEnabled": "WPA2-Personal",
+						"WPAEncryptionModes": "AESEncryption",
+						"PreSharedKey": "YourSecurePassword123"
+					}
+				}
+			}
+		},
+		"DNS": {
+			"Client": {
+				"Enable": "true",
+				"Server": {
+					"1": {
+						"Enable": "true",
+						"Alias": "PrimaryDNS",
+						"DNSServer": "8.8.8.8",
+						"Type": "Static"
+					},
+					"2": {
+						"Enable": "true",
+						"Alias": "SecondaryDNS",
+						"DNSServer": "8.8.4.4",
+						"Type": "Static"
+					}
+				}
+			},
+			"Relay": {
+				"Enable": "true",
+				"Forwarding": {
+					"1": {
+						"Enable": "true",
+						"Alias": "LanForwarder",
+						"DNSServer": "8.8.8.8",
+						"IngressInterface": "Device.IP.Interface.2"
+					}
+				},
+				"Caching": {
+					"Enable": "true",
+					"MaxEntries": "1000",
+					"MaxTTL": "86400",
+					"MinTTL": "0",
+					"NegativeTTL": "3600"
+				}
+			},
+			"RebindProtection": {
+				"Enable": "true",
+				"AllowedDomains": "lan.local"
+			}
+		},
+		"SSH": {
+			"Enable": "true",
+			"Server": {
+				"1": {
+					"Enable": "true",
+					"Alias": "DefaultSSH",
+					"Interface": "Device.IP.Interface.2",
+					"Port": "22",
+					"IdleTimeout": "300",
+					"KeepAlive": "300",
+					"AllowRootLogin": "true",
+					"AllowPasswordLogin": "true",
+					"AllowRootPasswordLogin": "true",
+					"MaxAuthTries": "3"
+				}
+			}
+		},
+		"Ethernet": {
+			"Interface": {
+				"1": {
+					"Enable": "true",
+					"Alias": "eth0",
+					"Name": "eth0",
+					"Upstream": "true",
+					"MaxBitRate": "-1",
+					"DuplexMode": "Auto"
+				},
+				"2": {
+					"Enable": "true",
+					"Alias": "eth1",
+					"Name": "eth1",
+					"Upstream": "false",
+					"MaxBitRate": "-1",
+					"DuplexMode": "Auto"
+				}
+			},
+			"Link": {
+				"1": {
+					"Enable": "true",
+					"Alias": "eth-WAN",
+					"Name": "eth0",
+					"LowerLayers": "Device.Ethernet.Interface.1",
+					"MACAddress": ""
+				},
+				"2": {
+					"Enable": "true",
+					"Alias": "eth-LAN",
+					"Name": "eth1",
+					"LowerLayers": "Device.Ethernet.Interface.2",
+					"MACAddress": ""
+				}
+			}
+		},
+		"Bridging": {
+			"Bridge": {
+				"1": {
+					"Enable": "true",
+					"Alias": "LanBridge",
+					"Name": "br-lan",
+					"Standard": "802.1Q-2011",
+					"Port": {
+						"1": {
+							"Enable": "true",
+							"Alias": "br-lan",
+							"Name": "br-lan",
+							"ManagementPort": "true",
+							"LowerLayers": ""
+						},
+						"2": {
+							"Enable": "true",
+							"Alias": "LanPort1",
+							"Name": "lanport1",
+							"ManagementPort": "false",
+							"LowerLayers": "Device.Ethernet.Link.2"
+						},
+						"3": {
+							"Enable": "true",
+							"Alias": "WiFiPort",
+							"Name": "wifiport",
+							"ManagementPort": "false",
+							"LowerLayers": "Device.WiFi.SSID.1,Device.WiFi.SSID.2"
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,220 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.SSID.{i}.Stats.",
+  "object": {
+    "path": "Device.WiFi.SSID.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "BytesSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} transmitted out of the interface, including framing characters.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "BytesReceived",
+        "access": "readOnly",
+        "description": "The total number of {{units}} received on the interface, including framing characters.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "PacketsSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} transmitted out of the interface.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "PacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of {{units}} received on the interface.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ErrorsSent",
+        "access": "readOnly",
+        "description": "The total number of outbound {{units}} that could not be transmitted because of errors. These can be due to the number of retransmissions exceeding the retry limit, or from other causes.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ErrorsReceived",
+        "access": "readOnly",
+        "description": "The total number of inbound {{units}} that contained errors preventing them from being delivered to a higher-layer protocol.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "UnicastPacketsSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} requested for transmission which were not addressed to a multicast or broadcast address at this layer, including those that were discarded or not sent.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "DiscardPacketsSent",
+        "access": "readOnly",
+        "description": "The total number of outbound {{units}} which were chosen to be discarded even though no errors had been detected to prevent their being transmitted. One possible reason for discarding such a packet could be to free up buffer space.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "DiscardPacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of inbound {{units}} which were chosen to be discarded even though no errors had been detected to prevent their being delivered. One possible reason for discarding such a packet could be to free up buffer space.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "MulticastPacketsSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} that higher-level protocols requested for transmission and which were addressed to a multicast address at this layer, including those that were discarded or not sent.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "UnicastPacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of received {{units}}, delivered by this layer to a higher layer, which were not addressed to a multicast or broadcast address at this layer.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "MulticastPacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of received {{units}}, delivered by this layer to a higher layer, which were addressed to a multicast address at this layer.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "BroadcastPacketsSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} that higher-level protocols requested for transmission and which were addressed to a broadcast address at this layer, including those that were discarded or not sent.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "BroadcastPacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of received {{units}}, delivered by this layer to a higher layer, which were addressed to a broadcast address at this layer.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "UnknownProtoPacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of {{units}} received via the interface which were discarded because of an unknown or unsupported protocol.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "RetransCount",
+        "access": "readOnly",
+        "description": "The total number of transmitted packets which were retransmissions. Two retransmissions of the same packet results in this counter incrementing by two.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "FailedRetransCount",
+        "access": "readOnly",
+        "description": "The number of packets that were not transmitted successfully due to the number of retransmission attempts exceeding an 802.11 retry limit. This parameter is based on dot11FailedCount from {{bibref|802.11-2012}}.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "RetryCount",
+        "access": "readOnly",
+        "description": "The number of packets that were successfully transmitted after one or more retransmissions. This parameter is based on dot11RetryCount from {{bibref|802.11-2012}}.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "MultipleRetryCount",
+        "access": "readOnly",
+        "description": "The number of packets that were successfully transmitted after more than one retransmission. This parameter is based on dot11MultipleRetryCount from {{bibref|802.11-2012}}.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "ACKFailureCount",
+        "access": "readOnly",
+        "description": "The number of expected ACKs that were never received. This parameter is based on dot11ACKFailureCount from {{bibref|802.11-2012}}.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "AggregatedPacketCount",
+        "access": "readOnly",
+        "description": "The number of aggregated packets that were transmitted. This applies only to 802.11n and 802.11ac.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "DiscardPacketsSentBufOverflow",
+        "access": "readOnly",
+        "description": "The total number of discarded packets during transmission caused by transmit buffer overflow.",
+        "type": "dataType:StatsCounter64",
+        "version": "2.14"
+      },
+      {
+        "name": "DiscardPacketsSentNoAssoc",
+        "access": "readOnly",
+        "description": "The total number of discarded packets due to the station not being associated.",
+        "type": "dataType:StatsCounter64",
+        "version": "2.14"
+      },
+      {
+        "name": "FragSent",
+        "access": "readOnly",
+        "description": "The total number of frame-fragments transmitted out of the interface.",
+        "type": "dataType:StatsCounter64",
+        "version": "2.14"
+      },
+      {
+        "name": "SentNoAck",
+        "access": "readOnly",
+        "description": "The total number of transmitted data packets that did not receive an ACK when expected.",
+        "type": "dataType:StatsCounter64",
+        "version": "2.14"
+      },
+      {
+        "name": "DupReceived",
+        "access": "readOnly",
+        "description": "The total number of received packets whose Sequence Control field indicates it is a duplicate.",
+        "type": "dataType:StatsCounter64",
+        "version": "2.14"
+      },
+      {
+        "name": "TooLongReceived",
+        "access": "readOnly",
+        "description": "The total number of received packets longer than the maximum allowed packet length.",
+        "type": "dataType:StatsCounter64",
+        "version": "2.14"
+      },
+      {
+        "name": "TooShortReceived",
+        "access": "readOnly",
+        "description": "The total number of received packets that did not contain enough bytes for the packet type.",
+        "type": "dataType:StatsCounter64",
+        "version": "2.14"
+      },
+      {
+        "name": "AckUcastReceived",
+        "access": "readOnly",
+        "description": "The total number of unicast ACKs received, with good Frame Check Sequence (FCS).",
+        "type": "dataType:StatsCounter64",
+        "version": "2.14"
+      }
+    ],
+    "description": "Throughput statistics for this interface. The CPE MUST reset the interface's Stats parameters (unless otherwise stated in individual object or parameter descriptions) either when the interface becomes operationally down due to a previous administrative down (i.e. the interface's {{param|#.Status}} parameter transitions to a down state after the interface is disabled) or when the interface becomes administratively up (i.e. the interface's {{param|#.Enable}} parameter transitions from {{false}} to {{true}}). Administrative and operational interface status is discussed in {{bibref|TR-181i2|section 4.2.2}}. Packet counters here count 802.11 WiFi frames. See {{bibref|TR-181i2|Appendix III}} for further details.",
+    "children": []
+  }
+}

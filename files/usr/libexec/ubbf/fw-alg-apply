@@ -1,0 +1,232 @@
+#!/usr/bin/ucode --
+'use strict';
+
+import { readfile, open, stat } from 'fs';
+import { log_init, log_info, log_err, log_warn } from 'ubbf.utils.logging';
+
+const STATE_PATH = '/tmp/ubbf/firewall-alg.json';
+
+log_init('ubbf-fw-alg');
+
+/**
+ * Validates that a name only contains characters legitimate for a
+ * kernel module identifier.  Defensive belt-and-braces against the
+ * side-car file ever being tampered with: every name in it traces
+ * back to a fixed table in firewall-conntrack.uc, but we still go
+ * through shell.
+ *
+ * @param {string} name - candidate module name
+ * @returns {boolean} true when the name is safe to pass to modprobe/rmmod
+ */
+function module_name_valid(name) {
+	if (type(name) != 'string')
+		return false;
+	return !!match(name, /^[A-Za-z0-9_]+$/);
+}
+
+/**
+ * Validates a comma-separated port list.  Empty string means "no
+ * override"; otherwise every comma-delimited token must parse as a
+ * decimal in [0, 65535].
+ *
+ * @param {string} ports - candidate Ports value
+ * @returns {boolean} true when the value is safe and well-formed
+ */
+function ports_valid(ports) {
+	if (ports == null || ports == '')
+		return true;
+	if (type(ports) != 'string')
+		return false;
+	if (!match(ports, /^[0-9]+(,[0-9]+)*$/))
+		return false;
+	for (let tok in split(ports, ',')) {
+		let n = +tok;
+		if (n < 0 || n > 65535)
+			return false;
+	}
+	return true;
+}
+
+/**
+ * Returns true when /proc/modules lists the given module as loaded.
+ * Linear scan of the file rather than a regex with an interpolated
+ * module name: avoids any chance of an injected metacharacter ever
+ * mattering, and the file is tens of lines on a typical DUT.
+ *
+ * @param {string} module - kernel module name
+ * @returns {boolean}
+ */
+function module_loaded(module) {
+	let pm = readfile('/proc/modules');
+	if (!pm)
+		return false;
+	for (let line in split(pm, '\n')) {
+		let space = index(line, ' ');
+		if (space > 0 && substr(line, 0, space) == module)
+			return true;
+	}
+	return false;
+}
+
+/**
+ * Returns the current value of the module's ports parameter, with
+ * whitespace and trailing newline stripped.  Empty string when the
+ * module is not loaded or has no ports parameter.
+ *
+ * @param {string} module - kernel module name
+ * @returns {string}
+ */
+function module_ports_current(module) {
+	let v = readfile(`/sys/module/${module}/parameters/ports`);
+	if (!v)
+		return '';
+	return trim(v);
+}
+
+/**
+ * Loads the module with optional ports= parameter.  Returns true if
+ * the modprobe call succeeded.
+ *
+ * @param {string} module - kernel module name
+ * @param {string} ports - comma-separated port list, or '' for default
+ * @returns {boolean}
+ */
+function module_load(module, ports) {
+	let cmd = (ports != '')
+		? sprintf('modprobe %s ports=%s', module, ports)
+		: sprintf('modprobe %s', module);
+	let rc = system(cmd);
+	if (rc != 0)
+		log_warn('%s failed rc=%d', cmd, rc);
+	return rc == 0;
+}
+
+/**
+ * Unloads the module if loaded.  Silent when the module is absent.
+ *
+ * @param {string} module - kernel module name
+ */
+function module_unload(module) {
+	if (!module_loaded(module))
+		return;
+	let rc = system(sprintf('rmmod %s 2>/dev/null', module));
+	if (rc != 0)
+		log_warn('rmmod %s failed rc=%d', module, rc);
+}
+
+/**
+ * Writes a value to a /sys file.  Silent when the file is absent
+ * (kernel param was renamed or module did not export it).
+ *
+ * @param {string} path - filesystem path
+ * @param {string} value - bytes to write (newline appended)
+ */
+function syswrite(path, value) {
+	if (!stat(path))
+		return;
+	let f = open(path, 'w');
+	if (!f) {
+		log_warn('open %s failed', path);
+		return;
+	}
+	f.write(value + '\n');
+	f.close();
+}
+
+/**
+ * Reconciles a single ALG entry's module presence and runtime
+ * parameters.  Returns true when the call changed module load state
+ * (used to decide whether to trigger an fw4 reload).
+ *
+ * @param {object} entry - one element of state.alg
+ * @returns {boolean} module load state changed
+ */
+function entry_reconcile(entry) {
+	if (!module_name_valid(entry.module)) {
+		log_err('refusing to act on invalid module name %s', entry.module);
+		return false;
+	}
+	if (!ports_valid(entry.ports)) {
+		log_err('refusing to act on invalid ports %s for %s',
+		        entry.ports, entry.module);
+		return false;
+	}
+	if (entry.nat_module != null && !module_name_valid(entry.nat_module)) {
+		log_err('refusing to act on invalid nat_module name %s', entry.nat_module);
+		return false;
+	}
+
+	let loaded = module_loaded(entry.module);
+	let changed = false;
+
+	if (!entry.enable) {
+		if (!loaded)
+			return false;
+		if (entry.nat_module)
+			module_unload(entry.nat_module);
+		module_unload(entry.module);
+		log_info('%s disabled', entry.name);
+		return true;
+	}
+
+	if (loaded && entry.ports != '' &&
+	    module_ports_current(entry.module) != entry.ports) {
+		if (entry.nat_module)
+			module_unload(entry.nat_module);
+		module_unload(entry.module);
+		loaded = false;
+	}
+
+	if (!loaded) {
+		if (!module_load(entry.module, entry.ports))
+			return false;
+		if (entry.nat_module)
+			module_load(entry.nat_module, '');
+		log_info('%s enabled ports=%s', entry.name, entry.ports);
+		changed = true;
+	}
+
+	for (let key, value in (entry.params ?? {}))
+		syswrite(`/sys/module/${entry.module}/parameters/${key}`, value);
+
+	for (let key, value in (entry.sysctl ?? {}))
+		syswrite(`/proc/sys/net/netfilter/${key}`, value);
+
+	return changed;
+}
+
+let raw = readfile(STATE_PATH);
+if (!raw) {
+	log_info('no state file %s, nothing to reconcile', STATE_PATH);
+	exit(0);
+}
+
+let state;
+try { state = json(raw); } catch (e) {
+	log_err('failed to parse %s: %s', STATE_PATH, e);
+	exit(1);
+}
+
+for (let key, value in (state?.sysctl ?? {})) {
+	if (!match(key, /^nf_conntrack_[a-z_]+$/)) {
+		log_err('refusing to write sysctl %s', key);
+		continue;
+	}
+	syswrite(`/proc/sys/net/netfilter/${key}`, value);
+}
+
+if (!state?.alg)
+	exit(0);
+
+let reload_fw = false;
+for (let entry in state.alg) {
+	if (entry_reconcile(entry))
+		reload_fw = true;
+}
+
+if (reload_fw) {
+	log_info('fw4 reload (helper availability changed)');
+	system('fw4 reload >/dev/null 2>&1');
+}
+
+exit(0);

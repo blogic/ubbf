@@ -1,0 +1,67 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MoCA.Interface.{i}.Sapm.{i}.",
+  "object": {
+    "path": "Device.MoCA.Interface.{i}.Sapm.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "SapmNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this Sapm entry.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Profile",
+        "access": "readWrite",
+        "description": "Profile index used for the SAPM (Subcarrier Added PHY Margin) table.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Frequency",
+        "access": "readWrite",
+        "description": "Frequency (band) index used for the SAPM (Subcarrier Added PHY Margin) table.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AggrRxPwrLevelThreshold",
+        "access": "readWrite",
+        "description": "Aggregate Received Power Level Threshold (ARPL_THLD). The parameter contains the \"N\" value, where ARPL_THLD = -N dBm.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65
+      },
+      {
+        "name": "PhyMargin",
+        "access": "readWrite",
+        "description": "Subcarrier Added PHY Margin (SAPM). List of SAPM values representing the PHY margin the Node is required to add to the bitloading of each of the available subcarriers when the received power level is below ARPL_THLD ({{param|AggrRxPwrLevelThreshold}}). Each value contains the \"Ni\" value for a OFDM subcarrier \"i\", where SAPMi = 0.5*Ni dB.",
+        "list": true,
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 120
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Reflects the status of a row in this table.",
+        "type": "dataType:RowStatus"
+      }
+    ],
+    "description": "Interface SAPM Table supporting the configuration of SAPM (Subcarrier Added PHY Margin) function parameters for the selected profile. When the aggregate received power level (ARPL) is below the pre-specified threshold {{param|AggrRxPwrLevelThreshold}}, for each subcarrier, its corresponding value on the list {{param|PhyMargin}} will be considered to determine the subcarriers' bitloading according {{bibref|MoCAv2.0|section 7.15.2 and Table 17-1}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Profile",
+        "Frequency"
+      ]
+    }
+  }
+}

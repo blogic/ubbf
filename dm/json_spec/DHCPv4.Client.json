@@ -1,0 +1,191 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv4.Client.{i}.",
+  "object": {
+    "path": "Device.DHCPv4.Client.{i}.",
+    "access": "readWrite",
+    "minEntries": "1",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ClientNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the DHCP Client entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "{{reference}} The IP Interface associated with the ''Client'' entry.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this table entry. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "DHCPStatus",
+        "access": "readOnly",
+        "description": "The DHCP Client status as defined in {{bibref|RFC2131}}. {{enum}} Note: This value is only relevant when the DHCP Client is operationally enabled (i.e. when {{param|Status}} is {{enum|Enabled|Status}}).",
+        "type": "string",
+        "enumerations": [
+          "Init",
+          "Selecting",
+          "Requesting",
+          "Rebinding",
+          "Bound",
+          "Renewing"
+        ]
+      },
+      {
+        "name": "IPAddress",
+        "access": "readOnly",
+        "description": "IPv4 Address option received from the DHCP Server. {{empty}} when {{param|Status}} is not equal to {{enum|Bound|DHCPStatus}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "SubnetMask",
+        "access": "readOnly",
+        "description": "Subnet mask option received from the DHCP Server. {{empty}} when {{param|Status}} is not equal to {{enum|Bound|DHCPStatus}}. Value is information received via DHCP Option 1.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "IPRouters",
+        "access": "readOnly",
+        "description": "{{list}} Items represent IP Router IPv4 Address(es) received from the DHCP server. {{empty}} when {{param|Status}} is not equal to {{enum|Bound|DHCPStatus}}. Value is information received via DHCP Options 3, 33 or 121.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "listMaxLength": 256,
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "DNSServers",
+        "access": "readOnly",
+        "description": "{{list}} Items represent DNS Server IPv4 Address(es) received from the DHCP server. {{empty}} when {{param|Status}} is not equal to {{enum|Bound|DHCPStatus}}. Value is information received via DHCP Option 6.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "listMaxLength": 256,
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "LeaseTimeRemaining",
+        "access": "readOnly",
+        "description": "DHCP lease time remaining in {{units}}. A value of -1 indicates an infinite lease.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "DHCPServer",
+        "access": "readOnly",
+        "description": "The IPv4 address of the current DHCP server.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "PassthroughEnable",
+        "access": "readWrite",
+        "description": "If {{false}}, the DHCP Client retrieved IP address information is configured on the referenced {{param|Interface}} object. If {{true}}, the DHCP Client retrieved information is propagated to the parameters in the referenced {{param|PassthroughDHCPPool}} object, replacing any existing configuration (including ''MinAddress'', ''MaxAddress'', ''SubnetMask'', ''IPRouters'', and ''DNSServers'').",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "PassthroughDHCPPool",
+        "access": "readWrite",
+        "description": "{{reference}}When {{param}} is set to {{empty}}, {{param|PassthroughEnable}} MUST be set to {{false}} (i.e. passthrough can not be enabled without a pool reference specified).",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.Server.Pool.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "AuthenticationProtocol",
+        "access": "readWrite",
+        "description": "Specifies the authentication mechanism to be used.",
+        "default": "None",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "None",
+          "ConfigurationToken",
+          "DelayedAuthentication"
+        ],
+        "version": "2.19"
+      },
+      {
+        "name": "DSCPMark",
+        "access": "readWrite",
+        "description": "Diffserv code point to be used for outgoing DHCP messages.",
+        "default": "48",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 63,
+        "version": "2.19"
+      },
+      {
+        "name": "SentOptionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ReqOptionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object contains DHCP client settings for an associated ''IP Interface'' indicated by {{param|Interface}}. For enabled table entries, if {{param|Interface}} is not a valid reference then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}. Note: The {{object}} table includes a unique key parameter that is a strong reference. If a strongly referenced object is deleted, the CPE will set the referencing parameter to {{empty}}. However, doing so under these circumstances might cause the updated {{object}} row to then violate the table's unique key constraint; if this occurs, the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and disable the offending {{object}} row.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

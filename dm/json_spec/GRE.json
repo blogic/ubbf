@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.GRE.",
+  "object": {
+    "path": "Device.GRE.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "TunnelNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "FilterNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object contains parameters associated with the Generic Routing Encapsulation (GRE) Tunnel ({{bibref|RFC2784}}) with Key and Sequence Number extensions ({{bibref|RFC2890}}). This object also provides a means to treat packets that are encapsulated within a GRE Tunnel by using a set of {{object|Filter}} objects to determine the treatment of the packet.",
+    "children": []
+  }
+}

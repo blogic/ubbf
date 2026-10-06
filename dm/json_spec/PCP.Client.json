@@ -1,0 +1,105 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PCP.Client.{i}.",
+  "object": {
+    "path": "Device.PCP.Client.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ClientNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the PCP Client.",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "WANInterface",
+        "access": "readOnly",
+        "description": "{{reference|the interface stack instance representing the WAN interface this client operates on}} See {{object|##.InterfaceStack}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of the PCP Client. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "StackDisabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "MAPEnable",
+        "access": "readWrite",
+        "description": "Enables or disables the MAP OpCode.",
+        "type": "boolean"
+      },
+      {
+        "name": "PEEREnable",
+        "access": "readWrite",
+        "description": "Enables or disables the PEER OpCode.",
+        "type": "boolean"
+      },
+      {
+        "name": "ANNOUNCEEnable",
+        "access": "readWrite",
+        "description": "Enables or disables the ANNOUNCE OpCode. When {{false}} the PCP Client does not support unsolicited ANNOUNCE messages.",
+        "type": "boolean"
+      },
+      {
+        "name": "THIRDPARTYEnable",
+        "access": "readWrite",
+        "description": "Enables or disables the THIRD_PARTY Option.",
+        "type": "boolean"
+      },
+      {
+        "name": "THIRDPARTYStatus",
+        "access": "readOnly",
+        "description": "Indicates whether THIRD_PARTY Option is enabled or not. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "FILTEREnable",
+        "access": "readWrite",
+        "description": "Enables or disables the FILTER option.",
+        "type": "boolean"
+      },
+      {
+        "name": "ServerNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Client properties for Port Control Protocol (PCP). The PCP Client interacts with a PCP Server as defined in {{bibref|RFC6887}} for internal device applications or LAN device applications via Interworking functions.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

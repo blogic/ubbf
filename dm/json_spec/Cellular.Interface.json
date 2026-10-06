@@ -1,0 +1,195 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Cellular.Interface.{i}.",
+  "object": {
+    "path": "Device.Cellular.Interface.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "InterfaceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the interface. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}. Because the interface includes layer 1, the {{enum|LowerLayerDown}} value SHOULD never be used.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the interface as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}. Note: Since {{object}} is a layer 1 interface, it is expected that {{param}} will not be used.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Upstream",
+        "access": "readOnly",
+        "description": "Indicates whether the interface points towards the Internet ({{true}}) or towards End Devices ({{false}}). For example: * For an Internet Gateway Device, {{param}} will be {{true}} for all WAN interfaces and {{false}} for all LAN interfaces. * For a standalone WiFi Access Point that is connected via Ethernet to an Internet Gateway Device, {{param}} will be {{true}} for the Ethernet interface and {{false}} for the WiFi Radio interface. * For an End Device, {{param}} will be {{true}} for all interfaces.",
+        "type": "boolean"
+      },
+      {
+        "name": "IMEI",
+        "access": "readOnly",
+        "description": "International Mobile Station Equipment Identity number, represented as a 15 digit string (digits 0-9).",
+        "type": "string",
+        "minLength": 15,
+        "maxLength": 15,
+        "pattern": "[0-9]{15,15}"
+      },
+      {
+        "name": "SupportedAccessTechnologies",
+        "access": "readOnly",
+        "description": "Access technologies supported by the interface.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "GPRS",
+          "EDGE",
+          "UMTS",
+          "UMTSHSPA",
+          "CDMA2000OneX",
+          "CDMA2000HRPD",
+          "LTE",
+          "NR"
+        ]
+      },
+      {
+        "name": "PreferredAccessTechnology",
+        "access": "readWrite",
+        "description": "Preferred access technology.",
+        "default": "Auto",
+        "defaultType": "factory",
+        "type": "string"
+      },
+      {
+        "name": "CurrentAccessTechnology",
+        "access": "readOnly",
+        "description": "Access technology that is currently in use.",
+        "type": "string"
+      },
+      {
+        "name": "AvailableNetworks",
+        "access": "readOnly",
+        "description": "List of available networks.",
+        "list": true,
+        "type": "string",
+        "maxLength": 64,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "NetworkRequested",
+        "access": "readWrite",
+        "description": "Name of the network which will be used, or {{empty}} if the network is selected automatically.",
+        "default": "",
+        "defaultType": "factory",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "NetworkInUse",
+        "access": "readOnly",
+        "description": "The value is {{empty}} if no network is found, or if the network specified in {{param|NetworkRequested}} is not found.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "RSSI",
+        "access": "readOnly",
+        "description": "The received signal strength in {{units}}. The allowed values depend on {{param|CurrentAccessTechnology}}: * For {{enum|GPRS|SupportedAccessTechnologies}}, {{enum|EDGE|SupportedAccessTechnologies}} the range is -111 {{units}} to -49 {{units}} * For {{enum|UMTS|SupportedAccessTechnologies}}, {{enum|UMTSHSPA|SupportedAccessTechnologies}} the range is -117 {{units}} to -54 {{units}} * For {{enum|LTE|SupportedAccessTechnologies}}, {{enum|NR|SupportedAccessTechnologies}} the range is -117 {{units}} to -25 {{units}} Note: An undetectable signal is indicated by the appropriate lower limit, e.g. -117 {{units}} for LTE.",
+        "type": "int",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "RSRP",
+        "access": "readOnly",
+        "description": "The Reference Signal Received Power in {{units}} for {{enum|LTE|SupportedAccessTechnologies}}, {{enum|NR|SupportedAccessTechnologies}} values of {{param|CurrentAccessTechnology}}: * The valid range of RSRP values from worst to best is -140 {{units}} to -44 {{units}} * Set to {{maxval}} if RSRP is not supported by the current access technology",
+        "type": "int",
+        "version": "2.14",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "RSRQ",
+        "access": "readOnly",
+        "description": "The Reference Signal Received Quality in {{units}} for {{enum|LTE|SupportedAccessTechnologies}}, {{enum|NR|SupportedAccessTechnologies}} values of {{param|CurrentAccessTechnology}}: * RSRQ is calculated using RSSI and RSRP values using RSRQ = (N*RSRP)/RSSI where N is the number of resource blocks (bandwidth). * The valid range of RSRQ values from worst to best is -20 {{units}} to -3 {{units}}. * Set to {{maxval}} if RSRQ is not supported by the current access technology.",
+        "type": "int",
+        "version": "2.14",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "UpstreamMaxBitRate",
+        "access": "readOnly",
+        "description": "The current maximum attainable data rate upstream (expressed in {{units}}).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DownstreamMaxBitRate",
+        "access": "readOnly",
+        "description": "The current maximum attainable data rate downstream (expressed in {{units}}).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SIMReferenceList",
+        "access": "readWrite",
+        "description": "Each list item references a SIM with which the interface is associated.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".TrustedElements.SIM.",
+          "targetType": "row"
+        },
+        "version": "2.19"
+      }
+    ],
+    "description": "Cellular interface table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}). Each instance of this object models a cellular modem with a single radio and can reference multiple {{object|.TrustedElements.SIM.}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Firewall.Level.{i}.",
+  "object": {
+    "path": "Device.Firewall.Level.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "LevelNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "Human-readable name associated with this {{object}} entry.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Description",
+        "access": "readWrite",
+        "description": "Human-readable description associated with this {{object}} entry.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Order",
+        "access": "readWrite",
+        "description": "{{datatype|expand}} This indicates the order of the {{object}} entry in the user interface display. Levels can be presented according to increasing or decreasing level of security.",
+        "type": "dataType:Order"
+      },
+      {
+        "name": "Policies",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|a {{object|#.Policy}}}} {{param}} only applies when {{param|#.Config}} is {{enum|Policy|#.Config}}.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        },
+        "version": "2.16"
+      },
+      {
+        "name": "Chain",
+        "access": "readOnly",
+        "description": "The Chain containing Firewall Level Rules associated with this {{object}} entry. On creation of a new {{object}} entry, the device will automatically create a new {{object|#.Chain}} table entry that this {{param}} parameter will reference.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Chain.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "PortMappingEnabled",
+        "access": "readWrite",
+        "description": "Indicates whether NAT port mapping is enabled or disabled when this is the active Level. For a {{enum|Stateless|#.Type}} Firewall this can be set to {{false}} to force any port mappings to be operationally disabled (for a {{enum|Stateful|#.Type}} Firewall this is not necessary because the same effect can be achieved via Firewall rules). This parameter affects all the interfaces on which NAT is enabled. It operationally enables or disables port mapping functionality and therefore does not affect the individual {{param|##.NAT.PortMapping.{i}.Enable}} settings. Note that the current NAT status and NAT port mapping status are indicated by the {{param|##.NAT.InterfaceSetting.{i}.Status}} parameter.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DefaultPolicy",
+        "access": "readWrite",
+        "description": "Default action for packets not matching any of the level rules. {{enum}}",
+        "default": "Drop",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Drop",
+          "Accept",
+          "Reject"
+        ]
+      },
+      {
+        "name": "DefaultLogPolicy",
+        "access": "readWrite",
+        "description": "Enable or disable logging, in a {{object|##.DeviceInfo.VendorLogFile}}, of packets not matching any of the level rules.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      }
+    ],
+    "description": "Firewall Level table. When an {{enum|Advanced|#.Config}} or {{enum|Policy|#.Config}} configuration is selected, {{param|#.AdvancedLevel}} or {{param|#.PolicyLevel}} selects the currently active entry in this table. Each {{object}} table entry references the {{object|#.Chain}} that contains the rules for this level.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

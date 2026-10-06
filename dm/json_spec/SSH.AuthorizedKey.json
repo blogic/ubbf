@@ -1,0 +1,49 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SSH.AuthorizedKey.{i}.",
+  "object": {
+    "path": "Device.SSH.AuthorizedKey.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "AuthorizedKeyNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.16"
+      },
+      {
+        "name": "User",
+        "access": "readWrite",
+        "description": "The user to whom the authorized key belongs to.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": ".Users.User.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Key",
+        "access": "readWrite",
+        "description": "Public key used for authentication (OpenSSH format).",
+        "type": "string"
+      }
+    ],
+    "description": "This object contains parameters relating to a SSH server instance.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

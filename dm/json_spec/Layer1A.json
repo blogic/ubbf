@@ -1,0 +1,16 @@
+{
+  "source_file": "tr-181-2-19-0-interface.xml",
+  "path": "Device.Layer1A.",
+  "object": {
+    "path": "Device.Layer1A.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [],
+    "description": "{{object}}.",
+    "children": []
+  }
+}

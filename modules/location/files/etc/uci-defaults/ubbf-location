@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# ucode-gps ships disabled; this module being installed means a receiver
+# is expected, so the daemon runs.
+uci -q set gps.@gps[0].disabled='0' && uci -q commit gps
+exit 0

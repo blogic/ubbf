@@ -1,0 +1,89 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.LogRotate.{i}.",
+  "object": {
+    "path": "Device.DeviceInfo.LogRotate.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "LogRotateNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.17"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the log rotation functionality for this item.",
+        "type": "boolean"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "Specifies the full path and filename of the log file that must be rotated. Which MUST use the uri scheme file {{bibref|RFC8089|The file URI Scheme}}.",
+        "type": "string"
+      },
+      {
+        "name": "NumberOfFiles",
+        "access": "readWrite",
+        "description": "Specifies the maximum number of log files retained. When during log rotation the maximum number of log files is reached, the oldest log file will be deleted. Specify ''1'' for implementations that only support one log file.",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "MaxFileSize",
+        "access": "readWrite",
+        "description": "Specifies the maximum log file size in {{units}}. Log events that arrive after the maximum file size is reached will cause the current log file to be closed and a new log file to be opened.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RollOver",
+        "access": "readWrite",
+        "description": "Specifies the length of time, in {{units}}, that log events should be written to a specific log file. Log events that arrive after the rollover period cause the current log file to be closed and a new log file to be opened.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Retention",
+        "access": "readWrite",
+        "description": "Specifies the length of time, in {{units}}, that completed/closed log event files should be stored in the file system before they are removed.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Compression",
+        "access": "readWrite",
+        "description": "Specifies the post-rotation compression method that must be applied exclusively on the initial log file in a rotation sequence.",
+        "default": "None",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "None",
+          "GZIP",
+          "BZIP2",
+          "LZO",
+          "XZ",
+          "ZSTD"
+        ]
+      },
+      {
+        "name": "LogFileNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This Object details the available rotation settings for vendor log file rotation. Based on {{bibref|YANGSYSLOG|A YANG Data Model for Syslog Configuration}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

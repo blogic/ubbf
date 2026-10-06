@@ -1,0 +1,172 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MQTT.Broker.{i}.Bridge.{i}.",
+  "object": {
+    "path": "Device.MQTT.Broker.{i}.Bridge.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "BridgeNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "The textual name of the MQTT bridge used for identification.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Allows to enable or disable the MQTT Bridge.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the status of this MQTT Bridge. {{enum}} The {{enum|Disabled}} value indicates that the MQTT bridge is not in service; parameter {{param|Enable}} is set to {{false}}. The {{enum|Connecting}} value indicates that the MQTT bridge is currently established. The {{enum|Connected}} value indicates that the MQTT bridge is currently active. The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid (e.g. No active Server entry, the MQTT broker can not use the defined bridge port, because it is blocked) The {{enum|Error_BrokerUnreachable}} value indicates that the MQTT bridge connection to the remote MQTT broker could not be established. The {{enum|Error}} value MAY be used to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Connecting",
+          "Connected",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error_BrokerUnreachable",
+          "Error"
+        ]
+      },
+      {
+        "name": "ProtocolVersion",
+        "access": "readWrite",
+        "description": "Specifies the MQTT protocol version used in the MQTT bridge connection.",
+        "type": "string"
+      },
+      {
+        "name": "TransportProtocol",
+        "access": "readWrite",
+        "description": "Indicates the transport protocol to be used for the MQTT bridge connection.",
+        "default": "TCP/IP",
+        "defaultType": "object",
+        "type": "string"
+      },
+      {
+        "name": "CleanSession",
+        "access": "readWrite",
+        "description": "The value of the MQTT clean session flag in the MQTT CONNECT packet (see {{bibref|MQTT311|section 3.1}} and {{bibref|MQTT311|section 3.1.2.4}}) to establish a MQTT bridge connection. If this flag is set to {{true}} (default), the remote MQTT broker will delete all subscription information after a Disconnect. {{template|MQTTReconnect}} This parameter only applies if {{param|ProtocolVersion}} is set to {{enum|3.1|##.Capabilities.ProtocolVersionsSupported}} or {{enum|3.1.1|##.Capabilities.ProtocolVersionsSupported}}.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "CleanStart",
+        "access": "readWrite",
+        "description": "The value of the MQTT Clean Start flag in the MQTT CONNECT packet (see {{bibref|MQTT50|section 3.1.2.4}} to establish a MQTT bridge connection. If this flag is set to {{true}} (default), the remote MQTT broker will delete all subscription information after a Disconnect. {{template|MQTTReconnect}}. This parameter only applies if {{param|ProtocolVersion}} is set to {{enum|5.0|##.Capabilities.ProtocolVersionsSupported}}.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.13"
+      },
+      {
+        "name": "KeepAliveTime",
+        "access": "readWrite",
+        "description": "Keep Alive Time in {{units}} defines the maximum wait time after which a packet has to be sent to the remote MQTT broker (see {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section 3.1.2.10}}) or {{bibref|MQTT50|section 3.1.2.10}}). If no regular packet can be sent a MQTT PINGREQ packet is sent. A value of zero (0) means no keep alive packets are sent and the bridge is not disconnected by the server. {{template|MQTTReconnect}}",
+        "default": "60",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "ClientID",
+        "access": "readWrite",
+        "description": "The MQTT client identifier used in the CONNECT packet (see {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section 3.1.3.1}}) or {{bibref|MQTT50|section 3.1.3.1}}). If {{param|ProtocolVersion}} is set to {{enum|3.1|##.Capabilities.ProtocolVersionsSupported}} or {{enum|3.1.1|##.Capabilities.ProtocolVersionsSupported}}, this parameter MUST NOT be an empty string. If {{param|ProtocolVersion}} is set to {{enum|5.0|##.Capabilities.ProtocolVersionsSupported}}, an empty string is allowed. {{template|MQTTReconnect}}",
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 65535
+      },
+      {
+        "name": "Username",
+        "access": "readWrite",
+        "description": "User name used to authenticate the MQTT broker when making a connection over the MQTT bridge. The value is sent in the MQTT CONNECT packet (see {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section 3.1.3.4}} or {{bibref|MQTT50|section 3.1.3.5}}). If this parameter is {{empty}} no authentication parameters are sent in the MQTT CONNECT packet.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Password",
+        "access": "readWrite",
+        "description": "Password used to authenticate the MQTT broker when making a connection over the MQTT bridge. The value is sent in the MQTT CONNECT packet (see {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section 3.1.3.5}} or {{bibref|MQTT50|section 3.1.3.6}}). This password is only sent in the MQTT CONNECT packet if {{param|Username}} is not {{empty}}.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "MessageRetryTime",
+        "access": "readWrite",
+        "description": "Message retry time in {{units}} defines the wait time before a MQTT message that expects a response (QoS value of message is > 0, or PUBLISH, PUBREL, SUBSCRIBE, UNSUBSCRIBE message) is resent, because the response is not received (see {{bibref|MQTT311|section 4.2}}. This parameter only applies if {{param|ProtocolVersion}} is set to {{enum|3.1|##.Capabilities.ProtocolVersionsSupported}}.",
+        "default": "5",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "ConnectRetryTime",
+        "access": "readWrite",
+        "description": "Connect retry time in {{units}} defines the wait time before a failed bridge connection is retried. A failure can either be on the connection level (e.g. the TCP/IP or TLS connection can not be established) or on the Protocol level, the MQTT client does not receive a MQTT CONNACK packet on a MQTT CONNECT packet sent.",
+        "default": "30",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "ServerSelectionAlgorithm",
+        "access": "readWrite",
+        "description": "The algorithm used to select a server entry from the {{object|Server}} table",
+        "type": "string",
+        "enumerations": [
+          "Priority",
+          "RoundRobin",
+          "Random"
+        ]
+      },
+      {
+        "name": "ServerConnection",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|Server.}} instance that is used for this {{object}}, while the {{param|Status}} is {{enum|Connecting|Status}} or {{enum|Connected|Status}}. If the MQTT bridge is not connected the value MUST be an empty string}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Bridge.{i}.Server.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ServerNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SubscriptionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Configures MQTT bridges, which are used to communicate with other MQTT brokers.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.STABlock.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.STABlock.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "STABlockNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "BlockedSTA",
+        "access": "readWrite",
+        "description": "MAC addresses of the STA that is blocked.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "BSSID",
+        "access": "readWrite",
+        "description": "{{list}} Indicates BSS from which the {{param|BlockedSTA}} is blocked from association and cannot associate to. A null list indicates that all SSIDs are blocked.",
+        "list": true,
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "ScheduleNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.17"
+      }
+    ],
+    "description": "This object indicates stations (STAs) for which client association is blocked. optionally the BSSID(s) the STA is blocked from associating to. In multi-AP cases, this should be implemented by Wi-Fi EasyMesh {{bibref|EasyMesh}} client association control. Stations that are already associated shall be disassociated if {{object|#.STABlock.{i}.Schedule.{i}.}} indicates so.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "BlockedSTA"
+      ]
+    }
+  }
+}

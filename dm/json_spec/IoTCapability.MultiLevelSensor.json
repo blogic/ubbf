@@ -1,0 +1,67 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IoTCapability.{i}.MultiLevelSensor.",
+  "object": {
+    "path": "Device.IoTCapability.{i}.MultiLevelSensor.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "Describes the type of functionality that {{object}} is representing.",
+        "type": "string",
+        "enumerations": [
+          "RGB",
+          "Location"
+        ]
+      },
+      {
+        "name": "Description",
+        "access": "readOnly",
+        "description": "Human-readable description of the {{object}}. e.g. a more detailed description of {{param|Type}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Values",
+        "access": "readOnly",
+        "description": "The current value reading of this {{object}} in units defined in {{param|Unit}}.",
+        "list": true,
+        "type": "decimal"
+      },
+      {
+        "name": "ValueNames",
+        "access": "readOnly",
+        "description": "The names of the values expressed in {{param|Values}}.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The date and time when {{param|Values}} has been changed to the current values.",
+        "type": "dateTime"
+      },
+      {
+        "name": "LastContactTime",
+        "access": "readOnly",
+        "description": "The date and time in UTC when the {{object}} has received data.",
+        "type": "dateTime",
+        "version": "2.18"
+      },
+      {
+        "name": "Unit",
+        "access": "readOnly",
+        "description": "{{datatype|expand}} Unit in which {{param|Values}} are expressed.",
+        "type": "dataType:IoTUnitType"
+      }
+    ],
+    "description": "MultiLevelSensor is used to reflect the functionality of a sensor that reports multiple {{param|Values}} with the same {{param|Unit}}.",
+    "children": []
+  }
+}

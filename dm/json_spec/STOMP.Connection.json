@@ -1,0 +1,171 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.STOMP.Connection.{i}.",
+  "object": {
+    "path": "Device.STOMP.Connection.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ConnectionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}}. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of this {{object}} (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Disabled}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Enabled}} if and only if the interface is able to transmit and receive PDUs; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason.",
+        "type": "string",
+        "enumerations": [
+          "Enabled",
+          "Disabled",
+          "Unknown",
+          "Connecting",
+          "ServerNotPresent",
+          "Error_Misconfigured",
+          "Error_AuthenticationFailure",
+          "Error"
+        ]
+      },
+      {
+        "name": "LastChangeDate",
+        "access": "readOnly",
+        "description": "The date and time at which this {{object}} entered into its current operational state.",
+        "type": "dateTime"
+      },
+      {
+        "name": "Host",
+        "access": "readWrite",
+        "description": "The hostname or IP Address of the STOMP Server.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "The port number of the STOMP Server.",
+        "default": "61613",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Username",
+        "access": "readWrite",
+        "description": "The username part of the credentials to be used when authenticating this {{object}} during connection establishment with the STOMP Server.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Password",
+        "access": "readWrite",
+        "description": "The password part of the credentials to be used when authenticating this {{object}} during connection establishment with the STOMP Server.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "VirtualHost",
+        "access": "readWrite",
+        "description": "The Virtual Host to use when establishing the connection. Some STOMP Server implementations utilize virtual hosts to place a context around credentials, permissions, and internal resources.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "EnableHeartbeats",
+        "access": "readWrite",
+        "description": "Enable or disable the STOMP Heart-beating mechanism as described in STOMP (for this {{object}}). When the STOMP Heart-beat mechanism is enabled, {{param|OutgoingHeartbeat}} and {{param|IncomingHeartbeat}} determine how the heart-beat header within the CONNECT frame is formatted. When the STOMP Heart-beat mechanism is disabled, {{param|OutgoingHeartbeat}} and {{param|IncomingHeartbeat}} are ignored and the CONNECT frame MUST NOT contain a heart-beat header element. Any changes to this parameter will not take effect until the next connection.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "OutgoingHeartbeat",
+        "access": "readWrite",
+        "description": "Represents the Outgoing heart-beat timing (in {{units}}) of the STOMP Heart-beating mechanism as described in STOMP (for this {{object}}). The Outgoing heart-beat represents what the sender of the frame can do. A value of 0 means that it cannot send heart-beats. Any changes to this parameter will not take effect until the next connection.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IncomingHeartbeat",
+        "access": "readWrite",
+        "description": "Represents the Incoming heart-beat timing (in {{units}}) of the STOMP Heart-beating mechanism as described in STOMP (for this {{object}}). The Incoming heart-beat represents what the sender of the frame would like to get. A value of 0 means that it does not want to receive heart-beats. Any changes to this parameter will not take effect until the next connection.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ServerRetryInitialInterval",
+        "access": "readWrite",
+        "description": "The maximum first reconnection wait interval, in {{units}}, as specified in {{bibref|TR-369}}. The Device MUST use a random value between ''0'' and {{param}} as the first reconnection wait interval.",
+        "default": "60",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "ServerRetryIntervalMultiplier",
+        "access": "readWrite",
+        "description": "The reconnection interval multiplier as specified in {{bibref|TR-369}}. This value is expressed in units of 0.001. Hence the values of the multiplier range between 1.000 and 65.535. For the ''n''th reconnection wait interval, the Device MUST use a random value, in ''seconds'', between ''0'' and {{param|ServerRetryInitialInterval}} * ({{param}} / 1000) ** (''n'' - ''1''). The server retry mechanism reaches its upper limit at 10 reconnection attempts. Meaning, that if the number of reconnection attempts exceeds 10, then the Device MUST use a random value, in seconds, between 0 and ServerRetryInitialInterval * (ServerRetryIntervalMultiplier / 1000) ** (10 - 1).",
+        "default": "2000",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1000,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "ServerRetryMaxInterval",
+        "access": "readWrite",
+        "description": "The maximum reconnection wait interval, in {{units}}. If the ''n''th reconnection wait interval calculated from {{param|ServerRetryInitialInterval}} and {{param|ServerRetryIntervalMultiplier}} exceeds the value of this parameter, then the Agent MUST use the value of this parameter as the next reconnection wait interval.",
+        "default": "30720",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "IsEncrypted",
+        "access": "readOnly",
+        "description": "This parameter represents whether or not communications that utilize this {{object}} object instance are encrypted. {{deprecated|2.14|because the {{param|EnableEncryption}} parameter will dictate whether all connections for this STOMP instance are or are not encrypted}} {{obsoleted|2.16}} {{deleted|2.17}}",
+        "type": "boolean"
+      },
+      {
+        "name": "EnableEncryption",
+        "access": "readWrite",
+        "description": "When {{true}}, encryption MUST be used for this STOMP Connection {{object}}.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.14"
+      }
+    ],
+    "description": "The {{object}} represents a STOMP connection between the Agent and a STOMP server.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Host",
+        "Username",
+        "VirtualHost"
+      ]
+    }
+  }
+}

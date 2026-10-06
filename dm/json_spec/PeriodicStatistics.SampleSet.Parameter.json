@@ -1,0 +1,152 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PeriodicStatistics.SampleSet.{i}.Parameter.{i}.",
+  "object": {
+    "path": "Device.PeriodicStatistics.SampleSet.{i}.Parameter.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ParameterNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this object instance.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Reference",
+        "access": "readWrite",
+        "description": "{{reference}} This is the parameter being monitored by the Periodic Statistics mechanism.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "parameter"
+        }
+      },
+      {
+        "name": "SampleMode",
+        "access": "readWrite",
+        "description": "Controls how this parameter's value is sampled. {{enum}} Parameters of non-numeric types can only support {{enum|Current}}. The value of the {{param}} MUST be ignored for such parameters.",
+        "default": "Current",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Current",
+          "Change"
+        ]
+      },
+      {
+        "name": "CalculationMode",
+        "access": "readWrite",
+        "description": "Controls how this parameter's statistic is calculated from the sampled value(s) of each internal sample interval. {{enum}} Parameters of non-numeric types can only support {{enum|Latest}}. The value of the {{param}} MUST be ignored for such parameters. {{param|SampleMode}} MUST be applied before {{param}}, i.e. the inputs to the calculation will have already accounted for {{param|SampleMode}}.",
+        "default": "Latest",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Latest",
+          "Minimum",
+          "Maximum",
+          "Average",
+          "Histogram"
+        ]
+      },
+      {
+        "name": "LowThreshold",
+        "access": "readWrite",
+        "description": "The low threshold value that controls the calculation of {{template|PERIODICSTATISTICS-FAILURES}}. A value equal to {{param|HighThreshold}} disables the threshold/failure mechanism. Parameters of non-numeric types cannot support the threshold/failure mechanism. The value of this parameter MUST be ignored for such parameters.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "int"
+      },
+      {
+        "name": "HighThreshold",
+        "access": "readWrite",
+        "description": "The high threshold value that controls the calculation of {{template|PERIODICSTATISTICS-FAILURES}}. A value equal to {{param|LowThreshold}} disables the threshold/failure mechanism. Parameters of non-numeric types cannot support the threshold/failure mechanism. The value of this parameter MUST be ignored for such parameters.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "int"
+      },
+      {
+        "name": "SampleSeconds",
+        "access": "readOnly",
+        "description": "{{list}} Each entry indicates the number of {{units}} during which data was collected for this parameter during the sample interval. Individual {{param}} values can be less than {{param|#.SampleInterval}}, for several reasons, including: : Any of the reasons for which {{param|#.SampleSeconds}} values might be less than {{param|#.SampleInterval}}. : The parameter doesn't exist, or was created or deleted during a sample interval.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SuspectData",
+        "access": "readOnly",
+        "description": "{{list}} Each entry is 0 if the sampled value is believed to be valid, or 1 if an event that might affect the validity of the sampled value occurred during the sample interval. For example, if the parameter value were to be reset during the sample interval then it would be appropriate to set {{param}} to 1.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "unsignedInt",
+        "maxInclusive": 1,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Values",
+        "access": "readOnly",
+        "description": "{{list}} Each entry indicates the value of the referenced parameter, as determined by {{param|SampleMode}}, during the sample interval. The statistics values in this comma-separated list MUST be in time order, with the oldest one first and the most recent one last. If the {{param|SampleMode}} parameter is not present, or is inappropriate for the referenced parameter, the statistics values MUST be collected in Current mode. if {{param|CalculationMode}} has value \"Histogram\" then the values of the referenced parameter are in {{param|ValuesIfHistogram}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ValuesIfHistogram",
+        "access": "readOnly",
+        "description": "{{list}} Each entry indicates the value of the referenced parameter, as determined by {{param|SampleMode}}, during the sample interval. The statistics values in this comma-separated list MUST be in time order, with the oldest one first and the most recent one last. If the {{param|SampleMode}} parameter is not present, or is inappropriate for the referenced parameter, the statistics values MUST be collected in Current mode. This parameter applies only if {{param|CalculationMode}} has value \"Histogram\" and then this parameter is the values of the sampled histograms, where each histogram bin is the count of the number of samples within the corresponding {{param|HistogramBinBoundaries}}, and this parameter is expressed using square brackets to protect comma separators within nested lists. For example, [12,5,1,0,1],[12,3,2,1,0] represents two histograms.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "version": "2.18",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Failures",
+        "access": "readOnly",
+        "description": "Counts the number of times (since this object instance was last enabled) that a newly-calculated sample value (accounting for {{param|SampleMode}}) transitioned from the \"in range\" state to the \"out of range\" state, or between the \"out of range (low)\" and \"out of range (high)\" states. The states are defined as follows: * \"in range\" : current value is greater than {{param|LowThreshold}} and less than {{param|HighThreshold}}. * \"out of range\" : current value is less than or equal to {{param|LowThreshold}}, or greater than or equal to {{param|HighThreshold}}. * \"out of range (low)\" : current value is less than or equal to {{param|LowThreshold}}. * \"out of range (high)\" : current value is greater than or equal to {{param|HighThreshold}}. Note that, if {{param|LowThreshold}} and {{param|HighThreshold}} are both the same, the threshold/failure mechanism is disabled, so the value of this parameter will not increment. This parameter can be incremented at any time during a sample interval, and might be incremented more than once during a single sample interval. For this reason, the CPE SHOULD place a locally specified limit on the frequency at which it will notify the Controller of such changes. Parameters of non-numeric types cannot support the threshold/failure mechanism. The value of this parameter MUST be ignored for such parameters.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "HistogramBinBoundaries",
+        "access": "readWrite",
+        "description": "{{list}} Definition of the boundaries between histogram bins. Applies if {{param|CalculationMode}} has value \"Histogram\". Each value is the minimum value of this bin, and the next value is just above the maximum value of this bin. For example, \u201c0,1,4,8,\u201d defines the four histogram bins: 0 to 1 but not including values identically equal to 1, 1 to 4 but not including values identically equal to 4, 4 to 8 but not including values identically equal to 8, and greater than or equal to 8. (No value after the last comma means no upper bound.) If this parameter is set to an empty string, then no histogram will be collected.",
+        "list": true,
+        "type": "string",
+        "version": "2.18"
+      }
+    ],
+    "description": "Periodic statistics parameter table for this sample set. This table contains entries for parameters whose values are to be sampled. Note that the comma-separated lists in this object (SampleSeconds, SuspectData and Values) only ever change (a) when first enabled, (b) when {{template|PERIODICSTATISTICS-FORCESAMPLE}} has been used to force statistics for the current sample to be calculated (a \"sneak preview\" of the current sample), or (c) at the end of the sample interval.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Reference"
+      ]
+    }
+  }
+}

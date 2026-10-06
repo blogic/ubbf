@@ -1,0 +1,85 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.ZigBee.Discovery.AreaNetwork.{i}.",
+  "object": {
+    "path": "Device.ZigBee.Discovery.AreaNetwork.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "AreaNetworkNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables discovery of the ZigBee devices in this {{object}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "LastUpdate",
+        "access": "readOnly",
+        "description": "The date and time when this {{object}} or its member devices (i.e., the devices with ZDOs listed in {{param|ZDOList}}) were updated due to a discovery operation.",
+        "type": "dateTime"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of the current discovery operation. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Indeterminate",
+          "InProgress",
+          "Success",
+          "Error",
+          "Error_Timeout"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Coordinator",
+        "access": "readWrite",
+        "description": "The Fully Qualified Domain Name (FQDN) or IP address of the ZigBee Coordinator. The coordinator MAY be located within the CPE. In this scenario the Controller or CPE MAY use the value of \"localhost\".",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ZDOReference",
+        "access": "readOnly",
+        "description": "The ZDO object for this device that is used to discover the ZigBee capabilities of attached devices. {{reference}}",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.ZDO.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ZDOList",
+        "access": "readOnly",
+        "description": "The list of ZDO objects discovered in this Area Network by the ZigBee Coordinator. {{reference}}",
+        "list": true,
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.ZDO.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "This object specifies the ZigBee devices that are discovered by the {{param|Coordinator}}. As the ZigBee specification does not provide a discovery protocol between the CWMP proxy and the ZigBee coordinator, the {{object}} object is provisioned and not discovered.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

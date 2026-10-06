@@ -1,0 +1,144 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Action.{i}.",
+  "object": {
+    "path": "Device.LMAP.MeasurementAgent.{i}.Schedule.{i}.Action.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ActionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object|##.Schedule.{i}.Action}} object. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "State",
+        "access": "readOnly",
+        "description": "The current operational state of the {{object}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Enabled",
+          "Suppressed",
+          "Disabled",
+          "Running"
+        ]
+      },
+      {
+        "name": "Order",
+        "access": "readWrite",
+        "description": "The order of the scheduled action.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Task",
+        "access": "readWrite",
+        "description": "{{reference|a {{object|##.Task}} object used in this scheduled action}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.Task.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "OutputDestination",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|a {{object|##.Schedule}} object used to receive the output(s) of this scheduled action}}",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.Schedule.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "SuppressionTags",
+        "access": "readWrite",
+        "description": "{{list|representing the suppression tags to be matched}}",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "Tags",
+        "access": "readWrite",
+        "description": "{{list|each entry represents tags that are to be reported together with the measurement results.}}",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "Storage",
+        "access": "readOnly",
+        "description": "The amount of secondary storage, in {{units}}, allocated to an instance of this {{object}}. The value of this parameter reflects the amount of allocated physical storage and not the storage used by logical data records. For example the secondary storage can be the storage allocated in a file system holding temporary data.",
+        "type": "unsignedLong",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LastInvocation",
+        "access": "readOnly",
+        "description": "Date and time, based on {{bibref|RFC3339}}, in UTC that the {{object}} was invoked by the measurement agent.",
+        "type": "dateTime"
+      },
+      {
+        "name": "LastSuccessfulCompletion",
+        "access": "readOnly",
+        "description": "Date and time, based on {{bibref|RFC3339}}, in UTC of a successful completion of the {{object}}.",
+        "type": "dateTime"
+      },
+      {
+        "name": "LastSuccessfulStatusCode",
+        "access": "readOnly",
+        "description": "The status code returned by successful execution of the {{object}}. A value of 0 indicates successful completion.",
+        "type": "int"
+      },
+      {
+        "name": "LastSuccessfulMessage",
+        "access": "readOnly",
+        "description": "The message associated with the successful completion of the {{object}}.",
+        "type": "string"
+      },
+      {
+        "name": "LastFailedCompletion",
+        "access": "readOnly",
+        "description": "Date and time, based on {{bibref|RFC3339}}, in UTC of a failure to complete the {{object}}.",
+        "type": "dateTime"
+      },
+      {
+        "name": "LastFailedStatusCode",
+        "access": "readOnly",
+        "description": "The status code returned by failed execution of the {{object}}. A value of 0 indicates successful completion.",
+        "type": "int"
+      },
+      {
+        "name": "LastFailedMessage",
+        "access": "readOnly",
+        "description": "The message associated with the failure to complete the task.",
+        "type": "string"
+      },
+      {
+        "name": "OptionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object represents an action that is associated with the this {{object|##.Schedule}} object.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

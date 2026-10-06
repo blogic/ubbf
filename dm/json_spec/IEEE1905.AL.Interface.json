@@ -1,0 +1,146 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.AL.Interface.{i}.",
+  "object": {
+    "path": "Device.IEEE1905.AL.Interface.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "InterfaceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "InterfaceId",
+        "access": "readOnly",
+        "description": "MAC Address of this interface. This is the value of the intfAddress parameter defined in {{bibref|IEEE1905.1a|Table 5-2: intfDescriptor elements}}",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "This parameter is NOT RECOMMENDED to be used because it is not a parameter defined in a 1905 ALME primitive or protocol TLV. The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} It SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD normally be {{enum|Down}} when the interface cannot transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "This parameter is NOT RECOMMENDED to be used because it is not a parameter defined in a 1905 ALME primitive or protocol TLV. The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readOnly",
+        "description": "This parameter is NOT RECOMMENDED to be used because it is not a parameter defined in a 1905 ALME primitive or protocol TLV. {{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "InterfaceStackReference",
+        "access": "readOnly",
+        "description": "Path name of an interface object described by this 1905 {{object}}. Referenced interface object MUST have a MACAddress and the InterfaceId MUST be the same as the interface object MACAddress.",
+        "type": "string",
+        "maxLength": 256,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "MediaType",
+        "access": "readOnly",
+        "description": "Media type of this {{object}}. This is derived from the value of the intfType parameter defined in {{bibref|IEEE1905.1a|Tables 5.2: intfDescriptor elements}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "IEEE 802.3u",
+          "IEEE 802.3ab",
+          "IEEE 802.11b",
+          "IEEE 802.11g",
+          "IEEE 802.11a",
+          "IEEE 802.11n 2.4",
+          "IEEE 802.11n 5.0",
+          "IEEE 802.11ac",
+          "IEEE 802.11ad",
+          "IEEE 802.11af",
+          "IEEE 1901 Wavelet",
+          "IEEE 1901 FFT",
+          "MoCAv1.1",
+          "Generic PHY"
+        ]
+      },
+      {
+        "name": "GenericPhyOUI",
+        "access": "readOnly",
+        "description": "OUI of the Generic Phy networking technology of the local interface that would be included in a Generic Phy Device Information Type TLV defined in {{bibref|IEEE1905.1a|Tables 6-29: Generic Phy Device Information type TLV}}.",
+        "type": "string",
+        "minLength": 6,
+        "maxLength": 6,
+        "pattern": "[0-9A-F]{6}"
+      },
+      {
+        "name": "GenericPhyVariant",
+        "access": "readOnly",
+        "description": "Variant Index of the Generic Phy networking technology of the local interface that would be included in a Generic Phy Device Information Type TLV defined in {{bibref|IEEE1905.1a|Tables 6-29: Generic Phy Device Information type TLV}}.",
+        "type": "hexBinary",
+        "minLength": 1,
+        "maxLength": 1
+      },
+      {
+        "name": "GenericPhyURL",
+        "access": "readOnly",
+        "description": "{{datatype}} to the Generic Phy XML Description of the Generic Phy networking technology of the local interface that would be included in a Generic Phy Device Information Type TLV defined in {{bibref|IEEE1905.1a|Table 6-29: Generic Phy device information type TLV}}.",
+        "type": "dataType:URL"
+      },
+      {
+        "name": "SetIntfPowerStateEnabled",
+        "access": "readWrite",
+        "description": "Enables or disables the Abstraction Layer's ability to set the power state for the interface. Boolean can be {{true}} for \"enabled\" and {{false}} for \"disabled\".",
+        "type": "boolean"
+      },
+      {
+        "name": "PowerState",
+        "access": "readWrite",
+        "description": "The Power State of this {{object}}. This is derived from the value of the powerState parameter as defined in {{bibref|IEEE1905.1a|Tables 5.3: ALME-SET-INTF-PWR-STATE.request parameters and Table 5.7: ALME-GET-INTF-PWR-STATE.response parameters}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "On",
+          "Power_Save",
+          "Off",
+          "Unsupported"
+        ]
+      },
+      {
+        "name": "VendorPropertiesNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LinkNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The 1905 interface table (described in {{bibref|IEEE1905.1a|sub-clause 5 Abstraction Layer Management}}).",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "InterfaceId"
+      ]
+    }
+  }
+}

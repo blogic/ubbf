@@ -1,0 +1,89 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WWC.AccessNetwork.{i}.",
+  "object": {
+    "path": "Device.WWC.AccessNetwork.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "AccessNetworkNumberOfEntries",
+    "version": "2.14",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.14"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the Access Network entry as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "{{reference}} Specifies the egress interface associated with this \"AccessNetwork\" entry. This MUST be a layer 1 interface.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "RegistrationStatus",
+        "access": "readOnly",
+        "description": "The registration status of this entry. See {{bibref|3GPP-TS.23.501|Clause 5.3.2}}. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "RM_REGISTERED",
+          "RM_DEREGISTERED",
+          "RM_UNDEFINED",
+          "Error"
+        ]
+      },
+      {
+        "name": "ConnectionStatus",
+        "access": "readOnly",
+        "description": "The connection status of this entry. A 5G-RG is deemed in the {{enum|CM_CONNECTED|ConnectionStatus}} state if there is a NAS signalling connection established between the 5G-RG and AMF. If {{param|RegistrationStatus}} transitions from {{enum|RM_REGISTERED|RegistrationStatus}} to {{enum|RM_DEREGISTERED|RegistrationStatus}}, the status of {{param}} must change to {{enum|CM_UNDEFINED||ConnectionStatus}}. See {{bibref|3GPP-TS.23.501|Clause 5.3.3}}. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "CM_IDLE",
+          "CM_CONNECTED",
+          "CM_UNDEFINED",
+          "Error"
+        ]
+      },
+      {
+        "name": "AccessNetworkType",
+        "access": "readOnly",
+        "description": "The access network type of this entry. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "NG-RAN",
+          "E-UTRAN",
+          "W-5GAN"
+        ]
+      },
+      {
+        "name": "LastError",
+        "access": "readOnly",
+        "description": "Error code. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.2}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Each table entry describes a single access network. The entire table is built by the 5G-RG upon startup. The primary purpose is to show the registration and connectivity status of each access network. Typically a 5G-RG would register on each available access network. A minimum of one access network must be in the CM-CONNECTED state in order to support N1 messaging.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

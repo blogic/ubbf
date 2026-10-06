@@ -1,0 +1,74 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DNS.Zone.{i}.Host.{i}.",
+  "object": {
+    "path": "Device.DNS.Zone.{i}.Host.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "HostNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.17"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the entry in the zone file.",
+        "type": "boolean"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "List of hostnames that are associated with the {{object}}.",
+        "list": true,
+        "type": "string",
+        "maxLength": 128
+      },
+      {
+        "name": "Origin",
+        "access": "writeOnceReadOnly",
+        "description": "Indicates the owner of the {{object}} instance. Note: This parameter was changed to writeOnceReadOnly in the Device:2.18 version.",
+        "default": "System",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "User",
+          "System",
+          "Controller"
+        ]
+      },
+      {
+        "name": "Host",
+        "access": "readWrite",
+        "description": "Host table entries associated with the device.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": ".Hosts.Host.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "LastUpdate",
+        "access": "readOnly",
+        "description": "The date and time in UTC when the entry was last changed.",
+        "type": "dateTime"
+      }
+    ],
+    "description": "This object specifies the resource records (RR) of the DNS zone.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

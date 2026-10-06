@@ -1,0 +1,313 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FAST.Line.{i}.",
+  "object": {
+    "path": "Device.FAST.Line.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "LineNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the interface. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}. Because the interface includes layer 1, the {{enum|LowerLayerDown}} value SHOULD never be used.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the interface as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}. Note: Since {{object}} is a layer 1 interface, it is expected that {{param}} will not be used.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Upstream",
+        "access": "readOnly",
+        "description": "Indicates whether the interface points towards the Internet ({{true}}) or towards End Devices ({{false}}). For example: * For an Internet Gateway Device, {{param}} will be {{true}} for all WAN interfaces and {{false}} for all LAN interfaces. * For a standalone WiFi Access Point that is connected via Ethernet to an Internet Gateway Device, {{param}} will be {{true}} for the Ethernet interface and {{false}} for the WiFi Radio interface. * For an End Device, {{param}} will be {{true}} for all interfaces.",
+        "type": "boolean"
+      },
+      {
+        "name": "FirmwareVersion",
+        "access": "readOnly",
+        "description": "A string identifying the version of the modem firmware currently installed for this interface. This is applicable only when the modem firmware is separable from the overall CPE software.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LinkStatus",
+        "access": "readOnly",
+        "description": "Status of the FAST physical link. {{enum}} When {{param}} is {{enum|Up}}, {{param|Status}} is expected to be {{enum|Up|Status}}. When {{param}} is {{enum|Initializing}} or {{enum|EstablishingLink}} or {{enum|NoSignal}} or {{enum|Disabled}}, {{param|Status}} is expected to be {{enum|Down|Status}}. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Initializing",
+          "EstablishingLink",
+          "NoSignal",
+          "Disabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "AllowedProfiles",
+        "access": "readOnly",
+        "description": "{{list}} List items indicate which FAST profiles are allowed on the line. {{enum}} Note: In G.997.2, this parameter is called PROFILES. See ITU-T Recommendation {{bibref|G.997.2}}.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "106a",
+          "212a"
+        ]
+      },
+      {
+        "name": "CurrentProfile",
+        "access": "readOnly",
+        "description": "Indicates which FAST profile is currently in use on the line.",
+        "type": "string"
+      },
+      {
+        "name": "PowerManagementState",
+        "access": "readOnly",
+        "description": "The power management state of the line. {{enum}} Note: See ITU-T Recommendation {{bibref|G.9701}}.",
+        "type": "string",
+        "enumerations": [
+          "L0",
+          "L2.1",
+          "L2.2",
+          "L3"
+        ]
+      },
+      {
+        "name": "SuccessFailureCause",
+        "access": "readOnly",
+        "description": "The success failure cause of the initialization. An enumeration of the following integer values: * 0: Successful * 1: Configuration error. Configuration error. This error occurs if the line cannot reach L0 state due to a mismatch of configuration and FTU capabilities. * 2: Configuration not feasible on the line. This error occurs if the line cannot reach the L0 state due to a mismatch of configuration of line and noise characteristics. * 3: Communication problem. This error occurs, for example, due to corrupted messages or bad syntax messages or if no common mode can be selected in the G.994.1 handshaking procedure or due to a timeout. * 4: No far-end FTU detected. This error occurs if the far-end FTU is not powered or not connected or if the line is too long to allow detection of a far-end FTU. * 5: Any other or unknown initialization failure cause. Note: In G.997.2, this parameter is called \"Initialization success/failure cause\". See Clause 7.20.2.1 of ITU-T Recommendation {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 5
+      },
+      {
+        "name": "UPBOKLER",
+        "access": "readOnly",
+        "description": "This parameter reports the estimate of the electrical length expressed in {{units}}, as determined by the FTU-R (see clause 7.3.1.4.2.1/{{bibref|G.9701}}) and conveyed in the R-MSG1 initialization message (see clause 12.3.3.2.3/{{bibref|G.9701}}). The value is coded as an unsignedInt in the range 0 (coded as 0) to 128 dB (coded as 1280) in steps of {{units}}. Note: This parameter is defined as UPBOKLE-R in Clause 7.10.4.2 of ITU-T Recommendation {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 1280
+      },
+      {
+        "name": "LastTransmittedDownstreamSignal",
+        "access": "readOnly",
+        "description": "This parameter reports the downstream signal count of the last transmitted initialization signal in the last full or short initialization performed on the line. The valid values are 0..21. The downstream signal count is defined in clause 12.3.1/{{bibref|G.9701}}. Note: See clause 7.10.2.2 ITU-T Recommendation {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 21
+      },
+      {
+        "name": "LastTransmittedUpstreamSignal",
+        "access": "readOnly",
+        "description": "This parameter reports the upstream signal count of the last transmitted initialization signal in the last full or short initialization performed on the line. The valid values are 0..21. The upstream signal count is defined in clause 12.3.1/{{bibref|G.9701}}. Note: See clause 7.10.2.3 ITU-T Recommendation {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 21
+      },
+      {
+        "name": "UPBOKLE",
+        "access": "readOnly",
+        "description": "This parameter reports the electrical length expressed in {{units}}, that would have been sent from the FTU-O to the FTU-R if the electrical length was not forced by the DPU-MIB. If the electrical length is not forced by the DPU-MIB, then this object reports the final electrical length, as determined by the FTU-O (see clause 7.3.1.4.2.1/{{bibref|G.9701}}) and conveyed in the O-UPDATE initialization message (see clause 12.3.3.2.4/{{bibref|G.9701}}). Note: See clause 7.10.4.1 in ITU-T Recommendation {{bibref|G.997.2}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 1280
+      },
+      {
+        "name": "LineNumber",
+        "access": "readOnly",
+        "description": "Signifies the line pair that the modem is using to connection. {{param}} = 1 is the innermost pair.",
+        "type": "int",
+        "minInclusive": 1
+      },
+      {
+        "name": "UpstreamMaxBitRate",
+        "access": "readOnly",
+        "description": "This parameter reports the attainable net data rate expressed in {{units}} as defined in clause 11.4.1.1.2/{{bibref|G.9701}}. Note: This parameter is related to the G.997.2 parameter ATTNDRus. See clause 7.11.2.1 ITU-T Recommendation {{bibref|G.997.2}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DownstreamMaxBitRate",
+        "access": "readOnly",
+        "description": "This parameter reports the attainable net data rate expressed in {{units}} as defined in clause 11.4.1.1.2/{{bibref|G.9701}}. Note: This parameter is related to the G.997.2 parameter ATTNDRds. See clause 7.11.2.1 ITU-T Recommendation {{bibref|G.997.2}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UpstreamNoiseMargin",
+        "access": "readOnly",
+        "description": "This parameter reports the signal-to-noise ratio margin (as defined in clause 9.8.3.2/{{bibref|G.9701}} and 11.4.1.3/{{bibref|G.9701}}) in the upstream direction. A special value indicates that the signal-to-noise ratio margin is out of the range to be represented. The parameter is expressed in {{units}}. Note: In G.997.2, this parameter is called SNRMus. See ITU-T Recommendation {{bibref|G.997.2}}.",
+        "type": "int",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "DownstreamNoiseMargin",
+        "access": "readOnly",
+        "description": "This parameter reports the signal-to-noise ratio margin (as defined in clause 9.8.3.2/{{bibref|G.9701}} and 11.4.1.3/{{bibref|G.9701}}) in the upstream direction. A special value indicates that the signal-to-noise ratio margin is out of the range to be represented. The parameter is expressed in {{units}}. Note: In G.997.2, this parameter is called SNRMds. See ITU-T Recommendation {{bibref|G.997.2}}.",
+        "type": "int",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "UpstreamAttenuation",
+        "access": "readOnly",
+        "description": "The current upstream signal loss (expressed in {{units}}).",
+        "type": "int",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "DownstreamAttenuation",
+        "access": "readOnly",
+        "description": "The current downstream signal loss (expressed in {{units}}).",
+        "type": "int",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "UpstreamPower",
+        "access": "readOnly",
+        "description": "The current output power at the CPE's FAST line (expressed in {{units}}).",
+        "type": "int",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "DownstreamPower",
+        "access": "readOnly",
+        "description": "The current received power at the CPE's FAST line (expressed in {{units}}).",
+        "type": "int",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SNRMRMCds",
+        "access": "readOnly",
+        "description": "This parameter reports the signal-to-noise margin for the robust management channel (RMC) in the downstream direction (express in {{units}}). A special value (-512) indicates that the signal-to-noise ratio margin for the RMC is out of the range to be represented. This parameter is defined in clauses 7.10.12.1 of ITU-T Recommendation {{bibref|G.997.2}}.",
+        "type": "int",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SNRMRMCus",
+        "access": "readOnly",
+        "description": "This parameter reports the signal-to-noise margin for the robust management channel (RMC) in the upstream direction (express in {{units}}). A special value (-512) indicates that the signal-to-noise ratio margin for the RMC is out of the range to be represented. This parameter is defined in clauses 7.10.12.2 of ITU-T Recommendation {{bibref|G.997.2}}.",
+        "type": "int",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "BITSRMCpsds",
+        "access": "readOnly",
+        "description": "{{list}} List items report the bit allocation values on RMC sub-carriers in RMC symbols in the downstream direction. Each pair composes of a sub-carrier index from 0..4095 and an 8 bit allocation value. There are maximum 512 pairs. This parameter is defined in clause 7.10.12.3 of ITU-T Recommendation {{bibref|G.997.2}}.",
+        "list": true,
+        "listMaxLength": 4610,
+        "type": "int",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "BITSRMCpsus",
+        "access": "readOnly",
+        "description": "{{list}} List items report the bit allocation values on RMC sub-carriers in RMC symbols in the upstream direction. Each pair composes of a sub-carrier index from 0..4095 and an 8 bit allocation value. There are maximum 512 pairs. This parameter is defined in clause 7.10.12.4 of ITU-T Recommendation {{bibref|G.997.2}}.",
+        "list": true,
+        "listMaxLength": 4610,
+        "type": "int",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "FEXTCANCELds",
+        "access": "readOnly",
+        "description": "This indicates whether FEXT cancellation in the downstream direction from all the other vectored lines into the line in the vectored group is enabled (TRUE) or disabled (FALSE). This parameter is defined as FEXT_TO_CANCEL_ENABLEds in clause 7.1.7.1 of ITU Recommendation {{bibref|G.997.2}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "FEXTCANCELus",
+        "access": "readOnly",
+        "description": "This indicates whether FEXT cancellation in the upstream direction from all the other vectored lines into the line in the vectored group is enabled (TRUE) or disabled (FALSE). This parameter is defined as FEXT_TO_CANCEL_ENABLEds in clause 7.1.7.1 of ITU Recommendation {{bibref|G.997.2}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "ETRds",
+        "access": "readOnly",
+        "description": "This parameter reports the expected throughput rate expressed in {{units}} as defined in clause 7.11.1.2 of ITU-T Recommendation {{bibref|G.997.2}}",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ETRus",
+        "access": "readOnly",
+        "description": "This parameter reports the expected throughput rate expressed in {{units}} as defined in clause 7.11.1.2 of ITU-T Recommendation {{bibref|G.997.2}}",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ATTETRds",
+        "access": "readOnly",
+        "description": "This parameter reports the attainable expected throughput expressed in {{units}} as defined in clause 7.11.2.2 of ITU-T Recommendation {{bibref|G.997.2}}",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ATTETRus",
+        "access": "readOnly",
+        "description": "This parameter reports the attainable expected throughput expressed in {{units}} as defined in clause 7.11.2.2 of ITU-T Recommendation {{bibref|G.997.2}}",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "MINEFTR",
+        "access": "readOnly",
+        "description": "This parameter reports the minimum error free throughput value expressed in {{units}} computed from power up as defined in clause 11.4.1.1.3 of ITU-T Recommendation {{bibref|G.9701}}",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "FAST Line table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}). This table models physical FAST lines.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

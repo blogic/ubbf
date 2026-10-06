@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Hosts.Host.{i}.IPv4Address.{i}.",
+  "object": {
+    "path": "Device.Hosts.Host.{i}.IPv4Address.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "IPv4AddressNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "IPAddress",
+        "access": "readOnly",
+        "description": "IPv4 address.",
+        "type": "dataType:IPv4Address"
+      }
+    ],
+    "description": "The host's known IPv4 addresses. This includes any addresses assigned via DHCP, which can also be accessed via the {{param|#.DHCPClient}} reference.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "IPAddress"
+      ]
+    }
+  }
+}

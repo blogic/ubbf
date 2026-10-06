@@ -1,0 +1,79 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SoftwareModules.ExecEnv.{i}.ApplicationData.{i}.",
+  "object": {
+    "path": "Device.SoftwareModules.ExecEnv.{i}.ApplicationData.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ApplicationDataNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "A name which is assigned to the ApplicationData instance at the time of its creation, which distinguishes it from any other application data volumes owned by the same application.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Capacity",
+        "access": "readOnly",
+        "description": "Storage capacity of the volume, in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Encrypted",
+        "access": "readOnly",
+        "description": "Whether the data is stored on an encrypted medium.",
+        "type": "boolean"
+      },
+      {
+        "name": "Retain",
+        "access": "readOnly",
+        "description": "The level of persistency of the volume. Note that if this parameter has the value {{enum|Forever}}, it is possible that there is no currently installed {{object|##.DeploymentUnit}} whose {{param|##.DeploymentUnit.{i}.UUID}} matches the {{param|ApplicationUUID}} of this {{object|#}} table entry; this situation will be resolved when either a matching {{object|##.DeploymentUnit}} is re-installed, or this volume is removed using the {{command|Remove()}} command.",
+        "type": "string",
+        "enumerations": [
+          "UntilStopped",
+          "Forever"
+        ]
+      },
+      {
+        "name": "AccessPath",
+        "access": "readOnly",
+        "description": "The path by which the Execution Units created by the Deployment Unit may access the storage volume.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.16"
+      },
+      {
+        "name": "ApplicationUUID",
+        "access": "readOnly",
+        "description": "The {{param|##.DeploymentUnit.{i}.UUID}} of the {{object|##.DeploymentUnit}} for which this volume was created. This parameter retains its value so long as the {{object}} instance continues to exist, even if the {{object|##.DeploymentUnit}} is not currently installed.",
+        "type": "dataType:UUID"
+      },
+      {
+        "name": "Utilization",
+        "access": "readOnly",
+        "description": "The amount of data which is currently stored in this volume, in {{units}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "The ApplicationData volumes which currently exist within this ExecEnv. The entries in this table are created automatically as a result of calls to {{command|##.InstallDU()}} and {{command|##.DeploymentUnit.{i}.Update()}}, and are removed as a result of calls to {{command|##.DeploymentUnit.{i}.Update()}}, {{command|##.DeploymentUnit.{i}.Uninstall()}}, and {{command|Remove()}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

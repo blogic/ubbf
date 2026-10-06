@@ -1,0 +1,148 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Routing.Router.{i}.IPv4Forwarding.{i}.",
+  "object": {
+    "path": "Device.Routing.Router.{i}.IPv4Forwarding.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "IPv4ForwardingNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the forwarding entry. On creation, an entry is disabled by default.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the status of the forwarding entry. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition. The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Type",
+        "access": "readWrite",
+        "description": "Specifies the forwarding entry type. Based on {{bibref|RFC8349}}",
+        "default": "Normal",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Normal",
+          "Receive",
+          "Blackhole",
+          "Unreachable",
+          "Prohibit"
+        ],
+        "version": "2.16"
+      },
+      {
+        "name": "StaticRoute",
+        "access": "readOnly",
+        "description": "If {{true}}, this route is a Static route.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DestIPAddress",
+        "access": "readWrite",
+        "description": "Destination IPv4 address. {{empty}} indicates no destination address is specified. A Forwarding table entry for which {{param}} and {{param|DestSubnetMask}} are both {{empty}} is a default route.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "DestSubnetMask",
+        "access": "readWrite",
+        "description": "Destination subnet mask. {{empty}} indicates no destination subnet mask is specified. If a destination subnet mask is specified, the {{param}} is ANDed with the destination address before comparing with the {{param|DestIPAddress}}. Otherwise, the full destination address is used as is. A Forwarding table entry for which {{param|DestIPAddress}} and {{param}} are both {{empty}} is a default route.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "ForwardingPolicy",
+        "access": "readWrite",
+        "description": "Identifier of a set of classes or flows that have the corresponding {{param}} value as defined in the {{object|###.QoS}} object. A value of -1 indicates no {{param}} is specified. If specified, this forwarding entry is to apply only to traffic associated with the specified classes and flows.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "GatewayIPAddress",
+        "access": "readWrite",
+        "description": "IPv4 address of the gateway. Only one of {{param}} and Interface SHOULD be configured for a route. If both are configured, {{param}} and {{param|Interface}} MUST be consistent with each other.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "{{reference}} Specifies the egress layer 3 interface associated with this entry. Example: Device.IP.Interface.1. Only one of {{param|GatewayIPAddress}} and {{param}} SHOULD be configured for a route. If both are configured, {{param|GatewayIPAddress}} and {{param}} MUST be consistent with each other. For a route that was configured by setting {{param|GatewayIPAddress}} but not {{param}}, read access to {{param}} MUST return the full hierarchical parameter name for the routes egress interface.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "###.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Origin",
+        "access": "readOnly",
+        "description": "Protocol via which the IPv4 forwarding rule was learned. {{enum}}",
+        "default": "Static",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "DHCPv4",
+          "OSPF",
+          "IPCP",
+          "RIP",
+          "3GPP-NAS",
+          "Static"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "ForwardingMetric",
+        "access": "readWrite",
+        "description": "Forwarding metric. A value of -1 indicates this metric is not used.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1
+      }
+    ],
+    "description": "Layer 3 IPv4 forwarding table. In addition to statically configured routes, this table MUST include dynamic routes learned through layer 3 routing protocols, including RIP (i.e. RIP version 2), OSPF, DHCPv4, 3GPP-NAS (3GPP Non Access Stratum) and IPCP. The CPE MAY reject attempts to delete or modify a dynamic route entry. For each incoming packet, the layer 3 forwarding decision is conceptually made as follows: * Only enabled table entries with a matching {{param|ForwardingPolicy}} are considered, i.e. those that either do not specify a {{param|ForwardingPolicy}}, or else specify a {{param|ForwardingPolicy}} that matches that of the incoming packet. * Next, table entries that also have a matching destination address/mask are considered, and the matching entry with the longest prefix is applied to the packet (i.e. the entry with the most specific network). An unspecified destination address is a wild-card and always matches, but with a prefix length of zero. For enabled table entries, if {{param|Interface}} is not a valid reference to an IPv4-capable interface (that is attached to the IPv4 stack), then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}. Note: The {{object}} table includes a unique key parameter that is a strong reference. If a strongly referenced object is deleted, the CPE will set the referencing parameter to {{empty}}. However, doing so under these circumstances might cause the updated {{object}} row to then violate the table's unique key constraint; if this occurs, the CPE MUST disable the offending {{object}} row.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

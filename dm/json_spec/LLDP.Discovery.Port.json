@@ -1,0 +1,66 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LLDP.Discovery.Device.{i}.Port.{i}.",
+  "object": {
+    "path": "Device.LLDP.Discovery.Device.{i}.Port.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "PortNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "PortIDSubtype",
+        "access": "readOnly",
+        "description": "The port identifier subtype, which is included in the value of the ''LLDPDU's'' Port ID TLV (TLV Type = 2). The following subtype values are defined: * ''0'' (Reserved) * ''1'' (Interface alias) * ''2'' (Port component) * ''3'' (MAC address) * ''4'' (Network address) * ''5'' (Interface name) * ''6'' (Agent circuit ID) * ''7'' (Locally assigned) * ''8-255'' (Reserved)",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "PortID",
+        "access": "readOnly",
+        "description": "The port identifier, which is included in the value of the ''LLDPDU's'' Port ID TLV (TLV Type = 2).",
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 255
+      },
+      {
+        "name": "TTL",
+        "access": "readOnly",
+        "description": "The ''LLDPDU'' lifetime (in {{units}}), which is the value of the latest TimeToLive TLV (TLV Type = 3). If this value is 0, it means that the LLDP agent or the MAC service function of the port is stopped.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "PortDescription",
+        "access": "readOnly",
+        "description": "The port description, which is the value of the latest Port Description TLV (TLV Type = 4), or {{empty}} if no Port Description TLV has been received. Note: It is assumed that this string might be used for HTIP (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and {{bibref|G.9973}}. In this case, the parameter value is likely to be one of the names defined in {{bibref|JJ-300.00|Appendix A (''List of Interface Standard Names'')}}.",
+        "type": "string",
+        "maxLength": 255
+      },
+      {
+        "name": "MACAddressList",
+        "access": "readOnly",
+        "description": "The device's MAC addresses, which are included in the value of the ''LLDPDU's'' Organizationally Specific TLV (TLV Type = 127), or {{empty}} if no list of MAC addresses has been received. The parameter is relevant when there is a LLDP device which has a MAC copy function and has two or more MAC addresses. Note: It is assumed that it might be used for HTIP (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and {{bibref|G.9973}}. In this case, the {{bibref|OUI}} in the third octet is E0271A (''TTC-OUI'') and the organizationally defined subtype in the sixth octet is 3 (''MAC Address List'').",
+        "list": true,
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "LastUpdate",
+        "access": "readOnly",
+        "description": "The date and time at which the last LLDPDU was received for this ({{object|#}},{{object}}).",
+        "type": "dateTime"
+      }
+    ],
+    "description": "This table contains information about ports on discovered LLDP devices.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "PortIDSubtype",
+        "PortID"
+      ]
+    }
+  }
+}

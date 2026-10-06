@@ -1,0 +1,113 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Cellular.AccessPoint.{i}.",
+  "object": {
+    "path": "Device.Cellular.AccessPoint.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "AccessPointNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the Access Point.",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "APN",
+        "access": "readWrite",
+        "description": "Access Point Name.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Username",
+        "access": "readWrite",
+        "description": "Username used to authenticate the CPE when making a connection to the Access Point.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Password",
+        "access": "readWrite",
+        "description": "Password used to authenticate the CPE when making a connection to the Access Point.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Proxy",
+        "access": "readWrite",
+        "description": "Proxy server IP address.",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "ProxyPort",
+        "access": "readWrite",
+        "description": "Proxy server port.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "Reference to the interface with which the access point is associated.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "IPVersion",
+        "access": "readWrite",
+        "description": "Specifies the IP protocol version, following the definitions in {{bibref|IANA-ipversionnumbers}}. Valid values are: {{range}}.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "ranges": [
+          [
+            4,
+            4
+          ],
+          [
+            6,
+            6
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "version": "2.19"
+      },
+      {
+        "name": "Type",
+        "access": "readWrite",
+        "description": "This parameter specifies the type of APN being used. Common values are \"default\", \"mms\", \"ims\", \"hipri\", ... The specific values supported may vary depending on the network operator. If the APN type is not applicable, this parameter may be {{empty}}.",
+        "list": true,
+        "type": "string",
+        "version": "2.19"
+      }
+    ],
+    "description": "Cellular Access Point table. Each entry is identified by an {{param|APN}} (Access Point Name) that identifies a gateway between the mobile network and another computer network. Note: Device 2.19 grouped the APN and Interface keys into one combined key.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

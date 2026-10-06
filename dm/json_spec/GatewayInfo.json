@@ -1,0 +1,65 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.GatewayInfo.",
+  "object": {
+    "path": "Device.GatewayInfo.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "ManagementProtocol",
+        "access": "readOnly",
+        "description": "Specifies the management protocol used by the gateway.",
+        "type": "string",
+        "enumerations": [
+          "CWMP",
+          "USP",
+          "Unknown"
+        ],
+        "version": "2.16"
+      },
+      {
+        "name": "EndpointID",
+        "access": "readOnly",
+        "description": "The unique USP identifier for this USP Agent.",
+        "type": "string",
+        "version": "2.16"
+      },
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "MAC address of the discovered device.",
+        "type": "dataType:MACAddress",
+        "version": "2.16"
+      },
+      {
+        "name": "ManufacturerOUI",
+        "access": "readOnly",
+        "description": "Organizationally unique identifier of the associated gateway. {{pattern}} {{empty}} indicates that there is no associated gateway that has been detected.",
+        "type": "string",
+        "maxLength": 6,
+        "pattern": ""
+      },
+      {
+        "name": "ProductClass",
+        "access": "readOnly",
+        "description": "Identifier of the product class of the associated gateway. {{empty}} indicates either that there is no associated gateway that has been detected, or the gateway does not support the use of the product-class parameter.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "SerialNumber",
+        "access": "readOnly",
+        "description": "Serial number of the associated gateway. {{empty}} indicates that there is no associated gateway that has been detected.",
+        "type": "string",
+        "maxLength": 64
+      }
+    ],
+    "description": "This object contains information associated with a connected gateway.",
+    "children": []
+  }
+}

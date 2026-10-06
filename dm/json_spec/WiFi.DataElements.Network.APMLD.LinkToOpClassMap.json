@@ -1,0 +1,38 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.LinkToOpClassMap.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.LinkToOpClassMap.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "LinkToOpClassMapNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "LinkID",
+        "access": "readOnly",
+        "description": "The Link ID assigned to one of the affiliated APs of this APMLD. {{bibref|EasyMesh|Section 17.2.96, Agent AP MLD Configuration TLV}}",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 15
+      },
+      {
+        "name": "OpClass",
+        "access": "readOnly",
+        "description": "One of the current Operating Class per {{bibref|802.11ax|Table E-4}} that the Radio on which the Affiliated AP with the given {{param|LinkID}} is operating on.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      }
+    ],
+    "description": "This object describes the relationship between an Affiliated AP and the Operating Class (OpClass) of the Radio that the Affiliated AP is operating on {{bibref|EasyMesh|Section 20.2.8}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "LinkID"
+      ]
+    }
+  }
+}

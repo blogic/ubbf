@@ -1,0 +1,128 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Time.Server.{i}.",
+  "object": {
+    "path": "Device.Time.Server.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ServerNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the time server.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Status of Time server instance. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.16"
+      },
+      {
+        "name": "Mode",
+        "access": "readWrite",
+        "description": "Specifies in which mode the NTP server must be ran. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Unicast",
+          "Broadcast",
+          "Multicast",
+          "Manycast"
+        ]
+      },
+      {
+        "name": "Version",
+        "access": "readWrite",
+        "description": "Specifies the supported NTP version. Possible versions are 1-4.",
+        "default": "4",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 4
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "Specify the port used to receive NTP packets. {{bibref|RFC5905|Section 7.2}}",
+        "default": "123",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "The IP Interface associated with the ''Server'' entry.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": ".IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "BindType",
+        "access": "readWrite",
+        "description": "Specifies how the client sockets must be bounded. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Address",
+          "Device"
+        ]
+      },
+      {
+        "name": "MinPoll",
+        "access": "readWrite",
+        "description": "This is the minimum polling interval, in {{units}} to the power of two, allowed by any peer of the Internet system, currently set to 6 (64 seconds). {{bibref|RFC5905|Section 7.2}}",
+        "default": "6",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxPoll",
+        "access": "readWrite",
+        "description": "This is the maximum polling interval, in {{units}} to the power of two, allowed by any peer of the Internet system, currently set to 10 (1024 seconds) {{bibref|RFC5905|Section 7.2}}",
+        "default": "10",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TTL",
+        "access": "readWrite",
+        "description": "Specifies the time to live (TTL) for a broadcast/multicast packet. {{bibref|RFC5905|Section 3.1}}",
+        "default": "255",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 255
+      }
+    ],
+    "description": "This object contains parameters relating to an time server instance.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

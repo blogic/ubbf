@@ -1,0 +1,89 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Bridging.ProviderBridge.{i}.",
+  "object": {
+    "path": "Device.Bridging.ProviderBridge.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ProviderBridgeNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this {{object}}. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. For example when the {{param|Type}} is configured with value of {{enum|PE|Type}} but {{param|CVLANcomponents}} is {{empty}}. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Type",
+        "access": "readWrite",
+        "description": "Selects the standard supported by this {{object}} table entry.",
+        "type": "string",
+        "enumerations": [
+          "S-VLAN",
+          "PE"
+        ]
+      },
+      {
+        "name": "SVLANcomponent",
+        "access": "readWrite",
+        "description": "{{reference|a {{object|#.Bridge}} instance that specifies the S-VLAN component for the {{object}}}}",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.Bridge.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "CVLANcomponents",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|a {{object|#.Bridge}} instance that specifies a C-VLAN component for the {{object}}}}",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.Bridge.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "Provider Bridge table. A Provider Bridge is described in {{bibref|802.1Q-2011|section 5.10 Provider Bridge conformance}} as an entity that is comprised of one S-VLAN component and zero or more C-VLAN components. S-VLAN and C-VLAN components are modelled as instances of {{object|#.Bridge}} objects. When {{param|Type}} is configured with value of {{enum|PE|Type}} VLAN tags from the S-VLAN component (outer of 2 VLAN tags) are stacked on top of the VLAN tag from the C-VLAN component (inner of 2 VLAN tags). When {{param|Type}} is configured with value of {{enum|S-VLAN|Type}} only VLAN tags from the S-VLAN component are utilized.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

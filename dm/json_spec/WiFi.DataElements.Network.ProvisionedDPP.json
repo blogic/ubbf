@@ -1,0 +1,36 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.ProvisionedDPP.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.ProvisionedDPP.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ProvisionedDPPNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "DPPURI",
+        "access": "readWrite",
+        "description": "The boostrapping DPP URI information which contains the enrollee public key to use for DPP onboarding a Multi-AP agent as specified by {{bibref|EasyConnect|Section 5.2.1}}.",
+        "type": "dataType:URI"
+      }
+    ],
+    "description": "This table contains provisioned Device Provisioning Protocol (DPP) Boostrap URIs {{bibref|EasyConnect|Section 5.2.1}} which contain bootstrapping keys available to the Multi-AP controller for trusted third party onboarding of new Multi-AP agents.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Users.Group.{i}.",
+  "object": {
+    "path": "Device.Users.Group.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "GroupNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.15"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables/disables this group object instance. If any User which belongs to a Group which becomes disabled is currently accessing the device then the effect on that User should be as if the Group were removed from that User's GroupParticipation list.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "GroupID",
+        "access": "readWrite",
+        "description": "Unique Identifier of the group. Depending on the implementation this can be the unique identifier assigned by the underlying system.",
+        "type": "unsignedInt",
+        "version": "2.15"
+      },
+      {
+        "name": "Groupname",
+        "access": "readWrite",
+        "description": "Name of the Group. MUST NOT be {{empty}} for an enabled entry.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "RoleParticipation",
+        "access": "readWrite",
+        "description": "These Roles are assigned to any User which is member of this Group, for so long as they remain a member of the Group.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Role.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "StaticGroup",
+        "access": "readOnly",
+        "description": "A static group is a fixed group that is always available in the system. When set to {{true}}, the group cannot be removed.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object contains parameters relating to the characteristics of a user group.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Groupname"
+      ]
+    }
+  }
+}

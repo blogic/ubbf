@@ -1,0 +1,162 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "WiFi6Capabilities.",
+  "object": {
+    "path": "WiFi6Capabilities.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "HE160",
+        "access": "readOnly",
+        "description": "Indicates support for High Efficiency (HE) 160 MHz.",
+        "type": "boolean"
+      },
+      {
+        "name": "HE8080",
+        "access": "readOnly",
+        "description": "Indicates support for HE 80+80 MHz.",
+        "type": "boolean"
+      },
+      {
+        "name": "MCSNSS",
+        "access": "readOnly",
+        "description": "Supported High Efficiency-Modulation and Coding Scheme (HE-MCS) and Number of Spatial Streams (NSS) Set field as defined in {{bibref|802.11ax|Figure 9-788d}} Supported HE-MCS And NSS Set field format. HE-MCS And NSS Set field for 160MHz is present if 160MHz is supported. HE-MCS And NSS Set field for 80+80MHz is present if 80+80MHz is supported.",
+        "type": "base64",
+        "minLength": 4,
+        "maxLength": 12
+      },
+      {
+        "name": "SUBeamformer",
+        "access": "readOnly",
+        "description": "Indicates support for Single-User (SU) Beamformer.",
+        "type": "boolean"
+      },
+      {
+        "name": "SUBeamformee",
+        "access": "readOnly",
+        "description": "Indicates support for SU Beamformee.",
+        "type": "boolean"
+      },
+      {
+        "name": "MUBeamformer",
+        "access": "readOnly",
+        "description": "Indicates support for Multi-User (MU) Beamformer.",
+        "type": "boolean"
+      },
+      {
+        "name": "Beamformee80orLess",
+        "access": "readOnly",
+        "description": "Indicates support for Beamformee Space-Time Stream (STS) \u2264 80 MHz.",
+        "type": "boolean"
+      },
+      {
+        "name": "BeamformeeAbove80",
+        "access": "readOnly",
+        "description": "Indicates support for Beamformee STS > 80 MHz.",
+        "type": "boolean"
+      },
+      {
+        "name": "ULMUMIMO",
+        "access": "readOnly",
+        "description": "Indicates support for Uplink (UL) Multi-User Multiple Input, Multiple Output (MU-MIMO).",
+        "type": "boolean"
+      },
+      {
+        "name": "ULOFDMA",
+        "access": "readOnly",
+        "description": "Indicates support for UL Orthogonal Frequency Division Multiplexing (OFDMA).",
+        "type": "boolean"
+      },
+      {
+        "name": "DLOFDMA",
+        "access": "readOnly",
+        "description": "Indicates support for Downlink (DL) Orthogonal Frequency Division Multiplexing (OFDMA).",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "MaxDLMUMIMO",
+        "access": "readOnly",
+        "description": "Max number of users supported per DL MU-MIMO Transmitter (TX) in the BSS role.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "MaxULMUMIMO",
+        "access": "readOnly",
+        "description": "Max number of users supported per UL MU-MIMO Receiver (RX) in the BSS role.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "MaxDLOFDMA",
+        "access": "readOnly",
+        "description": "Max number of users supported per Downlink (DL) OFDMA TX in the BSS role.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "MaxULOFDMA",
+        "access": "readOnly",
+        "description": "Max number of users supported per UL OFDMA RX in the BSS role.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "RTS",
+        "access": "readOnly",
+        "description": "Indicates support for Request To Send (RTS).",
+        "type": "boolean"
+      },
+      {
+        "name": "MURTS",
+        "access": "readOnly",
+        "description": "Indicates support for MU RTS.",
+        "type": "boolean"
+      },
+      {
+        "name": "MultiBSSID",
+        "access": "readOnly",
+        "description": "Indicates support for Multi-Basic Service Set Identifier (BSSID).",
+        "type": "boolean"
+      },
+      {
+        "name": "MUEDCA",
+        "access": "readOnly",
+        "description": "Indicates support for MU Enhanced distributed channel access (EDCA).",
+        "type": "boolean"
+      },
+      {
+        "name": "TWTRequestor",
+        "access": "readOnly",
+        "description": "Indicates support for Target Wake Time (TWT) Requestor.",
+        "type": "boolean"
+      },
+      {
+        "name": "TWTResponder",
+        "access": "readOnly",
+        "description": "Indicates support for TWT Responder.",
+        "type": "boolean"
+      },
+      {
+        "name": "SpatialReuse",
+        "access": "readOnly",
+        "description": "Indicates support for EasyMesh configuration and reporting of BSS Color and Spatial Reuse.",
+        "type": "boolean"
+      },
+      {
+        "name": "AnticipatedChannelUsage",
+        "access": "readOnly",
+        "description": "Indicates support for Anticipated Channel Usage (ACU) reporting.",
+        "type": "boolean"
+      }
+    ],
+    "description": "Describes the Wi-Fi 6 capabilities of the Associated Device (STA).",
+    "children": []
+  }
+}

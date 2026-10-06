@@ -1,0 +1,102 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Firewall.InterfaceSetting.{i}.",
+  "object": {
+    "path": "Device.Firewall.InterfaceSetting.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "InterfaceSettingNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the {{object}} entry, indicating if NAT is enabled for the referenced IP Interface instance. On creation, an {{object}} entry is disabled by default.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this entry. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the device to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.17"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "{{reference}} The associated IP interface on which NAT is to be enabled.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "IPv4SpoofingProtection",
+        "access": "readWrite",
+        "description": "Enables or disables the IPv4 spoofing protection. Spoofing protection prevents LAN devices from sending packets with a wrong source IP address. A number of DDoS attacks are known to modify the source IP address of packets to initiate a DDoS attack. Spoofing protection checks if the source IP address of packets initiated in the LAN belongs to the LAN interface Address range, otherwise the packet will be dropped early in the network stack.",
+        "type": "boolean"
+      },
+      {
+        "name": "IPv6SpoofingProtection",
+        "access": "readWrite",
+        "description": "Enables or disables the IPv6 spoofing protection. Spoofing protection prevents LAN devices from sending packets with a wrong source IP address. A number of DDoS attacks are known to modify the source IP address of packets to initiate a DDoS attack. Spoofing protection checks if the source IP address of packets initiated in the LAN belongs to the LAN interface Address range, otherwise the packet will be dropped early in the network stack.",
+        "type": "boolean"
+      },
+      {
+        "name": "IPv4AcceptICMPEchoRequest",
+        "access": "readWrite",
+        "description": "When {{true}} the 'ICMPv4 echo request' packet must be answered with an 'ICMPv4 echo reply'. When {{false}} the 'ICMPv4 echo request' packet must be dropped.",
+        "type": "boolean"
+      },
+      {
+        "name": "IPv6AcceptICMPEchoRequest",
+        "access": "readWrite",
+        "description": "When {{true}} the 'ICMPv6 echo request' packet must be answered with an 'ICMPv6 echo reply'. When {{false}} the 'ICMPv6 echo request' packet must be dropped.",
+        "type": "boolean"
+      },
+      {
+        "name": "IPv6PassThroughICMPEchoRequest",
+        "access": "readWrite",
+        "description": "When {{true}} the 'ICMPv6 echo request' packet must be forward to the LAN device. When {{false}} the 'ICMPv6 echo request' packet must be dropped.",
+        "type": "boolean",
+        "version": "2.18"
+      },
+      {
+        "name": "StealthMode",
+        "access": "readWrite",
+        "description": "Enables or disables the stealth mode. Stealth mode defines how the firewall must treat \"unwanted\" packets. Typically the feature is enabled for WAN facing interface(s). Stealth mode is applicable for both IPv4 and IPv6, and UDP and TCP based protocols. If set to {{true}} all 'UDP/TCP' packets are dropped silently. This prevents a possible attacker from knowing which ports are opened/closed on a gateway. When {{param}} is set to {{false}}, the firewall will reply with an ICMP port unreachable. If there are other firewall rules in effect, they will have priority over this parameter. i.e: If an 'UDP' port is set to 'ACCEPT', and the {{param}} is activated, then the port will be accepted and all the other 'UDP' ports will be blocked.",
+        "type": "boolean"
+      }
+    ],
+    "description": "Firewall settings for an associated IP Interface. For enabled table entries, if {{param|Interface}} is not a valid reference then the table entry is inoperable and the device MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}. Note: The {{object}} includes a unique key that is a strong reference. If a strongly referenced object is deleted, the device will set the referencing parameter to {{empty}}. However, doing so under these circumstances might cause the updated {{object}} row to then violate the table's unique key constraint; if this occurs, the device MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and disable the offending {{object}} row.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

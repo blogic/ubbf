@@ -1,0 +1,88 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Cellular.Interface.{i}.SMS.Message.{i}.",
+  "object": {
+    "path": "Device.Cellular.Interface.{i}.SMS.Message.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "MessageNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "Sender",
+        "access": "readOnly",
+        "description": "Phone number of the SMS sender.",
+        "type": "string"
+      },
+      {
+        "name": "Receiver",
+        "access": "readOnly",
+        "description": "Phone number of the SMS receiver.",
+        "type": "string"
+      },
+      {
+        "name": "TimeStamp",
+        "access": "readOnly",
+        "description": "Indicates the time an incoming SMS was received (when {{param|Status}} is {{enum|Received|Status}}) or when an outgoing SMS was sent (when {{param|Status}} is {{enum|Sent|Status}}).",
+        "type": "dateTime"
+      },
+      {
+        "name": "Text",
+        "access": "readOnly",
+        "description": "Text of the SMS message.",
+        "type": "string"
+      },
+      {
+        "name": "StorageRef",
+        "access": "readOnly",
+        "description": "Specifies the memory path where the messages are stored.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "Device.Cellular.Interface.{i}.SMS.Storage.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the status of the message.",
+        "type": "string",
+        "enumerations": [
+          "ReceivedRead",
+          "Received",
+          "Sent",
+          "Stored",
+          "Unknown"
+        ]
+      },
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "Indicates the type of the message.",
+        "type": "string",
+        "enumerations": [
+          "PointToPoint",
+          "Broadcast",
+          "Acknowledgement"
+        ]
+      }
+    ],
+    "description": "This object models individual SMS messages, including both received and sent entries.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

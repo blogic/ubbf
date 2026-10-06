@@ -1,0 +1,61 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.RadSecProxy.SourceConfig.{i}.",
+  "object": {
+    "path": "Device.RadSecProxy.SourceConfig.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "SourceConfigNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "Specifies the source Protocol of the RadSecProxy service.",
+        "type": "string",
+        "enumerations": [
+          "UDP",
+          "TCP",
+          "TLS",
+          "DTLS"
+        ]
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "The IP interface which the RadSecProxy service uses as the source for the corresponding {{param|Protocol}}.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": ".IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "Specifies the port used to receive corresponding {{param|Protocol}} packets. UDP {{param|Protocol}} will default to port 1812 and TCP and TLS {{param|Protocol}} will default to 2083.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      }
+    ],
+    "description": "Specifies the source configurations of the RadSecProxy service which is used for connecting to servers in order to send messages for each type of {{param|Protocol}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

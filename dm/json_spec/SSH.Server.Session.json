@@ -1,0 +1,53 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SSH.Server.{i}.Session.{i}.",
+  "object": {
+    "path": "Device.SSH.Server.{i}.Session.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "SessionNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.16"
+      },
+      {
+        "name": "User",
+        "access": "readOnly",
+        "description": "The user to whom the session belongs to. Note: This parameter was demoted to readOnly in the Device:2.18 version.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": ".Users.User.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "IPAddress",
+        "access": "readOnly",
+        "description": "IP address of the remote SSH client.",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "Port",
+        "access": "readOnly",
+        "description": "Port of the remote SSH client.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Active SSH session list.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

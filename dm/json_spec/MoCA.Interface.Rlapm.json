@@ -1,0 +1,67 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MoCA.Interface.{i}.Rlapm.{i}.",
+  "object": {
+    "path": "Device.MoCA.Interface.{i}.Rlapm.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "RlapmNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this Rlamp entry.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Profile",
+        "access": "readWrite",
+        "description": "Profile index used for the RLAPM (Receive Level Added PHY Margin) table.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Frequency",
+        "access": "readWrite",
+        "description": "Frequency (band) index used for the RLAPM (Receive Level Added PHY Margin) table.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "GlobalAggrRxPwrLevel",
+        "access": "readWrite",
+        "description": "Global Aggregated Receive Power Level (GARPL). The parameter contains the \"Ni\" value, where GARPLi = -Ni dBm.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65
+      },
+      {
+        "name": "PhyMargin",
+        "access": "readWrite",
+        "description": "Receive Level Added Phy Margin (RLAPM). The parameter contains the \"Ni\" value, where RLAPMi = 0.5*Ni dB.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 60
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Reflects the status of a row in this table.",
+        "type": "dataType:RowStatus"
+      }
+    ],
+    "description": "Interface RLAPM Table supporting the configuration of RLAPM (Receive Level Added PHY Margin) function parameters for the selected profile. The pairs [{{param|GlobalAggrRxPwrLevel}} (GARPLi ), {{param|PhyMargin}} (RLAPMi)] are used to determine the subcarriers' bitloadings according {{bibref|MoCAv2.0|section 7.15.2 and Table 17-1}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Profile",
+        "Frequency",
+        "GlobalAggrRxPwrLevel"
+      ]
+    }
+  }
+}

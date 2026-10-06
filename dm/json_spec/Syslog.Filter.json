@@ -1,0 +1,119 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Syslog.Filter.{i}.",
+  "object": {
+    "path": "Device.Syslog.Filter.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "FilterNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.17"
+      },
+      {
+        "name": "FacilityLevel",
+        "access": "readWrite",
+        "description": "Only the log messages with following Facility levels must be logged.",
+        "default": "[All]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "Kern",
+          "User",
+          "Mail",
+          "Daemon",
+          "Auth",
+          "Syslog",
+          "LPR",
+          "News",
+          "UUCP",
+          "Cron",
+          "AuthPriv",
+          "FTP",
+          "NTP",
+          "Audit",
+          "Console",
+          "Cron2",
+          "Local0",
+          "Local1",
+          "Local2",
+          "Local3",
+          "Local4",
+          "Local5",
+          "Local6",
+          "Local7",
+          "All"
+        ]
+      },
+      {
+        "name": "Severity",
+        "access": "readWrite",
+        "description": "Specifies the Severity level filter rules. Defines the processing used to select log messages by comparing syslog message severity using the following processing rules: - if 'none', do not match. - if 'all', match. - else compare message severity with the specified severity according to the default compare rule (all messages of the specified severity and greater match). This must be used inconjuction with {{param|SeverityCompare}} and {{param|SeverityCompareAction}}.",
+        "default": "All",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Emergency",
+          "Alert",
+          "Critical",
+          "Error",
+          "Warning",
+          "Notice",
+          "Info",
+          "Debug",
+          "All",
+          "None"
+        ]
+      },
+      {
+        "name": "SeverityCompare",
+        "access": "readWrite",
+        "description": "Describes the comparison method that must be applied when a syslog message is received. Not applicable when severity {{enum|All|Severity}} and {{enum|None|Severity}} is configured.",
+        "default": "EqualOrHigher",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Equal",
+          "EqualOrHigher"
+        ]
+      },
+      {
+        "name": "SeverityCompareAction",
+        "access": "readWrite",
+        "description": "Specifies the process of handling a syslog message based on specified conditions. It defines the action that will be taken when the criteria of both {{param|Severity}} and {{param|SeverityCompare}} are met, determining the response to the syslog message.",
+        "default": "Log",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Log",
+          "Block",
+          "Stop"
+        ]
+      },
+      {
+        "name": "PatternMatch",
+        "access": "readWrite",
+        "description": "Regular expression pattern designed to match a syslog message that must be logged. The format is implementation specific.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string"
+      }
+    ],
+    "description": "This table defines the processing used to select log messages by comparing syslog message with the provided rules. A rule can consist either of {{param|FacilityLevel}} - {{param|Severity}} and or {{param|PatternMatch}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

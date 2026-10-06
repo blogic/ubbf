@@ -1,0 +1,138 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PeriodicStatistics.SampleSet.{i}.",
+  "object": {
+    "path": "Device.PeriodicStatistics.SampleSet.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "SampleSetNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables collection of periodic statistics for this sample set. When collection of periodic statistics is enabled, any stored samples are discarded, and the first sample interval begins immediately.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates availability of Sample statistics. {{enum}} The {{enum|Trigger}} value is only used for triggering the Controller to fetch the collected data and can only be used when {{param|FetchSamples}} is in the range [1:{{param|ReportSamples}}]. The transition from {{enum|Enabled}} to {{enum|Trigger}} to {{enum|Enabled}} MUST be instantaneous and so will result in only a single value change for notification purposes. {{deprecated|2.16|because the periodic statistics are sent through a USP {{event|Push!}} event}} {{obsoleted|2.18}} {{deleted|2.19}}",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Trigger"
+        ]
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "The name of this sample set, which uniquely distinguishes each sample set.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 128
+      },
+      {
+        "name": "Controller",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|##.LocalAgent.Controller}} instance that created {{object}}|delete}} The value of this parameter is automatically populated by the USP Agent upon {{object}} creation using the reference to the USP Controller that created the instance. The USP Controller referenced by this parameter defines the set of permissions to use when updating the {{object|Parameter}} table. Furthermore, only the USP Controller referenced by this parameter will receive a {{event|Push!}} Event (assuming it has an associated Subscription), even if another USP Controller has an associated Subscription.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.LocalAgent.Controller.",
+          "targetType": "row"
+        },
+        "version": "2.15"
+      },
+      {
+        "name": "SampleInterval",
+        "access": "readWrite",
+        "description": "The sample interval in {{units}}. Each statistic is measured over this sample interval. The CPE MAY also support an internal sampling rate (implementation dependent) that is faster than the {{param}} and allows the CPE to support the various options available in {{param|Parameter.{i}.CalculationMode}}. The CPE MAY reject a request to set {{param}} to less than {{param|#.MinSampleInterval}}. Sample intervals MUST begin every {{param}} {{units}}, with no delay between samples. If {{param}} is changed while collection of periodic statistics is enabled, any stored samples are discarded, and the first sample interval begins immediately. For example, if {{param|ReportSamples}} is 24 and {{param}} is 3600 (an hour), the CPE can store up to a day's worth of samples for each statistic.",
+        "default": "3600",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "ReportSamples",
+        "access": "readWrite",
+        "description": "The number of samples that the CPE will store and report for each statistic. The CPE MUST permit {{param}} to be set to at least {{param|#.MaxReportSamples}}. If {{param}} is changed while collection of periodic statistics is enabled, the CPE will truncate or extend its statistics buffers as appropriate, but statistics collection MUST NOT otherwise be affected. For example, if {{param}} is 24 and {{param|SampleInterval}} is 3600 (an hour), the CPE can store up to a day's worth of samples for each statistic.",
+        "default": "24",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "TimeReference",
+        "access": "readWrite",
+        "description": "An absolute time reference in UTC to determine when sample intervals will complete. Each sample interval MUST complete at this reference time plus or minus an integer multiple of {{param|SampleInterval}}. {{param}} is used only to set the \"phase\" of the sample and fetch intervals. The actual value of {{param}} can be arbitrarily far into the past or future. This time reference also determines when the {{event|Push!}} event that is controlled by {{param|FetchSamples}} will occur. If collection of periodic statistics is enabled and {{param|FetchSamples}} is in the range [1:{{param|ReportSamples}}] then each such {{event|Push!}} event MUST occur at this reference time plus or minus an integer multiple of {{param|FetchSamples}} * {{param|SampleInterval}} (the fetch interval). If {{param}} is changed while collection of periodic statistics is enabled, any stored samples are discarded, and the first sample interval begins immediately. The Unknown Time value defined in {{bibref|TR-106}} indicates that no particular time reference is specified. That is, the CPE MAY locally choose the time reference, and is required only to adhere to the specified sample and fetch intervals. If absolute time is not available to the CPE, its sample and fetch interval behavior MUST be the same as if the {{param}} parameter was set to the Unknown Time value. For example, if {{param|SampleInterval}} is 3600 (an hour) and if {{param}} is set to UTC midnight on some day (in the past, present, or future) then sample intervals will complete on each UTC hour (00:00, 01:00, 02:00 etc). If, in addition, {{param|FetchSamples}} is 24, then the fetch interval is 86400 (a day) and the {{event|Push!}} event will occur every day at UTC midnight. Note that, if {{param}} is set to a time other than the Unknown Time, the first sample interval (which has to begin immediately) will almost certainly be shorter than {{param|SampleInterval}}). This is why {{param}} is defined in terms of when sample intervals complete rather than start.",
+        "default": "0001-01-01T00:00:00Z",
+        "defaultType": "object",
+        "type": "dateTime"
+      },
+      {
+        "name": "ReportStartTime",
+        "access": "readOnly",
+        "description": "The absolute time at which the sample interval for the first stored sample (for each statistic) started.",
+        "default": "0001-01-01T00:00:00Z",
+        "defaultType": "object",
+        "type": "dateTime"
+      },
+      {
+        "name": "ReportEndTime",
+        "access": "readOnly",
+        "description": "The absolute time at which the sample interval for the last stored sample (for each statistic) ended. If {{template|PERIODICSTATISTICS-FORCESAMPLE}} has been used to force statistics for the current sample to be calculated and updated in the data model, then {{param}} MUST be updated to reflect the actual time over which stored data was collected.",
+        "default": "0001-01-01T00:00:00Z",
+        "defaultType": "object",
+        "type": "dateTime"
+      },
+      {
+        "name": "SampleSeconds",
+        "access": "readOnly",
+        "description": "{{list}} Each entry indicates the number of {{units}} during which data was collected during the sample interval. Individual {{param}} values can be less than {{param|SampleInterval}}, for several reasons, including: : {{param|TimeReference}} has been set to a time other than the Unknown Time and the current sample interval started part of the way through a scheduled sample interval. : {{template|PERIODICSTATISTICS-FORCESAMPLE}} has been used to force statistics for the current sample to be calculated and updated in the data model.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ParameterNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "FetchSamples",
+        "access": "readWrite",
+        "description": "The number of sample intervals to be collected before triggering a {{event|Push!}} event. If this SampleSet is enabled and {{param}} is in the range [1:{{param|ReportSamples}}] then a {{event|Push!}} event MUST be sent on completion of every {{param}} sample intervals. For example, if {{param|ReportSamples}} is 25 and {{param}} is 24, then the CPE will store 25 values for each monitored parameter and the {{event|Push!}} event will occur as the CPE stores each 24th of 25 sample intervals.",
+        "default": "1",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      }
+    ],
+    "description": "Periodic statistics sample set table. Each sample set has its own sample interval etc.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Name"
+      ]
+    }
+  }
+}

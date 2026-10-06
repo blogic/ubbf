@@ -1,0 +1,77 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.USPServices.USPService.{i}.",
+  "object": {
+    "path": "Device.USPServices.USPService.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "USPServiceNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "EndpointID",
+        "access": "readOnly",
+        "description": "The unique USP identifier for this USP Agent.",
+        "type": "string"
+      },
+      {
+        "name": "Protocol",
+        "access": "readOnly",
+        "description": "The Message Transfer Protocol (MTP) to be used for communications by a USP Endpoint. Note: This parameter was demoted to readOnly in the Device:2.17 version.",
+        "type": "string",
+        "enumerations": [
+          "WebSocket",
+          "STOMP",
+          "MQTT",
+          "UDS"
+        ]
+      },
+      {
+        "name": "DataModelPaths",
+        "access": "readOnly",
+        "description": "Registered data model paths.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "DeploymentUnitRef",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|##.SoftwareModules.DeploymentUnit.}} object instance that this USP Service is part of.}} {{empty}} means that USP service doesn't have a corresponding software module.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.SoftwareModules.DeploymentUnit.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ExecutionUnitRef",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|##.SoftwareModules.ExecutionUnit.}} object instance that this USP Service is part of.}} {{empty}} means that USP service doesn't have a corresponding software module.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.SoftwareModules.ExecutionUnit.",
+          "targetType": "row"
+        },
+        "version": "2.18"
+      },
+      {
+        "name": "HasController",
+        "access": "readOnly",
+        "description": "The USP service has controller functionality next to the standard USP Agent functionality.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object contains parameters relating to a USPService configuration.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "EndpointID"
+      ]
+    }
+  }
+}

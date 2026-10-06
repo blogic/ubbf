@@ -1,0 +1,63 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LocalAgent.MTP.{i}.",
+  "object": {
+    "path": "Device.LocalAgent.MTP.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "MTPNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enable/Disable this {{object}} instance. If this {{object}} instance is to be disabled and currently used for communication with the requesting controller, the agent has to send the request response first, before disabling it.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the {{object}} instance.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Error"
+        ]
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "The Message Transfer Protocol (MTP) to be used for communications by a USP Endpoint.",
+        "type": "string"
+      },
+      {
+        "name": "EnableMDNS",
+        "access": "readWrite",
+        "description": "This parameter, when {{true}}, enables the advertisement of DNS-SD services defined for this {{object}} instance using mDNS as defined in {{bibref|RFC6762}}. This parameter cannot be set to {{true}} if there are multiple {{object}} instances with the same value of the {{param|Protocol}} parameter. When {{true}}, the hostname advertised in the SRV record MUST be a Fully Qualified Domain Name (FQDN). The interfaces that advertise these DNS-SD services are restricted to the set of interfaces associated with this {{object}} instance and the interfaces defined by the {{param|.DNS.SD.Advertise.{i}.Interface}} parameter.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      }
+    ],
+    "description": "Each instance of this table represents a MTP used by the local Agent.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

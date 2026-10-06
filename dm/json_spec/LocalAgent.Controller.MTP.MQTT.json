@@ -1,0 +1,78 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LocalAgent.Controller.{i}.MTP.{i}.MQTT.",
+  "object": {
+    "path": "Device.LocalAgent.Controller.{i}.MTP.{i}.MQTT.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "Reference",
+        "access": "readWrite",
+        "description": "A reference to the MQTT Client used by this Controller when communicating via the MQTT MTP. {{deprecated|2.16|because {{param|AgentMTPReference}} was added}} {{obsoleted|2.18}} {{deleted|2.19}}",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".MQTT.Client.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Topic",
+        "access": "readWrite",
+        "description": "The topic name the USP Controller has subscribed to, to be used for Notify messages send by the USP Agent.",
+        "type": "string",
+        "maxLength": 65535
+      },
+      {
+        "name": "PublishRetainResponse",
+        "access": "readWrite",
+        "description": "If set to {{true}} the Agent MUST set the RETAIN flag in MQTT PUBLISH messages carrying a USP Response Message to 1, unless the MQTT server sent Retain Available = 0 (MQTT 5.0) in its CONNACK (in which case, the Agent MUST set the RETAIN flag to 0).",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "PublishRetainNotify",
+        "access": "readWrite",
+        "description": "If set to {{true}} the Agent MUST set the RETAIN flag in MQTT PUBLISH messages carrying a USP Notify Message to 1, unless the MQTT server sent Retain Available = 0 (MQTT 5.0) in its CONNACK (in which case, the Agent MUST set the RETAIN flag to 0).",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "AgentMTPReference",
+        "access": "readWrite",
+        "description": "{{reference|the {{object|###.MTP.}} object instance containing the Response Topic used by this Controller when communicating via the MQTT MTP}}",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "###.MTP.",
+          "targetType": "row"
+        },
+        "version": "2.16"
+      },
+      {
+        "name": "USPServiceRef",
+        "access": "readOnly",
+        "description": "A reference to the USP Service associated with this Agent when communicating via the MQTT MTP.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".USPServices.USPService.",
+          "targetType": "row"
+        },
+        "version": "2.16"
+      }
+    ],
+    "description": "If the USP Endpoint uses the MQTT Message Transfer Protocol (MTP), then this object contains MQTT Client specific configuration parameters related to how this Controller communicates with the MQTT broker.",
+    "children": []
+  }
+}

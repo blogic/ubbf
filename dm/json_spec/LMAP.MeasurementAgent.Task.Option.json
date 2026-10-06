@@ -1,0 +1,55 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.MeasurementAgent.{i}.Task.{i}.Option.{i}.",
+  "object": {
+    "path": "Device.LMAP.MeasurementAgent.{i}.Task.{i}.Option.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "OptionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} instance. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Order",
+        "access": "readWrite",
+        "description": "The order of the Option.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "The name of the option. When the value of this parameter is equal to \"channel\", the option value specifies the Communication Channel used for this task.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Value",
+        "access": "readWrite",
+        "description": "The value associated with the Option.",
+        "type": "string"
+      }
+    ],
+    "description": "This object represents an option associated with the task.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

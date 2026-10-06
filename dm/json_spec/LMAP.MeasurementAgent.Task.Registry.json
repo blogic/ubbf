@@ -1,0 +1,50 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.MeasurementAgent.{i}.Task.{i}.Registry.{i}.",
+  "object": {
+    "path": "Device.LMAP.MeasurementAgent.{i}.Task.{i}.Registry.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "RegistryNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} instance. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "RegistryEntry",
+        "access": "readWrite",
+        "description": "A URI ({{bibref|RFC3986}}) that is the value of the task registry entry as defined in {{bibref|LMAPREG}} or a value for a task that is understood by the measurement agent, measurement controller and measurement collector.",
+        "type": "string"
+      },
+      {
+        "name": "Roles",
+        "access": "readWrite",
+        "description": "{{list| representing the roles of the function}}",
+        "list": true,
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "This object represents a registry function and an associated list of roles for this task",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "RegistryEntry"
+      ]
+    }
+  }
+}

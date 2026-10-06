@@ -1,0 +1,100 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DynamicDNS.Server.{i}.",
+  "object": {
+    "path": "Device.DynamicDNS.Server.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ServerNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables Dynamic DNS Server. Note: This parameter was previously wrongly defined as a string.",
+        "type": "boolean"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "The textual name of the Dynamic DNS Server.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "ServiceName",
+        "access": "readWrite",
+        "description": "Dynamic DNS service used to contact this server. {{reference}}",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ServerAddress",
+        "access": "readWrite",
+        "description": "Host name or IP address of the Dynamic DNS server.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ServerPort",
+        "access": "readWrite",
+        "description": "Port number of the Dynamic DNS server.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "SupportedProtocols",
+        "access": "readOnly",
+        "description": "Indicates the protocols that are supported by the CPE for sending requests to the Dynamic DNS server. {{list}} This list depends on the Dynamic DNS service defined by the {{param|ServiceName}} parameter.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "HTTP",
+          "HTTPS"
+        ]
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "Indicates the protocol used to send requests to the Dynamic DNS server.",
+        "type": "string"
+      },
+      {
+        "name": "CheckInterval",
+        "access": "readWrite",
+        "description": "Interval (in {{units}}) between two checks for IP change. A value of zero indicates that the CPE knows when IP changes and doesn\u2019t need to check it periodically.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RetryInterval",
+        "access": "readWrite",
+        "description": "Initial retry interval (in {{units}}) after a failed request. This parameter can be used as a fixed value or as part of a retry interval calculation.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxRetries",
+        "access": "readWrite",
+        "description": "Maximum number of retries after a failed request. When the maximum number is reached, no further requests are sent until the context changes. A value of 0 means that there are no retries after a failed request.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Table of Dynamic DNS servers available for this CPE.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Name"
+      ]
+    }
+  }
+}

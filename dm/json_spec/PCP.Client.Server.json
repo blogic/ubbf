@@ -1,0 +1,157 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PCP.Client.{i}.Server.{i}.",
+  "object": {
+    "path": "Device.PCP.Client.{i}.Server.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ServerNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this PCP Server.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of the PCP Server. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Connecting",
+          "Error_Timeout",
+          "Error_HostNameNotResolved",
+          "Error_NetworkFailure",
+          "Error_NotAuthorized",
+          "Error_Unsupported",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Origin",
+        "access": "readOnly",
+        "description": "Method used to assign {{param|ServerNameOrAddress}} and create this table entry. {{enum}} Note: In the {{enum|DHCPv4}} and {{enum|DHCPv6}} cases, if more than one IP address is received {{param|ServerNameOrAddress}} will be the first address and {{param|AdditionalServerAddresses}} will be the remaining addresses.",
+        "default": "Static",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "DHCPv4",
+          "DHCPv6",
+          "Static"
+        ]
+      },
+      {
+        "name": "ServerNameOrAddress",
+        "access": "readWrite",
+        "description": "The FQDN or IP address of the PCP Server, assigned as described under {{param|Origin}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ServerAddressInUse",
+        "access": "readOnly",
+        "description": "The IP address currently in use for the PCP Server, derived from the value of {{param|ServerNameOrAddress}}. {{empty}} indicates that no PCP Server address is currently known.",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "AdditionalServerAddresses",
+        "access": "readOnly",
+        "description": "PCP Server addresses in addition to {{param|ServerNameOrAddress}}. This can be non-empty only if {{param|Origin}} is {{enum|DHCPv4|Origin}} or {{enum|DHCPv6|Origin}} and if more than one PCP Server address was received.",
+        "list": true,
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "ExternalIPAddress",
+        "access": "readOnly",
+        "description": "The external IP address of the PCP-controlled device hosting this server.",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "CurrentVersion",
+        "access": "readOnly",
+        "description": "This is the version of PCP resulting from client-server Version Negotiation. This parameter is based on Version from {{bibref|RFC6887}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "MaximumFilters",
+        "access": "readWrite",
+        "description": "Indicates the maximum number of inbound filters allowed to be associated with a mapping entry on this server.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PortQuota",
+        "access": "readWrite",
+        "description": "Indicates the maximum number of ports allocated to this PCP Client on this server. A value of 0 means that there is no limitation.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "PreferredLifetime",
+        "access": "readWrite",
+        "description": "Indicates the preferred lifetime (in {{units}}) to be used for mappings with this server when no preference is selected by an application/user.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Capabilities",
+        "access": "readOnly",
+        "description": "Indicates the capabilities supported by the PCP Server. {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "NAT44",
+          "StatelessNAT64",
+          "StatefulNAT64",
+          "A+PPortRangeRouter",
+          "SupportsPORTSETOption",
+          "IPv4Firewall",
+          "IPv6Firewall",
+          "NPTv6",
+          "DSCPReMarkingFunction",
+          "FLOWDATAAwareFunction",
+          "ILNPTranslator"
+        ]
+      },
+      {
+        "name": "InboundMappingNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "OutboundMappingNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This table contains the PCP Servers to be used by the PCP Client. Entries are either statically configured or automatically created via DHCP options OPTION_V4_PCP_SERVER and OPTION_V6_PCP_SERVER, as per {{bibref|RFC7291}}. Each OPTION_V4_PCP_SERVER or OPTION_V6_PCP_SERVER option corresponds to a {{object}} instance. If an option returns multiple addresses then that {{object}} instance has multiple addresses.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

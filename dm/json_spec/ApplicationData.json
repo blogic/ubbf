@@ -1,0 +1,55 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "ApplicationData.{i}.",
+  "object": {
+    "path": "ApplicationData.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "A name which is assigned to the ApplicationData instance at the time of its creation, which distinguishes it from any other application data volumes owned by the same application.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Capacity",
+        "access": "readOnly",
+        "description": "Storage capacity of the volume, in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Encrypted",
+        "access": "readOnly",
+        "description": "Whether the data is stored on an encrypted medium.",
+        "default": "true",
+        "defaultType": "parameter",
+        "type": "boolean"
+      },
+      {
+        "name": "Retain",
+        "access": "readOnly",
+        "description": "The level of persistency of the volume.",
+        "type": "string",
+        "enumerations": [
+          "UntilStopped",
+          "Forever"
+        ]
+      },
+      {
+        "name": "AccessPath",
+        "access": "readOnly",
+        "description": "The path by which the Execution Units created by the Deployment Unit may access the storage volume.",
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "The application data volumes which are required for correct functioning of the updated {{object|##}}. The {{object|##}} may already have one or more existing application data volumes, represented by entries in the {{object|###.ExecEnv.{i}.ApplicationData}} table, which have {{param|###.ExecEnv.{i}.ApplicationData.{i}.Retain}} equal to {{enum|Forever|###.ExecEnv.{i}.ApplicationData.{i}.Retain}} and {{param|###.ExecEnv.{i}.ApplicationData.{i}.ApplicationUUID}} equal to the {{param|##.UUID}} of the {{object|##}} which is being updated. The behaviour with respect to these existing application volumes depends on the value of the {{param|#.RetainData}} input argument. # If the {{param|#.RetainData}} input argument is {{false}} then the device SHOULD remove these existing application data volumes, and SHOULD treat the rows in this argument in the same way as for the {{command|###.InstallDU()}} command. # If {{param|#.RetainData}} is {{true}}, the device SHOULD attempt to transfer the existing application data volumes to the updated {{object|##}}. ## If an existing application data volume does not match the {{param|Name}} of any row of this argument, then the device SHOULD leave both the volume and its entry in the {{object|###.ExecEnv.{i}.ApplicationData}} table unchanged. ## If the {{param|Name}} of a row of this argument does not match the {{param|###.ExecEnv.{i}.ApplicationData.{i}.Name}} of any existing application data volume, then the device SHOULD attempt to create the volume together with its entry in the {{object|###.ExecEnv.{i}.ApplicationData}} table. ## If the {{param|Name}} of a row of this argument matches the {{param|###.ExecEnv.{i}.ApplicationData.{i}.Name}} of an existing application data volume, then the device SHOULD attempt to carry the application data forward to the updated {{object|##}}. This may imply copying of the data if the {{param|Capacity}}, {{param|Encrypted}}, or {{param|Retain}} values in this argument differ from those in the {{object|###.ExecEnv.{i}.ApplicationData}} table. An attempt to create a new application data volume or to copy an existing application data volume to a new location may cause the operation to fail with a 7227 (System Resources Exceeded) fault code.",
+    "children": []
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "source_file": "tr-181-2-19-0-map.xml",
+  "path": "Interface.",
+  "object": {
+    "path": "Interface.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.0",
+    "parameters": [],
+    "description": "{{object}} table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}).",
+    "children": []
+  }
+}

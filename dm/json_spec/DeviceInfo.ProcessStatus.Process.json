@@ -1,0 +1,72 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.ProcessStatus.Process.{i}.",
+  "object": {
+    "path": "Device.DeviceInfo.ProcessStatus.Process.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ProcessNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "PID",
+        "access": "readOnly",
+        "description": "The Process Identifier.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Command",
+        "access": "readOnly",
+        "description": "The name of the command that has caused the process to exist.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Size",
+        "access": "readOnly",
+        "description": "The size in {{units}} of the memory occupied by the process.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Priority",
+        "access": "readOnly",
+        "description": "The priority of the process where 0 is highest.",
+        "type": "unsignedInt",
+        "maxInclusive": 99
+      },
+      {
+        "name": "CPUTime",
+        "access": "readOnly",
+        "description": "The amount of time in {{units}} that the process has spent taking up CPU time since the process was started.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "State",
+        "access": "readOnly",
+        "description": "The current state that the process is in.",
+        "type": "string",
+        "enumerations": [
+          "Running",
+          "Sleeping",
+          "Stopped",
+          "Idle",
+          "Uninterruptible",
+          "Zombie"
+        ],
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "List of all processes running on the device.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "PID"
+      ]
+    }
+  }
+}

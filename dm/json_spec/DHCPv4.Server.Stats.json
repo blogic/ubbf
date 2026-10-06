@@ -1,0 +1,95 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv4.Server.Stats.",
+  "object": {
+    "path": "Device.DHCPv4.Server.Stats.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Discover",
+        "access": "readOnly",
+        "description": "The total number of DHCPDISCOVER messages received by the server, as defined in {{bibref|RFC2132|DHCP Message Type}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "Offer",
+        "access": "readOnly",
+        "description": "The total number of DHCPOFFER messages sent by the server, as defined in {{bibref|RFC2132|DHCP Message Type}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "Request",
+        "access": "readOnly",
+        "description": "The total number of DHCPREQUEST messages received by the server, as defined in {{bibref|RFC2132|DHCP Message Type}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "ACK",
+        "access": "readOnly",
+        "description": "The total number of DHCPACK messages sent by the server, as defined in {{bibref|RFC2132|DHCP Message Type}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "NACK",
+        "access": "readOnly",
+        "description": "The total number of DHCPNACK messages sent by the server, as defined in {{bibref|RFC2132|DHCP Message Type}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "Decline",
+        "access": "readOnly",
+        "description": "The total number of DHCPDECLINE messages received by the server, as defined in {{bibref|RFC2132|DHCP Message Type}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "Release",
+        "access": "readOnly",
+        "description": "The total number of DHCPRELEASE messages received by the server, as defined in {{bibref|RFC2132|DHCP Message Type}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "Inform",
+        "access": "readOnly",
+        "description": "The total number of DHCPINFORM messages received by the server, as defined in {{bibref|RFC2132|DHCP Message Type}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "ForceRenew",
+        "access": "readOnly",
+        "description": "The total number of DHCPFORCERNEW messages sent by the server, as defined in {{bibref|RFC3203|DHCP reconfigure extension}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "DiscardedPackets",
+        "access": "readOnly",
+        "description": "The total number of DHCP packets discarded by the server. Packets can be discarded due to illegal message format and content, incorrect received bytes, etc.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "TransmitFailure",
+        "access": "readOnly",
+        "description": "The total number of DHCP messages that failed to transmit.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "RelayOptionDropped",
+        "access": "readOnly",
+        "description": "The total number of DHCP messages with dropped relay options.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "SecondServerDetected",
+        "access": "readOnly",
+        "description": "The total number of times a second DHCP server was detected.",
+        "type": "dataType:StatsCounter64"
+      }
+    ],
+    "description": "Provide statistics for the embedded DHCP Server.",
+    "children": []
+  }
+}

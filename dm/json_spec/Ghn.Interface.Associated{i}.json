@@ -1,0 +1,55 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Ghn.Interface.{i}.AssociatedDevice.{i}.",
+  "object": {
+    "path": "Device.Ghn.Interface.{i}.AssociatedDevice.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "AssociatedDeviceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "MAC address of remote G.hn device. This is denoted as REGID in {{bibref|G.9961}}.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "DeviceId",
+        "access": "readOnly",
+        "description": "Device Id (as defined in G.hn) for the remote G.hn device, denoted as DEVICE_ID in {{bibref|G.9961}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TxPhyRate",
+        "access": "readOnly",
+        "description": "The PHY transmit Rate (expressed in {{units}}) to this remote device, denoted as PHY data rate in {{bibref|G.9961}}. Refer to Note 1 of {{bibref|G.9961|Table 8-48}}. To convert from the value in the table, divide by 32K (32768) and round down.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "RxPhyRate",
+        "access": "readOnly",
+        "description": "The PHY receive Rate (expressed in {{units}}) from this remote device, denoted as PHY data rate in {{bibref|G.9961}}. Refer to Note 1 of {{bibref|G.9961|Table 8-48}}. To convert from the value in the table, divide by 32K (32768) and round down.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Active",
+        "access": "readOnly",
+        "description": "Whether or not this device is currently present in the G.hn domain. The ability to list inactive nodes is OPTIONAL. If the CPE includes inactive nodes in this table, {{param}} MUST be set to {{false}} for each inactive node. The length of time an inactive node remains listed in this table is a local matter to the CPE. If {{param}} is {{true}}, it indicates that the Status of the remote device is 0, 1, or 2 (see {{bibref|G.9961|Table 7-3}}).",
+        "type": "boolean"
+      }
+    ],
+    "description": "This table contains information about other G.hn devices connected to this G.hn interface.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "MACAddress"
+      ]
+    }
+  }
+}

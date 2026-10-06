@@ -1,0 +1,93 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.EndPoint.{i}.AC.{i}.",
+  "object": {
+    "path": "Device.WiFi.EndPoint.{i}.AC.{i}.",
+    "access": "readOnly",
+    "minEntries": "4",
+    "maxEntries": "4",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "AccessCategory",
+        "access": "readOnly",
+        "description": "This identifies the access category.",
+        "type": "string",
+        "enumerations": [
+          "BE",
+          "BK",
+          "VI",
+          "VO"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "AIFSN",
+        "access": "readWrite",
+        "description": "Arbitration Inter Frame Spacing (Number). This is the number of time slots in the arbitration interframe space. {{deprecated|2.15|because it is superseded by the WMM Specification}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "unsignedInt",
+        "minInclusive": 2,
+        "maxInclusive": 15
+      },
+      {
+        "name": "ECWMin",
+        "access": "readWrite",
+        "description": "Exponent of Contention Window (Minimum). This encodes the values of CWMin as an exponent: CWMin = 2^ECWMin^ - 1. For example, if ECWMin is 8, then CWMin is 2^8^ - 1, or 255, (expressed in {{units}}). {{deprecated|2.15|because it is superseded by the WMM Specification}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 15
+      },
+      {
+        "name": "ECWMax",
+        "access": "readWrite",
+        "description": "Exponent of Contention Window (Maximum). This encodes the values of CWMax as an exponent: CWMax = 2^ECWMax^ - 1. For example, if ECWMax is 8, then CWMax is 2^8^ - 1, or 255, (expressed in {{units}}). {{deprecated|2.15|because it is superseded by the WMM Specification}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 15
+      },
+      {
+        "name": "TxOpMax",
+        "access": "readWrite",
+        "description": "Maximum transmit opportunity, in multiples of {{units}}. A TXOP time interval of 0 means it is limited to a single MAC protocol data unit (MPDU). {{deprecated|2.15|because it is superseded by the WMM Specification}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "AckPolicy",
+        "access": "readWrite",
+        "description": "Ack Policy, where False=\"Do Not Acknowledge\" and True=\"Acknowledge\"",
+        "type": "boolean"
+      },
+      {
+        "name": "OutQLenHistogramIntervals",
+        "access": "readWrite",
+        "description": "{{list}} Definition of the histogram intervals for counting the transmit queue length in packets. Each value indicates the maximum value of the interval. For example, \"0,1,4,8,\" defines the five intervals: 0 packets in queue, 1 packet in queue, 2 to 4 packets in queue, 5 to 8 packets in queue, and 9 or more packets in queue. (No value after the last comma means no upper bound.) If this parameter is set to an empty string, no {{param|Stats.OutQLenHistogram}} stats will be collected.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "OutQLenHistogramSampleInterval",
+        "access": "readWrite",
+        "description": "The time between recording samples of the current transmit queue {{units}}.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object contains parameters related to WiFi QoS for different 802.11e access categories (priorities). Access categories are: BE, BK, VI, and VO. These parameters can help control and monitor 802.11e Enhanced distributed channel access (EDCA). The size of this table is fixed, with four entries which are identified by the {{param|AccessCategory}} parameter as follows: * BE (Best Effort) * BK (Background) * VI (Video) * VO (Voice)",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "AccessCategory"
+      ]
+    }
+  }
+}

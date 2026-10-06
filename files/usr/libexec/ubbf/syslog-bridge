@@ -1,0 +1,279 @@
+#!/usr/bin/env ucode
+'use strict';
+
+/*
+ * ubbf-syslog-bridge: ferries logd ring entries into syslog-ng over a
+ * loopback TCP connection in RFC 3164 form, with no boot-time loss and
+ * no reload-window loss.
+ *
+ * The previous design (`logread -f -r ...`) leaked messages in two ways:
+ *
+ *  1. Boot-time / pre-connect: logread invokes log.read with lines=0,
+ *     which in logd means "skip past the existing ring, follow new
+ *     messages only". Anything logged before logread connected was lost
+ *     from the syslog-ng pipeline.
+ *
+ *  2. syslog-ng-ctl reload: every render commit reloads syslog-ng,
+ *     which closes its network() listener; logread's TCP connection
+ *     drops; on reconnect it again invokes log.read with lines=0 and
+ *     skips past anything that arrived during the gap.
+ *
+ * This daemon avoids both:
+ *
+ *  - Subscribes to the `log` ubus object's "message" notifications so
+ *    new ring entries arrive as push notifies.
+ *  - On startup AND after every TCP reconnect, calls log.read with a
+ *    large `lines` count to drain whatever is still in the ring,
+ *    deduplicated against `last_seen_id`.
+ *  - Buffers up to QUEUE_MAX records in memory while the syslog-ng
+ *    listener is unreachable; drains the buffer on reconnect.
+ *
+ * Wire format mirrors logread-ubox's network mode so syslog-ng's
+ * RFC 3164 parser handles the frames natively.
+ */
+
+import * as ubus from 'ubus';
+import * as uloop from 'uloop';
+import * as socket from 'socket';
+import * as fs from 'fs';
+
+const SYSLOG_HOST = '127.0.0.1';
+const SYSLOG_PORT = 5514;
+const RECONNECT_MS = 500;
+const SUBSCRIBE_RETRY_MS = 2000;
+const QUEUE_MAX = 10000;
+
+const MONTHS = [
+	'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+	'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+];
+
+let hostname = 'unknown';
+let last_seen_id = -1;
+let tcp_sock = null;
+let tcp_queue = [];
+let reconnect_timer = null;
+let subscribe_timer = null;
+let subscriber = null;
+
+// Forward-declarations: ucode strict mode does not hoist function
+// declarations, so any reference to a name has to follow its assignment
+// in source order. The TCP / ring / subscribe paths form mutual cycles
+// (tcp_send -> tcp_reconnect_schedule -> tcp_reconnect -> tcp_drain_queue
+//  -> tcp_send; subscribe_setup -> remove_cb -> subscribe_setup), so we
+// predeclare with `let` and assign function expressions below.
+let log_msg;
+let hostname_read;
+let hostname_arg;
+let rfc3164_encode;
+let tcp_close;
+let tcp_queue_push;
+let tcp_send;
+let tcp_drain_queue;
+let tcp_reconnect_schedule;
+let tcp_reconnect;
+let entry_forward;
+let notify_cb;
+let remove_cb;
+let ring_drain;
+let subscribe_setup;
+
+log_msg = function (fmt, ...args) {
+	warn(sprintf('ubbf-syslog-bridge: ' + fmt + '\n', ...args));
+};
+
+hostname_read = function () {
+	let f = fs.open('/proc/sys/kernel/hostname', 'r');
+	if (!f)
+		return 'unknown';
+	let h = f.read('all') ?? '';
+	f.close();
+	h = trim(h);
+	return h != '' ? h : 'unknown';
+};
+
+hostname_arg = function () {
+	for (let i = 0; i + 1 < length(ARGV); i++) {
+		if (ARGV[i] != '-h')
+			continue;
+		let h = trim(ARGV[i + 1]);
+		return h != '' ? h : null;
+	}
+	return null;
+};
+
+/**
+ * Builds an RFC 3164 wire frame from a logd ring entry.
+ *
+ * @param {object} e - { id, time, priority, source, msg }
+ * @returns {string|null} Encoded line, or null on malformed input
+ */
+rfc3164_encode = function (e) {
+	let pri = +(e.priority ?? 0);
+	let secs = int(+(e.time ?? 0) / 1000);
+	let tm = localtime(secs);
+	if (!tm)
+		return null;
+	let ts = sprintf('%s %2d %02d:%02d:%02d',
+		MONTHS[tm.mon - 1], tm.mday, tm.hour, tm.min, tm.sec);
+	let kern = (+(e.source ?? 1) == 0) ? 'kernel: ' : '';
+	let msg = e.msg ?? '';
+	return sprintf('<%u>%s %s %s%s', pri, ts, hostname, kern, msg);
+};
+
+tcp_close = function () {
+	if (tcp_sock) {
+		tcp_sock.close();
+		tcp_sock = null;
+	}
+};
+
+tcp_queue_push = function (line) {
+	if (length(tcp_queue) < QUEUE_MAX) {
+		push(tcp_queue, line);
+	} else {
+		// Bounded queue: drop oldest so we keep the most recent.
+		// Real bursts under sustained TCP outage will lose data either
+		// way; preferring recent entries matches operator expectation
+		// when they're tailing live to debug whatever is happening now.
+		shift(tcp_queue);
+		push(tcp_queue, line);
+	}
+};
+
+tcp_send = function (line) {
+	if (!tcp_sock) {
+		tcp_queue_push(line);
+		tcp_reconnect_schedule();
+		return false;
+	}
+	let n = tcp_sock.send(line + '\n');
+	if (n == null || n <= 0) {
+		tcp_close();
+		tcp_queue_push(line);
+		tcp_reconnect_schedule();
+		return false;
+	}
+	return true;
+};
+
+tcp_drain_queue = function () {
+	let drain = tcp_queue;
+	tcp_queue = [];
+	for (let line in drain) {
+		if (!tcp_sock) {
+			tcp_queue_push(line);
+			continue;
+		}
+		tcp_send(line);
+	}
+};
+
+tcp_reconnect_schedule = function () {
+	if (reconnect_timer.remaining() >= 0)
+		return;
+	reconnect_timer.set(RECONNECT_MS);
+};
+
+tcp_reconnect = function () {
+	let s = socket.create(socket.AF_INET, socket.SOCK_STREAM);
+	if (!s) {
+		tcp_reconnect_schedule();
+		return;
+	}
+	let addr = socket.sockaddr({
+		family: socket.AF_INET,
+		address: SYSLOG_HOST,
+		port: SYSLOG_PORT
+	});
+	if (!addr || !s.connect(addr)) {
+		s.close();
+		tcp_reconnect_schedule();
+		return;
+	}
+	tcp_sock = s;
+	// Re-drain the ring so anything logged during the syslog-ng outage
+	// (when subscriber notifies were also dropped because we couldn't
+	// forward) is recovered. Dedup by last_seen_id keeps it idempotent.
+	ring_drain();
+	tcp_drain_queue();
+};
+
+entry_forward = function (entry) {
+	let id = +(entry.id ?? -1);
+	if (id <= last_seen_id)
+		return;
+	last_seen_id = id;
+	let line = rfc3164_encode(entry);
+	if (line)
+		tcp_send(line);
+};
+
+notify_cb = function (req) {
+	if (req?.type != 'message')
+		return 0;
+	if (!req.data)
+		return 0;
+	entry_forward(req.data);
+	return 0;
+};
+
+remove_cb = function () {
+	log_msg('log object removed; will resubscribe when it returns');
+	subscribe_setup();
+};
+
+ring_drain = function () {
+	let resp = ubus.call('log', 'read', {
+		stream: false,
+		oneshot: true,
+		lines: 100000
+	});
+	if (!resp?.log)
+		return;
+	for (let entry in resp.log)
+		entry_forward(entry);
+};
+
+subscribe_setup = function () {
+	if (!subscriber) {
+		subscriber = ubus.subscriber(notify_cb, remove_cb, []);
+		if (!subscriber) {
+			log_msg('ubus.subscriber() failed; retrying');
+			subscribe_timer.set(SUBSCRIBE_RETRY_MS);
+			return;
+		}
+	}
+	let ok;
+	try {
+		ok = subscriber.subscribe('log');
+	} catch (e) {
+		ok = false;
+	}
+	if (!ok) {
+		log_msg('subscribe(log) failed (logd not yet up?); retrying');
+		subscribe_timer.set(SUBSCRIBE_RETRY_MS);
+		return;
+	}
+	// Subscribe is in place; pull the current ring. New messages that
+	// land between subscribe and drain are caught by either path
+	// (deduped via last_seen_id).
+	ring_drain();
+};
+
+uloop.init();
+
+reconnect_timer = uloop.timer(-1, tcp_reconnect);
+subscribe_timer = uloop.timer(-1, subscribe_setup);
+
+hostname = hostname_arg() ?? hostname_read();
+
+tcp_reconnect();
+subscribe_setup();
+
+uloop.signal('SIGTERM', () => uloop.end());
+uloop.signal('SIGINT', () => uloop.end());
+
+uloop.run();
+
+tcp_close();

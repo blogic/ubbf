@@ -1,0 +1,201 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IPsec.",
+  "object": {
+    "path": "Device.IPsec.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables IPsec.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "IPsec status. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "AHSupported",
+        "access": "readOnly",
+        "description": "Indicates whether or not Authentication Header (AH) {{bibref|RFC4302}} is supported.",
+        "type": "boolean"
+      },
+      {
+        "name": "IKEv2SupportedEncryptionAlgorithms",
+        "access": "readOnly",
+        "description": "Supported IKEv2 encryption algorithms {{bibref|IKEv2-params|Transform Type 1}}. {{enum}} Note that these are the names from the above reference, transformed as follows: * Leading ''ENCR_'' (when present) discarded because they are all encryption algorithms so it's not needed. * Underscores changed to hyphens to preserve names used in existing data models (and because of inconsistent conventions). * Phrases collapsed where unambiguous, e.g. \"with a(n) NN octet ICV\" -> \"-NN\". As additional algorithms are added to the above reference, this data model will be extended according to the above conventions.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "DES",
+          "3DES",
+          "RC5",
+          "IDEA",
+          "CAST",
+          "BLOWFISH",
+          "3IDEA",
+          "AES-CBC",
+          "AES-CTR",
+          "AES-CCM-8",
+          "AES-CCM-12",
+          "AES-CCM-16",
+          "AES-GCM-8",
+          "AES-GCM-12",
+          "AES-GCM-16",
+          "CAMELLIA-CBC"
+        ]
+      },
+      {
+        "name": "ESPSupportedEncryptionAlgorithms",
+        "access": "readOnly",
+        "description": "Supported ESP encryption algorithms {{bibref|IKEv2-params|Transform Type 1}} {{bibref|RFC4835|Section 3.1.1}}. {{enum}} Note that these are the names from the above reference, transformed as follows: * Leading ''ENCR_'' (when present) discarded because they are all encryption algorithms so it's not needed. * Underscores changed to hyphens to preserve names used in existing data models (and because of inconsistent conventions). * Phrases collapsed where unambiguous, e.g. \"with a(n) NN octet ICV\" -> \"-NN\". * Some algorithms with apparently rather specialised application are omitted, e.g. ''ENCR_NULL_AUTH_AES_GMAC''. As additional algorithms are added to the above reference, this data model will be extended according to the above conventions.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "NULL",
+          "DES-IV64",
+          "DES",
+          "3DES",
+          "RC5",
+          "IDEA",
+          "CAST",
+          "BLOWFISH",
+          "3IDEA",
+          "DES-IV32",
+          "AES-CBC",
+          "AES-CTR",
+          "AES-CCM-8",
+          "AES-CCM-12",
+          "AES-CCM-16",
+          "AES-GCM-8",
+          "AES-GCM-12",
+          "AES-GCM-16",
+          "NULL-AUTH-AES-GMAC",
+          "CAMELLIA-CBC",
+          "CAMELLIA-CTR",
+          "CAMELLIA-CCM-8",
+          "CAMELLIA-CCM-12",
+          "CAMELLIA-CCM-16"
+        ]
+      },
+      {
+        "name": "IKEv2SupportedPseudoRandomFunctions",
+        "access": "readOnly",
+        "description": "Supported IKEv2 pseudo-random functions {{bibref|IKEv2-params|Transform Type 2}}. {{enum}} Note that these are the names from the above reference, transformed as follows: * Leading ''PRF_'' (when present) discarded because they all pseudo-random functions so it's not needed. * Underscores changed to hyphens to preserve names used in existing data models. * Hyphen inserted after ''AES'' (or other acronym) when immediately followed by a key length. As additional functions are added to the above reference, this data model will be extended according to the above conventions.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "HMAC-MD5",
+          "HMAC-SHA1",
+          "HMAC-TIGER",
+          "AES-128-XCBC",
+          "HMAC-SHA2-256",
+          "HMAC-SHA2-384",
+          "HMAC-SHA2-512",
+          "AES-128-CMAC"
+        ]
+      },
+      {
+        "name": "SupportedIntegrityAlgorithms",
+        "access": "readOnly",
+        "description": "Supported integrity algorithms {{bibref|IKEv2-params|Transform Type 3}}. {{enum}} Note that these are the names from the above reference, transformed as follows: * Leading ''AUTH_'' (when present) discarded because they all authentication (integrity) algorithms so it's not needed. * Underscores changed to hyphens to preserve names used in existing data models. As additional algorithms are added to the above reference, this data model will be extended according to the above conventions.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "NONE",
+          "HMAC-MD5-96",
+          "HMAC-SHA1-96",
+          "DES-MAC",
+          "KPDK-MD5",
+          "AES-XCBC-96",
+          "HMAC-MD5-128",
+          "HMAC-SHA1-160",
+          "AES-CMAC-96",
+          "AES-128-GMAC",
+          "AES-192-GMAC",
+          "AES-256-GMAC",
+          "HMAC-SHA2-256-128",
+          "HMAC-SHA2-256-192",
+          "HMAC-SHA2-256-256"
+        ]
+      },
+      {
+        "name": "SupportedDiffieHellmanGroupTransforms",
+        "access": "readOnly",
+        "description": "Supported Diffie-Hellman group transforms {{bibref|IKEv2-params|Transform Type 4}}. {{enum}} Note that these are the names from the above reference, transformed as follows: * Name (other than ''NONE'') always starts with the type of group, currently ''MODP'' or ''ECP'' (implies ECP random). * This is followed by ''-NN'', where ''NN'' is the group length in bits. * this is followed by ''-PRIME-NN'' for groups with prime order subgroups, where ''NN'' is the subgroup length in bits. As additional algorithms are added to the above reference, this data model will be extended according to the above conventions.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "NONE",
+          "MODP-768",
+          "MODP-1024",
+          "MODP-1536",
+          "MODP-2048",
+          "MODP-3072",
+          "MODP-4096",
+          "MODP-6144",
+          "MODP-8192",
+          "ECP-256",
+          "ECP-384",
+          "ECP-521",
+          "MODP-1024-PRIME-160",
+          "MODP-2048-PRIME-224",
+          "MODP-2048-PRIME-256",
+          "ECP-192",
+          "ECP-224"
+        ]
+      },
+      {
+        "name": "MaxFilterEntries",
+        "access": "readOnly",
+        "description": "The maximum number of entries in the {{object|Filter}} table. A value of 0 means no specific limit.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxProfileEntries",
+        "access": "readOnly",
+        "description": "The maximum number of entries in the {{object|Profile}} table. A value of 0 means no specific limit.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "FilterNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ProfileNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TunnelNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IKEv2SANumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "IPsec {{bibref|RFC4301}} object that supports the configuration of Encapsulating Security Payload (ESP) {{bibref|RFC4303}} and Authentication Header (AH) {{bibref|RFC4302}} in tunnel mode {{bibref|RFC4301|Section 3.2}}. Use of IKEv2 {{bibref|RFC5996}} is assumed. The IPsec object does not currently support static configuration of tunnels and child Security Associations (SAs). See the IPsec Theory of Operation {{bibref|TR-181i2|Appendix IX}} for a description of the working of this IPsec data model.",
+    "children": []
+  }
+}

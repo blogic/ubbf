@@ -1,0 +1,58 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LocalAgent.MTP.{i}.CoAP.",
+  "object": {
+    "path": "Device.LocalAgent.MTP.{i}.CoAP.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Interfaces",
+        "access": "readWrite",
+        "description": "{{reference|the {{object|###.IP.Interface}} object instance that this server will use as its host address to receive USP messages}} {{empty}} will bind this server to all interfaces for this device.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "###.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "The port number used by the CoAP Server to receive USP messages.",
+        "default": "5683",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Path",
+        "access": "readWrite",
+        "description": "The path that is used by the CoAP Server in order to receive USP messages.",
+        "type": "string"
+      },
+      {
+        "name": "IsEncrypted",
+        "access": "readOnly",
+        "description": "This parameter represents whether or not communications that utilize this {{object}} object instance are encrypted. {{deprecated|2.14|because the {{param|EnableEncryption}} parameter will dictate whether all connections to this CoAP server instance are or are not encrypted}} {{obsoleted|2.16}} {{deleted|2.17}}",
+        "type": "boolean"
+      },
+      {
+        "name": "EnableEncryption",
+        "access": "readWrite",
+        "description": "When {{true}}, encryption MUST be used for this MTP instance.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      }
+    ],
+    "description": "If the USP Endpoint uses the CoAP Message Transfer Protocol (MTP), then this object contains CoAP specific configuration parameters. {{deprecated|2.15|because the CoAP MTP was deprecated in USP 1.2}} {{obsoleted|2.17}} {{deleted|2.18}}",
+    "children": []
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.ATM.Link.{i}.",
+  "object": {
+    "path": "Device.ATM.Link.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "LinkNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the interface. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.",
+        "default": "Down",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the interface as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "LinkType",
+        "access": "readWrite",
+        "description": "Indicates the type of connection and refers to the complete stack of protocol used for this connection.",
+        "type": "string",
+        "enumerations": [
+          "EoA",
+          "IPoA",
+          "PPPoA",
+          "CIP",
+          "Unconfigured"
+        ]
+      },
+      {
+        "name": "AutoConfig",
+        "access": "readOnly",
+        "description": "Indicates if the CPE is currently using some auto configuration mechanisms for this connection. If this variable is {{true}}, all writable variables in this connection instance become read-only. Any attempt to change one of these variables SHOULD fail and an error SHOULD be returned.",
+        "type": "boolean"
+      },
+      {
+        "name": "DestinationAddress",
+        "access": "readWrite",
+        "description": "Destination address of this link, in the form \"VPI/VCI\" (e.g. \"8/23\" or \"0/35\").",
+        "type": "string",
+        "maxLength": 256,
+        "pattern": "\\d+/\\d+"
+      },
+      {
+        "name": "Encapsulation",
+        "access": "readWrite",
+        "description": "Identifies the connection encapsulation that will be used.",
+        "type": "string",
+        "enumerations": [
+          "LLC",
+          "VCMUX"
+        ]
+      },
+      {
+        "name": "FCSPreserved",
+        "access": "readWrite",
+        "description": "This flag tells if a checksum SHOULD be added in the ATM payload. It does not refer to the checksum of one of the ATM cells or AALX packets. In case of LLC or VCMUX encapsulation, this ATM checksum is the FCS field described in {{bibref|RFC2684}}. It is only applicable in the upstream direction.",
+        "type": "boolean"
+      },
+      {
+        "name": "VCSearchList",
+        "access": "readWrite",
+        "description": "{{list}} Ordered list of VPI/VCI pairs to search if a link using the {{param|DestinationAddress}} cannot be established. In the form \"VPI1/VCI1, VPI2/VCI2, ...\". {{pattern}} Example: : ''0/35, 8/35, 1/35''",
+        "list": true,
+        "listMaxLength": 256,
+        "type": "string",
+        "pattern": "\\d+/\\d+"
+      },
+      {
+        "name": "AAL",
+        "access": "readOnly",
+        "description": "Describes the ATM Adaptation Layer (AAL) currently in use on the PVC.",
+        "type": "string",
+        "enumerations": [
+          "AAL1",
+          "AAL2",
+          "AAL3",
+          "AAL4",
+          "AAL5"
+        ]
+      }
+    ],
+    "description": "ATM link-layer table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}). Models an ATM PVC virtual circuit and the ATM Adaption Layer (AAL). An ATM Link entry is typically stacked on top of either a {{object|##.DSL.Channel}} or a {{object|##.DSL.BondingGroup}} object. When an ''ATM Link'' interface is used, a lower-layer {{object|##.DSL.Channel}} interface MUST be configured with ATM encapsulation (see {{param|##.DSL.Channel.{i}.LinkEncapsulationUsed}}).",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

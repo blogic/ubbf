@@ -1,0 +1,31 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Routing.Babel.Constants.",
+  "object": {
+    "path": "Device.Routing.Babel.Constants.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "UDPPort",
+        "access": "readWrite",
+        "description": "The UDP port number used by the Babel implementation to send and receive Babel packets. The UDP port number assigned by IANA is 6696.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "MulticastGroup",
+        "access": "readWrite",
+        "description": "The multicast group for sending and listening to multicast announcements on IPv6. The multicast group assigned by IANA is ff02::1:6.",
+        "type": "dataType:IPv6Address"
+      }
+    ],
+    "description": "This object represents the constants used by the Babel protocol.",
+    "children": []
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.AnticipatedChannelUsage.{i}.Entry.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.AnticipatedChannelUsage.{i}.Entry.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "EntryNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "BurstStartTime",
+        "access": "readOnly",
+        "description": "Least significant 4 octets of the TSF timer of the Reference BSSID, at the start of the anticipated first burst of channel usage. Note: a burst is a continuous or quasi-continuous period of channel usage. For IEEE 802.11 transmissions, a burst might comprise only one PPDU, or multiple closely spaced PPDUs.",
+        "type": "hexBinary",
+        "minLength": 4,
+        "maxLength": 4
+      },
+      {
+        "name": "BurstLength",
+        "access": "readOnly",
+        "description": "Duration of each burst of channel usage in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Repetitions",
+        "access": "readOnly",
+        "description": "Number of repetitions of the burst of channel usage; : 0 = single burst, : 2^32^-1 = indefinite/unknown.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "BurstInterval",
+        "access": "readOnly",
+        "description": "Interval between two successive bursts of channel usage in {{units}}; set to zero if {{param|Repetitions}} is zero.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RUBitmask",
+        "access": "readOnly",
+        "description": "Bitmask of 26-tone Resource Units (RUs) defined in {{bibref|802.11ax|Section 27.3.2.2}}, where the (i-1)th bit position is set to one if the nominal bandwidth of the channel usage corresponding to this entry fully or partially overlaps with the RUi, and is otherwise set to zero.",
+        "type": "hexBinary",
+        "minLength": 2,
+        "maxLength": 10
+      },
+      {
+        "name": "TransmitterIdentifier",
+        "access": "readOnly",
+        "description": "One of: : MAC address: if the entry corresponds to channel usage by a single client STA associated to the BSS of the Agent; : BSSID: if the entry corresponds to channel usage by multiple or unspecified client STAs associated to the BSS of the Agent; : BSS Color: (first 42-bits are zero) if the channel usage is caused by a source external to the BSSs operated by the Agent and the BSSID cannot be decoded (since frame sent at high MCS) but the BSS Color in the PHY headers could still be identified; : Zero: if the channel usage is caused by a source external to the BSSs operated by the Agent.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "PowerLevel",
+        "access": "readOnly",
+        "description": "Indicates maximum transmit power during each channel usage burst in {{units}}; equal to 255 when unknown or when the entry corresponds to multiple transmitters with different transmit powers",
+        "type": "int"
+      },
+      {
+        "name": "ChannelUsageReason",
+        "access": "readOnly",
+        "description": "The reason for this anticipated channel usage. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "TWT_schedule",
+          "TSPEC",
+          "Scheduler_policy",
+          "IEEE_802.11",
+          "Non_IEEE_802.11",
+          "BSS_non_usage"
+        ]
+      }
+    ],
+    "description": "This object reports an entry for anticipated channel usage {{bibref|802.11ax}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "BurstStartTime"
+      ]
+    }
+  }
+}

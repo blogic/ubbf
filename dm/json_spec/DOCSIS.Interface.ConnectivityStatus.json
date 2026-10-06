@@ -1,0 +1,87 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DOCSIS.Interface.{i}.ConnectivityStatus.",
+  "object": {
+    "path": "Device.DOCSIS.Interface.{i}.ConnectivityStatus.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Value",
+        "access": "readOnly",
+        "description": "This attribute denotes the current CM connectivity state. For the case of IP acquisition related states, this attribute reflects states for the current CM provisioning mode, not the {{enum|Other}} DHCP process associated with dual stack operation. See {{bibref|CM-SP-MULPIv3.0}}, Establishing IP Connectivity.",
+        "type": "dataType:CmRegState"
+      },
+      {
+        "name": "StatusCode",
+        "access": "readOnly",
+        "description": "This attribute denotes the status code for CM as defined in the OSSI Specification. The status code consists of a single character indicating error groups, followed by a two-or three-digit number indicating the status condition, followed by a decimal. An example of a returned value could be \"T101.0\". The zero-length hex string indicates no status code yet registered. See {{bibref|CM-SP-OSSIv3.0}}, Format and Content for Event, Syslog, and SNMP Notification Annex.",
+        "type": "string",
+        "lengths": [
+          [
+            0,
+            0
+          ],
+          [
+            5,
+            7
+          ]
+        ]
+      },
+      {
+        "name": "Resets",
+        "access": "readOnly",
+        "description": "This attribute denotes the number of times the CM reset or initialized this interface. Discontinuities in the value of this counter can occur at re-initialization of the managed system, and at other times as indicated by the value of ifCounterDiscontinuityTime for the CM MAC Domain interface. See {{bibref|RFC2863}}.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "LostSyncs",
+        "access": "readOnly",
+        "description": "This attribute denotes the number of times the CM lost synchronization with the downstream channel. Discontinuities in the value of this counter can occur at re-initialization of the managed system, and at other times as indicated by the value of ifCounterDiscontinuityTime for the CM MAC Domain interface. See {{bibref|RFC2863}}.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "InvalidMaps",
+        "access": "readOnly",
+        "description": "This attribute denotes the number of times the CM received invalid MAP messages. Discontinuities in the value of this counter can occur at re-initialization of the managed system, and at other times as indicated by the value of ifCounterDiscontinuityTime for the CM MAC Domain interface. See {{bibref|RFC2863}}.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "InvalidUcds",
+        "access": "readOnly",
+        "description": "This attribute denotes the number of times the CM received invalid UCD messages. Discontinuities in the value of this counter can occur at re-initialization of the managed system, and at other times as indicated by the value of ifCounterDiscontinuityTime for the CM MAC Domain interface. See {{bibref|RFC2863}}.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "InvalidRangingRsps",
+        "access": "readOnly",
+        "description": "This attribute denotes the number of times the CM received invalid ranging response messages. Discontinuities in the value of this counter can occur at re-initialization of the managed system, and at other times as indicated by the value of ifCounterDiscontinuityTime for the CM MAC Domain interface. See {{bibref|RFC2863}}.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "InvalidRegRsps",
+        "access": "readOnly",
+        "description": "This attribute denotes the number of times the CM received invalid registration response messages. Discontinuities in the value of this counter can occur at re-initialization of the managed system, and at other times as indicated by the value of ifCounterDiscontinuityTime for the CM MAC Domain interface. See {{bibref|RFC2863}}.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "T1Timeouts",
+        "access": "readOnly",
+        "description": "This attribute denotes the number of times counter T1 expired in the CM. Discontinuities in the value of this counter can occur at re-initialization of the managed system, and at other times as indicated by the value of ifCounterDiscontinuityTime for the CM MAC Domain interface. See {{bibref|RFC2863}}.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "T2Timeouts",
+        "access": "readOnly",
+        "description": "This attribute denotes the number of times counter T2 expired in the CM. Discontinuities in the value of this counter can occur at re-initialization of the managed system, and at other times as indicated by the value of ifCounterDiscontinuityTime for the CM MAC Domain interface. See {{bibref|RFC2863}}.",
+        "type": "dataType:StatsCounter32"
+      }
+    ],
+    "description": "This object defines attributes of the CM connectivity status. This object provides CM connectivity status information of the CM previously available in the SNMP table docsIfCmStatusTable. See {{bibref|RFC4546}}.",
+    "children": []
+  }
+}

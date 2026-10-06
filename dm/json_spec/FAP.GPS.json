@@ -1,0 +1,116 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FAP.GPS.",
+  "object": {
+    "path": "Device.FAP.GPS.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ScanOnBoot",
+        "access": "readWrite",
+        "description": "Enables or disables GPS scans during the device start up.",
+        "default": "true",
+        "defaultType": "factory",
+        "type": "boolean"
+      },
+      {
+        "name": "ScanPeriodically",
+        "access": "readWrite",
+        "description": "Enables or disables periodic GPS scans.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean"
+      },
+      {
+        "name": "PeriodicInterval",
+        "access": "readWrite",
+        "description": "When {{param|ScanPeriodically}} is {{true}}, this value indicates the interval in {{units}} which GPS scan is performed.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PeriodicTime",
+        "access": "readWrite",
+        "description": "An absolute time reference in UTC to determine when the CPE will initiate the periodic GPS scan. Each GPS scan MUST occur at (or as soon as possible after) this reference time plus or minus an integer multiple of the {{param|PeriodicInterval}}. {{param}} is used only to set the \"phase\" of the GPS scan. The actual value of {{param}} can be arbitrarily far into the past or future. For example, if {{param|PeriodicInterval}} is 86400 (a day) and if {{param}} is set to UTC midnight on some day (in the past, present, or future) then periodic GPS scans will occur every day at UTC midnight. These MUST begin on the very next midnight, even if {{param}} refers to a day in the future. The Unknown Time value defined in {{bibref|TR-106|Section 3.2}} indicates that no particular time reference is specified. That is, the CPE MAY locally choose the time reference, and needs only to adhere to the specified PeriodicInformInterval. If absolute time is not available to the CPE, its periodic GPS scan behavior MUST be the same as if {{param}} parameter was set to the Unknown Time value.",
+        "type": "dateTime"
+      },
+      {
+        "name": "ContinuousGPS",
+        "access": "readWrite",
+        "description": "Whether or not the device SHOULD maintain a continuous GPS lock (e.g. as a frequency stability source).",
+        "type": "boolean"
+      },
+      {
+        "name": "ScanTimeout",
+        "access": "readWrite",
+        "description": "Specifies the time-out value in {{units}} since the scan started after which the scan will time out. A timed out scan is to be reported as {{enum|Error_TIMEOUT|ScanStatus}} with {{param|ErrorDetails}} indicating \"Timed out\"",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ScanStatus",
+        "access": "readOnly",
+        "description": "Indicates the current status of this scan.",
+        "type": "string",
+        "enumerations": [
+          "Indeterminate",
+          "InProgress",
+          "Success",
+          "Error",
+          "Error_TIMEOUT"
+        ]
+      },
+      {
+        "name": "ErrorDetails",
+        "access": "readOnly",
+        "description": "Provides more detail when the {{param|ScanStatus}} is either {{enum|Error|ScanStatus}} or {{enum|Error_TIMEOUT|ScanStatus}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "LastScanTime",
+        "access": "readOnly",
+        "description": "The date and time when the last GPS scan completed.",
+        "type": "dateTime",
+        "activeNotify": "forceDefaultEnabled"
+      },
+      {
+        "name": "LastSuccessfulScanTime",
+        "access": "readOnly",
+        "description": "Specifies the date and time, when the GPS scan last completed successfully. {{template|FAP-GPS-RESET}} The values for {{param|LockedLatitude}}, {{param|LockedLongitude}} and {{param|NumberOfSatellites}} correspond to this time. If a scan has never succeeded before, the value will be the Unknown Time value, as defined in {{bibref|TR-106|Section 3.2}}.",
+        "type": "dateTime",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LockedLatitude",
+        "access": "readOnly",
+        "description": "This parameter specifies the latitude of the device's position in degrees, multiplied by 1 million. The positive value signifies the direction, north of the equator. The negative value signifies the direction, south of the equator. Range is from: 90d00.00' South (-90,000,000) to 90d00.00' North (90,000,000). Example: A latitude of 13d19.43' N would be represented as 13,323,833, derived as (13*1,000,000)+((19.43*1,000,000)/60). Latitude of 50d00.00' S would be represented as value -50,000,000. {{template|FAP-GPS-RESET}} If a scan has never succeeded before, the value 0 is reported.",
+        "type": "int",
+        "minInclusive": -90000000,
+        "maxInclusive": 90000000,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LockedLongitude",
+        "access": "readOnly",
+        "description": "This parameter specifies the longitude of the device's position in degrees, multiplied by 1 million. The positive value signifies the direction, east of the prime meridian. The negative value signifies the direction, west of the prime meridian. Range is from: 180d00.00' West (-180,000,000) to 180d00.00' East (180,000,000). Example: A longitude of 13d19.43' E would be represented as 13,323,833, derived as (13*1,000,000)+((19.43*1,000,000)/60). A longitude of 50d00.00' W would be represented as value -50,000,000. {{template|FAP-GPS-RESET}} If a scan has never succeeded before, the value 0 is reported.",
+        "type": "int",
+        "minInclusive": -180000000,
+        "maxInclusive": 180000000,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "NumberOfSatellites",
+        "access": "readOnly",
+        "description": "The number of satellites that were locked during the test execution. The greater the number of satellites the better the precision of the results. {{template|FAP-GPS-RESET}} If a scan has never succeeded before, the value 0 is reported.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "This object contains the parameters relating to the GPS scan.",
+    "children": []
+  }
+}

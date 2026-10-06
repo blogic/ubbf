@@ -1,0 +1,55 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Cellular.Interface.{i}.SMS.Storage.{i}.",
+  "object": {
+    "path": "Device.Cellular.Interface.{i}.SMS.Storage.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "StorageNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "Location",
+        "access": "readWrite",
+        "description": "Specifies the storage location e.g. SM SIM card, ME device memory.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Capacity",
+        "access": "readOnly",
+        "description": "The maximum number of SMS messages in {{object|Device.Cellular.Interface.{i}.SMS.Message}} that can be stored in Storage.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "StorageAvailable",
+        "access": "readOnly",
+        "description": "Indicates whether the SMS Storage is available to receive new messages. {{true}} means that there is storage still available; {{false}} means that the storage is full.",
+        "type": "boolean"
+      },
+      {
+        "name": "AvailableCapacity",
+        "access": "readOnly",
+        "description": "The number of SMS messages in {{object|Device.Cellular.Interface.{i}.SMS.Message}} that the Storage entity has room to store, which can not exceed {{param|Capacity}}.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Represents a SMS storage location. Each instance of this object corresponds to a distinct SMS storage area. Multiple instances of this object may exist, each representing a different storage type (e.g., SM SIM card, ME device memory).",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

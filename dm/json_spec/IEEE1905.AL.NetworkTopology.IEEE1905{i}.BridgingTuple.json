@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.BridgingTuple.{i}.",
+  "object": {
+    "path": "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.BridgingTuple.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "BridgingTupleNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "InterfaceList",
+        "access": "readOnly",
+        "description": "{{list}} {{reference}}",
+        "list": true,
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IEEE1905Device.{i}.Interface.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "This object represents an instance of an {{object}} for the {{object|##.IEEE1905Device}}. These values come from the 1905 Device\u2019s Topology response message as defined in {{bibref|IEEE1905.1a|Table 6-11: Device bridging capability TLV}}.",
+    "children": []
+  }
+}

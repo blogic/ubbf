@@ -1,0 +1,146 @@
+#!/bin/sh
+# udhcpc callback for proto=admz. When ADMZ is disabled (admz.main.enable=0
+# or the section is absent) it is byte-equivalent to dhcp.script: applies
+# the leased IP onto the WAN device, default route via $router, DNS, and
+# leasetime. When ADMZ is enabled it pins the RG's non-routable secondary
+# 198.18.0.1/32 onto the WAN device instead (offlink, no subnet route),
+# omits the default route (admzd installs an onlink default sourced from
+# the secondary), and stuffs the lease snapshot into the interface's
+# `data` field via proto_add_data so admzd reads it through
+# `ubus call network.interface.<wan> status`.
+
+[ -z "$1" ] && echo "Error: should be run by udhcpc" && exit 1
+
+. /lib/functions.sh
+. /lib/netifd/netifd-proto.sh
+
+ADMZ_SECONDARY="198.18.0.1"
+
+admz_enabled() {
+	local enable=0
+	local mac=""
+	config_load admz 2>/dev/null || return 1
+	config_get_bool enable main enable 0
+	config_get mac main advanced_dmz_host
+	# The address-juggle is gated on both the user-visible Enable AND a
+	# non-empty AdvancedDMZhost. With Enable=1 but no MAC, admzd parks
+	# in NO_MAC (no /32 LAN route, no proxy-neigh), so binding
+	# 198.18.0.1 here would leave inbound traffic with no destination.
+	# Behave like dhcp.script in that case so wan stays usable.
+	[ "$enable" = "1" ] && [ -n "$mac" ]
+}
+
+set_classless_routes() {
+	local max=128
+	while [ -n "$1" -a -n "$2" -a $max -gt 0 ]; do
+		proto_add_ipv4_route "${1%%/*}" "${1##*/}" "$2" "$ip"
+		max=$(($max-1))
+		shift 2
+	done
+}
+
+setup_interface_dhcp() {
+	proto_init_update "*" 1
+	proto_add_ipv4_address "$ip" "${subnet:-255.255.255.0}"
+
+	local ip_net IP PREFIX NETWORK NETMASK BROADCAST
+	ipcalc "$ip/$mask" && ip_net="$NETWORK"
+
+	local i
+	for i in $router; do
+		local gw_net
+		ipcalc "$i/$mask" && gw_net="$NETWORK"
+
+		[ "$ip_net" != "$gw_net" ] && proto_add_ipv4_route "$i" 32 "" "$ip"
+		proto_add_ipv4_route 0.0.0.0 0 "$i" "$ip"
+
+		local r
+		for r in $CUSTOMROUTES; do
+			proto_add_ipv4_route "${r%%/*}" "${r##*/}" "$i" "$ip"
+		done
+	done
+
+	[ -n "$staticroutes" ] && set_classless_routes $staticroutes
+	[ -n "$msstaticroutes" ] && set_classless_routes $msstaticroutes
+
+	for i in $dns; do
+		proto_add_dns_server "$i"
+	done
+	for i in $domain; do
+		proto_add_dns_search "$i"
+	done
+
+	proto_add_data
+	[ -n "$ZONE" ]     && json_add_string zone "$ZONE"
+	[ -n "$ntpsrv" ]   && json_add_string ntpserver "$ntpsrv"
+	[ -n "$hostname" ] && json_add_string hostname "$hostname"
+	[ -n "$message" ]  && json_add_string message "$message"
+	[ -n "$timezone" ] && json_add_int timezone "$timezone"
+	[ -n "$lease" ]    && json_add_int leasetime "$lease"
+	[ -n "$serverid" ] && json_add_string dhcpserver "$serverid"
+	proto_close_data
+
+	proto_send_update "$INTERFACE"
+}
+
+setup_interface_admz() {
+	proto_init_update "*" 1
+	# 198.18.0.1/32: no subnet route, the WAN device sees no other
+	# 198.18/24 address. proto_add_ipv4_address has no offlink arg for
+	# IPv4, but /32 already has a zero-sized subnet so netifd emits no
+	# subnet route either way.
+	proto_add_ipv4_address "$ADMZ_SECONDARY" 32
+
+	# Default route is intentionally NOT emitted here. admzd installs an
+	# onlink default route via $router sourced from $ADMZ_SECONDARY -- the
+	# gateway is not in any subnet bound to the WAN device once netifd
+	# applies our /32 secondary, so the route must be onlink, which
+	# proto_add_ipv4_route does not support.
+
+	# DNS still goes to netifd so resolv.conf gets the upstream resolvers.
+	for i in $dns; do
+		proto_add_dns_server "$i"
+	done
+	for i in $domain; do
+		proto_add_dns_search "$i"
+	done
+
+	proto_add_data
+	json_add_string  admz_lease_ip       "$ip"
+	json_add_string  admz_lease_netmask  "${subnet:-255.255.255.0}"
+	json_add_string  admz_lease_router   "${router%% *}"
+	[ -n "$dns" ]      && json_add_string admz_lease_dns      "$dns"
+	[ -n "$serverid" ] && json_add_string admz_lease_serverid "$serverid"
+	[ -n "$lease" ]    && json_add_int    admz_lease_time     "$lease"
+	[ -n "$hostname" ] && json_add_string hostname            "$hostname"
+	[ -n "$message" ]  && json_add_string message             "$message"
+	[ -n "$ZONE" ]     && json_add_string zone                "$ZONE"
+	proto_close_data
+
+	proto_send_update "$INTERFACE"
+}
+
+deconfig_interface() {
+	proto_init_update "*" 0
+	proto_send_update "$INTERFACE"
+}
+
+case "$1" in
+	deconfig)
+		deconfig_interface
+	;;
+	renew|bound)
+		if admz_enabled; then
+			setup_interface_admz
+		else
+			setup_interface_dhcp
+		fi
+	;;
+esac
+
+[ -f /etc/udhcpc.user ] && . /etc/udhcpc.user "$@"
+for f in /etc/udhcpc.user.d/*; do
+	[ -f "$f" ] && (. "$f" "$@")
+done
+
+exit 0

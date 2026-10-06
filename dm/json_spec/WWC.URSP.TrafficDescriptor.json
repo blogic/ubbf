@@ -1,0 +1,49 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WWC.URSP.{i}.TrafficDescriptor.{i}.",
+  "object": {
+    "path": "Device.WWC.URSP.{i}.TrafficDescriptor.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "TrafficDescriptorNumberOfEntries",
+    "version": "2.14",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.14"
+      },
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "Traffic Descriptor Type. See {{bibref|3GPP-TS.24.526|Clause 5.2}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Value",
+        "access": "readOnly",
+        "description": "Traffic descriptor value. See {{bibref|3GPP-TS.24.526|Clause 5.2}}.",
+        "type": "string",
+        "maxLength": 1024
+      },
+      {
+        "name": "RouteSelectionDescriptorNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "A set of rules for a given precedence that must be matched in order to select a router in the form of data network and slice. Selection criteria range from destination IP addresses to connection capabilities.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

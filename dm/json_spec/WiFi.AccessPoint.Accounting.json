@@ -1,0 +1,83 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.AccessPoint.{i}.Accounting.",
+  "object": {
+    "path": "Device.WiFi.AccessPoint.{i}.Accounting.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables accounting functionality for the access point.",
+        "type": "boolean"
+      },
+      {
+        "name": "ServerIPAddr",
+        "access": "readWrite",
+        "description": "The IP Address of the RADIUS accounting server.",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "SecondaryServerIPAddr",
+        "access": "readWrite",
+        "description": "The IP Address of a secondary RADIUS accounting server. The client can forward requests to the secondary server in the event that the primary server is down or unreachable, or after a number of tries to the primary server fail, or in a round-robin fashion. {{bibref|RFC2866}}",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "ServerPort",
+        "access": "readWrite",
+        "description": "The port number of the RADIUS server used for accounting. The default port is 1813 as defined in {{bibref|RFC2866}}.",
+        "default": "1813",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SecondaryServerPort",
+        "access": "readWrite",
+        "description": "The port number of the secondary RADIUS server used for accounting. The default port is 1813 as defined in {{bibref|RFC2866}}. If this parameter is not implemented, the secondary RADIUS server will use the same port number as the primary RADIUS server.",
+        "default": "1813",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Secret",
+        "access": "readWrite",
+        "description": "The secret used for handshaking with the RADIUS accounting server {{bibref|RFC2865}}.",
+        "secured": true,
+        "type": "string"
+      },
+      {
+        "name": "SecondarySecret",
+        "access": "readWrite",
+        "description": "The secret used for handshaking with the secondary RADIUS accounting server {{bibref|RFC2865}}. If this parameter is not implemented, the secondary RADIUS server will use the same secret as the primary RADIUS server.",
+        "secured": true,
+        "type": "string"
+      },
+      {
+        "name": "InterimInterval",
+        "access": "readWrite",
+        "description": "Specifies the default interim accounting interval in {{units}}, which is used for service accounting when the ''Acct-Interim-Interval'' attribute is not configured. {{bibref|RFC2869|Section 2.1}} The value MUST NOT be smaller than 60. The value SHOULD NOT be smaller than 600, and careful consideration should be given to its impact on network traffic {{bibref|RFC2869|Section 5.16}}. A value of 0 means no interim accounting messages are sent.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "ranges": [
+          [
+            0,
+            0
+          ],
+          [
+            60,
+            null
+          ]
+        ]
+      }
+    ],
+    "description": "This object contains the parameters related to RADIUS accounting functionality for the access point.",
+    "children": []
+  }
+}

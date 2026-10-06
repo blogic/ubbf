@@ -1,0 +1,120 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.L2TPv3.Tunnel.{i}.Interface.{i}.",
+  "object": {
+    "path": "Device.L2TPv3.Tunnel.{i}.Interface.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "InterfaceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the interface. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.",
+        "default": "Down",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the interface as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "SessionID",
+        "access": "readWrite",
+        "description": "The unique Session ID to be used in the L2TPv3 header of the tunnel. A Session ID with a value of -1 indicates that he CPE is to generate the session ids for this {{object}} instance.",
+        "default": "1",
+        "defaultType": "object",
+        "type": "int",
+        "ranges": [
+          [
+            -1,
+            -1
+          ],
+          [
+            1,
+            65535
+          ]
+        ]
+      },
+      {
+        "name": "CookiePolicy",
+        "access": "readWrite",
+        "description": "The policy that defines how the Cookie is handled in this {{object}} instance.",
+        "default": "Configured",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Configured",
+          "Generated"
+        ]
+      },
+      {
+        "name": "Cookie",
+        "access": "readWrite",
+        "description": "The Cookie transmitted in the L2TPv3 header. The default is to set the Cookie to the device's MAC address that is encoded in the low order 6 bytes.",
+        "type": "unsignedLong"
+      }
+    ],
+    "description": "L2TPv3 Interface table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}). The {{object}} object models the L2TPv3 Header as defined in {{bibref|RFC3931}} and the transport of L2 frames across over L2TPv3 as defined in {{bibref|RFC4719}}. The {{object}} object provides a way to discriminate how sessions or flows are encapsulated within the L2TPv3 Tunnel. In addition the {{object}} object represents the entry point and exit point of the tunnel in relation to the LAN interface.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

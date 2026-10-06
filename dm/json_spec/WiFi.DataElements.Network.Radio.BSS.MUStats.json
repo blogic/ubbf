@@ -1,0 +1,173 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.MUStats.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.MUStats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "DLTotalPPDUCount",
+        "access": "readOnly",
+        "description": "Total number of Physical-layer Protocol Data Units (PPDUs) transmitted by the Wi-Fi Basic Service Set (BSS).",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "DLHEPPDUCount",
+        "access": "readOnly",
+        "description": "Number of High-Efficiency (HE) PPDUs transmitted by the BSS.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "DLMUPPDUCount",
+        "access": "readOnly",
+        "description": "Number of Multi-User (MU) PPDUs transmitted by the BSS.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "DLOFDMAPPDUCount",
+        "access": "readOnly",
+        "description": "Number of Orthogonal Frequency-Division Multiple Access (OFDMA) PPDUs transmitted by the BSS.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "DLMUMIMOPPDUCount",
+        "access": "readOnly",
+        "description": "Number of Multi-Input Multi-Output (MU-MIMO) PPDUs transmitted by the BSS.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "DLOFDMAMUMIMOPPDUCount",
+        "access": "readOnly",
+        "description": "Number of PPDUs transmitted by the BSS with OFDMA and MU-MIMO.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ULTotalPPDUCount",
+        "access": "readOnly",
+        "description": "Total number of PPDUs received by the BSS.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ULHEPPDUCount",
+        "access": "readOnly",
+        "description": "Number of High-Efficiency (HE) PPDUs received by the BSS.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ULMUPPDUCount",
+        "access": "readOnly",
+        "description": "Number of MU PPDUs received by the BSS.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ULOFDMAPPDUCount",
+        "access": "readOnly",
+        "description": "Number of OFDMA PPDUs received by the BSS.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ULMUMIMOPPDUCount",
+        "access": "readOnly",
+        "description": "Number of MU-MIMO PDDUs received by the BSS.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ULOFDMAMUMIMOPPDUCount",
+        "access": "readOnly",
+        "description": "Number of PPDUs received by the BSS with OFDMA and MU-MIMO.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "DLRU26PPDUCount",
+        "access": "readOnly",
+        "description": "Number of PPDUs sent on the downlink using Resource Unit (RU) RU26.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "DLRU52PPDUCount",
+        "access": "readOnly",
+        "description": "Number of PPDUs sent on the downlink using RU52.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "DLRU106PPDUCount",
+        "access": "readOnly",
+        "description": "Number of PPDUs sent on the downlink using RU106.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "DLRU242PPDUCount",
+        "access": "readOnly",
+        "description": "Number of PPDUs sent on the downlink using RU242.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "DLRU484PPDUCount",
+        "access": "readOnly",
+        "description": "Number of PPDUs sent on the downlink using RU484.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "DLRU996PPDUCount",
+        "access": "readOnly",
+        "description": "Number of PPDUs sent on the downlink using RU996.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "DLRU1992PPDUCount",
+        "access": "readOnly",
+        "description": "Number of PPDUs sent on the downlink using RU1992.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ULRU26PPDUCount",
+        "access": "readOnly",
+        "description": "Number of PPDUs received on the uplink using RU26.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ULRU52PPDUCount",
+        "access": "readOnly",
+        "description": "Number of PPDUs received on the uplink using RU52.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ULRU106PPDUCount",
+        "access": "readOnly",
+        "description": "Number of PPDUs received on the uplink using RU106.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ULRU242PPDUCount",
+        "access": "readOnly",
+        "description": "Number of PPDUs received on the uplink using RU242.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ULRU484PPDUCount",
+        "access": "readOnly",
+        "description": "Number of PPDUs received on the uplink using RU484.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ULRU996PPDUCount",
+        "access": "readOnly",
+        "description": "Number of PPDUs received on the uplink using RU996.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ULRU1992PPDUCount",
+        "access": "readOnly",
+        "description": "Number of PPDUs received on the uplink using RU1992.",
+        "type": "dataType:StatsCounter32"
+      }
+    ],
+    "description": "This object provides packet statistics for a Multiuser (MU) BSS.",
+    "children": []
+  }
+}

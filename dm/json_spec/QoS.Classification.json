@@ -1,0 +1,800 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.QoS.Classification.{i}.",
+  "object": {
+    "path": "Device.QoS.Classification.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ClassificationNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this classifier.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this classifier. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Order",
+        "access": "readWrite",
+        "description": "{{datatype|expand}} For each packet, the highest ordered entry that matches the classification criteria is applied. All lower order entries are ignored.",
+        "type": "dataType:Order"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "DHCPType",
+        "access": "readWrite",
+        "description": "The DHCP protocol associated with the {{object}} instance. Affects only parameters that specify DHCP option values as classification criteria (all such parameter descriptions note this fact). {{enum}} If {{param}} is {{enum|DHCPv4}}, then {{object}} parameters that are DHCPv6-specific are ignored. If {{param}} is {{enum|DHCPv6}}, then {{object}} parameters that are DHCPv4-specific are ignored.",
+        "default": "DHCPv4",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "DHCPv4",
+          "DHCPv6"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "Classification criterion. {{reference}} This specifies the ingress interface associated with the entry. It MAY be a layer 1, 2 or 3 interface, however, the types of interfaces for which ''Classifications'' can be instantiated is a local matter to the CPE. Note that this parameter is permitted to reference ''Tunnel'' instances in order to classify upstream packets that have just been encapsulated (such packets are conceptually similar to locally-generated traffic). For example, this parameter might reference a {{object|##.GRE.Tunnel}} or a {{object|##.MAP.Domain}} instance.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "AllInterfaces",
+        "access": "readWrite",
+        "description": "Classification criterion. This specifies that all ingress interfaces are associated with the entry. If {{true}}, the value of {{param|Interface}} is ignored since all ingress interfaces are indicated.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "IPVersion",
+        "access": "readWrite",
+        "description": "Classification criterion. Specifies the IP protocol version, following the definitions in {{bibref|IANA-ipversionnumbers}}. Valid values are: {{range}}.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "ranges": [
+          [
+            4,
+            4
+          ],
+          [
+            6,
+            6
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "version": "2.16"
+      },
+      {
+        "name": "DestIP",
+        "access": "readWrite",
+        "description": "Classification criterion. Destination IP address. {{empty}} indicates this criterion is not used for classification.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "DestMask",
+        "access": "readWrite",
+        "description": "Destination IP address mask, represented as an IP routing prefix using CIDR notation [RFC4632]. The IP address part MUST be {{empty}} (and, if specified, MUST be ignored).",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPPrefix"
+      },
+      {
+        "name": "DestIPExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the (masked) DestIP entry, if specified. If {{true}}, the class includes all packets except those that match the (masked) DestIP entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SourceIP",
+        "access": "readWrite",
+        "description": "Classification criterion. Source IP address. {{empty}} indicates this criterion is not used for classification.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "SourceMask",
+        "access": "readWrite",
+        "description": "Source IP address mask, represented as an IP routing prefix using CIDR notation [RFC4632]. The IP address part MUST be {{empty}} (and, if specified, MUST be ignored).",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPPrefix"
+      },
+      {
+        "name": "SourceIPExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the (masked) {{param|SourceIP}} entry, if specified. If {{true}}, the class includes all packets except those that match the (masked) {{param|SourceIP}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "Classification criterion. Protocol number. A value of -1 indicates this criterion is not used for classification.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 255
+      },
+      {
+        "name": "ProtocolExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the {{param|Protocol}} entry, if specified. If {{true}}, the class includes all packets except those that match the {{param|Protocol}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DestPort",
+        "access": "readWrite",
+        "description": "Classification criterion. Destination port number. A value of -1 indicates this criterion is not used for classification.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "DestPortRangeMax",
+        "access": "readWrite",
+        "description": "Classification criterion. If specified, indicates the classification criterion is to include the port range from {{param|DestPort}} through {{param}} (inclusive). If specified, {{param}} MUST be greater than or equal to {{param|DestPort}}. A value of -1 indicates that no port range is specified.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "DestPortExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the {{param|DestPort}} entry (or port range), if specified. If {{true}}, the class includes all packets except those that match the {{param|DestPort}} entry (or port range), if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SourcePort",
+        "access": "readWrite",
+        "description": "Classification criterion. Source port number. A value of -1 indicates this criterion is not used for classification.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "SourcePortRangeMax",
+        "access": "readWrite",
+        "description": "Classification criterion. If specified, indicates the classification criterion is to include the port range from {{param|SourcePort}} through {{param}} (inclusive). If specified, {{param}} MUST be greater than or equal to SourcePort. A value of -1 indicates that no port range is specified.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "SourcePortExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the {{param|SourcePort}} entry (or port range), if specified. If {{true}}, the class includes all packets except those that match the {{param|SourcePort}} entry (or port range), if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SourceMACAddress",
+        "access": "readWrite",
+        "description": "Classification criterion. Source MAC Address. {{empty}} indicates this criterion is not used for classification.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "SourceMACMask",
+        "access": "readWrite",
+        "description": "Bit-mask for the MAC address, where matching of a packet's MAC address with the {{param|SourceMACAddress}} is only to be done for bit positions set to one in the mask. A mask of ''FF:FF:FF:FF:FF:FF'' or {{empty}} indicates all bits of the {{param|SourceMACAddress}} are to be used for classification.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "SourceMACExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the (masked) {{param|SourceMACAddress}} entry, if specified. If {{true}}, the class includes all packets except those that match the (masked) {{param|SourceMACAddress}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DestMACAddress",
+        "access": "readWrite",
+        "description": "Classification criterion. Destination MAC Address. {{empty}} indicates this criterion is not used for classification. The use of destination MAC address as a classification criterion is primarily useful only for bridged traffic.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "DestMACMask",
+        "access": "readWrite",
+        "description": "Bit-mask for the MAC address, where matching of a packet's MAC address with the {{param|DestMACAddress}} is only to be done for bit positions set to one in the mask. A mask of ''FF:FF:FF:FF:FF:FF'' or {{empty}} indicates all bits of the {{param|DestMACAddress}} are to be used for classification.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "DestMACExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the (masked) {{param|DestMACAddress}} entry, if specified. If {{true}}, the class includes all packets except those that match the (masked) {{param|DestMACAddress}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Ethertype",
+        "access": "readWrite",
+        "description": "Classification criterion. Ethertype as indicated in either the Ethernet or SNAP Type header. A value of -1 indicates this criterion is not used for classification.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "EthertypeExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the {{param|Ethertype}} entry, if specified. If {{true}}, the class includes all packets except those that match the {{param|Ethertype}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SSAP",
+        "access": "readWrite",
+        "description": "Classification criterion. SSAP element in the LLC header. A value of -1 indicates this criterion is not used for classification.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "SSAPExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the {{param|SSAP}} entry, if specified. If {{true}}, the class includes all packets except those that match the {{param|SSAP}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DSAP",
+        "access": "readWrite",
+        "description": "Classification criterion. DSAP element in the LLC header. A value of -1 indicates this criterion is not used for classification.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "DSAPExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the {{param|DSAP}} entry, if specified. If {{true}}, the class includes all packets except those that match the {{param|DSAP}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "LLCControl",
+        "access": "readWrite",
+        "description": "Classification criterion. Control element in the LLC header. A value of -1 indicates this criterion is not used for classification.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "LLCControlExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the {{param|LLCControl}} entry, if specified. If {{true}}, the class includes all packets except those that match the {{param|LLCControl}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SNAPOUI",
+        "access": "readWrite",
+        "description": "Classification criterion. OUI element in the SNAP header. A value of -1 indicates this criterion is not used for classification.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "SNAPOUIExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the {{param|SNAPOUI}} entry, if specified. If {{true}}, the class includes all packets except those that match the {{param|SNAPOUI}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SourceVendorClassID",
+        "access": "readWrite",
+        "description": "Classification criterion. Used to identify one or more LAN devices, value of the DHCPv4 Vendor Class Identifier (Option 60) as defined in {{bibref|RFC2132}}, matched according to the criterion in {{param|SourceVendorClassIDMode}}. Case sensitive. This is a normal string, e.g. \"abc\" is represented as \"abc\" and not say \"616263\" hex. However, if the value includes non-printing characters then such characters have to be represented using XML escapes, e.g. #x0a for line-feed. {{empty}} indicates this criterion is not used for classification. Note: This parameter is DHCPv4-specific. It only applies when {{param|DHCPType}} is {{enum|DHCPv4|DHCPType}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 255
+      },
+      {
+        "name": "SourceVendorClassIDv6",
+        "access": "readWrite",
+        "description": "Classification criterion. A hexbinary string used to identify one or more LAN devices, value of the DHCPv6 Vendor Class Identifier (Option 16) as defined in {{bibref|RFC8415}}. The option value is binary, so an exact match is REQUIRED. {{empty}} indicates this criterion is not used for classification. Note: This parameter is DHCPv6-specific. It only applies when {{param|DHCPType}} is {{enum|DHCPv6|DHCPType}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "maxLength": 65535,
+        "version": "2.12"
+      },
+      {
+        "name": "SourceVendorClassIDExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets sourced from LAN devices that match the {{param|SourceVendorClassID}} entry (for {{enum|DHCPv4|DHCPType}}) or the {{param|SourceVendorClassIDv6}} entry (for {{enum|DHCPv6|DHCPType}}), if specified. If {{true}}, the class includes all packets except those sourced from LAN devices that match the {{param|SourceVendorClassID}} entry (for {{enum|DHCPv4|DHCPType}}) or the {{param|SourceVendorClassIDv6}} entry (for {{enum|DHCPv6|DHCPType}}), if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SourceVendorClassIDMode",
+        "access": "readWrite",
+        "description": "SourceVendorClassID pattern match criterion. {{enum}} For example, if {{param|SourceVendorClassID}} is \"Example\" then an Option 60 value of \"Example device\" will match with {{param}} values of {{enum|Prefix}} or {{enum|Substring}}, but not with {{enum|Exact}} or {{enum|Suffix}}.",
+        "default": "Exact",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Exact",
+          "Prefix",
+          "Suffix",
+          "Substring"
+        ]
+      },
+      {
+        "name": "DestVendorClassID",
+        "access": "readWrite",
+        "description": "Classification criterion. Used to identify one or more LAN devices, value of the DHCPv4 Vendor Class Identifier (Option 60) as defined in {{bibref|RFC2132}}, matched according to the criterion in {{param|DestVendorClassIDMode}}. Case sensitive. This is a normal string, e.g. \"abc\" is represented as \"abc\" and not say \"616263\" hex. However, if the value includes non-printing characters then such characters have to be represented using XML escapes, e.g. #x0a for line-feed. {{empty}} indicates this criterion is not used for classification. Note: This parameter is DHCPv4-specific. It only applies when {{param|DHCPType}} is {{enum|DHCPv4|DHCPType}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 255
+      },
+      {
+        "name": "DestVendorClassIDv6",
+        "access": "readWrite",
+        "description": "Classification criterion. A hexbinary string used to identify one or more LAN devices, value of the DHCPv6 Vendor Class Identifier (Option 16) as defined in {{bibref|RFC8415}}. The option value is binary, so an exact match is REQUIRED. {{empty}} indicates this criterion is not used for classification. Note: This parameter is DHCPv6-specific. It only applies when {{param|DHCPType}} is {{enum|DHCPv6|DHCPType}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "maxLength": 65535,
+        "version": "2.12"
+      },
+      {
+        "name": "DestVendorClassIDExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets destined for LAN devices that match the {{param|DestVendorClassID}} entry (for {{enum|DHCPv4|DHCPType}}) or the {{param|DestVendorClassIDv6}} entry (for {{enum|DHCPv6|DHCPType}}), if specified. If {{true}}, the class includes all packets except those destined for LAN devices that match the {{param|DestVendorClassID}} entry (for {{enum|DHCPv4|DHCPType}}) or the {{param|DestVendorClassIDv6}} entry (for {{enum|DHCPv6|DHCPType}}), if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DestVendorClassIDMode",
+        "access": "readWrite",
+        "description": "{{param|DestVendorClassID}} pattern match criterion. {{enum}} For example, if {{param|DestVendorClassID}} is \"Example\" then an Option 60 value of \"Example device\" will match with {{param}} values of {{enum|Prefix}} or {{enum|Substring}}, but not with {{enum|Exact}} or {{enum|Suffix}}.",
+        "default": "Exact",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Exact",
+          "Prefix",
+          "Suffix",
+          "Substring"
+        ]
+      },
+      {
+        "name": "SourceClientID",
+        "access": "readWrite",
+        "description": "Classification criterion. A hexbinary string used to identify one or more LAN devices, value of the DHCP Client Identifier. The DHCP Client Identifier is Option 61 (as defined in {{bibref|RFC2132}}) for {{enum|DHCPv4|DHCPType}}, or is Option 1 (as defined in {{bibref|RFC8415}}) for {{enum|DHCPv6|DHCPType}}. The option value is binary, so an exact match is REQUIRED. {{empty}} indicates this criterion is not used for classification. Note: DHCPv4 Option values are limited to a length of 255, while DHCPv6 Option values can have a maximum length of 65535. Note: This parameter is DHCP version neutral. The specific DHCP version in use with this parameter is indicated by {{param|DHCPType}}. Note: DHCPv6 Option 1 (Client Identifier) is sometimes referred to as ''DUID''.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "maxLength": 65535
+      },
+      {
+        "name": "SourceClientIDExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets sourced from LAN devices that match the {{param|SourceClientID}} entry, if specified. If {{true}}, the class includes all packets except those sourced from LAN devices that match the {{param|SourceClientID}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DestClientID",
+        "access": "readWrite",
+        "description": "Classification criterion. A hexbinary string used to identify one or more LAN devices, value of the DHCP Client Identifier. The DHCP Client Identifier is Option 61 (as defined in {{bibref|RFC2132}}) for {{enum|DHCPv4|DHCPType}}, or is Option 1 (as defined in {{bibref|RFC8415}}) for {{enum|DHCPv6|DHCPType}}. The option value is binary, so an exact match is REQUIRED. {{empty}} indicates this criterion is not used for classification. Note: DHCPv4 Option values are limited to a length of 255, while DHCPv6 Option values can have a maximum length of 65535. Note: This parameter is DHCP version neutral. The specific DHCP version in use with this parameter is indicated by {{param|DHCPType}}. Note: DHCPv6 Option 1 (Client Identifier) is sometimes referred to as ''DUID''.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "maxLength": 65535
+      },
+      {
+        "name": "DestClientIDExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets destined for LAN devices that match the {{param|DestClientID}} entry, if specified. If {{true}}, the class includes all packets except those destined for LAN devices that match the {{param|DestClientID}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SourceUserClassID",
+        "access": "readWrite",
+        "description": "Classification criterion. A hexbinary string used to identify one or more LAN devices, value of the DHCP User Class Identifier. The DHCP User Class Identifier is Option 77 (as defined in {{bibref|RFC3004}}) for {{enum|DHCPv4|DHCPType}}, or is Option 15 (as defined in {{bibref|RFC8415}}) for {{enum|DHCPv6|DHCPType}}. The option value is binary, so an exact match is REQUIRED. {{empty}} indicates this criterion is not used for classification. Note: DHCPv4 Option values are limited to a length of 255, while DHCPv6 Option values can have a maximum length of 65535. Note: This parameter is DHCP version neutral. The specific DHCP version in use with this parameter is indicated by {{param|DHCPType}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "maxLength": 65535
+      },
+      {
+        "name": "SourceUserClassIDExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets sourced from LAN devices that match the {{param|SourceUserClassID}} entry, if specified. If {{true}}, the class includes all packets except those sourced from LAN devices that match the {{param|SourceUserClassID}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DestUserClassID",
+        "access": "readWrite",
+        "description": "Classification criterion. A hexbinary string used to identify one or more LAN devices, value of the DHCP User Class Identifier. The DHCP User Class Identifier is Option 77 (as defined in {{bibref|RFC3004}}) for {{enum|DHCPv4|DHCPType}}, or is Option 15 (as defined in {{bibref|RFC8415}}) for {{enum|DHCPv6|DHCPType}}. The option value is binary, so an exact match is REQUIRED. {{empty}} indicates this criterion is not used for classification. Note: DHCPv4 Option values are limited to a length of 255, while DHCPv6 Option values can have a maximum length of 65535. Note: This parameter is DHCP version neutral. The specific DHCP version in use with this parameter is indicated by {{param|DHCPType}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "maxLength": 65535
+      },
+      {
+        "name": "DestUserClassIDExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets destined for LAN devices that match the {{param|DestUserClassID}} entry, if specified. If {{true}}, the class includes all packets except those destined for LAN devices that match the {{param|DestUserClassID}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SourceVendorSpecificInfo",
+        "access": "readWrite",
+        "description": "Classification criterion. A hexbinary string used to identify one or more LAN devices, value of the DHCP Vendor-specific Information, matched according to the criteria in {{param|SourceVendorSpecificInfoEnterprise}} and {{param|SourceVendorSpecificInfoSubOption}}. The DHCP Vendor-specific Information is Option 125 (as defined in {{bibref|RFC3925}}) for {{enum|DHCPv4|DHCPType}}, or is Option 17 (as defined in {{bibref|RFC8415}}) for {{enum|DHCPv6|DHCPType}}. {{empty}} indicates this criterion is not used for classification. Note: DHCPv4 Option values are limited to a length of 255, while DHCPv6 Option values can have a maximum length of 65535. Note: This parameter is DHCP version neutral. The specific DHCP version in use with this parameter is indicated by {{param|DHCPType}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "maxLength": 65535
+      },
+      {
+        "name": "SourceVendorSpecificInfoExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets sourced from LAN devices that match the {{param|SourceVendorSpecificInfo}} entry, if specified. If {{true}}, the class includes all packets except those sourced from LAN devices that match the {{param|SourceVendorSpecificInfo}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SourceVendorSpecificInfoEnterprise",
+        "access": "readWrite",
+        "description": "{{param|SourceVendorSpecificInfo}} Enterprise Number as defined in {{bibref|RFC3925}}. The default value (0) is assigned to IANA and will probably need to be replaced with an appropriate enterprise number.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SourceVendorSpecificInfoSubOption",
+        "access": "readWrite",
+        "description": "{{param|SourceVendorSpecificInfo}} Sub Option Code as defined in {{bibref|RFC3925}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "DestVendorSpecificInfo",
+        "access": "readWrite",
+        "description": "Classification criterion. A hexbinary string used to identify one or more LAN devices, value of the DHCP Vendor-specific Information, matched according to the criteria in {{param|DestVendorSpecificInfoEnterprise}} and {{param|DestVendorSpecificInfoSubOption}}. The DHCP Vendor-specific Information is Option 125 (as defined in {{bibref|RFC3925}}) for {{enum|DHCPv4|DHCPType}}, or is Option 17 (as defined in {{bibref|RFC8415}}) for {{enum|DHCPv6|DHCPType}}. {{empty}} indicates this criterion is not used for classification. Note: DHCPv4 Option values are limited to a length of 255, while DHCPv6 Option values can have a maximum length of 65535. Note: This parameter is DHCP version neutral. The specific DHCP version in use with this parameter is indicated by {{param|DHCPType}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "maxLength": 65535
+      },
+      {
+        "name": "DestVendorSpecificInfoExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets destined for LAN devices that match the {{param|DestVendorSpecificInfo}} entry, if specified. If {{true}}, the class includes all packets except those destined for LAN devices that match the {{param|DestVendorSpecificInfo}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DestVendorSpecificInfoEnterprise",
+        "access": "readWrite",
+        "description": "{{param|DestVendorSpecificInfo}} Enterprise Number as defined in {{bibref|RFC3925}}. The default value (0) is assigned to IANA and will probably need to be replaced with an appropriate enterprise number.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DestVendorSpecificInfoSubOption",
+        "access": "readWrite",
+        "description": "{{param|DestVendorSpecificInfo}} Sub Option Code as defined in {{bibref|RFC3925}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "TCPACK",
+        "access": "readWrite",
+        "description": "Classification criterion. If {{false}}, this criterion is not used for classification. If {{true}}, this criterion matches with all TCP segments that have the ACK control bit set.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "TCPACKExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the {{param|TCPACK}} entry, if specified. If {{true}}, the class includes all packets except those that match the {{param|TCPACK}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "IPLengthMin",
+        "access": "readWrite",
+        "description": "Classification criterion. Minimum IP Packet Length (including header) in {{units}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IPLengthMax",
+        "access": "readWrite",
+        "description": "Classification criterion. Maximum IP Packet Length (including header) in {{units}}. A value of zero indicates that no maximum is specified (an umlimited maximum length).",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IPLengthExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets whose length (including header) falls within the inclusive range {{param|IPLengthMin}} through {{param|IPLengthMax}}. A value of zero for both {{param|IPLengthMin}} and {{param|IPLengthMax}} allows any length packet. An equal non-zero value of {{param|IPLengthMin}} and {{param|IPLengthMax}} allows only a packet with the exact length specified. If {{true}}, the class includes all packets except those whose length (including header) falls within the inclusive range {{param|IPLengthMin}} through {{param|IPLengthMax}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DSCPCheck",
+        "access": "readWrite",
+        "description": "Classification criterion. DiffServ codepoint (defined in {{bibref|RFC2474}}). If set to a Class Selector Codepoint (defined in {{bibref|RFC2474}}), all DSCP values that match the first 3 bits will be considered a valid match. A value of -1 indicates this criterion is not used for classification.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 63
+      },
+      {
+        "name": "DSCPExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the {{param|DSCPCheck}} entry, if specified. If {{true}}, the class includes all packets except those that match the {{param|DSCPCheck}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DSCPMark",
+        "access": "readWrite",
+        "description": "Classification result. DSCP to mark traffic with that falls into this classification entry. A value of -1 indicates no change from the incoming packet. A value of -2 indicates automatic marking of DSCP based upon the EthernetPriority value of the incoming packet as defined in {{bibref|TR-181i2|Annex A}}.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -2
+      },
+      {
+        "name": "EthernetPriorityCheck",
+        "access": "readWrite",
+        "description": "Classification criterion. Current Ethernet priority of a VLAN Tag as defined in {{bibref|802.1Q-2011}} or Ethernet Priority field as defined in 802.1D. If more than 1 VLAN tag is present, then this parameter represents the outer VLAN Tag. A value of -1 indicates this criterion is not used for classification.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "EthernetPriorityExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the {{param|EthernetPriorityCheck}} entry, if specified. If {{true}}, the class includes all packets except those that match the {{param|EthernetPriorityCheck}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "EthernetPriorityMark",
+        "access": "readWrite",
+        "description": "Classification result. Ethernet priority code (as defined in {{bibref|802.1Q-2011}}) to mark traffic with that falls into this classification entry associated with the {{param|EthernetPriorityCheck}}. A value of -1 indicates no change from the incoming packet. A value of -2 indicates automatic marking of EthernetPriority based upon the DSCP value of the incoming packet as defined in {{bibref|TR-181i2|Annex A}}.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -2
+      },
+      {
+        "name": "InnerEthernetPriorityCheck",
+        "access": "readWrite",
+        "description": "Classification criterion. Current Ethernet priority of the inner VLAN Tag as defined in 802.1Q. This parameter is only applicable when the PDU has 2 VLAN Tags. A value of -1 indicates this criterion is not used for classification.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "version": "2.12"
+      },
+      {
+        "name": "InnerEthernetPriorityExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the {{param|InnerEthernetPriorityCheck}} entry, if specified. If {{true}}, the class includes all packets except those that match the {{param|InnerEthernetPriorityCheck}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "InnerEthernetPriorityMark",
+        "access": "readWrite",
+        "description": "Classification result. Ethernet priority code to mark traffic with that falls into this classification entry associated with the {{param|InnerEthernetPriorityCheck}}. A value of -1 indicates no change from the incoming packet. A value of -2 indicates automatic marking of EthernetPriority based upon the DSCP value of the incoming packet as defined in {{bibref|TR-181i2|Annex A}}.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -2,
+        "version": "2.12"
+      },
+      {
+        "name": "EthernetDEICheck",
+        "access": "readWrite",
+        "description": "Classification criterion. Current Ethernet Drop eligible Indication (DEI) of the VLAN tag as defined in 802.1Q. If 2 VLAN Tags are present, then this parameter represents the outer VLAN tag. A value of -1 indicates this criterion is not used for classification.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "version": "2.12"
+      },
+      {
+        "name": "EthernetDEIExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the {{param|EthernetDEICheck}} entry, if specified. If {{true}}, the class includes all packets except those that match the {{param|EthernetDEICheck}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "VLANIDCheck",
+        "access": "readWrite",
+        "description": "Classification criterion. Current Ethernet VLAN ID as defined in 802.1Q. A value of -1 indicates this criterion is not used for classification.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "VLANIDExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the class includes only those packets that match the {{param|VLANIDCheck}} entry, if specified. If {{true}}, the class includes all packets except those that match the {{param|VLANIDCheck}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "OutOfBandInfo",
+        "access": "readWrite",
+        "description": "Classification criterion. Allows traffic to be distinguished based on out-of-band information such as physical port or application ID. Primarily intended for, but not restricted to, locally sourced traffic. If specified, this entry applies to traffic with matching out-of-band information. A value of -1 indicates this criterion is not used for classification.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "ForwardingPolicy",
+        "access": "readWrite",
+        "description": "Classification result. Identifier of the forwarding policy associated with traffic that falls in this classification.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TrafficClass",
+        "access": "readWrite",
+        "description": "Classification result. Identifier of the traffic class associated with traffic that falls in this classification. If specified, at least one {{object|#.Queue}} table entry MUST include this traffic class in its {{param|#.Queue.{i}.TrafficClasses}} parameter (which is a comma-separated list). A value of -1 indicates a null traffic class. {{param}} and {{param|App}} are mutually exclusive and one of the two MUST be specified. If {{param}} is {{null}}, {{param|App}} MUST be specified, and vice versa.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "Policer",
+        "access": "readWrite",
+        "description": "Classification result. {{reference}} Indicates the ''Policer'' table entry for traffic that falls in this classification. {{empty}} indicates a null policer. {{param}} MAY optionally be specified in conjunction with {{param|TrafficClass}}. {{param}} and {{param|App}} are mutually exclusive.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.Policer.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "App",
+        "access": "readWrite",
+        "description": "Classification result. {{reference}} Indicates the ''App'' table entry for traffic that falls in this classification. {{empty}} indicates a null ''App''. {{param|TrafficClass}} and {{param}} are mutually exclusive and one of the two MUST be specified. If {{param|TrafficClass}} is null, {{param}} MUST be specified, and vice versa.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.App.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "Classification table. For enabled table entries, if {{param|Interface}} is not a valid reference and {{param|AllInterfaces}} is {{false}}, then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}. Several of this object's parameters specify DHCP option values. Some cases are version neutral (the parameter can apply to both DHCPv4 and DHCPv6), but in other cases the representation of the option is different for DHCPv4 and DHCPv6, so it is necessary to define separate DHCPv4-specific and DHCPv6-specific parameters. Therefore, an instance of this object that uses DHCP option values as classification criteria will be associated with either DHCPv4 or DHCPv6, as indicated by the {{param|DHCPType}} parameter.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

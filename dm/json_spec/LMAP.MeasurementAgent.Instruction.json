@@ -1,0 +1,81 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.MeasurementAgent.{i}.Instruction.{i}.",
+  "object": {
+    "path": "Device.LMAP.MeasurementAgent.{i}.Instruction.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "InstructionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} instance. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "Date and time, based on {{bibref|RFC3339}}, in UTC that the {{object}} object or its sub-object's configuration was changed by a measurement agent's controller.",
+        "type": "dateTime"
+      },
+      {
+        "name": "InstructionSchedules",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|a {{object|#.Schedule}} object}} This parameter lists the available instruction schedules for invoking control tasks by the measurement agent.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Schedule.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "InstructionTasks",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|a {{object|#.Task}} object}} This parameter lists the available instruction tasks that can be invoked by the measurement agent.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Task.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ReportChannels",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|a {{object|#.CommunicationChannel}} object}} This parameter defines the corresponding report channels to be used when reporting results of tasks to a measurement collector.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.CommunicationChannel.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "MeasurementSuppressionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The {{object}} object defines the instruction to the measurement agent by the measurement controller. At most one {{object}} object for the {{object|##.MeasurementAgent}} instance is enabled at a time. .",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# odhcp6c hook: capture the RA RDNSS set for this interface so the
+# TR-181 DNS.Client.Server handler can tag RA-learned addresses as
+# Type=RouterAdvertisement. The stock /lib/netifd/proto/dhcpv6.sh
+# merges RA_DNS into RDNSS before publishing to netifd, losing the
+# provenance; this runs earlier, while the two are still separate
+# env vars.
+
+case "$2" in
+	bound|informed|updated|rebound|ra-updated)
+		mkdir -p /tmp/ubbf
+		tmp="/tmp/ubbf/ra-dns.$INTERFACE.$$"
+		: > "$tmp"
+		for addr in $RA_DNS; do
+			printf '%s\n' "$addr" >> "$tmp"
+		done
+		mv "$tmp" "/tmp/ubbf/ra-dns.$INTERFACE"
+		;;
+	stopped|unbound)
+		rm -f "/tmp/ubbf/ra-dns.$INTERFACE"
+		;;
+esac

@@ -1,0 +1,36 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "SSIDtoVIDMapping.{i}.",
+  "object": {
+    "path": "SSIDtoVIDMapping.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "SSID",
+        "access": "readOnly",
+        "description": "The SSID name.",
+        "type": "string"
+      },
+      {
+        "name": "VID",
+        "access": "readOnly",
+        "description": "The VLAN ID (VID).",
+        "type": "unsignedInt",
+        "maxInclusive": 4095
+      }
+    ],
+    "description": "The Service Set Identifier (SSID) to VLAN ID (VID) mapping for EasyMesh traffic separation {{bibref|EasyMesh}}. Consists of a table of pairs of {{param|SSID}} and corresponding {{param|VID}}. If this input is not provided, then existing {{object|##.Device.{i}.SSIDtoVIDMapping.{i}.}} apply.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "SSID"
+      ]
+    }
+  }
+}

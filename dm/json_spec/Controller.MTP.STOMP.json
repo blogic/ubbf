@@ -1,0 +1,50 @@
+{
+  "source_file": "tr-181-2-19-0-localagent.xml",
+  "path": "Controller.{i}.MTP.{i}.STOMP.",
+  "object": {
+    "path": "Controller.{i}.MTP.{i}.STOMP.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Reference",
+        "access": "readWrite",
+        "description": "A reference to the STOMP Connection used by this Controller when communicating via the STOMP MTP.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".STOMP.Connection.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Destination",
+        "access": "readWrite",
+        "description": "The STOMP destination where the Controller will be listening to incoming USP messages.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string"
+      },
+      {
+        "name": "USPServiceRef",
+        "access": "readOnly",
+        "description": "A reference to the USP Service associated with this Agent when communicating via the STOMP MTP.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".USPServices.USPService.",
+          "targetType": "row"
+        },
+        "version": "2.16"
+      }
+    ],
+    "description": "If the USP Endpoint uses the STOMP Message Transfer Protocol (MTP), then this object contains STOMP Client specific configuration parameters related to how this Controller communicates with the STOMP Server.",
+    "children": []
+  }
+}

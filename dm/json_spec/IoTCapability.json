@@ -1,0 +1,53 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IoTCapability.{i}.",
+  "object": {
+    "path": "Device.IoTCapability.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "IoTCapabilityNumberOfEntries",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.13"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "A textual name of the instance, which can be assigned by the user.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Class",
+        "access": "readOnly",
+        "description": "Describes the type of functionality that {{object}} is representing. Depending on the functionality the corresponding sub-object is instantiated. Note: Only one of the defined sub-objects can exist in an {{object}} instance.",
+        "type": "string",
+        "enumerations": [
+          "BinaryControl",
+          "LevelControl",
+          "EnumControl",
+          "BinarySensor",
+          "LevelSensor",
+          "MultiLevelSensor",
+          "EnumSensor",
+          "BlobSensor"
+        ]
+      }
+    ],
+    "description": "This list of IoT capability objects.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

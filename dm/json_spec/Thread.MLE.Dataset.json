@@ -1,0 +1,112 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Thread.MLE.{i}.Dataset.{i}.",
+  "object": {
+    "path": "Device.Thread.MLE.{i}.Dataset.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "2",
+    "enableParameter": "",
+    "numEntriesParameter": "DatasetNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the status of this dataset.",
+        "type": "string",
+        "enumerations": [
+          "active",
+          "pending"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "TimeStamp",
+        "access": "readOnly",
+        "description": "{{param}} of the dataset, depending status, it represent : * Active Timestamp (timestamp of the current dataset) * Pending Timestamp",
+        "type": "dateTime"
+      },
+      {
+        "name": "DelayTimer",
+        "access": "readOnly",
+        "description": "An unsigned 32-bit number in milliseconds indicate the Time Remaining when pending Dataset will be activated. This value MUST be 0 for active dataset.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Channel",
+        "access": "readOnly",
+        "description": "The IEEE 802.15.4 channel value of the interface defined in {{bibref|ThreadSpec}} (Thread specification only supports the 2450 MHz channels).",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "NetworkName",
+        "access": "readOnly",
+        "description": "The name of the network link to the interface.",
+        "type": "string"
+      },
+      {
+        "name": "PanID",
+        "access": "readOnly",
+        "description": "The IEEE 802.15.4 PAN ID value link to the interface.",
+        "type": "hexBinary",
+        "minLength": 2,
+        "maxLength": 2
+      },
+      {
+        "name": "ExtendedPanID",
+        "access": "readOnly",
+        "description": "The IEEE 802.15.4 ExtPAN ID value link to the interface.",
+        "type": "hexBinary",
+        "minLength": 8,
+        "maxLength": 8
+      },
+      {
+        "name": "MeshLocalPrefix",
+        "access": "readOnly",
+        "description": "Indicate the mesh-local IPv6 prefix for the Thread network.",
+        "type": "dataType:IPv6Prefix"
+      },
+      {
+        "name": "ChannelMask",
+        "access": "readOnly",
+        "description": "Indicates the channels within channel page 0, in the 2.4GHz ISM band. The channels are represented in most significant bit order, with bit value 1 meaning selected, bit value 0 meaning unselected.",
+        "type": "hexBinary",
+        "minLength": 4,
+        "maxLength": 4
+      },
+      {
+        "name": "PSKc",
+        "access": "readOnly",
+        "description": "Pre-Shared Key Credential for inband commissioning.",
+        "type": "hexBinary",
+        "minLength": 16,
+        "maxLength": 16
+      },
+      {
+        "name": "NetworkKey",
+        "access": "readOnly",
+        "description": "Key of the network.",
+        "type": "hexBinary",
+        "minLength": 16,
+        "maxLength": 16
+      }
+    ],
+    "description": "Thread network configuration parameters are managed using an active and one optional pending Operational Dataset objects. The active Operational Dataset includes parameters (defined in the Thread specification, see {{bibref|ThreadSpec}}) that are currently in use across an entire Thread network. The active Operational Dataset contains: * Timestamp * Channel * Channel Mask * Extended PAN ID * Mesh-Local Prefix * Network Name * PAN ID * PSKc * Network key * Security Policy The pending Operational Dataset is used to communicate changes to the active Operational Dataset before they take effect. The pending Operational Dataset contains all the parameters from the Active Operational Dataset, with the addition of: Delay Timer.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Status"
+      ]
+    }
+  }
+}

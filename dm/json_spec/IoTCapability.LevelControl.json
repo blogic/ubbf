@@ -1,0 +1,60 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IoTCapability.{i}.LevelControl.",
+  "object": {
+    "path": "Device.IoTCapability.{i}.LevelControl.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:IoTLevelType"
+      },
+      {
+        "name": "Description",
+        "access": "readOnly",
+        "description": "Human-readable description of the {{object}}. e.g. a more detailed description of {{param|Type}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Value",
+        "access": "readWrite",
+        "description": "The desired run value that this {{object}} will be between {{param|MinValue}} and {{param|MaxValue}}.",
+        "type": "decimal"
+      },
+      {
+        "name": "Unit",
+        "access": "readOnly",
+        "description": "Units in which {{param|Value}}, {{param|Value}}, {{param|MinValue}}, {{param|MaxValue}} and {{param|StepValue}} are expressed. {{datatype|expand}}.",
+        "type": "dataType:IoTUnitType"
+      },
+      {
+        "name": "MinValue",
+        "access": "readOnly",
+        "description": "Minimum allowed value for {{param|Value}}.",
+        "type": "decimal"
+      },
+      {
+        "name": "MaxValue",
+        "access": "readOnly",
+        "description": "Maximum allowed value for {{param|Value}}.",
+        "type": "decimal"
+      },
+      {
+        "name": "StepValue",
+        "access": "readWrite",
+        "description": "Number of {{param|Unit}} changes of each {{command|StepUp()}} and {{command|StepDown()}} command.",
+        "type": "decimal"
+      }
+    ],
+    "description": "LevelController is used to model a control with a range of continuous states. These values are configurable via {{param|Value}} and measured in {{param|Unit}} and are restricted between a Min and Max values. Intensity profile - {{param|Value}} of intensity and ability to update that level through {{command|StepUp()}} and {{command|StepDown()}} commands with a configurable {{param|StepValue}}.",
+    "children": []
+  }
+}

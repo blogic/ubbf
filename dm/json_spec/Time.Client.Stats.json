@@ -1,0 +1,41 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Time.Client.{i}.Stats.",
+  "object": {
+    "path": "Device.Time.Client.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "PacketsSent",
+        "access": "readOnly",
+        "description": "Specifies the number of packets that have been successfully sent from the NTP client to the NTP server.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "PacketsSentFailed",
+        "access": "readOnly",
+        "description": "Specifies the number of packets that were not successfully sent to the NTP server.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "PacketsReceived",
+        "access": "readOnly",
+        "description": "Specifies the number of packets that have been successfully received by the NTP client from the NTP server.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "PacketsDropped",
+        "access": "readOnly",
+        "description": "Specifies the number of packets that were received by the NTP client but were not successfully processed or handled due to errors or other issues.",
+        "type": "dataType:StatsCounter32"
+      }
+    ],
+    "description": "This object specifies the statistic parameters for the time client. {{bibref|RFC9249|Chapter 8 NTP Yang Module}}",
+    "children": []
+  }
+}

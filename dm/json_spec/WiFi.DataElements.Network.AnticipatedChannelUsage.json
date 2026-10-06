@@ -1,0 +1,49 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.AnticipatedChannelUsage.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.AnticipatedChannelUsage.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "AnticipatedChannelUsageNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "OpClass",
+        "access": "readOnly",
+        "description": "The operating class per {{bibref|802.11ax|Table E-4}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "Channel",
+        "access": "readOnly",
+        "description": "The channel number in the given operating class of the channel on which the anticipated channel usage is reported.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "ReferenceBSSID",
+        "access": "readOnly",
+        "description": "Reference BSSID. Start Time values in this object are referenced to the Time Sync Function (TSF) timer value indicated in the Timestamp field in Beacon frames transmitted by this BSSID on the channel.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "EntryNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object reports Wi-Fi 6 {{bibref|802.11ax}} anticipated medium usage on channels (and subsets of those channels) on which the device is operating.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "OpClass"
+      ]
+    }
+  }
+}

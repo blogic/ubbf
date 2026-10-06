@@ -1,0 +1,35 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.MultiAPSteering.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.MultiAPSteering.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "BlacklistAttempts",
+        "access": "readOnly",
+        "description": "Number of times a Blacklist steer was attempted for this Access Point. Blacklist steering is the process of forcing a connected STA to move to another Access Point by temporarily blocking its access to the current Access Point.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BTMAttempts",
+        "access": "readOnly",
+        "description": "Number of times a BTM (BSS Transition Management; {{bibref|802.11-2020|sections 4.3.19.3 and 6.3.57}} steer was attempted for this Access Point.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BTMQueryResponses",
+        "access": "readOnly",
+        "description": "Number of asynchronous BTM (BSS Transition Management; {{bibref|802.11-2020|sections 4.3.19.3 and 6.3.57}} Queries for which a BTM Request was issued by this Access Point.",
+        "type": "dataType:StatsCounter64"
+      }
+    ],
+    "description": "A single logical Access Point operating on this radio.",
+    "children": []
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IPsec.Stats.",
+  "object": {
+    "path": "Device.IPsec.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "NegotiationFailures",
+        "access": "readOnly",
+        "description": "The total number of times an IPsec negotiation failure has occurred.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "BytesSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} sent by IPsec.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BytesReceived",
+        "access": "readOnly",
+        "description": "The total number of {{units}} received by IPsec.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "PacketsSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} sent by IPsec.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "PacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of {{units}} received by IPsec.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "ErrorsSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} discarded by IPsec due to any error. This can include packets dropped due to a lack of transmit buffers.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "UnknownSPIErrors",
+        "access": "readOnly",
+        "description": "The total number of {{units}} discarded by IPsec due to an unknown SPI (Security Parameter Index).",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "DecryptionErrors",
+        "access": "readOnly",
+        "description": "The total number of {{units}} discarded by IPsec due to ESP decryption errors.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "IntegrityErrors",
+        "access": "readOnly",
+        "description": "The total number of {{units}} discarded by IPsec due to integrity errors.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ReplayErrors",
+        "access": "readOnly",
+        "description": "The total number of {{units}} discarded by IPsec due to replay errors.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "PolicyErrors",
+        "access": "readOnly",
+        "description": "The total number of {{units}} discarded by IPsec due to policy errors.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "OtherReceiveErrors",
+        "access": "readOnly",
+        "description": "The total number of {{units}} discarded by IPsec due to errors other than unknown SPI, decryption, integrity, replay or policy errors. This can include packets dropped due to a lack of receive buffers.",
+        "type": "dataType:StatsCounter32"
+      }
+    ],
+    "description": "Global IPsec statistics. These statistics include all IPsec traffic, i.e. all IKEv2 negotiation, IKEv2 SAs and child SAs. The CPE MUST reset global IPsec Stats parameters (unless otherwise stated in individual object or parameter descriptions) either when IPsec is disabled ({{param|#.Enable}} is set to {{false}}) or when IPsec is enabled ({{param|#.Enable}} is set to {{true}}).",
+    "children": []
+  }
+}

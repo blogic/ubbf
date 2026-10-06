@@ -1,0 +1,85 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.MultiAPDevice.Backhaul.Stats.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.MultiAPDevice.Backhaul.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "BytesSent",
+        "access": "readOnly",
+        "description": "The total number of bytes transmitted across the backhaul medium (as identified by the value of the {{param|###.BackhaulMediaType}}}} parameter), including framing characters.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BytesReceived",
+        "access": "readOnly",
+        "description": "The total number of bytes received across the backhaul medium (as identified by the value of the {{param|###.BackhaulMediaType}} parameter), including framing characters.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "PacketsSent",
+        "access": "readOnly",
+        "description": "The total number of packets transmitted across the backhaul medium (as identified by the value of the {{param|###.BackhaulMediaType}} parameter), including framing characters.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "PacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of packets received across the backhaul medium (as identified by the value of the {{param|###.BackhaulMediaType}} parameter), including framing characters.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "ErrorsSent",
+        "access": "readOnly",
+        "description": "The total number of outbound packets that could not be transmitted because of errors.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "ErrorsReceived",
+        "access": "readOnly",
+        "description": "The total number of inbound packets that contained errors preventing them from being delivered to a higher-layer protocol.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "LinkUtilization",
+        "access": "readOnly",
+        "description": "Current utilization (expressed in {{units}}) of the medium (as identified by the value of the {{param|###.BackhaulMediaType}} parameter) being used to backhaul this Access Point device to the Multi-AP Controller. A value of 0 is used for the {{object}} instance that represents the Access Point on the Multi-AP Controller.",
+        "type": "unsignedInt",
+        "maxInclusive": 100
+      },
+      {
+        "name": "SignalStrength",
+        "access": "readOnly",
+        "description": "An indicator of radio signal strength of the backhaul link of the Access Point (AP) to the Multi-AP Controller, measured in {{units}}. RCPI is encoded per {{bibref|802.11-2020|Table 9-176}}. The value of this parameter is indeterminate if the value of the {{param|###.BackhaulMediaType}} parameter is anything other than a type of IEEE 802.11 Wi-Fi.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "LastDataDownlinkRate",
+        "access": "readOnly",
+        "description": "The data transmit rate in {{units}} that was most recently used for transmission of data from the access point to the associated device.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LastDataUplinkRate",
+        "access": "readOnly",
+        "description": "The data transmit rate in {{units}} that was most recently used for transmission of data from the associated device to the access point.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TimeStamp",
+        "access": "readOnly",
+        "description": "The time this group was collected.",
+        "type": "dateTime"
+      }
+    ],
+    "description": "This object represents the statistics of the backhaul interface view from the current Device's ID",
+    "children": []
+  }
+}

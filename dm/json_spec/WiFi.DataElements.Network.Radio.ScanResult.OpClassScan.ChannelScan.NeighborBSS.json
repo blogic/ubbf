@@ -1,0 +1,97 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanResult.{i}.OpClassScan.{i}.ChannelScan.{i}.NeighborBSS.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanResult.{i}.OpClassScan.{i}.ChannelScan.{i}.NeighborBSS.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "NeighborBSSNumberOfEntries",
+    "version": "2.14",
+    "parameters": [
+      {
+        "name": "BSSID",
+        "access": "readOnly",
+        "description": "The BSSID indicated by the neighboring BSS.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "SSID",
+        "access": "readOnly",
+        "description": "The SSID indicated by the neighboring BSS.",
+        "type": "string"
+      },
+      {
+        "name": "SignalStrength",
+        "access": "readOnly",
+        "description": "An indicator of radio signal strength (RSSI) of the Beacon or Probe Response frames of the neighboring BSS as received by the radio measured in {{units}}. (RSSI is encoded per {{bibref|802.11-2020|Table 9-176}}). Reserved: 221 - 255.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "ChannelBandwidth",
+        "access": "readOnly",
+        "description": "Indicates the maximum bandwidth at which the neighboring BSS is operating. e.g. \"1\" or \"2\" or \"4\" or \"8\"\u201d or \"16\" or \"20\" or \"40\" or \"80\" or \"80+80\" or \"160\" or \"320\" MHz.",
+        "type": "string"
+      },
+      {
+        "name": "ChannelUtilization",
+        "access": "readOnly",
+        "description": "The channel utilization reported by the neighboring BSS per the BSS Load element if present in Beacon or Probe Response frames, as defined by {{bibref|802.11-2020|Section 9.4.2.27}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "StationCount",
+        "access": "readOnly",
+        "description": "The number of Associated Devices (STA) reported by this neighboring BSS per the BSS Load element if present in Beacon or Probe Response frames as defined by {{bibref|802.11-2020|Section 9.4.2.27}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MLDMACAddress",
+        "access": "readOnly",
+        "description": "The Multi-Link Device (MLD) MAC address of the Multi-Link Operation (MLO) capable access point this neighboring BSS is affiliated to. Null if the neighboring BSS is not an affiliated AP.",
+        "type": "dataType:MACAddress",
+        "version": "2.17"
+      },
+      {
+        "name": "ReportingBSSID",
+        "access": "readOnly",
+        "description": "The BSSID of the reporting BSSID if different from {{param|BSSID}}. This will be set if the NeigborBSS was discovered through, for example, a Reduced Neighbor Report. EasyMesh {{bibref|EasyMesh}} source: Channel Scan Result TLV.",
+        "type": "dataType:MACAddress",
+        "version": "2.17"
+      },
+      {
+        "name": "MultiBSSID",
+        "access": "readOnly",
+        "description": "Indicates if the neighboring BSS is part of a MultiBSSID set and may be a non-transmitted BSSID.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "BSSLoadElementPresent",
+        "access": "readOnly",
+        "description": "Set to true if the neighbour BSS Beacon/Probe Responses include a BSSLoad Element as defined in {{bibref|802.11-2020|Section 9.4.2.28}}.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "BSSColor",
+        "access": "readOnly",
+        "description": "Set to the BSS Color from the BSS Color Information field in the BSS's HE Operation element.",
+        "type": "unsignedInt",
+        "maxInclusive": 63,
+        "version": "2.17"
+      }
+    ],
+    "description": "The neighboring BSS discovered by a Radio during a channel scan. For MLDs, {{param|MLDMACAddress}} identifies the APMLD for which this NeighborBSS.{i}. is an affilated AP, other affiliated APs in this {{object}} have the same value of {{param|MLDMACAddress}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "BSSID"
+      ]
+    }
+  }
+}

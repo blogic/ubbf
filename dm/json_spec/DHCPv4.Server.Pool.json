@@ -1,0 +1,269 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv4.Server.Pool.{i}.",
+  "object": {
+    "path": "Device.DHCPv4.Server.Pool.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "PoolNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the Pool entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this entry. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Order",
+        "access": "readWrite",
+        "description": "{{datatype|expand}} For each DHCP request, the highest ordered entry that matches the association criteria is applied. All lower order entries are ignored.",
+        "type": "dataType:Order"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "{{reference}} The IP Interface associated with the ''Pool'' entry.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "###.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "VendorClassID",
+        "access": "readWrite",
+        "description": "Pool association criterion. Used to identify one or more LAN devices, value of the DHCP Vendor Class Identifier (Option 60) as defined in {{bibref|RFC2132}}, matched according to the criterion in {{param|VendorClassIDMode}}. Case sensitive. This is a normal string, e.g. \"abc\" is represented as \"abc\" and not say \"616263\" hex. However, if the value includes non-printing characters then such characters have to be represented using XML escapes, e.g. #x0a for line-feed. {{empty}} indicates this criterion is not used for conditional serving.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 255
+      },
+      {
+        "name": "VendorClassIDExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, matching packets are those that match the {{param|VendorClassID}} entry, if specified. If {{true}}, matching packets are those that do not match the {{param|VendorClassID}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "VendorClassIDMode",
+        "access": "readWrite",
+        "description": "{{param|VendorClassID}} pattern match criterion. {{enum}} For example, if {{param|VendorClassID}} is \"Example\" then an Option 60 value of \"Example device\" will match with {{param}} values of {{enum|Prefix}} or {{enum|Substring}}, but not with {{enum|Exact}} or {{enum|Suffix}}.",
+        "default": "Exact",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Exact",
+          "Prefix",
+          "Suffix",
+          "Substring"
+        ]
+      },
+      {
+        "name": "ClientID",
+        "access": "readWrite",
+        "description": "Pool association criterion. A hexbinary string used to identify one or more LAN devices, value of the DHCP Client Identifier (Option 61) as defined in {{bibref|RFC2132}}. The option value is binary, so an exact match is REQUIRED. {{empty}} indicates this criterion is not used for conditional serving.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "maxLength": 255
+      },
+      {
+        "name": "ClientIDExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, matching packets are those that match the {{param|ClientID}} entry, if specified. If {{true}}, matching packets are those that do not match the {{param|ClientID}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "UserClassID",
+        "access": "readWrite",
+        "description": "Pool association criterion. A hexbinary string used to identify one or more LAN devices, value of the DHCP User Class Identifier (Option 77) as defined in {{bibref|RFC3004}}. {{empty}} indicates this criterion is not used for conditional serving.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "maxLength": 255
+      },
+      {
+        "name": "UserClassIDExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, matching packets are those that match the {{param|UserClassID}} entry, if specified. If {{true}}, matching packets are those that do not match the {{param|UserClassID}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Chaddr",
+        "access": "readWrite",
+        "description": "Pool association criterion. Hardware address (MAC address) of the physical interface of the DHCP client. {{empty}} indicates this criterion is not used for conditional serving.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "ChaddrMask",
+        "access": "readWrite",
+        "description": "Bit-mask for the MAC address, where matching of a packet's MAC address with the {{param|Chaddr}} is only to be done for bit positions set to one in the mask. A mask of FF:FF:FF:FF:FF:FF or {{empty}} indicates all bits of the {{param|Chaddr}} are to be used for conditional serving classification.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "ChaddrExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, matching packets are those that match the (masked) {{param|Chaddr}} entry, if specified. If {{true}}, matching packets are those that do not match the (masked) {{param|Chaddr}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "AllowedDevices",
+        "access": "readWrite",
+        "description": "Pool association criterion. Determines which devices are allowed, {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "All",
+          "Known",
+          "Unknown"
+        ],
+        "version": "2.13"
+      },
+      {
+        "name": "MinAddress",
+        "access": "readWrite",
+        "description": "Specifies first IPv4 address in the pool to be assigned by the DHCP server on the LAN interface. The parameter value can be overwritten by dynamic values retrieved via a DHCP client with {{param|##.Client.{i}.PassthroughEnable}} or a PPP interface with {{param|###.PPP.Interface.{i}.IPCP.PassthroughEnable}} equal to {{true}}.",
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "MaxAddress",
+        "access": "readWrite",
+        "description": "Specifies last IPv4 address in the pool to be assigned by the DHCP server on the LAN interface. The parameter value can be overwritten by dynamic values retrieved via a DHCP client with {{param|##.Client.{i}.PassthroughEnable}} or a PPP interface with {{param|###.PPP.Interface.{i}.IPCP.PassthroughEnable}} equal to {{true}}.",
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "ReservedAddresses",
+        "access": "readWrite",
+        "description": "{{list}} List items represent addresses marked reserved from the address allocation pool.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "SubnetMask",
+        "access": "readWrite",
+        "description": "Specifies the client's network subnet mask. The parameter value can be overwritten by dynamic values retrieved via a DHCP client with {{param|##.Client.{i}.PassthroughEnable}} or a PPP interface with {{param|###.PPP.Interface.{i}.IPCP.PassthroughEnable}} equal to {{true}}.",
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "DNSServers",
+        "access": "readWrite",
+        "description": "{{list}} List items represent DNS servers offered to DHCP clients. Support for more than three DNS Servers is OPTIONAL. The parameter value can be overwritten by dynamic values retrieved via a DHCP client with {{param|##.Client.{i}.PassthroughEnable}} or a PPP interface with {{param|###.PPP.Interface.{i}.IPCP.PassthroughEnable}} equal to {{true}}.",
+        "list": true,
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "DomainName",
+        "access": "readWrite",
+        "description": "Sets the domain name to provide to clients on the LAN interface.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "IPRouters",
+        "access": "readWrite",
+        "description": "{{list}} List items represent addresses of routers on this subnet. Also known as default gateway. Support for more than one Router address is OPTIONAL. The parameter value can be overwritten by dynamic values retrieved via a DHCP client with {{param|##.Client.{i}.PassthroughEnable}} or a PPP interface with {{param|###.PPP.Interface.{i}.IPCP.PassthroughEnable}} equal to {{true}}.",
+        "list": true,
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "WINSServers",
+        "access": "readWrite",
+        "description": "Represent the WINS servers offered to DHCP clients.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "dataType:IPv4Address",
+        "version": "2.19"
+      },
+      {
+        "name": "LeaseTime",
+        "access": "readWrite",
+        "description": "Specifies the lease time in {{units}} of client assigned addresses. A value of -1 indicates an infinite lease.",
+        "default": "86400",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "DSCPMark",
+        "access": "readWrite",
+        "description": "Diffserv code point to be used for outgoing DHCP messages.",
+        "default": "48",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 63,
+        "version": "2.19"
+      },
+      {
+        "name": "StaticAddressNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "OptionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ClientNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.12"
+      }
+    ],
+    "description": "DHCP conditional serving pool table. Each instance of this object defines a DHCP conditional serving pool. Client requests are associated with pools based on criteria such as source interface, supplied DHCP options, and MAC address. Overlapping pool ranges MUST be supported. For enabled table entries, if {{param|Interface}} is not a valid reference, or {{param|MinAddress}}, {{param|MaxAddress}}, or {{param|SubnetMask}} is not a valid value, then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

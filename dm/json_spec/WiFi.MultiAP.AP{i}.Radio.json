@@ -1,0 +1,134 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.MultiAP.APDevice.{i}.Radio.{i}.",
+  "object": {
+    "path": "Device.WiFi.MultiAP.APDevice.{i}.Radio.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "RadioNumberOfEntries",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "A unique identifier for this particular Radio within the identified Access Point. {{deprecated|2.15|because it is duplicated in {{param|###.DataElements.Network.Device.{i}.Radio.{i}.ID}}}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "OperatingFrequencyBand",
+        "access": "readOnly",
+        "description": "Indicates the frequency band at which the radio is operating. {{enum}} {{deprecated|2.15|because it is replaced with {{param|###.DataElements.Network.Device.{i}.Radio.{i}.CurrentOperatingClassProfile.{i}.Class}}}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "string",
+        "enumerations": [
+          "2.4GHz",
+          "5GHz",
+          "6GHz"
+        ]
+      },
+      {
+        "name": "OperatingStandards",
+        "access": "readOnly",
+        "description": "{{list}} List items indicate which IEEE 802.11 standard this {{object}} instance is configured for. {{enum}} If {{param|OperatingFrequencyBand}} is set to {{enum|2.4GHz|OperatingFrequencyBand}}, only values {{enum|b}}, {{enum|g}}, {{enum|n}}, {{enum|ax}} are applicable. If {{param|OperatingFrequencyBand}} is set to {{enum|5GHz|OperatingFrequencyBand}}, only values {{enum|a}}, {{enum|n}}, {{enum|ac}}, {{enum|ax}} are applicable. If {{param|OperatingFrequencyBand}} is set to {{enum|6GHz|OperatingFrequencyBand}}, only value {{enum|ax}} is allowed. For example, a value of \"g,b\" (or \"b,g\" - order is not important) means that the 802.11g standard {{bibref|802.11g-2003}} is used with a backwards-compatible mode for 802.11b {{bibref|802.11b-1999}}. A value of \"g\" means that only the 802.11g standard is in use. {{deprecated|2.15|because this information cannot be obtained by EasyMesh}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "a",
+          "b",
+          "g",
+          "n",
+          "ac",
+          "ax"
+        ]
+      },
+      {
+        "name": "Channel",
+        "access": "readWrite",
+        "description": "The current radio channel used by the connection. To request automatic channel selection, set {{param|###.Radio.{i}.AutoChannelEnable}} to {{true}}. Whenever {{param|###.Radio.{i}.AutoChannelEnable}} is {{true}}, the value of the {{param}} parameter MUST be the channel selected by the automatic channel selection procedure. For channels in \"wide mode\" (where a channel bandwidth strictly greater than 20 MHz is used), this parameter is used for Primary Channel only. The secondary or extension channel information is available through {{param|ExtensionChannel}}. Note: Valid {{param}} values depend on the {{param|OperatingFrequencyBand}} value specified and the regulatory domain. {{deprecated|2.15|because it is replaced with {{param|###.DataElements.Network.Device.{i}.Radio.{i}.CurrentOperatingClassProfile.{i}.Channel}}}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 255
+      },
+      {
+        "name": "ExtensionChannel",
+        "access": "readOnly",
+        "description": "The secondary extension channel position, applicable when operating in wide channel mode (i.e. when {{param|CurrentOperatingChannelBandwidth}} is {{enum|40MHz|CurrentOperatingChannelBandwidth}} If not operating in wide channel mode (i.e. when {{param|CurrentOperatingChannelBandwidth}} is something other than {{enum|40MHz|CurrentOperatingChannelBandwidth}}, then the value of {{param}} is {{enum|None}}. {{enum}} {{deprecated|2.15|because this information is not available via EasyMesh}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "string",
+        "enumerations": [
+          "None",
+          "AboveControlChannel",
+          "BelowControlChannel"
+        ]
+      },
+      {
+        "name": "PossibleChannels",
+        "access": "readOnly",
+        "description": "{{list}} List items represent possible radio channels for the wireless standard (a, b, g, n, ac, ax) and the regulatory domain. Ranges in the form \"n-m\" are permitted. For example, for 802.11b and North America, would be \"1-11\". {{deprecated|2.15|because it is not available via EasyMesh}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "version": "2.14"
+      },
+      {
+        "name": "CurrentOperatingChannelBandwidth",
+        "access": "readOnly",
+        "description": "The channel bandwidth currently in use. {{enum}} {{deprecated|2.15|because it is not available via EasyMesh}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "string",
+        "enumerations": [
+          "20MHz",
+          "40MHz",
+          "80MHz",
+          "160MHz"
+        ]
+      },
+      {
+        "name": "MCS",
+        "access": "readOnly",
+        "description": "The Modulation Coding Scheme index (applicable to 802.11n and 802.11ac specifications only). Values from 0 to 15 MUST be supported ({{bibref|802.11n-2009}}). Values from 0 to 9 MUST be supported for {{bibref|802.11ac-2013}}. {{deprecated|2.15|because this information is not available in EasyMesh}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "int",
+        "ranges": [
+          [
+            0,
+            15
+          ],
+          [
+            16,
+            31
+          ]
+        ]
+      },
+      {
+        "name": "TransmitPower",
+        "access": "readOnly",
+        "description": "Indicates the current transmit power level as a {{units}} of full power. {{deprecated|2.15|because it is duplicated in {{param|###.DataElements.Network.Device.{i}.Radio.{i}.CurrentOperatingClassProfile.{i}.TxPower}}}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 100
+      },
+      {
+        "name": "TransmitPowerLimit",
+        "access": "readWrite",
+        "description": "Indicates the maximum Effective Isotropic Radiated Power (EIRP) per 20 MHz bandwidth representing the nominal transmit power limit for this radio. The field is coded in units of {{units}} relative to 1 mW. {{bibref|EasyMesh|Clause 17.2.15}} {{deprecated|2.15|because it is not available in EasyMesh}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "int",
+        "minInclusive": -90,
+        "maxInclusive": 36,
+        "version": "2.14"
+      },
+      {
+        "name": "APNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}} {{deprecated|2.15| because the {{object|AP.{i}.}} is being deprecated}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object represents all of the individual Radios contained within the identified Access Point device known to the controller. {{deprecated|2.15|because {{param|MACAddress}} is duplicated in {{param|###.DataElements.Network.Device.{i}.Radio.{i}.ID}} and {{param|OperatingFrequencyBand}} is replaced with {{param|###.DataElements.Network.Device.{i}.Radio.{i}.CurrentOperatingClassProfile.{i}.Class}}. {{param|Channel}} is duplicated in {{param|###.DataElements.Network.Device.{i}.Radio.{i}.CurrentOperatingClassProfile.{i}.Channel}}. {{param|TransmitPower}} is duplicated in {{param|###.DataElements.Network.Device.{i}.Radio.{i}.CurrentOperatingClassProfile.{i}.TxPower}}. The remaining parameters deprecated as noted}} {{obsoleted|2.17}} {{deleted|2.18}}",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "MACAddress"
+      ]
+    }
+  }
+}

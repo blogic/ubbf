@@ -1,0 +1,56 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Firewall.Log.{i}.Filter.",
+  "object": {
+    "path": "Device.Firewall.Log.{i}.Filter.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Policy",
+        "access": "readWrite",
+        "description": "Specifies the policy for filtering logs based on the type of firewall rule. This parameter allows you to select which types of rules (e.g., all rules, denied rules, or allowed rules) will have their events logged.",
+        "default": "All",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "All",
+          "Denied",
+          "Allowed"
+        ]
+      },
+      {
+        "name": "SourceInterface",
+        "access": "readWrite",
+        "description": "Filters logs based on the rule's source interface. This parameter specifies the network interface from which the traffic originates. If left empty, no filtering on the source interface will be applied.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": ".IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "DestinationInterface",
+        "access": "readWrite",
+        "description": "Filters logs based on the rule's destination interface. This parameter specifies the network interface to which the traffic is directed. If left empty, no filtering on the destination interface will be applied.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": ".IP.Interface.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "Defines the filter criteria used for configuring firewall log rules. These criteria determine which firewall events are logged based on specified parameters such as policy, source interface, and destination interface.",
+    "children": []
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.Reboots.",
+  "object": {
+    "path": "Device.DeviceInfo.Reboots.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.18",
+    "parameters": [
+      {
+        "name": "BootCount",
+        "access": "readOnly",
+        "description": "The number of times the device has rebooted since the last factory reset.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "CurrentVersionBootCount",
+        "access": "readOnly",
+        "description": "The number of times the device has rebooted since the latest firmware update.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "WatchdogBootCount",
+        "access": "readOnly",
+        "description": "The number of times the device has rebooted by a sw/hw watchdog since the last factory reset. The watchdog is a component within the operating system kernel or Device responsible for monitoring user-space activities. If it detects non-responsiveness in user-space processes, it triggers a reboot of the device.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ColdBootCount",
+        "access": "readOnly",
+        "description": "The number of times the device has cold rebooted since the last factory reset.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "WarmBootCount",
+        "access": "readOnly",
+        "description": "The number of times the device has warm rebooted since the last factory reset.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxRebootEntries",
+        "access": "readWrite",
+        "description": "The maximum number of entries available in the {{object|Reboot}} table. Defines the maximum number of {{object|Reboot}} instances that can be stored on the device. When the maximum {{object|Reboot}} entries as indicated by {{param}} are reached, the next boot entry overrides the object with the oldest {{param|Reboot.{i}.TimeStamp}}. Set this parameter to 0 to completely disable the creation of {{object|Reboot}} instances. Set this parameter to -1 to leave it open to the implementation to decide the maximum number of {{object|Reboot}} instances that may be stored on the device. Reducing the {{param}} will cause for the implementation to delete the oldest {{object|Reboot}} instances. This setting does not affect the counting of reboots.",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "RebootNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The monitoring of reboot reasons is essential for diagnosing and troubleshooting issues with applications and processes running on the Device.",
+    "children": []
+  }
+}

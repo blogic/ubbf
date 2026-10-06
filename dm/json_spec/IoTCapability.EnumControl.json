@@ -1,0 +1,44 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IoTCapability.{i}.EnumControl.",
+  "object": {
+    "path": "Device.IoTCapability.{i}.EnumControl.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:IoTEnumControlType"
+      },
+      {
+        "name": "Description",
+        "access": "readOnly",
+        "description": "Human-readable description of the {{object}}. e.g. a more detailed description of {{param|Type}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Value",
+        "access": "readWrite",
+        "description": "Current value representing the {{object}}; MUST be an element of {{param|ValidValues}}.",
+        "type": "string"
+      },
+      {
+        "name": "ValidValues",
+        "access": "readOnly",
+        "description": "List of valid values from the control represented by the {{object}}.",
+        "list": true,
+        "type": "string",
+        "maxLength": 64
+      }
+    ],
+    "description": "The EnumControl reflects the Enumerated level Control functionality. The enumeration is defined by the {{param|ValidValues}} parameter. This will provide a comma-separated list of values that are available for configuring via the {{param|Value}} parameter.",
+    "children": []
+  }
+}

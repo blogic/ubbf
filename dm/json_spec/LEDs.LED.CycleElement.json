@@ -1,0 +1,72 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LEDs.LED.{i}.CycleElement.{i}.",
+  "object": {
+    "path": "Device.LEDs.LED.{i}.CycleElement.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "CycleElementNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} instance.",
+        "type": "boolean"
+      },
+      {
+        "name": "Order",
+        "access": "readWrite",
+        "description": "The relative order of this {{object}} in the LED's cycle period.",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "Color",
+        "access": "readWrite",
+        "description": "The color being displayed by the LED RGB hexadecimal notation (e.g., FF0088). Note: If the parameter is set to an unsupported color the CPE MUST NOT infer a different color.",
+        "type": "hexBinary",
+        "minLength": 3,
+        "maxLength": 3
+      },
+      {
+        "name": "Duration",
+        "access": "readWrite",
+        "description": "The duration, in {{units}}, for this element of the cycle period.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "FadeInterval",
+        "access": "readWrite",
+        "description": "The interval corresponding to this {{object}} instance, in {{units}}, from the starting from the target illumination characteristics of the previous {{object}} instance to the target illumination characteristics of this {{object}} instance. The transition to the target illumination characteristics is uniformly interpolated \"perceptually\" over the value of this {{param}} parameter.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Brightness",
+        "access": "readWrite",
+        "description": "The desired brightness level for this element of the cycle period, expressed as a {{units}}, relative to the maximum allowed brightness value specified in {{param|#.MaxBrightness}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 100,
+        "version": "2.19"
+      }
+    ],
+    "description": "Each instance of this object describes the LED characteristics for a portion of the LED cycle period. The pattern of lighting for the LED corresponding to this table (i.e., the LED cycle period) is defined by the illumination of the LED according to the entries in this table, taken sequentially in the order specified by the {{param|Order}} parameter, with the duration for the portion of the LED illumination corresponding to a given instance specified by the {{param|Duration}} parameter. The other parameters of the instance of this object (e.g., Color, Brightness) describes the illumination characteristics applied to the LED for this {{object}} instance. The length of the complete LED cycle is the sum of the Duration parameters for all of the entries in this table.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Order"
+      ]
+    }
+  }
+}

@@ -1,0 +1,230 @@
+#!/usr/bin/env ucode
+'use strict';
+
+import * as iwinfo from 'iwinfo';
+import * as nl80211 from 'nl80211';
+
+const DFS_REGION_ETSI = 2;
+const IFTYPE_ADHOC = 1;
+const IFTYPE_AP = 3;
+const IFTYPE_MESH_POINT = 7;
+const IFTYPE_P2P_GO = 9;
+const RADAR_IFTYPES = [ IFTYPE_ADHOC, IFTYPE_AP, IFTYPE_MESH_POINT, IFTYPE_P2P_GO ];
+const CHAN_WIDTH_80P80 = 4;
+// indexed by enum nl80211_chan_width; widths below 20 MHz sit inside one 20 MHz channel
+const CHAN_WIDTH_MHZ = [ 20, 20, 40, 80, 80, 160, 20, 20, 20, 20, 20, 20, 20, 320 ];
+
+function segment_freqs(center, mhz) {
+	let freqs = [];
+
+	for (let freq = center - mhz / 2 + 10; freq < center + mhz / 2; freq += 20)
+		push(freqs, freq);
+
+	return freqs;
+}
+
+function chandef_freqs(iface) {
+	let mhz = CHAN_WIDTH_MHZ[iface.channel_width];
+	if (!iface.center_freq1 || !mhz)
+		return [ iface.wiphy_freq ];
+
+	let freqs = segment_freqs(iface.center_freq1, mhz);
+	if (iface.channel_width == CHAN_WIDTH_80P80 && iface.center_freq2)
+		freqs = [ ...freqs, ...segment_freqs(iface.center_freq2, mhz) ];
+
+	return freqs;
+}
+
+function phy_radar_freqs(wiphy) {
+	let phy = filter(iwinfo.phys ?? [], (p) => p?.wiphy == wiphy)[0];
+	let freqs = [];
+
+	for (let band in phy?.wiphy_bands ?? []) {
+		for (let freq in band?.freqs ?? [])
+			if (freq.radar)
+				push(freqs, freq.freq);
+	}
+
+	return freqs;
+}
+
+function dfs_region_get(ifname) {
+	let reg = nl80211.request(nl80211.const.NL80211_CMD_GET_REG, 0, { dev: ifname });
+
+	return reg?.dfs_region;
+}
+
+// mac80211 will not scan away from a channel that needs radar detection
+// unless the DFS region permits pre-CAC, and only ETSI does; such a radio
+// cannot scan at all until it moves channel
+function radio_dfs_locked(iface) {
+	if (index(RADAR_IFTYPES, iface.iftype) < 0)
+		return false;
+	if (dfs_region_get(iface.ifname) == DFS_REGION_ETSI)
+		return false;
+
+	let radar_freqs = phy_radar_freqs(iface.wiphy);
+	for (let freq in chandef_freqs(iface))
+		if (index(radar_freqs, freq) >= 0)
+			return true;
+
+	return false;
+}
+
+function key_mgmt_to_security(key_mgmt) {
+	if (!key_mgmt || length(key_mgmt) == 0)
+		return 'None';
+
+	for (let km in key_mgmt) {
+		if (index(km, 'SAE') >= 0)
+			return 'WPA3-Personal';
+	}
+
+	for (let km in key_mgmt) {
+		if (index(km, 'EAP') >= 0)
+			return 'WPA2-Enterprise';
+		if (index(km, 'PSK') >= 0)
+			return 'WPA2-Personal';
+	}
+
+	return 'None';
+}
+
+function cipher_to_encryption(pair) {
+	if (!pair || length(pair) == 0)
+		return 'None';
+
+	for (let p in pair) {
+		if (index(p, 'CCMP') >= 0 || index(p, 'GCMP') >= 0)
+			return 'AES';
+	}
+
+	for (let p in pair) {
+		if (index(p, 'TKIP') >= 0)
+			return 'TKIP';
+	}
+
+	return 'None';
+}
+
+function bandwidth_parse(cell) {
+	if (cell.he?.chan_width)
+		return cell.he.chan_width;
+
+	if (cell.vht?.chan_width) {
+		let vw = cell.vht.chan_width;
+		if (index(vw, '160') >= 0)
+			return '160MHz';
+		if (index(vw, '80') >= 0)
+			return '80MHz';
+	}
+
+	if (cell.ht?.chan_width) {
+		let hw = cell.ht.chan_width;
+		if (index(hw, '40') >= 0)
+			return '40MHz';
+	}
+
+	return '20MHz';
+}
+
+function standards_parse(cell) {
+	let standards = [];
+
+	if (cell.eht)
+		push(standards, 'be');
+	if (cell.he)
+		push(standards, 'ax');
+	if (cell.vht)
+		push(standards, 'ac');
+	if (cell.ht)
+		push(standards, 'n');
+
+	if (cell.band == '2.4' && length(standards) == 0)
+		push(standards, 'g');
+
+	return join(',', standards);
+}
+
+function cell_to_tr181(cell, radio_path, noise) {
+	let band = cell.band ?? '';
+	if (band == '2.4')
+		band = '2.4GHz';
+	else if (band == '5')
+		band = '5GHz';
+	else if (band == '6')
+		band = '6GHz';
+
+	let mode = 'Infrastructure';
+	if (cell.mode == 'Ad-Hoc')
+		mode = 'AdHoc';
+
+	return {
+		Radio: radio_path,
+		SSID: cell.ssid ?? '',
+		BSSID: cell.bssid ?? '',
+		Mode: mode,
+		Channel: sprintf('%d', cell.channel ?? 0),
+		SignalStrength: sprintf('%d', cell.dbm ?? 0),
+		SecurityModeEnabled: key_mgmt_to_security(cell.crypto?.key_mgmt),
+		EncryptionMode: cipher_to_encryption(cell.crypto?.pair),
+		OperatingFrequencyBand: band,
+		OperatingStandards: standards_parse(cell),
+		OperatingChannelBandwidth: bandwidth_parse(cell),
+		Noise: sprintf('%d', noise)
+	};
+}
+
+iwinfo.update();
+let ifaces = iwinfo.ifaces;
+
+if (!ifaces || length(keys(ifaces)) == 0) {
+	print('{"error": "No wireless interfaces available"}\n');
+	exit(1);
+}
+
+let all_results = [];
+let skipped = [];
+let scanned = 0;
+let seen_phys = {};
+
+for (let ifname, iface in ifaces) {
+	let phy = iface.wiphy;
+	if (seen_phys[phy])
+		continue;
+	seen_phys[phy] = true;
+
+	let noise = iface.noise ?? 0;
+	let radio_path = sprintf('Device.WiFi.Radio.%d', phy + 1);
+
+	let scan_results = iwinfo.scan(ifname);
+	if (!scan_results && radio_dfs_locked(iface)) {
+		push(skipped, {
+			Radio: radio_path,
+			Interface: ifname,
+			Reason: sprintf('DFS channel %d, regulatory domain %s does not allow scanning away from it',
+				(iface.wiphy_freq - 5000) / 5, iface.country || 'unset')
+		});
+		continue;
+	}
+
+	if (!scan_results) {
+		// a null scan means the scan failed or was aborted by the kernel
+		// (e.g. while a CSA is pending on the phy); reporting it as zero
+		// neighbours would dress a broken radio up as a Complete result
+		print(sprintf('%J\n', { error: sprintf('scan failed on %s', ifname) }));
+		exit(1);
+	}
+
+	scanned++;
+	for (let cell in scan_results)
+		push(all_results, cell_to_tr181(cell, radio_path, noise));
+}
+
+if (!scanned) {
+	let reasons = map(skipped, (s) => sprintf('%s: %s', s.Interface, s.Reason));
+	print(sprintf('%J\n', { error: join('; ', reasons) }));
+	exit(1);
+}
+
+print(sprintf('%J\n', { results: all_results, skipped }));

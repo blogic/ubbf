@@ -1,0 +1,52 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.BulkData.Profile.{i}.MQTT.",
+  "object": {
+    "path": "Device.BulkData.Profile.{i}.MQTT.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Reference",
+        "access": "readWrite",
+        "description": "A reference to the MQTT Client used by this Bulk Data Collection Profile when communicating via the MQTT Protocol.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "###.MQTT.Client.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "PublishTopic",
+        "access": "readWrite",
+        "description": "The topic name the Agent MUST use when sending the Bulk Data report.",
+        "type": "string",
+        "maxLength": 65535
+      },
+      {
+        "name": "PublishQoS",
+        "access": "readWrite",
+        "description": "The Agent MUST use this QoS value when sending the Bulk Data report. If the referenced MQTT Client uses MQTT 5.0 and the MQTT server only indicates support for a QoS value in the CONNACK Maximum QoS property lower than this QoS value, the Agent MUST use the highest QoS value that is supported by the server.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 2
+      },
+      {
+        "name": "PublishRetain",
+        "access": "readWrite",
+        "description": "If set to {{true}} the Agent MUST set the RETAIN flag in MQTT PUBLISH messages carrying the Bulk Data report to 1, unless the MQTT server sent Retain Available = 0 (MQTT 5.0) in its CONNACK (in which case, the Agent MUST set the RETAIN flag to 0).",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object defines the properties to be used when transporting bulk data using the MQTT protocol. This object is used when the {{param|#.Protocol}} parameter has a value of {{enum|MQTT|##.Protocols}}.",
+    "children": []
+  }
+}

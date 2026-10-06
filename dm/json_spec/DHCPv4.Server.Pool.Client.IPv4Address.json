@@ -1,0 +1,35 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv4.Server.Pool.{i}.Client.{i}.IPv4Address.{i}.",
+  "object": {
+    "path": "Device.DHCPv4.Server.Pool.{i}.Client.{i}.IPv4Address.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "IPv4AddressNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "IPAddress",
+        "access": "readOnly",
+        "description": "IPv4 address.",
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "LeaseTimeRemaining",
+        "access": "readOnly",
+        "description": "The time at which the DHCP lease will expire or {{null}} if not known. For an infinite lease, the parameter value MUST be 9999-12-31T23:59:59Z.",
+        "type": "dateTime"
+      }
+    ],
+    "description": "IPv4 addresses assigned to this client.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "IPAddress"
+      ]
+    }
+  }
+}

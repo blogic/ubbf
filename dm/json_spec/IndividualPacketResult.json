@@ -1,0 +1,65 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "IndividualPacketResult.{i}.",
+  "object": {
+    "path": "IndividualPacketResult.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "PacketSuccess",
+        "access": "readOnly",
+        "description": "Indicates that the response to this UDP Echo Plus packet sent was received by the client. When this value is {{true}}, then all the remaining parameters in this instance are valid. Otherwise only the values originally set by the CPE client (e.g. {{param|PacketSendTime}} and {{param|TestGenSN}}) MAY be set to valid values.",
+        "type": "boolean"
+      },
+      {
+        "name": "PacketSendTime",
+        "access": "readOnly",
+        "description": "Time the client sent this UDP Echo Plus packet in UTC, which MUST be specified to microsecond precision. For example: 2008-04-09T15:01:05.123456Z",
+        "type": "dateTime"
+      },
+      {
+        "name": "PacketReceiveTime",
+        "access": "readOnly",
+        "description": "Time the client receives the response packet in UTC, which MUST be specified to microsecond precision. For example: 2008-04-09T15:01:05.123456Z If this response is never received, {{param}} SHOULD be set to the Unknown Time value as specified in {{bibref|TR-106|Section 3.2.2}}.",
+        "type": "dateTime"
+      },
+      {
+        "name": "TestGenSN",
+        "access": "readOnly",
+        "description": "The TestGenSN field in the UDPEcho Plus packet {{bibref|TR-143|Section A.1.4}} sent by the CPE client.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TestRespSN",
+        "access": "readOnly",
+        "description": "The TestRespSN field in the response packet {{bibref|TR-143|Section A.1.4}} from the UDP Echo Plus server (i.e. {{param|#.Host}}) for this Echo Plus packet sent by the CPE client. If {{param|PacketSuccess}} is {{false}}, {{param}} SHOULD be 0.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TestRespRcvTimeStamp",
+        "access": "readOnly",
+        "description": "The TestRespRcvTimeStamp field in the response packet {{bibref|TR-143|Section A.1.4}} from the UDP Echo Plus server (i.e. {{param|#.Host}}) to record the reception time in {{units}} of this UDP Echo Plus packet sent from the CPE client. If {{param|PacketSuccess}} is {{false}}, {{param}} SHOULD be 0.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TestRespReplyTimeStamp",
+        "access": "readOnly",
+        "description": "The TestRespReplyTimeStamp field in the response packet {{bibref|TR-143|Section A.1.4}} from the UDP Echo Plus server (i.e. {{param|#.Host}}) to record the server reply time in {{units}} of this UDP Echo Plus packet sent from the CPE client. That is, the time that the server returned the UDP Echo Plus packet. If {{param|PacketSuccess}} is {{false}}, {{param}} SHOULD be 0.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TestRespReplyFailureCount",
+        "access": "readOnly",
+        "description": "The count value that was set by the UDP Echo Plus server (i.e. {{param|#.Host}}) to record the number of dropped echo response packets by the server. This count is incremented if a valid echo request packet is received at a UDP EchoPlus server but for some reason cannot be responded to (e.g. due to local buffer overflow, CPU utilization, etc...). If {{param|PacketSuccess}} is {{false}}, {{param}} SHOULD be 0.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object provides the results from individual UDPEchoPlus test packets collected during a test if {{param|#.EnableIndividualPacketResults}} is set to true. It should contain {{param|#.NumberOfRepetitions}} objects. Instance numbers MUST start at 1 and sequentially increment as new instances are created. The instance number should match the TestIterationNumber field of the request and response packet.",
+    "children": []
+  }
+}

@@ -1,0 +1,309 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SoftwareModules.ExecutionUnit.{i}.",
+  "object": {
+    "path": "Device.SoftwareModules.ExecutionUnit.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ExecutionUnitNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "EUID",
+        "access": "readOnly",
+        "description": "Execution Unit Identifier chosen by the {{object|#.ExecEnv}} during installation of the associated {{object|#.DeploymentUnit}}. The format of this value is Execution Environment specific, but it MUST be unique across {{object|#.ExecEnv}} instances. Thus, it is recommended that this be a combination of the {{param|#.ExecEnv.{i}.Name}} and an Execution Environment local unique value.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The name of this {{object}} as it pertains to its associated {{object|#.DeploymentUnit}}, which SHOULD be unique across all {{object}} instances contained within its associated {{object|#.DeploymentUnit}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ExecEnvLabel",
+        "access": "readOnly",
+        "description": "The name of this {{object}} as provided by the {{object|#.ExecEnv}}, which SHOULD be unique across all {{object}} instances contained within a specific {{object|#.ExecEnv}}.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the status of this {{object}}.",
+        "type": "string",
+        "enumerations": [
+          "Idle",
+          "Starting",
+          "Active",
+          "Stopping",
+          "Restarting"
+        ],
+        "activeNotify": "forceDefaultEnabled"
+      },
+      {
+        "name": "ExecutionFaultCode",
+        "access": "readOnly",
+        "description": "If while running or transitioning between states this {{object}} identifies a fault this parameter embodies the problem. The value of {{enum|NoFault}} MUST be used when everything is working as intended. {{enum}} For fault codes not included in this list, the vendor MAY include vendor-specific values, which MUST use the format defined in {{bibref|TR-106|Section 3.3}}.",
+        "type": "string",
+        "enumerations": [
+          "NoFault",
+          "FailureOnStart",
+          "FailureOnAutoStart",
+          "FailureOnStop",
+          "FailureWhileActive",
+          "DependencyFailure",
+          "UnStartable"
+        ]
+      },
+      {
+        "name": "ExecutionFaultMessage",
+        "access": "readOnly",
+        "description": "If while running or transitioning between states this {{object}} identifies a fault this parameter provides a more detailed explanation of the problem. If {{param|ExecutionFaultCode}} has the value of {{enum|NoFault|ExecutionFaultCode}} then the value of this parameter MUST be {{empty}} and ignored by the Controller.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "AutoStart",
+        "access": "readWrite",
+        "description": "If {{true}} and the {{param|RunLevel}} verification is also met, then this {{object}} will be automatically started by the device after its {{object|#.ExecEnv}} is either rebooted or restarted. If {{false}} this {{object}} will not be started after its {{object|#.ExecEnv}} is either rebooted or restarted until it is explicitly commanded to do so by either the Controller or another Execution Unit.",
+        "type": "boolean"
+      },
+      {
+        "name": "RunLevel",
+        "access": "readWrite",
+        "description": "Determines when this {{object}} will be started. If {{param|AutoStart}} is {{true}} and {{param|#.ExecEnv.{i}.CurrentRunLevel}} is greater than or equal to {{param}}, then this {{object}} will be started. If the value of {{param|#.ExecEnv.{i}.CurrentRunLevel}} is -1, then the associated {{object|#.ExecEnv.}} doesn't support Run Levels, thus the value of this parameter is irrelevant when read and setting its value has no impact to the Run Level of this {{object}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Vendor",
+        "access": "readOnly",
+        "description": "Vendor of this {{object}}.",
+        "type": "string",
+        "maxLength": 128
+      },
+      {
+        "name": "Version",
+        "access": "readOnly",
+        "description": "Version of the {{object}}. The format of this value is Execution Environment specific.",
+        "type": "string",
+        "maxLength": 32
+      },
+      {
+        "name": "Description",
+        "access": "readOnly",
+        "description": "Textual description of this {{object}}. The format of this value is Execution Environment specific.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Privileged",
+        "access": "readOnly",
+        "description": "The Privileged mode for this {{object}}: {{true}} for Privileged, {{false}} for Unprivileged.",
+        "type": "boolean",
+        "version": "2.19"
+      },
+      {
+        "name": "AllocatedDiskSpace",
+        "access": "readOnly",
+        "description": "The amount of disk space measured in {{units}} allocated to this {{object}}. A value of -1 MUST be used for {{object}} instances where this parameter is not applicable.",
+        "type": "int",
+        "minInclusive": -1,
+        "version": "2.16"
+      },
+      {
+        "name": "DiskSpaceInUse",
+        "access": "readOnly",
+        "description": "The amount of disk space measured in {{units}} currently being used by this {{object}}. A value of -1 MUST be used for {{object}} instances where this parameter is not applicable.",
+        "type": "int",
+        "minInclusive": -1,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "AllocatedMemory",
+        "access": "readOnly",
+        "description": "The amount of physical RAM measured in {{units}} allocated to this {{object}}. A value of -1 MUST be used for {{object}} instances where this parameter is not applicable.",
+        "type": "int",
+        "minInclusive": -1,
+        "version": "2.16"
+      },
+      {
+        "name": "MemoryInUse",
+        "access": "readOnly",
+        "description": "The amount of physical RAM measured in {{units}} currently being used by this {{object}}. A value of -1 MUST be used for {{object}} instances where this parameter is not applicable.",
+        "type": "int",
+        "minInclusive": -1,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "AllocatedCPUPercent",
+        "access": "readOnly",
+        "description": "The CPU power allocated to this {{object}}, as a fraction (in {{units}}) of the CPU allocation of the {{object|#.ExecEnv}} in which this {{object}} resides. A value of -1 MUST be used for {{object}} instances where this parameter is not applicable.",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 100,
+        "version": "2.16"
+      },
+      {
+        "name": "CPUPercentInUse",
+        "access": "readOnly",
+        "description": "The CPU power currently being used by this by this {{object}}, as a fraction (in {{units}}) of the CPU allocation of the {{object|#.ExecEnv}} in which this {{object}} resides. A value of -1 MUST be used for {{object}} instances where this parameter is not applicable.",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 100,
+        "version": "2.16"
+      },
+      {
+        "name": "AllocatedEUUID",
+        "access": "readOnly",
+        "description": "This parameter is allocated by the host system. This is the user identifier within the execution unit's environment. This UID is local to the execution unit and is used by the EU's internal processes to manage permissions. By default, processes within the EU execute as root (UID 0) unless otherwise specified.",
+        "type": "unsignedInt",
+        "version": "2.18"
+      },
+      {
+        "name": "AllocatedEUGID",
+        "access": "readOnly",
+        "description": "This parameter is allocated by the host system. This is the group identifier within the execution unit's environment. This GID is local to the execution unit and is used by the EU's internal processes to manage permissions.",
+        "type": "string",
+        "version": "2.18"
+      },
+      {
+        "name": "AllocatedHostUID",
+        "access": "readOnly",
+        "description": "This parameter is allocated by the host system. This is the user identifier on the host system where this EU is running. This UID is system wide and is managed by the kernel.",
+        "type": "unsignedInt",
+        "version": "2.18"
+      },
+      {
+        "name": "AllocatedHostGID",
+        "access": "readOnly",
+        "description": "This parameter is allocated by the host system. This is the group identifier on the host system where this EU is running. This GID is system wide and is managed by the kernel.",
+        "type": "string",
+        "version": "2.18"
+      },
+      {
+        "name": "CreationTime",
+        "access": "readOnly",
+        "description": "The date and time when the EU was created.",
+        "type": "dateTime",
+        "version": "2.18"
+      },
+      {
+        "name": "Uptime",
+        "access": "readOnly",
+        "description": "The amount of time in {{units}} that this EU has been up and running since it was activated.",
+        "type": "unsignedInt",
+        "version": "2.18"
+      },
+      {
+        "name": "ShutdownDelay",
+        "access": "readWrite",
+        "description": "The delay in {{units}} before which the container is shutdown. This delay ensures that the application has enough time to perform any cleanup before the Execution Unit transitions to idle state.",
+        "default": "10",
+        "defaultType": "implementation",
+        "type": "unsignedInt",
+        "version": "2.18"
+      },
+      {
+        "name": "References",
+        "access": "readOnly",
+        "description": "Represents the instances of multi-instanced objects that are directly controlled by, and have come into existence because of, this {{object}}. NOTE: All other objects and parameters (i.e. not multi-instanced objects) that this {{object}} has caused to come into existence can be discovered via the GetSupportedDM and GetInstances USP messages.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "AssociatedProcessList",
+        "access": "readOnly",
+        "description": "Represents the system processes that are active in the system because of this {{object}}. If {{param|Status}} is not {{enum|Active|Status}} it is expected that this list will be {{empty}}. Some {{object}} instances MIGHT NOT have any system processes irrespective of the value of {{param|Status}}.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.DeviceInfo.ProcessStatus.Process.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "VendorLogList",
+        "access": "readOnly",
+        "description": "Represents the vendor log files that have come into existence because of this {{object}}. When the {{object|#.DeploymentUnit}} (that caused this {{object}} to come into existence) is uninstalled the vendor log files referenced here SHOULD be removed from the device. Not all {{object}} instances will actually have a corresponding vendor log file, in which case the value of this parameter will be {{empty}}.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.DeviceInfo.VendorLogFile.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "VendorConfigList",
+        "access": "readOnly",
+        "description": "Represents the vendor config files that have come into existence because of this {{object}}. When the {{object|#.DeploymentUnit}} (that caused this {{object}} to come into existence) is uninstalled the vendor config files referenced here SHOULD be removed from the device. Not all {{object}} instances will actually have a corresponding vendor config file, in which case the value of this parameter will be {{empty}}.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.DeviceInfo.VendorConfigFile.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ApplicationDataList",
+        "access": "readOnly",
+        "description": "Represents the application data volumes that are used by this {{object}}.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.ExecEnv.{i}.ApplicationData.",
+          "targetType": "row"
+        },
+        "version": "2.16"
+      },
+      {
+        "name": "ExecutionEnvRef",
+        "access": "readOnly",
+        "description": "Represents the {{object|#.ExecEnv}} that this {{object}} is associated with.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.ExecEnv.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "HostObjectNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.16"
+      },
+      {
+        "name": "EnvVariableNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.17"
+      }
+    ],
+    "description": "This table serves as the Execution Unit inventory and contains both status information about each Execution Unit as well as configurable parameters for each Execution Unit. Each {{object|#.DeploymentUnit}} that is installed can have zero or more Execution Units. Once a Deployment Unit is installed it populates this table with its contained Execution Units. When the Deployment Unit (that caused this {{object}} to come into existence) is updated, this instance MAY be removed and new instances MAY come into existence. While the Deployment Unit (that caused this {{object}} to come into existence) is being updated, all {{object}} instances associated with the Deployment Unit will be stopped until the update is complete at which time they will be restored to the state that they were in before the update started. When the Deployment Unit (that caused this {{object}} to come into existence) is uninstalled, this instance is removed. Each {{object}} MAY also contain a set of vendor specific parameters displaying status and maintaining configuration that reside under the {{object|Extensions}} object.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "EUID"
+      ]
+    }
+  }
+}

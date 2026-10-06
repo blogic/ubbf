@@ -1,0 +1,179 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.AccessPoint.{i}.Security.",
+  "object": {
+    "path": "Device.WiFi.AccessPoint.{i}.Security.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ModesSupported",
+        "access": "readOnly",
+        "description": "{{list}} Indicates which security modes this {{object|#}} instance is capable of supporting. The {{enum|WPA3-Personal}} value is the same as WPA3-SAE. The {{enum|WPA3-Personal-Transition}} value is the same as WPA2-PSK-WPA3-SAE.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "None",
+          "WEP-64",
+          "WEP-128",
+          "WPA-Personal",
+          "WPA2-Personal",
+          "WPA3-Personal",
+          "WPA-WPA2-Personal",
+          "WPA3-Personal-Transition",
+          "WPA-Enterprise",
+          "WPA2-Enterprise",
+          "WPA3-Enterprise",
+          "WPA-WPA2-Enterprise",
+          "OWE"
+        ]
+      },
+      {
+        "name": "ModeEnabled",
+        "access": "readWrite",
+        "description": "Indicates which security mode is enabled.",
+        "type": "string"
+      },
+      {
+        "name": "EncryptionMode",
+        "access": "readWrite",
+        "description": "The type of encryption in use. When {{param|ModeEnabled}} is one of {{enum|WPA3-Personal|ModesSupported}}, {{enum|WPA3-Personal-Transition|ModesSupported}}, or {{enum|WPA3-Enterprise|ModesSupported}}, {{enum|TKIP}} is not valid, and should not be in the list.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "TKIP",
+          "AES"
+        ],
+        "version": "2.14"
+      },
+      {
+        "name": "WEPKey",
+        "access": "readWrite",
+        "description": "A WEP key expressed as a hexadecimal string. {{param}} is used only if {{param|ModeEnabled}} is set to {{enum|WEP-64|ModeEnabled}} or {{enum|WEP-128|ModeEnabled}}. A 5 byte {{param}} corresponds to security mode {{enum|WEP-64|ModeEnabled}} and a 13 byte {{param}} corresponds to security mode {{enum|WEP-128|ModeEnabled}}.",
+        "secured": true,
+        "type": "hexBinary",
+        "minLength": 5,
+        "maxLength": 5
+      },
+      {
+        "name": "PreSharedKey",
+        "access": "readWrite",
+        "description": "A literal PreSharedKey (PSK) expressed as a hexadecimal string. {{param}} is only used if {{param|ModeEnabled}} is set to {{enum|WPA-Personal|ModeEnabled}} or {{enum|WPA2-Personal|ModeEnabled}} or {{enum|WPA-WPA2-Personal|ModeEnabled}}. If {{param|KeyPassphrase}} is written, then {{param}} is immediately generated. The Controller SHOULD NOT set both the {{param|KeyPassphrase}} and the {{param}} directly (the result of doing this is undefined).",
+        "secured": true,
+        "type": "hexBinary",
+        "maxLength": 32
+      },
+      {
+        "name": "KeyPassphrase",
+        "access": "readWrite",
+        "description": "A passphrase from which the {{param|PreSharedKey}} is to be generated, for {{enum|WPA-Personal|ModeEnabled}} or {{enum|WPA2-Personal|ModeEnabled}} or {{enum|WPA-WPA2-Personal|ModeEnabled}} security modes. If {{param}} is written, then {{param|PreSharedKey}} for WPA2 is immediately generated. The Controller SHOULD NOT set both the {{param}} and the {{param|PreSharedKey}} directly (the result of doing this is undefined). The key is generated as specified by WPA, which uses PBKDF2 from PKCS #5: Password-based Cryptography Specification Version 2.0 ({{bibref|RFC2898}}).",
+        "secured": true,
+        "type": "string",
+        "minLength": 8,
+        "maxLength": 63
+      },
+      {
+        "name": "RekeyingInterval",
+        "access": "readWrite",
+        "description": "The interval (expressed in {{units}}) in which the keys are re-generated. This is applicable to WPA, WPA2 and Mixed (WPA-WPA2) modes in Personal or Enterprise mode (i.e. when {{param|ModeEnabled}} is set to a value other than {{enum|None|ModeEnabled}} or {{enum|WEP-64|ModeEnabled}} or {{enum|WEP-128|ModeEnabled}}.",
+        "default": "3600",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SAEPassphrase",
+        "access": "readWrite",
+        "description": "A passphrase for {{enum|WPA3-Personal|ModeEnabled}} or {{enum|WPA3-Personal-Transition|ModeEnabled}} security modes. NOTE: this parameter is for WPA3. WPA2 {{param|PreSharedKey}} is generated from {{param|KeyPassphrase}}.",
+        "secured": true,
+        "type": "string",
+        "version": "2.13"
+      },
+      {
+        "name": "RadiusServerIPAddr",
+        "access": "readWrite",
+        "description": "The IP Address of the RADIUS server used for WLAN security. {{param}} is only applicable when {{param|ModeEnabled}} is an Enterprise type (i.e. {{enum|WPA-Enterprise|ModeEnabled}}, {{enum|WPA2-Enterprise|ModeEnabled}}, {{enum|WPA3-Enterprise|ModeEnabled}}, or {{enum|WPA-WPA2-Enterprise|ModeEnabled}}).",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "SecondaryRadiusServerIPAddr",
+        "access": "readWrite",
+        "description": "The IP Address of a secondary RADIUS server used for WLAN security. {{param}} is only applicable when {{param|ModeEnabled}} is an Enterprise type (i.e. {{enum|WPA-Enterprise|ModeEnabled}}, {{enum|WPA2-Enterprise|ModeEnabled}}, {{enum|WPA3-Enterprise|ModeEnabled}}, or {{enum|WPA-WPA2-Enterprise|ModeEnabled}}). The client can forward requests to the secondary server in the event that the primary server is down or unreachable, or after a number of tries to the primary server fail, or in a round-robin fashion {{bibref|RFC2865}}.",
+        "type": "dataType:IPAddress",
+        "version": "2.12"
+      },
+      {
+        "name": "RadiusServerPort",
+        "access": "readWrite",
+        "description": "The port number of the RADIUS server used for WLAN security. {{param}} is only applicable when {{param|ModeEnabled}} is an Enterprise type (i.e. {{enum|WPA-Enterprise|ModeEnabled}}, {{enum|WPA2-Enterprise|ModeEnabled}}, {{enum|WPA3-Enterprise|ModeEnabled}}, or {{enum|WPA-WPA2-Enterprise|ModeEnabled}}).",
+        "default": "1812",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SecondaryRadiusServerPort",
+        "access": "readWrite",
+        "description": "The port number of the secondary RADIUS server used for WLAN security. {{param}} is only applicable when {{param|ModeEnabled}} is an Enterprise type (i.e. {{enum|WPA-Enterprise|ModeEnabled}}, {{enum|WPA2-Enterprise|ModeEnabled}}, {{enum|WPA3-Enterprise|ModeEnabled}}, or {{enum|WPA-WPA2-Enterprise|ModeEnabled}}). If this parameter is not implemented, the secondary RADIUS server will use the same port number as the primary RADIUS server.",
+        "default": "1812",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "RadiusSecret",
+        "access": "readWrite",
+        "description": "The secret used for handshaking with the RADIUS server {{bibref|RFC2865}}.",
+        "secured": true,
+        "type": "string"
+      },
+      {
+        "name": "SecondaryRadiusSecret",
+        "access": "readWrite",
+        "description": "The secret used for handshaking with the secondary RADIUS server {{bibref|RFC2865}}. If this parameter is not implemented, the secondary RADIUS server will use the same secret as the primary RADIUS server.",
+        "secured": true,
+        "type": "string",
+        "version": "2.12"
+      },
+      {
+        "name": "MFPConfig",
+        "access": "readWrite",
+        "description": "Management Frame Protection configuration applicable when {{param|ModeEnabled}} is set to {{enum|WPA2-Personal|ModeEnabled}}, {{enum|WPA2-Enterprise|ModeEnabled}}, {{enum|WPA3-Personal|ModeEnabled}}, or {{enum|WPA3-Enterprise|ModeEnabled}}. When in WPA3 modes, {{param}} MUST be set to {{enum|Required}}.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Optional",
+          "Required"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "SPPAMSDU",
+        "access": "readWrite",
+        "description": "Signaling and Payload Protected for A-MSDU frames.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Capable",
+          "Required"
+        ],
+        "version": "2.16"
+      },
+      {
+        "name": "TransitionDisableIndication",
+        "access": "readWrite",
+        "description": "Sets the transition disable indication. When this parameter is enabled with {{param|ModeEnabled}} set to a transition mode, such as {{enum|WPA3-Personal-Transition|ModeEnabled}}, stations connected to the AP are not allowed to transition between the security modes allowed by the transition mode. Stations capable of the more secure security mode allowed by the transition, as defined in {{bibref|WPA3v3.0}}, will always communicate to the AP using it.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.16"
+      }
+    ],
+    "description": "This object contains security related parameters that apply to a CPE acting as an Access Point {{bibref|802.11-2007}}.",
+    "children": []
+  }
+}

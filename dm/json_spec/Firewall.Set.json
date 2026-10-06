@@ -1,0 +1,100 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Firewall.Set.{i}.",
+  "object": {
+    "path": "Device.Firewall.Set.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "SetNumberOfEntries",
+    "version": "2.18",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.18"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Origin",
+        "access": "writeOnceReadOnly",
+        "description": "Indicates the Origin of the {{object}} instance.",
+        "default": "Controller",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "User",
+          "System",
+          "Controller"
+        ]
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "Human-readable name associated with this {{object}} entry.",
+        "type": "string",
+        "maxLength": 31
+      },
+      {
+        "name": "Type",
+        "access": "readWrite",
+        "description": "Describes the intention of the {{object|Rule}} entries and what it contains.",
+        "default": "IPAddresses",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "IPAddresses",
+          "Ports",
+          "MACAddresses"
+        ]
+      },
+      {
+        "name": "IPVersion",
+        "access": "readWrite",
+        "description": "Specifies the IP protocol version, following the definitions in {{bibref|IANA-ipversionnumbers}}. Valid values are: {{range}}.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "ranges": [
+          [
+            4,
+            4
+          ],
+          [
+            6,
+            6
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "version": "2.18"
+      },
+      {
+        "name": "RuleNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object is used for configuring sets of IP, MAC addresses and/or port numbers which can then be used in conjunction with the firewall. It provides a more efficient way to manage large collections of addresses and ports compared to traditional methods of listing them individually within firewall rules.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

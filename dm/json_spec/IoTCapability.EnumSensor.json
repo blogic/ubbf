@@ -1,0 +1,57 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IoTCapability.{i}.EnumSensor.",
+  "object": {
+    "path": "Device.IoTCapability.{i}.EnumSensor.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:IoTEnumSensorType"
+      },
+      {
+        "name": "Description",
+        "access": "readOnly",
+        "description": "Human-readable description of the {{object}}. e.g. a more detailed description of {{param|Type}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Value",
+        "access": "readOnly",
+        "description": "The actual reading value; MUST be a member of the enumeration defined in {{param|ValidValues}}.",
+        "type": "string"
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The date and time when {{param|Value}} has been changed to the current value.",
+        "type": "dateTime"
+      },
+      {
+        "name": "LastContactTime",
+        "access": "readOnly",
+        "description": "The date and time in UTC when the {{object}} has received data.",
+        "type": "dateTime",
+        "version": "2.18"
+      },
+      {
+        "name": "ValidValues",
+        "access": "readOnly",
+        "description": "List of valid values reported from the sensor represented by this {{object}}.",
+        "list": true,
+        "type": "string",
+        "maxLength": 64
+      }
+    ],
+    "description": "EnumSensor is used to reflect the functionality of a sensor that reports explicit non-continuous values.",
+    "children": []
+  }
+}

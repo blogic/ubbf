@@ -1,0 +1,36 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.bSTAMLD.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.bSTAMLD.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "MLDMACAddress",
+        "access": "readOnly",
+        "description": "The Multi-Link Device (MLD) MAC Address of the MLO Capable bSTA. {{bibref|EasyMesh}} Source: Backhaul STA MLD Configuration TLV.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "BSSID",
+        "access": "readOnly",
+        "description": "The MLD MAC address of the upstream APMLD that this bSTAMLD is associated to. {{bibref|EasyMesh}} source: Associated Clients TLV.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "AffiliatedbSTAList",
+        "access": "readOnly",
+        "description": "{{list}} backhaul STA MAC addresses affiliated to this bSTAMLD. {{bibref|EasyMesh}} source: Backhaul STA MLD Configuration TLV.",
+        "list": true,
+        "type": "dataType:MACAddress"
+      }
+    ],
+    "description": "This object represents the Multi-Link Operation (MLO) capable backhaul station (bSTA) operating on this EasyMesh Agent. Only one MLO capable bSTA per EasyMesh Agent is allowed. {{bibref|EasyMesh}} source: Backhaul STA MLD Configuration TLV.",
+    "children": []
+  }
+}

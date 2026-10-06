@@ -1,0 +1,75 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DNS.Zone.{i}.",
+  "object": {
+    "path": "Device.DNS.Zone.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ZoneNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.17"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the DNS zone.",
+        "type": "boolean"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "Domain name that is associated with the zone.",
+        "type": "string",
+        "maxLength": 128
+      },
+      {
+        "name": "Origin",
+        "access": "writeOnceReadOnly",
+        "description": "The mechanism via which the Zone was created. Note: This parameter was changed to writeOnceReadOnly in the Device:2.18 version.",
+        "default": "System",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "User",
+          "System",
+          "Controller"
+        ]
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "Specifies the Layer 3 interface on which the zone should be available. Example: ''Device.IP.Interface.1'' or ''Device.Logical.Interface.1''.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": ".IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "HostNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object specifies Zone file configuration of the DNS server.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

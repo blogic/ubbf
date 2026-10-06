@@ -1,0 +1,65 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IPsec.IKEv2SA.{i}.Stats.",
+  "object": {
+    "path": "Device.IPsec.IKEv2SA.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "BytesSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} handled in the outbound direction by the IKEv2 SA.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BytesReceived",
+        "access": "readOnly",
+        "description": "The total number of {{units}} handled in the inbound direction by the IKEv2 SA.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "PacketsSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} handled in the outbound direction by the IKEv2 SA.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "PacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of {{units}} handled in the inbound direction by the IKEv2 SA.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "ErrorsSent",
+        "access": "readOnly",
+        "description": "The total number of outbound {{units}} from this IKEv2 SA discarded for any reason. This can include {{units}} dropped due to a lack of transmit buffer space. Note that this refers to IKE protocol {{units}}, and not to {{units}} carried by other SAs.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "DecryptionErrors",
+        "access": "readOnly",
+        "description": "The total number of inbound {{units}} to this IKEv2 SA discarded due to decryption errors. Note that this refers to IKEv2 protocol {{units}}, and not to {units}} carried by other SAs.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "IntegrityErrors",
+        "access": "readOnly",
+        "description": "The total number of inbound {{units}} to this IKEv2 SA discarded due to integrity errors. Note that this refers to IKEv2 protocol {{units}}, and not to {{units}} carried by other SAs.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "OtherReceiveErrors",
+        "access": "readOnly",
+        "description": "The total number of inbound {{units}} to this IKEv2 SA discarded for reasons other than decryption or integrity errors. This can include {{units}} dropped due to a lack of receive buffer space. Note that this refers to IKEv2 protocol {{units}}, and not to {{units}} carried by other SAs.",
+        "type": "dataType:StatsCounter32"
+      }
+    ],
+    "description": "Statistics for this IKEv2 Security Association (SA). The CPE MUST reset the IKEv2 SA's Stats parameters (unless otherwise stated in individual object or parameter descriptions) whenever the associated {{param|#.Tunnel}} instance's Stats parameters are reset.",
+    "children": []
+  }
+}

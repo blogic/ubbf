@@ -1,0 +1,170 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Firewall.Policy.{i}.",
+  "object": {
+    "path": "Device.Firewall.Policy.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "PolicyNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.16"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the firewall policy.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this {{object}} entry. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Chain",
+        "access": "readWrite",
+        "description": "The Chain containing Firewall Rules associated with this {{object}} entry. This is applicable for traffic from the {{param|SourceInterface}} to the {{param|DestinationInterface}}. {{param}} only applies when {{param|TargetChain}} is {{enum|Chain|TargetChain}}.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Chain.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "TargetChain",
+        "access": "readWrite",
+        "description": "Action to perform for traffic matching this {{object}} entry. {{enum}}",
+        "default": "Drop",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Drop",
+          "Accept",
+          "Reject",
+          "Chain"
+        ]
+      },
+      {
+        "name": "SourceInterface",
+        "access": "readWrite",
+        "description": "This specifies the L3 source interface associated with the entry.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "DestinationInterface",
+        "access": "readWrite",
+        "description": "This specifies the L3 destination interface associated with the entry.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "IPVersion",
+        "access": "readWrite",
+        "description": "Specifies the IP protocol version, following the definitions in {{bibref|IANA-ipversionnumbers}}. Valid values are: {{range}}.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "ranges": [
+          [
+            4,
+            4
+          ],
+          [
+            6,
+            6
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "version": "2.16"
+      },
+      {
+        "name": "ReverseChain",
+        "access": "readWrite",
+        "description": "The Chain containing Firewall Rules associated with this {{object}} entry. This is applicable for traffic from the {{param|DestinationInterface}} to the {{param|SourceInterface}}. {{param}} only applies when {{param|ReverseTargetChain}} is {{enum|Chain|ReverseTargetChain}}.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Chain.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ReverseTargetChain",
+        "access": "readWrite",
+        "description": "Action to perform for traffic matching this {{object}} entry.",
+        "default": "Drop",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Drop",
+          "Accept",
+          "Reject",
+          "Chain"
+        ]
+      },
+      {
+        "name": "Log",
+        "access": "readWrite",
+        "description": "Enable or disable logging, in a {{object|.DeviceInfo.VendorLogFile}}, of packets matching this {{object}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.19"
+      },
+      {
+        "name": "LogRef",
+        "access": "readWrite",
+        "description": "Specifies the logging rules for this {{object}} entry. The {{param|Log}} parameter MUST be set to {{true}} for this setting to take effect. When {{param|Log}} is {{true}} and {{param}} is {{empty}} or contains an invalid reference, the system MUST treat the configuration as an error and set {{param|Status}} to {{enum|Error_Misconfigured|Status}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Firewall.Log.",
+          "targetType": "row"
+        },
+        "version": "2.19"
+      }
+    ],
+    "description": "Firewall Policy table. When a {{enum|Policy|#.Config}} configuration is selected, {{param|#.PolicyLevel}} selects the currently active entry in this table. Each {{object}} table entry references the {{object|#.Chain}} that contains the rules for this policy.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

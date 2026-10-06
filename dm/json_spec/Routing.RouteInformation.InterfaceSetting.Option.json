@@ -1,0 +1,46 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Routing.RouteInformation.InterfaceSetting.{i}.Option.{i}.",
+  "object": {
+    "path": "Device.Routing.RouteInformation.InterfaceSetting.{i}.Option.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "OptionNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.16"
+      },
+      {
+        "name": "Tag",
+        "access": "readOnly",
+        "description": "Option tag (type) {{bibref|RFC4861|Section 4.6}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Value",
+        "access": "readOnly",
+        "description": "A hexbinary encoded option value {{bibref|RFC4861|Section 4.6}}.",
+        "type": "hexBinary",
+        "minLength": 0,
+        "maxLength": 65535
+      }
+    ],
+    "description": "This object specifies the received options in a Router Advertisement (RA) message {{bibref|RFC4861|Section 4.6}}. This includes support for receiving DNS information in the RA message as described in {{bibref|RFC6106}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

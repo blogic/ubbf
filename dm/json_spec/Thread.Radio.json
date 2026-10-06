@@ -1,0 +1,118 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Thread.Radio.{i}.",
+  "object": {
+    "path": "Device.Thread.Radio.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "RadioNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the interface. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}. Because the interface includes layer 1, the {{enum|LowerLayerDown}} value SHOULD never be used.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the interface as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}. Note: Since {{object}} is a layer 1 interface, it is expected that {{param}} will not be used.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "MaxBitRate",
+        "access": "readOnly",
+        "description": "The maximum upstream and downstream PHY bit rate supported by this interface (expressed in {{units}}).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Upstream",
+        "access": "readOnly",
+        "description": "Indicates whether the interface points towards the Internet ({{true}}) or towards End Devices ({{false}}). For example: * For an Internet Gateway Device, {{param}} will be {{true}} for all WAN interfaces and {{false}} for all LAN interfaces. * For a standalone WiFi Access Point that is connected via Ethernet to an Internet Gateway Device, {{param}} will be {{true}} for the Ethernet interface and {{false}} for the WiFi Radio interface. * For an End Device, {{param}} will be {{true}} for all interfaces.",
+        "type": "boolean"
+      },
+      {
+        "name": "TransmitPowerSupported",
+        "access": "readOnly",
+        "description": "{{list}} List items represent supported transmit power levels as {{units}} of full power. For example, \"0,25,50,75,100\". A -1 item indicates auto mode (automatic decision by CPE). Auto mode allows the {{object}} to adjust transmit power accordingly. For example, this can be useful for power-save modes such as EU-CoC, where the {{object}} can adjust power according to activity in the CPE.",
+        "list": true,
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 100
+      },
+      {
+        "name": "TransmitPower",
+        "access": "readWrite",
+        "description": "Indicates the current transmit power level as a {{units}} of full power. The value MUST be one of the values reported by the {{param|TransmitPowerSupported}} parameter. A value of -1 indicates auto mode (automatic decision by device).",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 100
+      },
+      {
+        "name": "HardwareVersion",
+        "access": "readOnly",
+        "description": "This radio's Thread hardware version.",
+        "type": "string"
+      },
+      {
+        "name": "FirmwareVersion",
+        "access": "readOnly",
+        "description": "This radio's Thread firmware version.",
+        "type": "string"
+      }
+    ],
+    "description": "This object models an 802.15.4 wireless radio ({{bibref|802.15.4-2020}}) on the device (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}).",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

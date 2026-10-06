@@ -1,0 +1,226 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IP.Diagnostics.",
+  "object": {
+    "path": "Device.IP.Diagnostics.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "IPv4PingSupported",
+        "access": "readOnly",
+        "description": "Indicates that Ping over IPv4 is supported.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "IPv6PingSupported",
+        "access": "readOnly",
+        "description": "Indicates that Ping over IPv6 is supported.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "IPv4TraceRouteSupported",
+        "access": "readOnly",
+        "description": "Indicates that TraceRoute over IPv4 is supported.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "IPv6TraceRouteSupported",
+        "access": "readOnly",
+        "description": "Indicates that TraceRoute over IPv6 is supported.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "IPv4DownloadDiagnosticsSupported",
+        "access": "readOnly",
+        "description": "Indicates that Download Diagnostics over IPv4 is supported.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "IPv6DownloadDiagnosticsSupported",
+        "access": "readOnly",
+        "description": "Indicates that Download Diagnostics over IPv6 is supported.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "IPv4UploadDiagnosticsSupported",
+        "access": "readOnly",
+        "description": "Indicates that Upload Diagnostics over IPv4 is supported.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "IPv6UploadDiagnosticsSupported",
+        "access": "readOnly",
+        "description": "Indicates that Upload Diagnostics over IPv6 is supported.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "IPv4UDPEchoDiagnosticsSupported",
+        "access": "readOnly",
+        "description": "Indicates that UDPEcho Diagnostics over IPv4 is supported.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "IPv6UDPEchoDiagnosticsSupported",
+        "access": "readOnly",
+        "description": "Indicates that UDPEcho Diagnostics over IPv6 is supported.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "IPLayerCapacitySupported",
+        "access": "readOnly",
+        "description": "Indicates that IP Layer Capacity measurement is supported.",
+        "type": "boolean",
+        "version": "2.14"
+      },
+      {
+        "name": "IPv4ServerSelectionDiagnosticsSupported",
+        "access": "readOnly",
+        "description": "Indicates that ServerSelection Diagnostics over IPv4 is supported.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "IPv6ServerSelectionDiagnosticsSupported",
+        "access": "readOnly",
+        "description": "Indicates that ServerSelection Diagnostics over IPv6 is supported.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "DownloadTransports",
+        "access": "readOnly",
+        "description": "Supported ''DownloadDiagnostics'' transport protocols for a CPE device.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "HTTP",
+          "FTP"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "DownloadDiagnosticMaxConnections",
+        "access": "readOnly",
+        "description": "Indicates the maximum number of connections that are supported by Download Diagnostics.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "version": "2.12"
+      },
+      {
+        "name": "DownloadDiagnosticsMaxIncrementalResult",
+        "access": "readOnly",
+        "description": "The maximum number of instances in {{object|DownloadDiagnostics().IncrementalResult}} that the implementation will return.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "version": "2.12"
+      },
+      {
+        "name": "UploadTransports",
+        "access": "readOnly",
+        "description": "Supported ''UploadDiagnostics'' transport protocols for a CPE device.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "HTTP",
+          "FTP"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "UploadDiagnosticsMaxConnections",
+        "access": "readOnly",
+        "description": "Indicates the maximum number of connections that are supported by Upload Diagnostics.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "version": "2.12"
+      },
+      {
+        "name": "UploadDiagnosticsMaxIncrementalResult",
+        "access": "readOnly",
+        "description": "The maximum number of instances in {{object|UploadDiagnostics().IncrementalResult}} that the implementation will return.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "version": "2.12"
+      },
+      {
+        "name": "UDPEchoDiagnosticsMaxResults",
+        "access": "readOnly",
+        "description": "The maximum number of rows in {{object|UDPEchoDiagnostics().IndividualPacketResult}} that the CPE will store. If a test would create more rows than {{param}} only the first {{param}} rows are present in {{object|UDPEchoDiagnostics().IndividualPacketResult}}.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "version": "2.12"
+      },
+      {
+        "name": "IPLayerMaxConnections",
+        "access": "readOnly",
+        "description": "Indicates the maximum number of connections that are supported for an IP-Layer Capacity test.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "version": "2.14"
+      },
+      {
+        "name": "IPLayerMaxIncrementalResult",
+        "access": "readOnly",
+        "description": "The maximum number of instances in {{object|IPLayerCapacity().IncrementalResult}} that the implementation will return.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "version": "2.14"
+      },
+      {
+        "name": "IPLayerCapSupportedSoftwareVersion",
+        "access": "readOnly",
+        "description": "Indicates the installed version of the test software. The software version string will be implementation-dependent, and SHOULD identify both the implementation and the version (e.g., UDPST-7.2.1).",
+        "type": "string",
+        "maxLength": 64,
+        "version": "2.15"
+      },
+      {
+        "name": "IPLayerCapSupportedControlProtocolVersion",
+        "access": "readOnly",
+        "description": "Indicates the control protocol version supported by the test software. Refer to {{bibref|TR-471}} for more information.",
+        "type": "string",
+        "maxLength": 64,
+        "version": "2.15"
+      },
+      {
+        "name": "IPLayerCapSupportedMetrics",
+        "access": "readOnly",
+        "description": "Indicates the test metrics from {{bibref|TR-471|Section 5.2}} that are supported by the device. Note that {{bibref|TR-471}} mandates support for and use of IPLR and Sampled RTT.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "IPLR",
+          "Sampled_RTT",
+          "IPDV",
+          "IPRR",
+          "RIPR"
+        ],
+        "version": "2.14"
+      },
+      {
+        "name": "IPLayerCapacityAuthCodeNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.19"
+      }
+    ],
+    "description": "The IP Diagnostics object.",
+    "children": []
+  }
+}

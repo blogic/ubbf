@@ -1,0 +1,72 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.ProcessFaults.ProcessFault.{i}.",
+  "object": {
+    "path": "Device.DeviceInfo.ProcessFaults.ProcessFault.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ProcessFaultNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.17"
+      },
+      {
+        "name": "ProcessID",
+        "access": "readOnly",
+        "description": "Process ID of the process that crashed.",
+        "type": "string"
+      },
+      {
+        "name": "ProcessName",
+        "access": "readOnly",
+        "description": "Process Name of the process that crashed.",
+        "type": "string"
+      },
+      {
+        "name": "FaultLocation",
+        "access": "readOnly",
+        "description": "Specifies the location of where to create and keep the process fault logs. Can either be a relative path or file within the {{param|#.StoragePath}} location.",
+        "type": "string"
+      },
+      {
+        "name": "TimeStamp",
+        "access": "readOnly",
+        "description": "The time when the process fault occurred.",
+        "type": "dateTime"
+      },
+      {
+        "name": "FirmwareVersion",
+        "access": "readOnly",
+        "description": "The firmware version that triggered the process fault.",
+        "type": "string"
+      },
+      {
+        "name": "Arguments",
+        "access": "readOnly",
+        "description": "The command arguments that were used to start to the process.",
+        "type": "string"
+      },
+      {
+        "name": "Reason",
+        "access": "readOnly",
+        "description": "The reason why the process fault occurred.",
+        "type": "string"
+      }
+    ],
+    "description": "Each table entry represents a process fault that is stored on the device.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

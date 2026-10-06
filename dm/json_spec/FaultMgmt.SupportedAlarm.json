@@ -1,0 +1,74 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FaultMgmt.SupportedAlarm.{i}.",
+  "object": {
+    "path": "Device.FaultMgmt.SupportedAlarm.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "SupportedAlarmNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "EventType",
+        "access": "readOnly",
+        "description": "Indicates the type of event.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "ProbableCause",
+        "access": "readOnly",
+        "description": "Qualifies the alarm and provides further information than {{param|EventType}}.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "SpecificProblem",
+        "access": "readOnly",
+        "description": "Provides further qualification on the alarm beyond {{param|EventType}} and {{param|ProbableCause}}. This is vendor defined and will be {{empty}} if the device doesn't support unique indexing of the table using {{param}}. The string can be set to \"*\" to indicate the default case if only a subset of {{param}} are to be contained within the table.",
+        "type": "string",
+        "maxLength": 128
+      },
+      {
+        "name": "PerceivedSeverity",
+        "access": "readOnly",
+        "description": "Indicates the relative level of urgency for operator attention, see {{bibref|ITU-X.733}}. {{enum}} This will be {{empty}} if the device doesn't support unique indexing of the table using {{param}}. The string can be set to \"*\" to indicate the default case if only a subset of {{param}} are to be contained within the table.",
+        "type": "string",
+        "enumerations": [
+          "*",
+          "Cleared",
+          "Critical",
+          "Major",
+          "Minor",
+          "Warning",
+          "Indeterminate"
+        ]
+      },
+      {
+        "name": "ReportingMechanism",
+        "access": "readWrite",
+        "description": "Indicates the reporting mechanism setting of the alarm. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "0 Expedited",
+          "1 Queued",
+          "2 Logged",
+          "3 Disabled"
+        ]
+      }
+    ],
+    "description": "Supported Alarm Entries which can be raised by the device. The instance numbers for this table SHOULD be maintained across firmware upgrades of the device.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "EventType",
+        "ProbableCause",
+        "SpecificProblem",
+        "PerceivedSeverity"
+      ]
+    }
+  }
+}

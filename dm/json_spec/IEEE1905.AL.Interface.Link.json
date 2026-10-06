@@ -1,0 +1,81 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.AL.Interface.{i}.Link.{i}.",
+  "object": {
+    "path": "Device.IEEE1905.AL.Interface.{i}.Link.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "LinkNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "InterfaceId",
+        "access": "readOnly",
+        "description": "MAC Address of the interface of the Neighbor for this {{object}}. This value comes from the neighbor\u2019s Topology discovery message as defined in {{bibref|IEEE1905.1a|Table 6-9: MAC address typeTLV}}.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "IEEE1905Id",
+        "access": "readOnly",
+        "description": "MAC Address of the 1905 AL entity of the Neighbor device on this {{object}}. This value comes from the neighbor\u2019s Topology discovery message as defined in {{bibref|IEEE1905.1a|Table 6-8: AL MAC address type TLV}}.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "MediaType",
+        "access": "readOnly",
+        "description": "Media type of this {{object}}. This value is derived from the neighbor\u2019s Topology response message 1905 device information type TLV Media Type field as defined in {{bibref|IEEE1905.1a|Table 6-12: Media type}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "IEEE 802.3u",
+          "IEEE 802.3ab",
+          "IEEE 802.11b",
+          "IEEE 802.11g",
+          "IEEE 802.11a",
+          "IEEE 802.11n 2.4",
+          "IEEE 802.11n 5.0",
+          "IEEE 802.11ac",
+          "IEEE 802.11ad",
+          "IEEE 802.11af",
+          "IEEE 1901 Wavelet",
+          "IEEE 1901 FFT",
+          "MoCAv1.1",
+          "Generic PHY"
+        ]
+      },
+      {
+        "name": "GenericPhyOUI",
+        "access": "readOnly",
+        "description": "OUI of the Generic Phy networking technology of the interface of the Neighbor for this {{object|#.Link}}. This value is from a Generic Phy response message field as defined in {{bibref|IEEE1905.1a|Tables 6-29: Generic Phy Device Information type TLV}}.",
+        "type": "string",
+        "minLength": 6,
+        "maxLength": 6,
+        "pattern": "[0-9A-F]{6}"
+      },
+      {
+        "name": "GenericPhyVariant",
+        "access": "readOnly",
+        "description": "Variant Index of the Generic Phy networking technology of the interface of the Neighbor for this {{object|#.Link}}. This value is from a Generic Phy response message variant index field as defined in {{bibref|IEEE1905.1a|Tables 6-29: Generic Phy Device Information type TLV}}.",
+        "type": "hexBinary",
+        "minLength": 1,
+        "maxLength": 1
+      },
+      {
+        "name": "GenericPhyURL",
+        "access": "readOnly",
+        "description": "{{datatype}} to the Generic Phy XML Description of the Generic Phy networking technology of the interface of the Neighbor for this {{object|#.Link}}. This value is from a Generic Phy response message URL to Generic Phy field as defined in {{bibref|IEEE1905.1a|Table 6-29: Generic Phy device information type TLV}}.",
+        "type": "dataType:URL"
+      }
+    ],
+    "description": "This object defines the 1905 neighbors and link properties.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "InterfaceId",
+        "IEEE1905Id"
+      ]
+    }
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.AccessPoint.{i}.ANQP.",
+  "object": {
+    "path": "Device.WiFi.AccessPoint.{i}.ANQP.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Specfies whether ANQP Element is sent as part of the wireless frames.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "IPv4AddressAvailability",
+        "access": "readWrite",
+        "description": "Specifies the IPv4 address availabilty field as described in {{bibref|802.11-2020|Table 9-334-IPv4 Address field values}}.",
+        "type": "string",
+        "enumerations": [
+          "NotAvailable",
+          "PublicIPv4",
+          "PortRestrictedIPv4",
+          "SingleNATIPv4",
+          "DoubleNATIPv4",
+          "PortRestrictSingleNATIPv4",
+          "PortRestrictDoubleNATIPv4",
+          "Unknown"
+        ]
+      },
+      {
+        "name": "IPv6AddressAvailability",
+        "access": "readWrite",
+        "description": "Specifies the IPv6 Address Type Availability ANQP-element as described in {{bibref|802.11-2020|Table 9-333-IPv6 Address field values}}.",
+        "type": "string",
+        "enumerations": [
+          "NotAvailable",
+          "Available",
+          "Unknown"
+        ]
+      },
+      {
+        "name": "VenueName",
+        "access": "readWrite",
+        "description": "Specifies venue name which can assist a user in selecting the appropriate BSS of which to become a member as described in {{bibref|802.11-2020|Section 9.4.5.4}}.",
+        "type": "string",
+        "maxLength": 252
+      },
+      {
+        "name": "RoamingConsortiumOIs",
+        "access": "readWrite",
+        "description": "Specifies the list of Roaming Consortiums whose networks are accessible via this AP as described in {{bibref|802.11-2020|Section 9.4.5.7}}.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "NAIRealms",
+        "access": "readWrite",
+        "description": "Specifies the list of network access identifier (NAI) realms corresponding to Subscription Service Provider or other entities whose networks or service are accessible via this AP as described in {{bibref|802.11-2020|Section 9.4.5.10}}.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "Domains",
+        "access": "readWrite",
+        "description": "Specifies the list of one or more domain names of the entity operating the IEEE 802.11 access network as described in {{bibref|802.11-2020|Section 9.4.5.15}}.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "AdviceOfCharges",
+        "access": "readWrite",
+        "description": "Specifies the list of financial advice of charges related to access as described in {{bibref|802.11-2020|Section 9.4.5.21}}.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "Time-based",
+          "Data-volume-based",
+          "Time-and-data-volume-based",
+          "Unlimited"
+        ]
+      },
+      {
+        "name": "NetworkAuthTypes",
+        "access": "readWrite",
+        "description": "Specifies the list of authentication types required when {{param|#.Interworking.ASRA}} is set to {{true}} as described in {{bibref|802.11-2020|Section 9.4.5.23}}.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "0",
+          "1",
+          "2",
+          "3"
+        ]
+      },
+      {
+        "name": "Cellular3GPPNetworkInfo",
+        "access": "readWrite",
+        "description": "Specifies the Public Land Mobile Network (PLMN) IDs which denote the country code (MCC) and network code (MNC) as described in {{bibref|802.11-2020|Section 9.4.5.11 3GPP Cellular Network ANQP-element}}. Example: : ''310410, 310026''",
+        "list": true,
+        "type": "dataType:PLMNId"
+      }
+    ],
+    "description": "This object contains the settings required for configuring the Access Network Query Protocol Information Elements as described in {{bibref|802.11-2020|Section 9.4.5}}.",
+    "children": []
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FAP.ApplicationPlatform.Control.SMS.",
+  "object": {
+    "path": "Device.FAP.ApplicationPlatform.Control.SMS.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "APIEnable",
+        "access": "readWrite",
+        "description": "Enable or disable SMS API exposure on FAP",
+        "type": "boolean"
+      },
+      {
+        "name": "QueueEnable",
+        "access": "readWrite",
+        "description": "Enable or disable Request queueing for the API",
+        "type": "boolean"
+      },
+      {
+        "name": "Queueing",
+        "access": "readWrite",
+        "description": "Determines how FAP handles simultaneous requests from different Applications to SMS API.",
+        "type": "string",
+        "enumerations": [
+          "FiFo",
+          "Priority"
+        ]
+      },
+      {
+        "name": "MaxAPIUsersNumber",
+        "access": "readWrite",
+        "description": "Determines the Max Number of different Applications that can send Requests to SMS API.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "MinSendSMSTimeInterval",
+        "access": "readWrite",
+        "description": "Determines the Minimum Time Interval in {{units}} between two consecutive Send SMS Requests by the same Application.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 3599
+      },
+      {
+        "name": "EnableQuerySMSDeliveryStatus",
+        "access": "readWrite",
+        "description": "Enable or disable \"QuerySMSDeliveryStatus\" Operation on SMS API. When disabled, QuerySMSDeliveryStatus Requests to SMS API are ignored.",
+        "type": "boolean"
+      },
+      {
+        "name": "EnableSubscribeToNotificationsOfMessageSentToApplication",
+        "access": "readWrite",
+        "description": "Enable or disable \"SubscribeToNotificationsOfMessageSentToApplication\" Operation on SMS API. When disabled, SubscribeTo NotificationsOfMessageSentToApplication Requests to SMS API are ignored.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object contains parameters related to the SMS API.",
+    "children": []
+  }
+}

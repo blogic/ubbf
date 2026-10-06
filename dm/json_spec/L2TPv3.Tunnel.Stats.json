@@ -1,0 +1,65 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.L2TPv3.Tunnel.{i}.Stats.",
+  "object": {
+    "path": "Device.L2TPv3.Tunnel.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "KeepAliveSent",
+        "access": "readOnly",
+        "description": "The total number of KeepAlive {{units}} sent out the tunnel.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "KeepAliveReceived",
+        "access": "readOnly",
+        "description": "The total number of KeepAlive {{units}} received by the tunnel.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "BytesSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} sent by the tunnel.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BytesReceived",
+        "access": "readOnly",
+        "description": "The total number of {{units}} received by the tunnel.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "PacketsSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} sent by the tunnel.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "PacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of {{units}} received by the tunnel.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "ErrorsSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} discarded by the tunnel due to any error. This can include packets dropped due to a lack of transmit buffers.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ErrorsReceived",
+        "access": "readOnly",
+        "description": "The total number of {{units}} received by the tunnel that contained errors preventing them from being delivered to a higher-layer protocol.",
+        "type": "dataType:StatsCounter32"
+      }
+    ],
+    "description": "Statistics for this L2TPv3 tunnel, i.e. all traffic that has passed through the tunnel. The device MUST reset the tunnel's Stats parameters (unless otherwise stated in individual object or parameter descriptions) either when the tunnel becomes operationally down due to a previous administrative down (i.e., Status parameter transitions to a disabled state after the tunnel has been disabled) or when the tunnel becomes administratively up (i.e. the Enable parameter transitioned from {{false}} to {{true}}).",
+    "children": []
+  }
+}

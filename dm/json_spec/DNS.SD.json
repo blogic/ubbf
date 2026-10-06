@@ -1,0 +1,60 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DNS.SD.",
+  "object": {
+    "path": "Device.DNS.SD.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "The parameter, when {{true}}, enables the discovery of DNS-SD services hosted by other devices.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of the DNS service discovery.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ],
+        "version": "2.19"
+      },
+      {
+        "name": "AdvertiseNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "ServiceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AdvertisedInterfaces",
+        "access": "readWrite",
+        "description": "{{reference|the {{object|##.IP.Interface}} object instance from which DNS-SD services are advertised}} If this parameter is not supported by an implementation then DNS-SD services are advertised on all LAN interfaces. {{deprecated|2.17|in favor of {{param|Advertise.{i}.Interface}}}} {{obsoleted|2.19}}",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        },
+        "version": "2.12"
+      }
+    ],
+    "description": "This object contains the DNS Service Discovery {{bibref|DNS-SD}} object and parameters necessary to discover services and their associated devices. Upon reboot the the contents of the service table are repopulated. When the DNS-SD service is disabled, the contents of the service table is implementation specific.",
+    "children": []
+  }
+}

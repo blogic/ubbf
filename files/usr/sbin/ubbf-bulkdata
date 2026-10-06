@@ -1,0 +1,790 @@
+#!/usr/bin/ucode
+'use strict';
+
+import * as ubus from 'ubus';
+import * as uloop from 'uloop';
+import * as uci from 'uci';
+import * as fs from 'fs';
+import * as math from 'math';
+import * as ubbf from 'ubbf';
+import { deflate } from 'zlib';
+import { cmd_build } from 'ubbf.utils.process';
+import { dm_event_send } from 'ubbf.utils.events';
+import { log_init, log_info, log_warn, log_err } from 'ubbf.utils.logging';
+
+log_init('ubbf-bulkdata');
+
+const MAX_RETRY_COUNT = 10;
+const DEFAULT_REPORTING_INTERVAL = 86400;
+
+let profiles = {};
+let stats = {
+	reports_sent: 0,
+	reports_failed: 0,
+	bytes_sent: 0,
+	last_collection_time: null
+};
+
+function device_info_get() {
+	let result = ubus.call('bbf-dm', 'get', {
+		paths: [
+			'Device.DeviceInfo.ManufacturerOUI',
+			'Device.DeviceInfo.ProductClass',
+			'Device.DeviceInfo.SerialNumber'
+		]
+	});
+
+	if (!result)
+		return {};
+
+	return result;
+}
+
+function uri_escape(str) {
+	if (!str)
+		return '';
+
+	let result = '';
+	for (let i = 0; i < length(str); i++) {
+		let c = substr(str, i, 1);
+		let code = ord(c);
+
+		if ((code >= 0x30 && code <= 0x39) ||
+		    (code >= 0x41 && code <= 0x5A) ||
+		    (code >= 0x61 && code <= 0x7A) ||
+		    c == '-' || c == '_' || c == '.' || c == '~') {
+			result += c;
+		} else {
+			result += sprintf('%%%02X', code);
+		}
+	}
+	return result;
+}
+
+function query_string_build(profile) {
+	let device_info = device_info_get();
+	let params = [];
+
+	push(params, sprintf('oui=%s', uri_escape(device_info['Device.DeviceInfo.ManufacturerOUI'] ?? '')));
+	push(params, sprintf('pc=%s', uri_escape(device_info['Device.DeviceInfo.ProductClass'] ?? '')));
+	push(params, sprintf('sn=%s', uri_escape(device_info['Device.DeviceInfo.SerialNumber'] ?? '')));
+
+	if (profile.http_uri_params) {
+		for (let param in profile.http_uri_params) {
+			let parts = split(param, '=');
+			if (length(parts) != 2)
+				continue;
+
+			let name = parts[0];
+			let reference = parts[1];
+
+			let result = ubus.call('bbf-dm', 'get', { paths: [reference] });
+			let value = result?.[reference] ?? '';
+
+			push(params, sprintf('%s=%s', uri_escape(name), uri_escape(value)));
+		}
+	}
+
+	return join('&', params);
+}
+
+function parameters_collect(profile) {
+	if (!profile.parameters || !length(profile.parameters))
+		return {};
+
+	let collected = {};
+
+	for (let param in profile.parameters) {
+		let parts = split(param, ':');
+		let name = length(parts) > 1 ? parts[0] : null;
+		let reference = length(parts) > 1 ? parts[1] : parts[0];
+
+		let result = ubus.call('bbf-dm', 'get', { paths: [reference] });
+		if (!result || !length(keys(result)))
+			continue;
+
+		for (let path, value in result) {
+			let output_name = path;
+			if (name) {
+				let suffix = substr(path, length(reference));
+				output_name = name + suffix;
+			}
+			collected[output_name] = value;
+		}
+	}
+
+	return collected;
+}
+
+function timestamp_format(timestamp, format) {
+	if (format == 'None')
+		return null;
+
+	if (format == 'ISO-8601')
+		return ubbf.iso8601_format(timestamp);
+
+	return timestamp;
+}
+
+function json_report_generate(profile) {
+	let now = time();
+	let params = parameters_collect(profile);
+
+	let report_entry = {};
+
+	let ts = timestamp_format(now, profile.json_report_timestamp ?? 'Unix-Epoch');
+	if (ts != null)
+		report_entry.CollectionTime = ts;
+
+	for (let path, value in params)
+		report_entry[path] = value;
+
+	let reports = [report_entry];
+
+	if (profile.retained_reports) {
+		for (let retained in profile.retained_reports)
+			push(reports, retained);
+	}
+
+	stats.last_collection_time = ubbf.iso8601_format(now);
+
+	return sprintf('%J', { Report: reports });
+}
+
+function csv_field_escape(value, field_sep, escape_char) {
+	if (value == null)
+		return '';
+
+	let str = sprintf('%s', value);
+	let needs_escape = false;
+
+	if (index(str, field_sep) >= 0 || index(str, escape_char) >= 0 ||
+	    index(str, '\n') >= 0 || index(str, '\r') >= 0)
+		needs_escape = true;
+
+	if (!needs_escape)
+		return str;
+
+	let escaped = '';
+	for (let i = 0; i < length(str); i++) {
+		let c = substr(str, i, 1);
+		if (c == escape_char)
+			escaped += escape_char + escape_char;
+		else
+			escaped += c;
+	}
+
+	return escape_char + escaped + escape_char;
+}
+
+function csv_report_generate(profile) {
+	let now = time();
+	let params = parameters_collect(profile);
+
+	let field_sep = profile.csv_field_separator ?? ',';
+	let row_sep = profile.csv_row_separator ?? '\n';
+	let escape_char = profile.csv_escape_character ?? '"';
+	let report_format = profile.csv_report_format ?? 'ParameterPerColumn';
+	let row_timestamp = profile.csv_row_timestamp ?? 'Unix-Epoch';
+
+	let lines = [];
+	let ts = timestamp_format(now, row_timestamp);
+
+	if (report_format == 'ParameterPerRow') {
+		let header_fields = ['CollectionTime', 'ParameterName', 'ParameterValue'];
+		push(lines, join(field_sep, header_fields));
+
+		for (let path, value in params) {
+			let row_fields = [];
+			if (ts != null)
+				push(row_fields, csv_field_escape(ts, field_sep, escape_char));
+			else
+				push(row_fields, '');
+			push(row_fields, csv_field_escape(path, field_sep, escape_char));
+			push(row_fields, csv_field_escape(value, field_sep, escape_char));
+			push(lines, join(field_sep, row_fields));
+		}
+	} else {
+		let param_names = sort(keys(params));
+
+		let header_fields = [];
+		if (ts != null)
+			push(header_fields, 'CollectionTime');
+		for (let name in param_names)
+			push(header_fields, csv_field_escape(name, field_sep, escape_char));
+		push(lines, join(field_sep, header_fields));
+
+		let row_fields = [];
+		if (ts != null)
+			push(row_fields, csv_field_escape(ts, field_sep, escape_char));
+		for (let name in param_names)
+			push(row_fields, csv_field_escape(params[name], field_sep, escape_char));
+		push(lines, join(field_sep, row_fields));
+	}
+
+	if (profile.retained_reports) {
+		for (let retained in profile.retained_reports)
+			push(lines, retained);
+	}
+
+	stats.last_collection_time = ubbf.iso8601_format(now);
+
+	return join(row_sep, lines) + row_sep;
+}
+
+function http_report_send(profile, report) {
+	let url = profile.http_url;
+	if (!url) {
+		log_err('profile %s: no HTTP URL configured', profile.alias);
+		return false;
+	}
+
+	let query_string = query_string_build(profile);
+	if (query_string)
+		url = url + '?' + query_string;
+
+	let body = report;
+	let content_encoding = null;
+
+	if (profile.http_compression == 'GZIP') {
+		let compressed = deflate(report, true);
+		if (compressed) {
+			body = compressed;
+			content_encoding = 'gzip';
+		} else {
+			log_warn('profile %s: GZIP compression failed, sending uncompressed', profile.alias);
+		}
+	}
+
+	let file_ext = (profile.encoding_type == 'CSV') ? 'csv' : 'json';
+	let tmp_file = sprintf('/tmp/bulkdata-%s.%s', profile.alias, file_ext);
+	if (fs.writefile(tmp_file, body) == null) {
+		log_err('profile %s: failed to write report to %s', profile.alias, tmp_file);
+		return false;
+	}
+
+	let cmd_parts = [
+		{raw: 'curl'},
+		'--fail', '--silent', '--show-error',
+		'-X', (profile.http_method == 'PUT') ? 'PUT' : 'POST',
+	];
+
+	if (profile.encoding_type == 'CSV') {
+		push(cmd_parts, '-H', 'Content-Type: text/csv; charset=UTF-8');
+		push(cmd_parts, '-H', sprintf('BBF-Report-Format: %s', profile.csv_report_format ?? 'ParameterPerColumn'));
+	} else {
+		push(cmd_parts, '-H', 'Content-Type: application/json; charset=UTF-8');
+		push(cmd_parts, '-H', 'BBF-Report-Format: NameValuePair');
+	}
+
+	if (content_encoding)
+		push(cmd_parts, '-H', sprintf('Content-Encoding: %s', content_encoding));
+
+	if (profile.http_use_date_header) {
+		let now = time();
+		let tm = gmtime(now);
+		// ucode gmtime() numbers weekdays 1-7 with Sunday = 7
+		let days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+		let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+		let date_header = sprintf('%s, %02d %s %04d %02d:%02d:%02d GMT',
+			days[tm.wday - 1], tm.mday, months[tm.mon - 1], tm.year,
+			tm.hour, tm.min, tm.sec);
+		push(cmd_parts, '-H', sprintf('Date: %s', date_header));
+	}
+
+	if (profile.http_username && profile.http_password)
+		push(cmd_parts, '-u', profile.http_username + ':' + profile.http_password);
+	else if (profile.http_username)
+		push(cmd_parts, '-u', profile.http_username);
+
+	push(cmd_parts, '--max-time', 60);
+	push(cmd_parts, '--connect-timeout', 30);
+	push(cmd_parts, '--data-binary', '@' + tmp_file);
+	push(cmd_parts, url);
+	push(cmd_parts, {raw: '2>&1'});
+
+	let cmd = cmd_build(cmd_parts);
+	log_info('profile %s: sending report to %s', profile.alias, profile.http_url);
+
+	let p = fs.popen(cmd, 'r');
+	if (!p) {
+		log_err('profile %s: failed to execute curl', profile.alias);
+		fs.unlink(tmp_file);
+		return false;
+	}
+
+	let output = p.read('all');
+	let exitcode = p.close();
+
+	fs.unlink(tmp_file);
+
+	if (exitcode == 0) {
+		log_info('profile %s: report sent successfully', profile.alias);
+		stats.reports_sent++;
+		stats.bytes_sent += length(body);
+		return true;
+	}
+
+	log_err('profile %s: HTTP request failed (exit %d): %s', profile.alias, exitcode, output);
+	stats.reports_failed++;
+	return false;
+}
+
+function mqtt_report_send(profile, report) {
+	if (!profile.mqtt_broker) {
+		log_err('profile %s: no MQTT broker configured', profile.alias);
+		return false;
+	}
+
+	if (!profile.mqtt_topic) {
+		log_err('profile %s: no MQTT topic configured', profile.alias);
+		return false;
+	}
+
+	let tmp_file = sprintf('/tmp/bulkdata-%s.json', profile.alias);
+	if (fs.writefile(tmp_file, report) == null) {
+		log_err('profile %s: failed to write report to %s', profile.alias, tmp_file);
+		return false;
+	}
+
+	let cmd_parts = [
+		{raw: 'mosquitto_pub'},
+		'-h', profile.mqtt_broker,
+		'-p', profile.mqtt_port ?? 1883,
+		'-t', profile.mqtt_topic,
+		'-q', profile.mqtt_qos ?? 0,
+	];
+
+	if (profile.mqtt_retain)
+		push(cmd_parts, '-r');
+
+	push(cmd_parts, '-i', profile.mqtt_client_id
+	                   ?? ('ubbf-bulkdata-' + profile.alias));
+
+	if (profile.mqtt_username)
+		push(cmd_parts, '-u', profile.mqtt_username);
+	if (profile.mqtt_password)
+		push(cmd_parts, '-P', profile.mqtt_password);
+
+	if (profile.mqtt_tls)
+		push(cmd_parts, '--capath', '/etc/ssl/certs');
+
+	push(cmd_parts, '-f', tmp_file);
+	push(cmd_parts, {raw: '2>&1'});
+
+	let cmd = cmd_build(cmd_parts);
+	log_info('profile %s: publishing to %s:%d topic %s',
+		profile.alias, profile.mqtt_broker, profile.mqtt_port, profile.mqtt_topic);
+
+	let p = fs.popen(cmd, 'r');
+	if (!p) {
+		log_err('profile %s: failed to execute mosquitto_pub', profile.alias);
+		fs.unlink(tmp_file);
+		return false;
+	}
+
+	let output = p.read('all');
+	let exitcode = p.close();
+
+	fs.unlink(tmp_file);
+
+	if (exitcode == 0) {
+		log_info('profile %s: report published successfully', profile.alias);
+		stats.reports_sent++;
+		stats.bytes_sent += length(report);
+		return true;
+	}
+
+	log_err('profile %s: MQTT publish failed (exit %d): %s', profile.alias, exitcode, output);
+	stats.reports_failed++;
+	return false;
+}
+
+function uspevt_report_send(profile, report) {
+	if (!profile.instance) {
+		log_err('profile %s: unknown TR-181 instance, cannot emit Push! event', profile.alias);
+		stats.reports_failed++;
+		return false;
+	}
+
+	let event_path = sprintf('Device.BulkData.Profile.%d.Push!', profile.instance);
+
+	dm_event_send(event_path, { Data: report });
+
+	log_info('profile %s: report sent via USPEventNotif', profile.alias);
+	stats.reports_sent++;
+	stats.bytes_sent += length(report);
+	return true;
+}
+
+function retry_wait_calculate(profile) {
+	let m = profile.http_retry_min_interval ?? 5;
+	let k = profile.http_retry_multiplier ?? 2000;
+	let retry_count = profile.retry_count ?? 1;
+
+	if (retry_count > MAX_RETRY_COUNT)
+		retry_count = MAX_RETRY_COUNT;
+	if (retry_count < 1)
+		retry_count = 1;
+
+	// the multiplier is in thousandths; 1000.0 avoids integer division
+	let min_seconds = m * math.pow(k / 1000.0, retry_count - 1);
+	let max_seconds = m * math.pow(k / 1000.0, retry_count);
+
+	let range = int(max_seconds - min_seconds);
+	let wait_time = min_seconds;
+	if (range > 0)
+		wait_time += math.rand() % range;
+
+	return int(wait_time);
+}
+
+function next_report_time_calculate(profile) {
+	let now = time();
+	let interval = profile.reporting_interval ?? DEFAULT_REPORTING_INTERVAL;
+
+	let time_ref = profile.time_reference;
+	if (!time_ref || time_ref == 0)
+		time_ref = math.rand() % 86400;
+
+	// TimeReference may be in the future; ucode % truncates towards zero, normalise into [0, interval)
+	let elapsed = ((now - time_ref) % interval + interval) % interval;
+	let wait_seconds = interval - elapsed;
+
+	return wait_seconds;
+}
+
+let profile_report_send;
+
+function profile_timer_set(profile, timeout_ms) {
+	if (profile.timer) {
+		profile.timer.set(timeout_ms);
+	} else {
+		let self = profile;
+		profile.timer = uloop.timer(timeout_ms, function() {
+			profile_report_send(self);
+		});
+	}
+}
+
+function profile_timer_schedule(profile) {
+	let wait_seconds = next_report_time_calculate(profile);
+	log_info('profile %s: next report in %d seconds', profile.alias, wait_seconds);
+	profile_timer_set(profile, wait_seconds * 1000);
+}
+
+profile_report_send = function(profile) {
+	if (!profile.enable) {
+		log_info('profile %s: disabled, skipping report', profile.alias);
+		profile_timer_schedule(profile);
+		return;
+	}
+
+	let report;
+	if (profile.encoding_type == 'CSV')
+		report = csv_report_generate(profile);
+	else
+		report = json_report_generate(profile);
+
+	let success = false;
+
+	if (profile.protocol == 'HTTP')
+		success = http_report_send(profile, report);
+	else if (profile.protocol == 'MQTT')
+		success = mqtt_report_send(profile, report);
+	else if (profile.protocol == 'USPEventNotif')
+		success = uspevt_report_send(profile, report);
+	else
+		log_warn('profile %s: unsupported protocol %s', profile.alias, profile.protocol);
+
+	if (success) {
+		profile.is_working = true;
+		profile.retry_count = 0;
+		profile.retained_reports = null;
+		profile_timer_schedule(profile);
+	} else {
+		profile.is_working = false;
+
+		if (profile.http_retry_enable) {
+			profile.retry_count = (profile.retry_count ?? 0) + 1;
+
+			if (profile.retry_count <= MAX_RETRY_COUNT) {
+				let wait = retry_wait_calculate(profile);
+				log_info('profile %s: scheduling retry %d in %d seconds',
+					profile.alias, profile.retry_count, wait);
+
+				let retained_entry;
+				if (profile.encoding_type == 'CSV') {
+					// report layout: header row, fresh data rows,
+					// previously retained rows, trailing row separator;
+					// retained entries may span multiple physical rows
+					let row_sep = profile.csv_row_separator ?? '\n';
+					let rows = split(report, row_sep);
+					let tail_rows = 1;
+					for (let retained in profile.retained_reports ?? [])
+						tail_rows += length(split(retained, row_sep));
+					let fresh = slice(rows, 1, length(rows) - tail_rows);
+					retained_entry = length(fresh) ? join(row_sep, fresh) : null;
+				} else {
+					retained_entry = json(report)?.Report?.[0];
+				}
+
+				if (retained_entry != null) {
+					profile.retained_reports ??= [];
+					// TR-181: -1 retains as many as possible, 0 retains
+					// nothing, overflow evicts the oldest reports first
+					let cap = profile.number_retained_reports ?? 0;
+					if (cap != 0) {
+						push(profile.retained_reports, retained_entry);
+						while (cap > 0 && length(profile.retained_reports) > cap)
+							shift(profile.retained_reports);
+					}
+				}
+
+				profile_timer_set(profile, wait * 1000);
+				return;
+			}
+		}
+
+		profile_timer_schedule(profile);
+	}
+};
+
+function profile_start(profile) {
+	profile.is_working = true;
+	profile.retry_count = 0;
+	profile.retained_reports = null;
+	profile_timer_schedule(profile);
+	log_info('profile %s: started', profile.alias);
+}
+
+function profile_stop(profile) {
+	if (profile.timer) {
+		profile.timer.cancel();
+		profile.timer = null;
+	}
+	log_info('profile %s: stopped', profile.alias);
+}
+
+/**
+ * Parses an integer UCI option with a real default. `int(x) ?? def`
+ * cannot work: int(null) is 0 and int('garbage') is NaN, neither of
+ * which triggers the nullish fallback.
+ */
+function int_option(value, def) {
+	if (value == null)
+		return def;
+	let n = int(value);
+	return (n == n) ? n : def;
+}
+
+function config_load() {
+	let cursor = uci.cursor();
+	if (!cursor.load('bulkdata'))
+		return false;
+
+	let global_config = cursor.get_all('bulkdata', 'global');
+	if (!global_config?.enable)
+		return false;
+
+	let all_sections = cursor.get_all('bulkdata');
+	for (let section_name, section in all_sections) {
+		if (section['.type'] != 'profile')
+			continue;
+
+		let alias = section.alias;
+		if (!alias) {
+			log_warn('profile without alias, skipping');
+			continue;
+		}
+
+		let instance = int(section.instance);
+		if (!(instance >= 1)) {
+			log_warn('profile %s: no TR-181 instance in UCI, Push! events unavailable', alias);
+			instance = 0;
+		}
+
+		let time_reference = section.time_reference ? usp_datetime_to_unix(section.time_reference) : 0;
+		// Unknown Time (0001-01-01T00:00:00Z) parses to a negative epoch; treat as no reference
+		if (time_reference < 0)
+			time_reference = 0;
+
+		profiles[alias] = {
+			instance: instance,
+			alias: alias,
+			name: section.name,
+			enable: (section.enable == '1'),
+			protocol: section.protocol ?? 'HTTP',
+			encoding_type: section.encoding_type ?? 'JSON',
+			reporting_interval: int_option(section.reporting_interval, DEFAULT_REPORTING_INTERVAL),
+			time_reference: time_reference,
+			number_retained_reports: int_option(section.number_retained_reports, 0),
+
+			http_url: section.http_url,
+			http_username: section.http_username,
+			http_password: section.http_password,
+			http_method: section.http_method ?? 'POST',
+			http_compression: section.http_compression ?? 'None',
+			http_use_date_header: (section.http_use_date_header != '0'),
+			http_retry_enable: (section.http_retry_enable == '1'),
+			http_retry_min_interval: int_option(section.http_retry_min_interval, 5),
+			http_retry_multiplier: int_option(section.http_retry_multiplier, 2000),
+			http_uri_params: section.http_uri_param,
+
+			mqtt_broker: section.mqtt_broker,
+			mqtt_port: int_option(section.mqtt_port, 1883),
+			mqtt_username: section.mqtt_username,
+			mqtt_password: section.mqtt_password,
+			mqtt_client_id: section.mqtt_client_id,
+			mqtt_tls: (section.mqtt_tls == '1'),
+			mqtt_topic: section.mqtt_topic,
+			mqtt_qos: int_option(section.mqtt_qos, 0),
+			mqtt_retain: (section.mqtt_retain == '1'),
+
+			json_report_format: section.json_report_format ?? 'NameValuePair',
+			json_report_timestamp: section.json_report_timestamp ?? 'Unix-Epoch',
+
+			csv_field_separator: section.csv_field_separator ?? ',',
+			csv_row_separator: section.csv_row_separator ?? '\n',
+			csv_escape_character: section.csv_escape_character ?? '"',
+			csv_report_format: section.csv_report_format ?? 'ParameterPerColumn',
+			csv_row_timestamp: section.csv_row_timestamp ?? 'Unix-Epoch',
+
+			parameters: section.parameter,
+
+			is_working: true,
+			retry_count: 0,
+			retained_reports: null,
+			timer: null
+		};
+
+		log_info('loaded profile %s: protocol=%s interval=%d',
+			alias, profiles[alias].protocol, profiles[alias].reporting_interval);
+	}
+
+	return true;
+}
+
+function status_handler(req) {
+	let profiles_active = 0;
+	let profiles_error = 0;
+
+	for (let alias, profile in profiles) {
+		if (profile.enable) {
+			profiles_active++;
+			if (!profile.is_working)
+				profiles_error++;
+		}
+	}
+
+	return {
+		running: true,
+		profiles_active: profiles_active,
+		profiles_error: profiles_error,
+		error: profiles_error > 0 ? 'One or more profiles have errors' : null
+	};
+}
+
+function profile_status_handler(req) {
+	let alias = req.args?.alias;
+	if (!alias)
+		return { error: 'alias required' };
+
+	let profile = profiles[alias];
+	if (!profile)
+		return { error: 'profile not found' };
+
+	return {
+		alias: profile.alias,
+		is_working: profile.is_working,
+		retry_count: profile.retry_count ?? 0,
+		retained_reports: length(profile.retained_reports ?? [])
+	};
+}
+
+function force_report_handler(req) {
+	let alias = req.args?.alias;
+	if (!alias)
+		return { error: 'alias required' };
+
+	let profile = profiles[alias];
+	if (!profile)
+		return { error: 'profile not found' };
+
+	if (profile.timer)
+		profile.timer.set(1);
+
+	return { success: true };
+}
+
+function stats_handler(req) {
+	return {
+		reports_sent: stats.reports_sent,
+		reports_failed: stats.reports_failed,
+		bytes_sent: stats.bytes_sent,
+		last_collection_time: stats.last_collection_time
+	};
+}
+
+function reload_handler(req) {
+	log_info('reloading configuration');
+
+	for (let alias, profile in profiles)
+		profile_stop(profile);
+
+	profiles = {};
+
+	if (!config_load()) {
+		log_warn('no configuration found or bulkdata disabled');
+		return { success: false, error: 'no configuration' };
+	}
+
+	for (let alias, profile in profiles) {
+		if (profile.enable)
+			profile_start(profile);
+	}
+
+	log_info('reloaded with %d profiles', length(profiles));
+	return { success: true, profiles: length(profiles) };
+}
+
+uloop.init();
+
+log_info('starting');
+
+if (!config_load()) {
+	log_warn('no configuration found or bulkdata disabled');
+	exit(0);
+}
+
+ubus.publish('ubbf-bulkdata', {
+	status: {
+		call: status_handler,
+		args: {}
+	},
+	profile_status: {
+		call: profile_status_handler,
+		args: { alias: '' }
+	},
+	force_report: {
+		call: force_report_handler,
+		args: { alias: '' }
+	},
+	stats: {
+		call: stats_handler,
+		args: {}
+	},
+	reload: {
+		call: reload_handler,
+		args: {}
+	}
+});
+
+for (let alias, profile in profiles) {
+	if (profile.enable)
+		profile_start(profile);
+}
+
+log_info('running with %d profiles', length(profiles));
+
+uloop.run();

@@ -1,0 +1,1048 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MoCA.Interface.{i}.",
+  "object": {
+    "path": "Device.MoCA.Interface.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "InterfaceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the interface. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "default": "true",
+        "defaultType": "factory",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}. Because the interface includes layer 1, the {{enum|LowerLayerDown}} value SHOULD never be used.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the interface as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}. Note: Since {{object}} is a layer 1 interface, it is expected that {{param}} will not be used.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Upstream",
+        "access": "readOnly",
+        "description": "Indicates whether the interface points towards the Internet ({{true}}) or towards End Devices ({{false}}). For example: * For an Internet Gateway Device, {{param}} will be {{true}} for all WAN interfaces and {{false}} for all LAN interfaces. * For a standalone WiFi Access Point that is connected via Ethernet to an Internet Gateway Device, {{param}} will be {{true}} for the Ethernet interface and {{false}} for the WiFi Radio interface. * For an End Device, {{param}} will be {{true}} for all interfaces.",
+        "type": "boolean"
+      },
+      {
+        "name": "MaxBitRate",
+        "access": "readOnly",
+        "description": "The maximum upstream and downstream PHY bit rate supported by this interface (expressed in {{units}}). This parameter MUST NOT be implemented for MoCA 2.0 because it doesn't map to a MIB object.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AccessControlNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "RlapmNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "SapmNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "MeshNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "BridgeNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "MeshScModNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "The MAC Address of the interface. Note: This is not necessarily the same as the Ethernet header source or destination MAC address, which is associated with the IP interface and is modeled via the {{param|##.Ethernet.Link.{i}.MACAddress}} parameter.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "FirmwareVersion",
+        "access": "readOnly",
+        "description": "This interface's firmware version. This parameter is based on ''mocaIfSoftwareVersion'' from {{bibref|MOCA11-MIB}}.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "MaxIngressBW",
+        "access": "readOnly",
+        "description": "The maximum bandwidth of this interface for flows onto the MoCA network. This parameter is based on ''mocaIfMaxIngressNodeBw'' from {{bibref|MOCA11-MIB}}.",
+        "type": "dataType:MocaMacRate"
+      },
+      {
+        "name": "MaxEgressBW",
+        "access": "readOnly",
+        "description": "The maximum bandwidth of this interface for flows from the MoCA network. This parameter is based on ''mocaIfMaxEgressNodeBw'' from {{bibref|MOCA11-MIB}}.",
+        "type": "dataType:MocaMacRate"
+      },
+      {
+        "name": "HighestVersion",
+        "access": "readOnly",
+        "description": "Identifies the highest MoCA version that this interface supports. This element MUST be in the form of dot-delimited integers, where each successive integer represents a more minor category of variation. For example, 1.0, where the components mean major.minor revision number. {{pattern}} This parameter is based on ''mocaIfMocaVersion'' from {{bibref|MOCA11-MIB}}.",
+        "type": "string",
+        "maxLength": 64,
+        "pattern": "\\d+(\\.\\d+)*"
+      },
+      {
+        "name": "CurrentVersion",
+        "access": "readOnly",
+        "description": "Identifies the MoCA version that the MoCA network is currently running. This element MUST be in the form of dot-delimited integers, where each successive integer represents a more minor category of variation. For example, 1.0, where the components mean major.minor revision number. {{pattern}} This parameter is based on ''mocaIfNetworkVersion'' from {{bibref|MOCA11-MIB}}.",
+        "type": "string",
+        "maxLength": 64,
+        "pattern": "\\d+(\\.\\d+)*"
+      },
+      {
+        "name": "NetworkCoordinator",
+        "access": "readOnly",
+        "description": "The Node ID of the current Network Coordinator (NC) for the MoCA network. This parameter is based on ''mocaIfNC'' from {{bibref|MOCA11-MIB}}.",
+        "type": "dataType:MocaNodeID"
+      },
+      {
+        "name": "NodeID",
+        "access": "readOnly",
+        "description": "The Node ID of this interface. This parameter is based on ''mocaIfNodeID'' from {{bibref|MOCA11-MIB}}.",
+        "type": "dataType:MocaNodeID"
+      },
+      {
+        "name": "MaxNodes",
+        "access": "readOnly",
+        "description": "The maximum network node capability supported by the interface. If {{param}} is {{true}} then the interface supports 16 nodes (the maximum for a MoCA 1.1 network). If {{param}} is false then the interface supports 8 nodes (the maximum for a MoCA 1.0 network). This parameter MUST NOT be implemented for MoCA 2.0 because it doesn't map to a MIB object.",
+        "type": "boolean"
+      },
+      {
+        "name": "NumNodes",
+        "access": "readOnly",
+        "description": "The numbers of 1's in the GCD_BITMASK field reported in Type I Probe Reports. This value corresponds to the number of MoCA Nodes that this MoCA Node communicates to in the MoCA network. This value may be smaller than the number of MoCA Nodes reported by the NC Node. See {{bibref|MoCAv1.1|Section 3.6.3.2}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 16,
+        "version": "2.17"
+      },
+      {
+        "name": "PreferredNC",
+        "access": "readWrite",
+        "description": "Whether this interface is a preferred Network Coordinator (NC). This parameter is based on ''mocaIfPreferredNC'' from {{bibref|MOCA11-MIB}}.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean"
+      },
+      {
+        "name": "BackupNC",
+        "access": "readOnly",
+        "description": "The Node ID of the backup Network Coordinator node. This parameter is based on ''mocaIfBackupNC'' from {{bibref|MOCA11-MIB}}.",
+        "type": "dataType:MocaNodeID"
+      },
+      {
+        "name": "PrivacyEnabledSetting",
+        "access": "readWrite",
+        "description": "The configured privacy mode. This indicates whether link-layer security is enabled ({{true}}) or disabled ({{false}}) for network admission.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean"
+      },
+      {
+        "name": "PrivacyEnabled",
+        "access": "readOnly",
+        "description": "Indicates whether link-layer security is enabled or disabled. This parameter is based on ''mocaIfPrivacyEnable'' from {{bibref|MOCA11-MIB}}. {{deprecated|2.17|because it and {{param|PrivacyEnabledSetting}} are associated with the same underlying MIB object and it is therefore unnecessary. If implemented, it MUST return the same value as {{param|PrivacyEnabledSetting}}}} {{obsoleted|2.19}}",
+        "type": "boolean"
+      },
+      {
+        "name": "AccessControlEnable",
+        "access": "readWrite",
+        "description": "Enable MAC address access control on the MoCA interface if this value is {{true}}. Disable MAC address access control on the MoCA interface if this value is {{false}}. Access control applies to subsequent MoCA Node admission.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "PhyThreshold",
+        "access": "readWrite",
+        "description": "The minimum PHY rate. If transmit PHY rate between all pairs of MoCA Nodes are greater than or equal to this value, and subsequently the transmit PHY rate of one pair of MoCA Nodes is less than this value, send {{event|BelowPhyThresholdTrap!}} if {{param|PhyThresholdTrapEnable}} is {{true}}. If transmit PHY rate between one or more pairs of MoCA Nodes are less than this value, and subsequently the transmit PHY rate between all pairs of MoCA Nodes are greater than or equal to this value, send {{event|AbovePhyThresholdTrap!}} if {{param|PhyThresholdTrapEnable}} is {{true}}. See {{bibref|MoCAv2.0|Section 3, Unusable Link definition}}.",
+        "default": "123",
+        "defaultType": "factory",
+        "type": "dataType:MocaPhyRate",
+        "version": "2.17"
+      },
+      {
+        "name": "PhyThresholdTrapEnable",
+        "access": "readWrite",
+        "description": "If transmit PHY rate between all pairs of MoCA Nodes are greater than or equal to {{param|PhyThreshold}}, and subsequently the transmit PHY rate of one pair of MoCA Node is less than {{param|PhyThreshold}}, send {{event|BelowPhyThresholdTrap!}} if this value is {{true}}, do not send {{event|BelowPhyThresholdTrap!}} if this value is {{false}}. If transmit PHY rate between one or more pairs of MoCA Nodes are less than {{param|PhyThreshold}}, and subsequently the transmit PHY rate between all pairs of MoCA Nodes are greater than or equal to {{param|PhyThreshold}}, send {{event|AbovePhyThresholdTrap!}} if this value is {{true}}, do not send {{event|AbovePhyThresholdTrap!}} if this value is {{false}}. Only one MoCA Node in the MoCA network should set {{param}} to {{true}}. Only one MoCA Node in the MoCA network should set {{param}} to {{true}}.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "StatusChangeEnable",
+        "access": "readWrite",
+        "description": "If {{param}} is {{true}} and {{param|Status}} changes, then the trap {{event|StatusChangeTrap!}} is sent.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "NumNodesChangeEnable",
+        "access": "readWrite",
+        "description": "If {{param}} is {{true}} and {{param|NumNodes}} changes, then the trap {{event|NumNodesChangeTrap!}} is sent. Only one MoCA Node in the MoCA network should set {{param}} to {{true}}.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "TpcTargetRateNper",
+        "access": "readWrite",
+        "description": "The Target PHY Rate of the receiving MoCA 2.0 Node in order to optimize the long-term PHY rate and transmit power level between the transmitting and receiving MoCA Nodes when TPC is enabled and PERMODE = NPER.",
+        "type": "dataType:MocaPhyRate",
+        "version": "2.17"
+      },
+      {
+        "name": "Band",
+        "access": "readWrite",
+        "description": "Configure the band or sub-band for the MoCA Node to operate in (BND Managed Parameter). See {{bibref|MoCAv2.0|section 15}}.",
+        "type": "dataType:MocaBand",
+        "version": "2.17"
+      },
+      {
+        "name": "LastOperFreqUpdateEnable",
+        "access": "readWrite",
+        "description": "Controls whether the LOF is updated when joining a network (LOF_UPDATE_EN Managed Parameter). See {{bibref|MoCAv2.0|section 8.1.1, and Table 17-1}}.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "FreqCapabilityMask",
+        "access": "readOnly",
+        "description": "The frequencies that the interface supports. {{datatype|expand}}",
+        "type": "dataType:MocaChannelMask"
+      },
+      {
+        "name": "FreqCurrentMaskSetting",
+        "access": "readWrite",
+        "description": "The enabled frequencies that the interface supports for network admission. {{datatype|expand}} The configured frequencies might not match the current operational state ({{param|FreqCurrentMask}}), since this setting is only applied during network formation or admission.",
+        "type": "dataType:MocaChannelMask"
+      },
+      {
+        "name": "FreqCurrentMask",
+        "access": "readOnly",
+        "description": "The frequencies that can be used. This is a subset of the {{param|FreqCapabilityMask}} frequencies. {{datatype|expand}}",
+        "type": "dataType:MocaChannelMask"
+      },
+      {
+        "name": "CurrentOperFreq",
+        "access": "readOnly",
+        "description": "Current Operational Frequency. The RF frequency in Hz to which the MoCA interface is currently tuned. This parameter is only valid when {{param|Status}} is {{enum|Up|Status}}. This parameter is based on ''mocaIfRFChannel'' from {{bibref|MOCA11-MIB}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LastOperFreq",
+        "access": "readWrite",
+        "description": "Last Operational Frequency. The RF frequency in Hz to which the MoCA interface was tuned when last in the {{enum|Up|Status}} state. This parameter is based on ''mocaIfLOF'' from {{bibref|MOCA11-MIB}}. (LOF Managed Parameter) This parameter is writable only for MoCA 2.0.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TpcEnable",
+        "access": "readWrite",
+        "description": "Enable automatic power control if this value is {{true}}. Use a fixed transmit power level if this value is {{false}}. (TPC_EN Managed Parameter)",
+        "default": "true",
+        "defaultType": "factory",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "KeyPassphrase",
+        "access": "readWrite",
+        "description": "MoCA Password. The value consists of numeric characters (0-9). {{pattern}} This parameter is based on ''mocaIfPassword'' from {{bibref|MOCA11-MIB}}.",
+        "secured": true,
+        "type": "string",
+        "minLength": 12,
+        "maxLength": 17,
+        "pattern": "\\d+"
+      },
+      {
+        "name": "PerMode",
+        "access": "readWrite",
+        "description": "Controls which transmission PER mode the MoCA Node uses for MPDUs not belonging to PQoS Flows, where a value of 0 indicates NPER and 1 indicates VLPER. By default PER mode is set to 1 in band E, while it is set to 0 for all other bands (PER_MODE Managed Parameter). See {{bibref|MoCAv2.0|section 8.2 and Table 17-2}}.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "TurboModeEnable",
+        "access": "readWrite",
+        "description": "Controls whether the MoCA Node operates in point-to-point Turbo Mode or not. When set to {{true}} the turbo mode is enabled; when set to {{false}} the turbo mode is disabled (TURBO_MODE_EN Managed Parameter). See {{bibref|MoCAv2.0|section 10 and Table 17-1}}.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "PolicingEnable",
+        "access": "readWrite",
+        "description": "Controls whether policing of PQoS Flows is enabled or disabled. When {{false}} the policy is disabled, and when {{true}} the policy is enabled (POLICING_EN Managed Parameter). See {{bibref|MoCAv2.0|section 8.8 and Table 17-1}}.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "TlpMin",
+        "access": "readWrite",
+        "description": "The minimum time (in milliseconds) a MoCA Node is required to stay in the Listening Phase of the Network Search (TLP_MIN Managed Parameter). See {{bibref|MoCAv2.0|Table 17-2}}.",
+        "default": "0",
+        "defaultType": "factory",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "TlpMax",
+        "access": "readWrite",
+        "description": "The maximum time (in milliseconds) a MoCA Node is required to stay in the Listening Phase of the Network Search (TLP_MAX Managed Parameter). Default value of {{param}} depends on the band configuration as follows: * 20 seconds for band E * 35 seconds for band F * 95 seconds for Band ExD * 10 seconds for Band D-Low * 55 seconds for Band D-High See {{bibref|MoCAv2.0|section 8.1}}.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "RlapmEnable",
+        "access": "readWrite",
+        "description": "Controls whether the RLAPM (Receive Level Added PHY Margin) function is enabled and the MoCA Node needs to apply it, or disabled and the MoCA Node needs to ignore it. RLAPM function is enabled when set to {{true}}. RLAPM function is disabled when set to {{false}}. The RLAPM function allows a Node to add a specific global PHY margin (RLAPM) to all the subcarriers' bitloadings at each estimated aggregate receive power level. This RLAPM value is obtained from the RLAPM table {{object|Device.MoCA.Interface.{i}.Rlapm.{i}.}}. See {{bibref|MoCAv2.0|section 7.15 and Table 17-1}}.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "RlapmProfileSelect",
+        "access": "readWrite",
+        "description": "Controls which RLAPM (Receive Level Added PHY Margin) profile is Active. See {{bibref|MoCAv2.0|section 7.15.2 and Table 17-1}}.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "SapmEnable",
+        "access": "readWrite",
+        "description": "Controls whether the SAPM (Subcarrier Added PHY Margin) function is enabled and the MoCA Node needs to apply it, or disabled and the MoCA Node needs to ignore it. SAPM function is enabled when set to {{true}}. SAPM function is disabled when set to {{false}}. The SAPM function allows a Node to add a prespecified PHY margin to each subcarrier\u2019s bitloading (SAPM value) whenever the aggregate received power levels (ARPLs) are below a pre-specified threshold. This SAPM value is obtained from the SAPM table {{object|Device.MoCA.Interface.{i}.Sapm.{i}.}}. See {{bibref|MoCAv2.0|section 7.15 and Table 17-1}}.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "SapmProfileSelect",
+        "access": "readWrite",
+        "description": "Controls which SAPM (Subcarrier Added PHY Margin) profile is Active. See {{bibref|MoCAv2.0|section 7.15.1 and Table 17-1}}.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "PowerStateRequest",
+        "access": "readWrite",
+        "description": "Carries a request to the MoCA Node to transition into a specified Power State (POWER_STATE_REQ Managed Parameter). See {{bibref|MoCAv2.0|section 12}}.",
+        "default": "m0Active",
+        "defaultType": "factory",
+        "type": "dataType:MocaPowerState",
+        "version": "2.17"
+      },
+      {
+        "name": "SeqNumMr",
+        "access": "readWrite",
+        "description": "Sequence Number used by the MR Transaction (SEQ_NUM_MR Managed Parameter). See {{bibref|MoCAv2.0|section 7.15 and Table 17-1}}.",
+        "default": "0",
+        "defaultType": "factory",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535,
+        "version": "2.17"
+      },
+      {
+        "name": "PowerStateTrapEnable",
+        "access": "readWrite",
+        "description": "Used for power state message trap. * When set to {{true}} it allows the MoCA Node to report a trap on each Power State transition. * When set to {{false}} no trap report is generated when the MoCA Node Power State changes. See {{bibref|MoCAv2.0|section 12}}.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "LmoTrapEnable",
+        "access": "readWrite",
+        "description": "Used for LMO (Link Maintenance Operation) message trap. * When set to {{true}} it allows the MoCA Node to report a trap on transitioning to LMO. * When set to {{false}} no trap report the MoCA Node is not transitioning to LMO. See {{bibref|MoCAv2.0|section 12}}.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "PrimaryOffset",
+        "access": "readWrite",
+        "description": "The offset in {{units}} of the primary channel relative to the beacon channel (PRIMARY_OFFSET Managed Parameter).",
+        "type": "int",
+        "minInclusive": -25,
+        "maxInclusive": 25,
+        "version": "2.17"
+      },
+      {
+        "name": "SecondaryOffset",
+        "access": "readWrite",
+        "description": "The offset in {{units}} of the secondary channel relative to the beacon channel (SECONDARY_OFFSET Managed Parameter). A value of 0 indicates that there is no secondary channel.",
+        "type": "int",
+        "minInclusive": -125,
+        "maxInclusive": 125,
+        "version": "2.17"
+      },
+      {
+        "name": "BeaconPowerDistributed",
+        "access": "readWrite",
+        "description": "The networkwide (see {{param|BeaconPowerMePie}}) value of Beacon transmit power in {{units}} sent by the NC (Network Coordinator) in Beacon Power PIEs (Power Information Elements). A value of 255 indicates that no networkwide PIE is sent. See {{bibref|MoCAv2.5|section 7.1.5 and Table 17-1}}.",
+        "type": "int",
+        "ranges": [
+          [
+            -10,
+            7
+          ],
+          [
+            255,
+            255
+          ]
+        ],
+        "version": "2.17"
+      },
+      {
+        "name": "BeaconPowerLocal",
+        "access": "readWrite",
+        "description": "The value of Beacon transmit power in {{units}} used by the Node when it transmits beacons.",
+        "type": "int",
+        "minInclusive": -10,
+        "maxInclusive": 7,
+        "version": "2.17"
+      },
+      {
+        "name": "BeaconPowerMePie",
+        "access": "readWrite",
+        "description": "The Beacon Power PIE (Power Information Element) that the ME (Management Entity) wants the NC (Network Coordinator) to send to configure the Beacon Transmit Power of the different nodes. See {{bibref|MoCAv2.5|section 7.1.5}}. This parameter specifies if the Beacon transmit power is intended to set the Beacon Power Local (individual type) or the Beacon Power Distributed (networkwide type) of the selected nodes. It is encoded as specified in {{bibref|MOCA25-MIB|section 4.11}}.",
+        "type": "hexBinary",
+        "minLength": 4,
+        "maxLength": 4,
+        "version": "2.17"
+      },
+      {
+        "name": "BeaconPowerMePieSend",
+        "access": "readWrite",
+        "description": "When this parameter is written, instructs the Node (in case of Network Coordinator) to send a set of Beacon Power PIEs (Power Information Element) with the Beacon Power PIE fields set as specified in {{param|BeaconPowerMePie}}. See {{bibref|MoCAv2.5|section 7.1.5}}.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "BeaconPowerNetConfig",
+        "access": "readWrite",
+        "description": "Controls whether the Node is allowed to configure its Beacon power (both Beacon Power Distributed and Beacon Power Local) according to the Beacon Power PIE (Power Information Element) sent by the NC (Network Coordinator). * When set to true the Node is allowed to configure its Beacon power. * When set to false the Node is not allowed to configure its Beacon power. See {{bibref|MoCAv2.5|section 7.1.5 and Table 17-1}}.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "EnhancedPassword",
+        "access": "readWrite",
+        "description": "The MoCA Enhanced Password using an ASCII printable character. This value must be 12 to 64 ASCII printable characters with decimal codes in the range 33 to 126 inclusive. Access is only allowed when used with SNMPv3 protocol, but not allowed when used with SNMPv1 or SNMPv2c protocol. If this value changes, this node will drop from the network if {{param|PrivacyEnabledSetting}} is {{true}}. If this managed object is changed, it may not be possible to change this object again via the SNMP protocol. The mechanism to change this object again is out of the scope of this MIB definition draft. See {{bibref|MoCAv2.5|section 11.3.1}}.",
+        "secured": true,
+        "default": "",
+        "defaultType": "factory",
+        "type": "string",
+        "lengths": [
+          [
+            12,
+            64
+          ],
+          [
+            0,
+            0
+          ]
+        ],
+        "version": "2.17"
+      },
+      {
+        "name": "FirstOffset",
+        "access": "readWrite",
+        "description": "The offset of the First Channel's center frequency below the center frequency of the Primary Channel. Valid values are -4 to 0. See {{bibref|MoCAv2.5|Table 17-1}}.",
+        "type": "int",
+        "minInclusive": -4,
+        "maxInclusive": 0,
+        "version": "2.17"
+      },
+      {
+        "name": "HandoffToLowerVersionEnable",
+        "access": "readWrite",
+        "description": "Enable handoff to a MoCA 2 or MoCA 1 Node if this value is {{true}}. Disable handoff to a MoCA 2 or MoCA 1 Node if this value is {{false}}. See {{bibref|MoCAv2.5|section 8.11.1 and Table 17-1}}.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "MgntEntityNetIePayloadRespTimeout",
+        "access": "readWrite",
+        "description": "The number of Discovery Request transmission opportunities a NN has to wait for a response to a Management Entity Response Network IE before continuing its network search. See {{bibref|MoCAv2.5|section 8.3.3.2 and Table 17-1}}.",
+        "default": "1000",
+        "defaultType": "factory",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "MgntEntityNetIePayloadTx",
+        "access": "readWrite",
+        "description": "The payload of the Management Entity Request Network IE (when the Node is trying to join the network), or of the Management Entity Response Network IE (when the Node is the NC). See {{bibref|MoCAv2.5|section 8.3.3 and Table 17-1}}. struct moca25IfMgntEntityNetIePayload { short vendorId; // 2 octets (MoCA Vendor ID) char information[60]; // 60 octets (Up to 60 bytes of vendor specific information) }",
+        "type": "hexBinary",
+        "minLength": 2,
+        "maxLength": 62,
+        "version": "2.17"
+      },
+      {
+        "name": "MpsPrivacyDown",
+        "access": "readWrite",
+        "description": "Controls whether the Node, during its MPS (MoCA Protected Setup) session, is allowed to accept privacy setting of Privacy Disabled from another Node when its own setting is Privacy Enabled. This parameter is valid only when {{param|MpsPrivacyReceive}} is set to {{true}}. See {{bibref|MoCAv2.5|section 8.3.1 and Table 17-1}}.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "MpsPrivacyReceive",
+        "access": "readWrite",
+        "description": "Controls whether the Node, during its MPS (MoCA Protected Setup) session, is allowed to accept privacy settings (Privacy Enabled / Disabled and Network Password and/or Enhanced Network Password) from another Node. See {{bibref|MoCAv2.5|section 8.3.1 and Table 17-1}}.",
+        "default": "true",
+        "defaultType": "factory",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "MpsReset",
+        "access": "readWrite",
+        "description": "Resets the MPS (MoCA Protected Setup) state of the Node {{param|MpsState}} to un-Paired and reinitializes MPS local variables and relevant parameters when this parameter is written. See {{bibref|MoCAv2.5|Section 8.3.1 and Table 17-1}}.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "MpsTriggered",
+        "access": "readWrite",
+        "description": "Signals the Node in Power State M0 (Active) or M1 (Low Power Idle) that MPS (MoCA Protected Setup) was triggered when this parameter is written. See {{bibref|MoCAv2.5|Section 8.3.1 and Table 17-1}}.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "MpsUnpairedTime",
+        "access": "readWrite",
+        "description": "The minimum time in {{units}} the Node is required to stay in the un-Paired state after it starts network search if the Node creates or joins a network without using MPS (MoCA Protected Setup). See {{bibref|MoCAv2.5|Section 8.3.1 and Table 17-1}}.",
+        "default": "300",
+        "defaultType": "factory",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "MpsWalkTime",
+        "access": "readWrite",
+        "description": "The allowed time interval in {{units}} to trigger MPS (MoCA Protected Setup) on two Nodes. See {{bibref|MoCAv2.5|Section 8.3.1 and Table 17-1}}.",
+        "default": "120",
+        "defaultType": "factory",
+        "type": "unsignedInt",
+        "minInclusive": 12,
+        "maxInclusive": 1200,
+        "version": "2.17"
+      },
+      {
+        "name": "NetworkJoin",
+        "access": "readWrite",
+        "description": "Instructs the NN to join the latest network from which the NN forwarded a Management Entity Response Network IE: Yes if this value is {{true}} and No if this value is {{false}}. See {{bibref|MoCAv2.5|Section 8.3.3 and Table 17-1}}.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "NetworkNameAdmissionRule",
+        "access": "readWrite",
+        "description": "Controls which Admission rule to follow. See {{bibref|MoCAv2.5|Section 8.3.3 and Table 17-1}}.",
+        "default": "none",
+        "defaultType": "factory",
+        "type": "string",
+        "enumerations": [
+          "none",
+          "all",
+          "name",
+          "osp"
+        ],
+        "version": "2.17"
+      },
+      {
+        "name": "NetworkNameNcNn",
+        "access": "readWrite",
+        "description": "The Network Name the Node is to use for any MoCA network it creates. When {{param|NetworkNameAdmissionRule}} is set to {{enum|name|NetworkNameAdmissionRule}}, this object also indicates to the Node the name of the network to join. See {{bibref|MoCAv2.5|Section 8.3.3 and Table 17-1}}.",
+        "type": "string",
+        "version": "2.17"
+      },
+      {
+        "name": "NumChannels",
+        "access": "readWrite",
+        "description": "The maximum number of 100MHz channels the Node uses when the Node forms the network. See {{bibref|MoCAv2.5|Table 17-1}}.",
+        "default": "5",
+        "defaultType": "factory",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 5,
+        "version": "2.17"
+      },
+      {
+        "name": "Per25Mode",
+        "access": "readWrite",
+        "description": "Controls which PER mode the receiver Node uses for calculating the bitloading of MoCA 2.5 Unicast profiles, where a value of 0 indicates NPER and 1 indicates VLPER. See {{bibref|MoCAv2.5|Table 17-1}}.",
+        "default": "0",
+        "defaultType": "factory",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "PrivacySupported",
+        "access": "readWrite",
+        "description": "Controls whether MoCA 2 Enhanced Privacy, MoCA 2.0 privacy, and MoCA 1 privacy are supported when privacy is enabled. See {{bibref|MoCAv2.5|Section 11 and Table 17-1}}.",
+        "default": "[moca1Privacy,moca20Privacy,moca2EnhancedPrivacy]",
+        "defaultType": "factory",
+        "list": true,
+        "type": "dataType:MocaPrivacy",
+        "version": "2.17"
+      },
+      {
+        "name": "TrafficPermissionEthertype",
+        "access": "readWrite",
+        "description": "The EtherType value of MSDUs that are allowed to transmit/receive to/from a Non-Secured Admitted Node. See {{bibref|MoCAv2.5|Section 11.7 and Table 17-1}}.",
+        "default": "888E",
+        "defaultType": "factory",
+        "type": "hexBinary",
+        "minLength": 2,
+        "maxLength": 2,
+        "version": "2.17"
+      },
+      {
+        "name": "TrafficPermissionLink",
+        "access": "readWrite",
+        "description": "Up to 15 pairs of {Node ID, SOURCE_NODE_BITMASK} where SOURCE_NODE_BITMASK is the value for SOURCE_NODE_BITMASK for the Node with the given Node ID in an Authorized Link PIE that the ME of the Authorization Server wants to distribute if the Node is the Authorization Server; otherwise, the value of SOURCE_NODE_BITMASK in the last received Authorized Link PIE. See {{bibref|MoCAv2.5|Section 11.7 and Table 17-1}}. struct moca25IfTrafficPermissionLink { long nodeIdVector; // 8 octets; Bit value in the ith bit position indicates NodeID=(i) (LSB=bit0) int numNodes; // 4 octets (Number of Node IDs indicated in the NodeIdVector) struct { short SrcNodeBitmask; // 2 octets (SOURCE_NODE_BITMASK in the latest Authorized Link PIE) }[numNodes]; };",
+        "type": "hexBinary",
+        "version": "2.17"
+      },
+      {
+        "name": "ConnectedNodesChangeTrapEn",
+        "access": "readWrite",
+        "description": "Used to enable {{event|ConnectedNodesChangeTrap!}}. * When set to {{true}} it allows the MoCA Node to report a trap on the change of {{param|NumNodes}}. * When set to {{false}} no trap report is generated when {{param|NumNodes}} changes.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "MgntEntityNetwIePayloadRecTrapEn",
+        "access": "readWrite",
+        "description": "Used to enable {{event|MgntEntityNetwIePayloadRecTrap!}}. * When set to {{true}} it allows the MoCA Node to report a trap on reception of a Management Entity Request/Response Network IE. * When set to {{false}} no trap report is generated when a Management Entity Request/Response Network IE is received.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "MpsTrapEn",
+        "access": "readWrite",
+        "description": "Used to enable the MPS-related traps: {{event|MpsInitScanRecTrap!}}, {{event|MpsPairFailTrap!}}, and {{event|MpsPrivacyChangedTrap!}}.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "NcPrivSupportedRecTrapEn",
+        "access": "readWrite",
+        "description": "Used to enable {{event|NcPrivacySupportedRecTrap!}}. * When set to {{true}} it allows the MoCA Node to report a trap on reception of a new NC_PRIVACY_SUPPORTED value. * When set to {{false}} no trap report is generated when a new NC_PRIVACY_SUPPORTED value is received.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "NetworkNameRecTrapEn",
+        "access": "readWrite",
+        "description": "Used to enable {{event|NetworkNameRecTrap!}}. * When set to {{true}} it allows the MoCA Node to report a trap on reception of a Network Name. * When set to {{false}} no trap report is generated when a Network Name is received.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "NodeDropTrapEn",
+        "access": "readWrite",
+        "description": "Used to enable {{event|NodeDropAdmFailureTrap!}}, {{event|NodeDropNcTrap!}}, {{event|NodeDropMpsTriggeredTrap!}}, and {{event|NodeDropNcChgTrap!}}.",
+        "default": "false",
+        "defaultType": "factory",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "TxPowerLimit",
+        "access": "readWrite",
+        "description": "The value in dB by which to reduce the transmit power of the node from its maximum transmit power. The transmit power SHALL only be changed when {{param|Status}} is not {{enum|Up|Status}}, which means the interface is not part of a MoCA network. If changed, the parameter may not take effect until the MoCA interface is restarted. This parameter is based on ''mocaIfTxPowerLimit'' from {{bibref|MOCA11-MIB}}.",
+        "default": "0",
+        "defaultType": "factory",
+        "type": "dataType:MocaDB"
+      },
+      {
+        "name": "PowerCntlPhyTarget",
+        "access": "readWrite",
+        "description": "Target PHY rate in Mbps for the power control algorithm. The MoCA interface SHOULD have {{param|Enable}} set to {{false}} for any change in this configuration. If the parameter is modified when {{param|Enable}} is {{true}} then this change might take several minutes to complete. This parameter is based on ''mocaIfPowerControlTargetRate'' from {{bibref|MOCA11-MIB}}.",
+        "default": "630",
+        "defaultType": "factory",
+        "type": "dataType:MocaPhyRate"
+      },
+      {
+        "name": "BeaconPowerLimit",
+        "access": "readWrite",
+        "description": "The value in dB by which to reduce the setting of the transmit power of the Beacon from the maximum transmit power (BEACON_PWR_BACKOFF Managed Parameter). The beacon transmit power SHALL only be changed when {{param|Status}} is not {{enum|Up|Status}}, which means the interface is not part of a MoCA network. If changed, the parameter may not take effect until the MoCA interface is restarted. This parameter is based on ''mocaIfBeaconPowerLimit'' from {{bibref|MOCA11-MIB}}. Note that this parameter maps to different MIB objects for MoCA 1.0/1.1 and MoCA 2.0. {{deprecated|2.17|for MoCA 2.5}} {{obsoleted|2.19}}",
+        "default": "0",
+        "defaultType": "factory",
+        "type": "dataType:MocaDB"
+      },
+      {
+        "name": "NetworkTabooMask",
+        "access": "readOnly",
+        "description": "The MoCA taboo channels identified for the home network. {{datatype|expand}}",
+        "type": "dataType:MocaChannelMask"
+      },
+      {
+        "name": "NodeTabooMask",
+        "access": "readOnly",
+        "description": "The MoCA taboo channels identified for this device. {{datatype|expand}}",
+        "type": "dataType:MocaChannelMask"
+      },
+      {
+        "name": "SupportedBands",
+        "access": "readOnly",
+        "description": "Lists all the supported bands and sub-bands by this device.",
+        "type": "dataType:MocaBand",
+        "version": "2.17"
+      },
+      {
+        "name": "TxBcastRate",
+        "access": "readOnly",
+        "description": "The broadcast PHY transmit rate for this interface. This parameter is based on ''mocaIfTxGcdRate'' from {{bibref|MOCA11-MIB}}.",
+        "type": "dataType:MocaPhyRate"
+      },
+      {
+        "name": "TxBcastPowerReduction",
+        "access": "readOnly",
+        "description": "Transmit Power attenuation relative to the maximum transmit power for broadcast transmissions. This parameter is based on ''mocaIfTxGcdPowerReduction'' from {{bibref|MOCA11-MIB}}.",
+        "type": "dataType:MocaDB"
+      },
+      {
+        "name": "QAM256Capable",
+        "access": "readOnly",
+        "description": "Whether this interface supports the 256 QAM feature. This parameter is based on ''mocaIfQAM256Capable'' from {{bibref|MOCA11-MIB}}. This parameter MUST NOT be implemented for MoCA 2.0 because it doesn't map to a MIB object.",
+        "type": "boolean"
+      },
+      {
+        "name": "PacketAggregationCapability",
+        "access": "readOnly",
+        "description": "The packet aggregation capability supported by the interface. Standard values are 0 (no support), 6 (6 {{units}}) or 10 (10 {{units}}). This parameter is based on ''mocaIfPacketsAggrCapability'' from {{bibref|MOCA11-MIB}}. Note that this parameter maps to different MIB objects for MoCA 1.0/1.1 and MoCA 2.0. [XXX1: Need to modify the syntax to 'unsignedInt' because MoCA 2.0 requires a minimum of 20 packets and MoCA 2.5 requires a minimum of 80 packets.]",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AssociatedDeviceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PasswordHash",
+        "access": "readOnly",
+        "description": "The 16 LSBs of a SHA1 performed on a 0-extended password ({{param|KeyPassphrase}}) concatenated with the SALT string \"MocaPasswordHash\". This parameter allows to remotely validate the MoCA password configuration without exposing its value. This value must be 4 hexadecimal digits long.",
+        "type": "hexBinary",
+        "minLength": 2,
+        "maxLength": 2,
+        "version": "2.17"
+      },
+      {
+        "name": "AggregationSize",
+        "access": "readOnly",
+        "description": "The maximum number of bytes in one aggregate which can be received by the MoCA Node.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "AeNumber",
+        "access": "readOnly",
+        "description": "Maximum number of allocation elements, excluding the TAUs and the Dummy DAUs, in one MAP the MoCA Node can process.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "SupportedIngressPqosFlows",
+        "access": "readOnly",
+        "description": "Maximum number of Ingress PQoS Flows supported by the MoCA Node.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "SupportedEgressPqosFlows",
+        "access": "readOnly",
+        "description": "Maximum number of Egress PQoS Flows supported by the MoCA Node.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "PowerStateCap",
+        "access": "readOnly",
+        "description": "The Power State capabilities of the MoCA Node (e.g., which Power States it can transition to) (POWER_STATE_CAP Managed Parameter). This value can change over time (e.g. when a MoCA 1 Node joins the network).",
+        "type": "dataType:MocaPowerState",
+        "version": "2.17"
+      },
+      {
+        "name": "AvbSupport",
+        "access": "readOnly",
+        "description": "The support of the MoCA Node for the IEEE 802.1 Audio Video Bridge specification. AVB is supported if this value is {{true}}. AVB is not supported if this value is {{false}}.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "ResetCount",
+        "access": "readOnly",
+        "description": "Count of MoCA resets since the interface was enabled for this MoCA Node.",
+        "type": "dataType:StatsCounter32",
+        "version": "2.17"
+      },
+      {
+        "name": "LinkDownCount",
+        "access": "readOnly",
+        "description": "The number of times that this MoCA Node has lost link with the MoCA network since the interface was enabled.",
+        "type": "dataType:StatsCounter32",
+        "version": "2.17"
+      },
+      {
+        "name": "LmoNodeID",
+        "access": "readOnly",
+        "description": "The ID of the MoCA Node currently undergoing LMO (Link Maintenance Operation), i.e. the LMO node.",
+        "type": "dataType:MocaNodeID",
+        "version": "2.17"
+      },
+      {
+        "name": "NetworkState",
+        "access": "readOnly",
+        "description": "The current Link control state in the MoCA network for the MoCA Node. This network state is a MAC parameter determined by the NC (Network Coordinator) and broadcasted in the MAP to the rest of nodes. {{enum|beginNodeAdmissionState}}, {{enum|newNodeTypeOneProbeTxState}}, {{enum|newNodeTypeOneProbeRxState}}, {{enum|newGcdDistributionState}}, {{enum|beginPhyProfileState}}, {{enum|steadyState}} refer to the Node Admission (see {{bibref|MoCAv2.5|Section 8.3}}). The admission process of a new MoCA node depends on the operation mode of the MoCA Network that it is going to join (MoCA 1 mode, MoCA 2.0 mode or Mixed Mode). The Node Admission process is completed when the NC (Network Controller) changes the network state to Steady State ({{enum|steadyState}}) at the end of the Node Admission process. {{enum|typeThreeProbeState}}, {{enum|lmoTypeOneProbeState}}, {{enum|lmoNodeGcdDistributionState}}, {{enum|beginLmoPhyProfileState}}, {{enum|lmoGcdTypeOneProbeLinkState}}, {{enum|steadyState}} refer to the Regular Link Maintenance Operation (see {{bibref|MoCAv2.5|Section 8.9.1}}). {{enum|alternateChannelQuietLineState}}, {{enum|alternateChannelEvmProbeState}}, {{enum|unsolicitedProbeReportState}}, {{enum|beginUnsolicitedPhyProfileState}}, {{enum|rxDeterminedProbeState}}, {{enum|steadyState}} refer to the On-Demand Link Maintenance Operation (see {{bibref|MoCAv2.5|Section 8.9.2}}). {{enum|calibrationState}} refer to the Network Operation after a NC handoff or failover (see {{bibref|MoCAv2.5|Section 8.14}}).",
+        "type": "string",
+        "enumerations": [
+          "beginNodeAdmissionState",
+          "newNodeTypeOneProbeTxState",
+          "newNodeTypeOneProbeRxState",
+          "newGcdDistributionState",
+          "beginPhyProfileState",
+          "steadyState",
+          "typeThreeProbeState",
+          "lmoTypeOneProbeState",
+          "lmoNodeGcdDistributionState",
+          "beginLmoPhyProfileState",
+          "lmoGcdTypeOneProbeLinkState",
+          "alternateChannelQuietLineState",
+          "alternateChannelEvmProbeState",
+          "unsolicitedProbeReportState",
+          "beginUnsolicitedPhyProfileState",
+          "rxDeterminedProbeState",
+          "calibrationState"
+        ],
+        "version": "2.17"
+      },
+      {
+        "name": "PrimaryChannelOffset",
+        "access": "readOnly",
+        "description": "The offset in MHz of the primary channel relative to the beacon channel. The allowed values are -25, 0, and +25.",
+        "type": "int",
+        "version": "2.17"
+      },
+      {
+        "name": "SecondaryChannelOffset",
+        "access": "readOnly",
+        "description": "The offset in MHz of the secondary channel relative to the beacon channel. The allowed values are -125 and +125. A value of 0 indicates that there is no secondary channel.",
+        "type": "int",
+        "version": "2.17"
+      },
+      {
+        "name": "ResetReason",
+        "access": "readOnly",
+        "description": "Describes the reason for a MoCA link reset or failure to join a network.",
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 80,
+        "version": "2.17"
+      },
+      {
+        "name": "NcVersion",
+        "access": "readOnly",
+        "description": "Indicates the MoCA version of the NC. This element MUST be in the form of dot-delimited integers, where each successive integer represents a more minor category of variation. For example, 1.0, where the components mean major.minor revision number. Possible patterns: * ''\\d+(\\.\\d+)*''",
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 64,
+        "version": "2.17"
+      },
+      {
+        "name": "LinkState",
+        "access": "readOnly",
+        "description": "This parameter is meaningful only after a Link Failure to indicate the state of the network the at the time of the Link failure. Each of the three chars (bytes) is represented as two hexadecimal digits. struct mocaLinkState { char LINK_STATE; // LINK_STATE_II from the Tx/Rx MAP at the // time of the Link Failure char ACF_TYPE; // ACF_TYPE from the Tx/Rx BEACON // at the time of the Link Failure char ADD_ACF_TYPE; // ADDITIONAL_ACF_TYPE from the Tx/Rx // BEACON at the time of the Link Failure };",
+        "type": "hexBinary",
+        "minLength": 3,
+        "maxLength": 3,
+        "version": "2.17"
+      },
+      {
+        "name": "ConnectedNodesInfo",
+        "access": "readOnly",
+        "description": "Indicates the information for each node connected in the network for up to 16 nodes. See {{bibref|MoCAv2.5|Table 17-1}}. struct moca25ConnectedNodesInfo { long nodeIdVector; // 8 octets; Bit value in the ith bit position indicates NodeID=(i) (LSB=bit0) int numNodes; // 4 octets (Number of Node IDs indicated in the NodeIdVector) struct { char guid[8]; // 8 octets (Node GUID MAC Address) char mocaVersion; // 1 octet (MoCA Version) }[numNodes]; };",
+        "type": "hexBinary",
+        "minLength": 12,
+        "maxLength": 156,
+        "version": "2.17"
+      },
+      {
+        "name": "MgntEntityNetIePayloadRx",
+        "access": "readOnly",
+        "description": "Indicates the payload of the latest received Management Entity Request Network IE, or Management Entity Response Network IE. See {{bibref|MoCAv2.5|Table 17-1}}. struct moca25IfMgntEntityNetIePayload { short vendorId; // 2 octets (MoCA Vendor ID) char information[60]; // 60 octets (Up to 60 bytes of vendor specific information) };",
+        "type": "hexBinary",
+        "minLength": 2,
+        "maxLength": 62,
+        "version": "2.17"
+      },
+      {
+        "name": "Moca25PhyCapable",
+        "access": "readOnly",
+        "description": "Indicate the MoCA Node supports MoCA 2.5 PHY if the value is {{true}}. Indicate the MoCA Node does not support MoCA 2.5 PHY if this value is {{false}}. See {{bibref|MoCAv2.5|section 8.3.4.1.1}}.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "MpsInitScanPayload",
+        "access": "readOnly",
+        "description": "Reports the channel number, NC's (Network Coordinators) MoCA version, Network MPS (MoCA Protected Setup) trigger, and Network MPS parameters (if any) and Network Name of the latest MoCA network found during Initial MPS Scanning. See {{bibref|MoCAv2.5|section 8.3.1.1.1}}. It is encoded as specified in {{bibref|MOCA25-MIB|section 4.6}}.",
+        "type": "hexBinary",
+        "minLength": 4,
+        "maxLength": 4,
+        "version": "2.17"
+      },
+      {
+        "name": "MpsState",
+        "access": "readOnly",
+        "description": "Indicates the MPS (MoCA Protected Setup) state of the Node: paired if the value is {{true}} and un-Paired if the value is {{false}}. See {{bibref|MoCAv2.5|section 8.3.1}}.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "NetworkNamePayload",
+        "access": "readOnly",
+        "description": "The payload of the latest received Network Name from the NC. See {{bibref|MoCAv2.5|section 8.3.3.2}}.",
+        "type": "hexBinary",
+        "minLength": 0,
+        "maxLength": 32,
+        "version": "2.17"
+      },
+      {
+        "name": "PrivacyNc",
+        "access": "readOnly",
+        "description": "The latest NC_PRIVACY_SUPPORTED value received from the NC. Before any NC_PRIVACY_SUPPORTED is received, reflects the value of {{param|PrivacySupported}}. See {{bibref|MoCAv2.5|Table 17-1}}.",
+        "list": true,
+        "type": "dataType:MocaPrivacy",
+        "version": "2.17"
+      },
+      {
+        "name": "PowerStateResp",
+        "access": "readOnly",
+        "description": "Carries the response of the MoCA Node to a request (through POWER_STATEREQ) to transition into a desired Power State: yes if the value if {{true}} and no if the value is {{false}}. See {{bibref|MoCAv2.5|section 12}}.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "PowerStateStatus",
+        "access": "readOnly",
+        "description": "Reports the current Power State of the Node (POWER_STATE_STATUS Managed Parameter).",
+        "type": "dataType:MocaPowerState",
+        "version": "2.17"
+      },
+      {
+        "name": "ConnectedNodesDropReason",
+        "access": "readOnly",
+        "description": "Reports the GUID(s) of the dropped EN(s) and the reason of node drop for up to 15 nodes. This object is valid only when the Node is the NC. See {{bibref|MoCAv2.5|Table 17-1}}. struct moca25IfConnectedNodesDropReason { int numNodes; // 4 octets (Number of dropped nodes) struct { char guid[8]; // 8 octets (Node GUID MAC Address) char dropReason; // 1 octet (Reason of node drop: // 0x00 Admission Failure // 0x01 Key Response Timeout // 0x02 Heartbeat Transmission Timeout // 0x03 Power State M0 Transition Timeout // 0x04 Disadvantaged Node // 0x05 RR Transmission Timeout) }[numNodes]; };",
+        "type": "hexBinary",
+        "version": "2.17"
+      }
+    ],
+    "description": "MoCA interface table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}). Each table entry models the PHY and MAC levels of a MoCA interface {{bibref|MoCAv1.0}} {{bibref|MoCAv1.1}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

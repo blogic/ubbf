@@ -1,0 +1,57 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "AutoRestart.",
+  "object": {
+    "path": "AutoRestart.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readOnly",
+        "description": "Enable the auto-restart feature for any {{object|##.ExecutionUnit}} which is created as a result of this command.",
+        "type": "boolean"
+      },
+      {
+        "name": "RetryMinimumWaitInterval",
+        "access": "readOnly",
+        "description": "Configures the initial delay in {{units}} between detecting that the EU has terminated abnormally and re-starting it.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RetryMaximumWaitInterval",
+        "access": "readOnly",
+        "description": "Maximum delay in {{units}} between detecting that the EU has terminated abnormally and re-starting it.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RetryIntervalMultiplier",
+        "access": "readOnly",
+        "description": "Configures the retry interval multiplier. This value is expressed in units of 0.001, so for example a value of 2000 will result in the retry interval being doubled each time.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaximumRetryCount",
+        "access": "readOnly",
+        "description": "Configures the maximum number of consecutive restarts (as shown in {{param|##.ExecutionUnit.{i}.AutoRestart.RetryCount}}) after which no more attempts will be performed. A value of zero means that the number of attempts is unlimited.",
+        "default": "10",
+        "defaultType": "parameter",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ResetPeriod",
+        "access": "readOnly",
+        "description": "If the EU runs for this number of {{units}} without terminating abnormally the Agent MAY reset its {{param|##.ExecutionUnit.{i}.AutoRestart.RetryCount}} to zero, thereby resetting the exponential backoff algorithm. A value of zero disables this behavior.",
+        "default": "0",
+        "defaultType": "parameter",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Defines the parameters of the auto-restart algorithm for any {{object|##.ExecutionUnit}} which is created as a result of this command. An auto-restart may be triggered if the Agent determines that the EU has terminated abnormally. An exponential backoff algorithm is applied (increasing each time the delay before the EU is re-launched) in order to prevent continual re-starting of the EU. The retry interval range is controlled by two Parameters, {{param|RetryMinimumWaitInterval}} and {{param|RetryIntervalMultiplier}}. Let ''m'' be the value of {{param|RetryMinimumWaitInterval}}, ''k'' the value of {{param|RetryIntervalMultiplier}}, and ''n'' the current value of {{param|##.ExecutionUnit.{i}.AutoRestart.RetryCount}}. Then on the next occasion that the Agent determines that the EU has terminated abnormally, the delay before re-starting the EU must lie between ''m * (k/1000)^n^'' and ''m * (k/1000)^(n+1)^'' seconds, so long as ''m * (k/1000)^n^'' evaluates to a value less than {{param|RetryMaximumWaitInterval}}. Once this point has been reached, on all subsequent occasions that the Agent determines that the EU has terminated abnormally the delay before re-starting the EU must lie between {{param|RetryMaximumWaitInterval}}'' * (1000/k)'' and {{param|RetryMaximumWaitInterval}} seconds.",
+    "children": []
+  }
+}

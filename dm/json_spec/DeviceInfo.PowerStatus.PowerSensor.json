@@ -1,0 +1,78 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.PowerStatus.PowerSensor.{i}.",
+  "object": {
+    "path": "Device.DeviceInfo.PowerStatus.PowerSensor.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "PowerSensorNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Indicates whether or not the power sensor is enabled.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this power sensor.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "Name of this power sensor. This text MUST be sufficient to distinguish this power sensor from other power sensors.",
+        "type": "string"
+      },
+      {
+        "name": "LastUpdate",
+        "access": "readOnly",
+        "description": "The time at which this power sensor's last good reading was obtained. The Unknown Time value, as defined in {{bibref|TR-106}}, indicates a good reading has not been obtained since last reset.",
+        "type": "dateTime",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Voltage",
+        "access": "readOnly",
+        "description": "The voltage measured by the sensor, in {{units}}.",
+        "type": "int"
+      },
+      {
+        "name": "Current",
+        "access": "readOnly",
+        "description": "The current measured by the sensor, in {{units}}.",
+        "type": "int"
+      },
+      {
+        "name": "Power",
+        "access": "readOnly",
+        "description": "The power measured by the sensor, in {{units}}.",
+        "type": "int"
+      }
+    ],
+    "description": "Represents the power sensor parameters including voltage, current, and power measurements.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Name"
+      ]
+    }
+  }
+}

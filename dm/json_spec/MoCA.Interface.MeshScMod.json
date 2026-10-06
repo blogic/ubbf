@@ -1,0 +1,67 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MoCA.Interface.{i}.MeshScMod.{i}.",
+  "object": {
+    "path": "Device.MoCA.Interface.{i}.MeshScMod.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "MeshScModNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "TxNodeIndex",
+        "access": "readOnly",
+        "description": "The Node ID of the transmit MoCA Node is used as one of the index to order the mesh PHY rate table.",
+        "type": "dataType:MocaNodeID"
+      },
+      {
+        "name": "RxNodeIndex",
+        "access": "readOnly",
+        "description": "The Node ID of the receive MoCA Node is used as one of the index to order the mesh subcarrier modulation.",
+        "type": "dataType:MocaNodeID"
+      },
+      {
+        "name": "ChannelIndex",
+        "access": "readOnly",
+        "description": "{{enum|primary}} or {{enum|secondary}} channel for MoCA 2.0 Node associated with {{param|Nper}} and {{param|Vlper}}. For MoCA 1 Node, the same as the {{enum|primary}} channel associated with {{param|Mod}}. In a bonded MoCA 2.0 network, the {{enum|primary}} and {{enum|secondary}} channels each have their own subcarrier modulation data. {{enum|m25first}}, {{enum|m25second}}, {{enum|m25third}}, {{enum|m25fourth}} or {{enum|m25fifth}} channel for MoCA 2.5 Node associated with {{param|ModM25}}.",
+        "type": "dataType:MocaChannelIndex"
+      },
+      {
+        "name": "Mod",
+        "access": "readOnly",
+        "description": "1 Byte Hex array values with no delimiters where each byte indicates the subcarrier modulation of one subcarrier from the MoCA Node identified by {{param|TxNodeIndex}} to the MoCA Node identified by {{param|RxNodeIndex}} for the MoCA 1 Unicast transmission PHY profile.",
+        "type": "dataType:MocaScMod"
+      },
+      {
+        "name": "Nper",
+        "access": "readOnly",
+        "description": "1 Byte Hex array values with no delimiters where each byte indicates the unicast NPER subcarrier modulation of one subcarrier from the MoCA Node identified by {{param|TxNodeIndex}} to the MoCA Node identified by {{param|RxNodeIndex}} for the associated {{param|ChannelIndex}}.",
+        "type": "dataType:MocaScMod"
+      },
+      {
+        "name": "Vlper",
+        "access": "readOnly",
+        "description": "1 Byte Hex array values with no delimiters where each byte indicates the unicast VLPER subcarrier modulation of one subcarrier from the MoCA Node identified by {{param|TxNodeIndex}} to the MoCA Node identified by {{param|RxNodeIndex}} for the associated {{param|ChannelIndex}}.",
+        "type": "dataType:MocaScMod"
+      },
+      {
+        "name": "ModM25",
+        "access": "readOnly",
+        "description": "1 Byte Hex array values with no delimiters where each byte indicates the MoCA 2.5 unicast subcarrier modulation for all subcarriers from the MoCA Node identified by {{param|TxNodeIndex}} to the MoCA Node identified by {{param|RxNodeIndex}} for the associated {{param|ChannelIndex}}. For MoCA 2.5 First Channel, Second Channel, Third Channel, Fourth Channel and Fifth Channel, the total number of subcarriers is 512.",
+        "type": "dataType:MocaScMod"
+      }
+    ],
+    "description": "MoCA mesh Subcarrier Modulation table. This table contains the Unicast transmit subcarrier modulation between all pairs of MoCA Nodes in the MoCA network. Since {{param|Mod}} is the subcarrier modulation from {{param|TxNodeIndex}} to {{param|RxNodeIndex}}, this table does not contain any entries with {{param|TxNodeIndex}} equals {{param|RxNodeIndex}}. In addition, a MoCA network can have less than 16 MoCA Nodes, hence some values of {{param|TxNodeIndex}} and {{param|RxNodeIndex}} in the range of 0 to 15 may not exist. The {{param|ChannelIndex}} index is used to differentiate between the primary and secondary channels in a bonded channel network. The primary channel index is always present, the secondary channel index may not always be present. Entries in this table cannot be created or deleted by the network management system. All entries are created or deleted by the device software.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "TxNodeIndex",
+        "RxNodeIndex",
+        "ChannelIndex"
+      ]
+    }
+  }
+}

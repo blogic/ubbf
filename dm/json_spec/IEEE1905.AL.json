@@ -1,0 +1,79 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.AL.",
+  "object": {
+    "path": "Device.IEEE1905.AL.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "IEEE1905Id",
+        "access": "readOnly",
+        "description": "1905 AL MAC Address.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the 1905 Abstraction Layer. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "This parameter is NOT RECOMMENDED to be used because IEEE1905 is not an interface. The accumulated time in {{units}} since the 1905 Abstraction Layer entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readOnly",
+        "description": "This parameter is NOT RECOMMENDED to be used because IEEE1905 is not an interface. {{list}} {{reference}} See {{bibref|TR-181i2|Section 4.2.1}}.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.AL.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "RegistrarFreqBand",
+        "access": "readOnly",
+        "description": "{{list}} See {{bibref|IEEE1905.1a|Table 6-25: SupportedFreqBand TLV}}. {{enum}}",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "enumerations": [
+          "802.11 2.4 GHz",
+          "802.11 5 GHz",
+          "802.11 60 GHz"
+        ]
+      },
+      {
+        "name": "InterfaceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object represents the management functions for the 1905 Abstraction Layer as defined in {{bibref|IEEE1905.1a|Section 4.4 Abstraction Layer}}.",
+    "children": []
+  }
+}

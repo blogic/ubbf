@@ -1,0 +1,89 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MoCA.Interface.{i}.Mesh.{i}.",
+  "object": {
+    "path": "Device.MoCA.Interface.{i}.Mesh.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "MeshNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "TxNodeIndex",
+        "access": "readOnly",
+        "description": "The Node ID of the transmit MoCA Node is used as one of the index to order the mesh PHY rate table.",
+        "type": "dataType:MocaNodeID"
+      },
+      {
+        "name": "RxNodeIndex",
+        "access": "readOnly",
+        "description": "The Node ID of the receive MoCA Node is used as one of the index to order the mesh PHY rate table.",
+        "type": "dataType:MocaNodeID"
+      },
+      {
+        "name": "TxRate",
+        "access": "readOnly",
+        "description": "The transmit MoCA 1 PHY rate in Mbps from the MoCA Node identified by {{param|TxNodeIndex}} to the MoCA Node identified by {{param|RxNodeIndex}}.",
+        "type": "dataType:MocaPhyRate"
+      },
+      {
+        "name": "TxRateNper",
+        "access": "readOnly",
+        "description": "The transmit normal packet error PHY Rate from the MoCA Node identified by {{param|TxNodeIndex}} to the MoCA Node identified by {{param|RxNodeIndex}}.",
+        "type": "dataType:MocaPhyRate"
+      },
+      {
+        "name": "TxRateVlper",
+        "access": "readOnly",
+        "description": "The transmit very low packet error PHY Rate from the MoCA Node identified by {{param|TxNodeIndex}} to the MoCA Node identified by {{param|RxNodeIndex}}.",
+        "type": "dataType:MocaPhyRate"
+      },
+      {
+        "name": "LinkType",
+        "access": "readOnly",
+        "description": "The type of link which exists from the MoCA Node identified by {{param|TxNodeIndex}} to the MoCA Node identified by {{param|RxNodeIndex}}. {{enum}} This parameter is only used for MoCA 2.0.",
+        "type": "string",
+        "enumerations": [
+          "moca1PHY",
+          "primary",
+          "bonded"
+        ]
+      },
+      {
+        "name": "Power",
+        "access": "readOnly",
+        "description": "Per channel list of Transmit or Receive power levels in dBm. If the MoCA Node identified by {{param|TxNodeIndex}} is equal to {{param|#.NodeID}}, then indicates the unicast transmit power in dBm from the MoCA Node identified by {{param|TxNodeIndex}} to the MoCA Node identified by {{param|RxNodeIndex}}, else indicates the unicast receive power in dBm from the MoCA Node identified by {{param|TxNodeIndex}} at the MoCA Node identified by {{param|RxNodeIndex}}. For transmit power, the power should be max power for the channel less the Transmit Power Control. For received power, the power measurement should cover the preamble and/or at least a symbol time. The averaging method employed for this measurement is implementation specific and not specified. It is recommended but not required to utilize the LMO (Link Maintenance Operation) EVM probes for this measurement. The field ''numValues'' is a function of {{param|LinkType}}: * {{enum|moca1PHY|LinkType}} - 1 * {{enum|primary|LinkType}} - 1 * {{enum|bonded|LinkType}} - 2 struct mocaPower { char numValues; // 1 octet (Number of Values to follow) { char power; // 1 octet (Tx or Rx Power Level in dB) } [numValues]; }; This parameter is only used for MoCA 2.0.",
+        "type": "hexBinary",
+        "minLength": 2,
+        "maxLength": 3
+      },
+      {
+        "name": "PowerReduction",
+        "access": "readOnly",
+        "description": "Per channel list of The Transmit Power Control (TPC) back-off in dB. If the MoCA Node identified by {{param|TxNodeIndex}} is equal to {{param|#.NodeID}}, then indicates the TPC in dB utilized to back-off transmission to the MoCA Node identified by {{param|RxNodeIndex}}. Otherwise indicates the TPC in dB that the MoCA Node identified by {{param|TxNodeIndex}} utilized to back-off its transmission. {{param}} is identical to the TPC back-off utilized for transmission and determined from the TPC backoff parameters TPC_BACKOFF_MAJOR and TPC_BACKOFF_MINOR as follows: {{param}} = TPC_BACKOFF_MAJOR * 3 +TPC_BACKOFF_MINOR. The field ''numValues'' is a function of {{param|LinkType}}: * {{enum|moca1PHY|LinkType}} - 1 * {{enum|primary|LinkType}} - 1 * {{enum|bonded|LinkType}} - 2 struct mocaPowerReduction { char numValues; // 1 octet (Number of Values to follow) { char tpc; // 1 octet (TPC in dB) } [numValues]; }; This parameter is only used for MoCA 2.0.",
+        "type": "hexBinary",
+        "minLength": 2,
+        "maxLength": 3
+      },
+      {
+        "name": "RxSNR",
+        "access": "readOnly",
+        "description": "Per channel list of average received Signal to Noise Ratio (SNR) in dB. If the MoCA Node identified by {{param|RxNodeIndex}} is not equal to {{param|#.NodeID}} or the MoCA Node identified by {{param|TxNodeIndex}} is equal to {{param|#.NodeID}}, then this parameter is not present. Otherwise indicates the average received SNR across all the available carriers based on the EVM probe from the MoCA Node identified by {{param|TxNodeIndex}}. The field ''numValues'' is a function of {{param|LinkType}}: * {{enum|moca1PHY|LinkType}} - 1 * {{enum|primary|LinkType}} - 1 * {{enum|bonded|LinkType}} - 2 struct mocaRxSNR { char numValues; // 1 octet (Number of Values to follow) { char rx_snr; // 1 octet (Rx SNR in dB) } [numValues]; }; This parameter is only used for MoCA 2.0.",
+        "type": "hexBinary",
+        "minLength": 2,
+        "maxLength": 3
+      }
+    ],
+    "description": "MoCA mesh PHY rate table. This table contains the unicast transmit PHY rate between all pairs of MoCA Nodes in the MoCA network. Since {{param|TxRate}} is the transmit PHY rate from {{param|TxNodeIndex}} to {{param|RxNodeIndex}}, this table does not contain any entries with {{param|TxNodeIndex}} equals {{param|RxNodeIndex}}. In addition, a MoCA network can have less than 16 Nodes, hence some values of {{param|TxNodeIndex}} and {{param|RxNodeIndex}} in the range of 0 to 15 may not exist. Entries in this table cannot be created or deleted by the network management system. All entries are created or deleted by the device software.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "TxNodeIndex",
+        "RxNodeIndex"
+      ]
+    }
+  }
+}

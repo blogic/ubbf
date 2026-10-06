@@ -1,0 +1,188 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DSL.Channel.{i}.",
+  "object": {
+    "path": "Device.DSL.Channel.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ChannelNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the interface. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the interface as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readOnly",
+        "description": "{{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "LinkEncapsulationSupported",
+        "access": "readOnly",
+        "description": "{{list}} List items indicate which link encapsulation standards and recommendations are supported by the {{object}} instance.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "G.992.3_Annex_K_ATM",
+          "G.992.3_Annex_K_PTM",
+          "G.993.2_Annex_K_ATM",
+          "G.993.2_Annex_K_PTM",
+          "G.994.1"
+        ]
+      },
+      {
+        "name": "LinkEncapsulationUsed",
+        "access": "readOnly",
+        "description": "Indicates the link encapsulation standard that the {{object}} instance is using for the connection. {{enum}} When ATM encapsulation is identified then an upper-layer {{object|##.ATM.Link}} interface MUST be used. When PTM encapsulation is identified then an upper-layer {{object|##.PTM.Link}} interface MUST be used.",
+        "type": "string",
+        "enumerations": [
+          "G.992.3_Annex_K_ATM",
+          "G.992.3_Annex_K_PTM",
+          "G.993.2_Annex_K_ATM",
+          "G.993.2_Annex_K_PTM"
+        ]
+      },
+      {
+        "name": "LPATH",
+        "access": "readOnly",
+        "description": "Reports the index of the latency path supporting the bearer channel. Note: See ITU-T Recommendation {{bibref|G.997.1|Section 7.5.2.7}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 3
+      },
+      {
+        "name": "INTLVDEPTH",
+        "access": "readOnly",
+        "description": "Reports the interleaver depth D for the latency path indicated in {{param|LPATH}}. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to 0.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "INTLVBLOCK",
+        "access": "readOnly",
+        "description": "Reports the interleaver block length in use on the latency path indicated in {{param|LPATH}}. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to -1.",
+        "type": "int"
+      },
+      {
+        "name": "ActualInterleavingDelay",
+        "access": "readOnly",
+        "description": "Reports the actual delay, in {{units}}, of the latency path due to interleaving. Note: In G.997.1, this parameter is called \"Actual Interleaving Delay.\" See ITU-T Recommendation {{bibref|G.997.1}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ACTINP",
+        "access": "readOnly",
+        "description": "Reports the actual impulse noise protection (INP) provided by the latency path indicated in {{param|LPATH}}. The value is the actual INP in the L0 (i.e., Showtime) state. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to -1.",
+        "type": "int"
+      },
+      {
+        "name": "INPREPORT",
+        "access": "readOnly",
+        "description": "Reports whether the value reported in ACTINP was computed assuming the receiver does not use erasure decoding. Valid values are 0 (computed per the formula assuming no erasure decoding) and 1 (computed by taking into account erasure decoding capabilities of receiver). Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to {{false}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "NFEC",
+        "access": "readOnly",
+        "description": "Reports the size, in {{units}}, of the Reed-Solomon codeword in use on the latency path indicated in {{param|LPATH}}. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to -1.",
+        "type": "int"
+      },
+      {
+        "name": "RFEC",
+        "access": "readOnly",
+        "description": "Reports the number of redundancy bytes per Reed-Solomon codeword on the latency path indicated in {{param|LPATH}}. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to -1.",
+        "type": "int"
+      },
+      {
+        "name": "LSYMB",
+        "access": "readOnly",
+        "description": "Reports the number of bits per symbol assigned to the latency path indicated in {{param|LPATH}}. This value does not include overhead due to trellis coding. Note: See ITU-T Recommendation {{bibref|G.997.1}}. For a multimode device operating in a mode in which this parameter does not apply, the value of this parameter SHOULD be set to -1.",
+        "type": "int"
+      },
+      {
+        "name": "UpstreamCurrRate",
+        "access": "readOnly",
+        "description": "The current physical layer aggregate data rate (expressed in {{units}}) of the upstream DSL connection. Note: If the parameter is implemented but no value is available, it MUST have the value 4294967295 (the maximum for its data type).",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "DownstreamCurrRate",
+        "access": "readOnly",
+        "description": "The current physical layer aggregate data rate (expressed in {{units}}) of the downstream DSL connection. Note: If the parameter is implemented but no value is available, it MUST have the value 4294967295 (the maximum for its data type).",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ACTNDR",
+        "access": "readOnly",
+        "description": "Actual net data rate expressed in {{units}}. Independent whether retransmission is used or not in a given transmit direction: * In L0 state, this parameter reports the net data rate (as specified in [ITU T G.992.3], [ITU T G.992.5] or [ITU T G.993.2]) at which the bearer channel is operating. * In L2 state, the parameter contains the net data rate (as specified in [ITU T G.992.3], [ITU T G.992.5] or [ITU T G.993.2]) in the previous L0 state. Note: See ITU-T Recommendation {{bibref|G.997.1}}.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "ACTINPREIN",
+        "access": "readOnly",
+        "description": "Actual impulse noise protection against REIN, expressed in {{units}}. If retransmission is used in a given transmit direction, this parameter reports the actual impulse noise protection (INP) against REIN (under specific conditions detailed in [ITU T G.998.4]) on the bearer channel in the L0 state. In the L2 state, the parameter contains the INP in the previous L0 state. The value is coded in fractions of DMT symbols with a granularity of 0.1 symbols. The range is from 0 to 25.4. A special value of 25.5 indicates an ACTINP_REIN of 25.5 or higher. Note: This parameter is defined as ACTINP_REIN in Clause 7.5.2.9 of ITU-T Recommendation {{bibref|G.997.1}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255,
+        "version": "2.12"
+      }
+    ],
+    "description": "DSL Channel table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}). This table models DSL channel(s) on top of physical DSL lines.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

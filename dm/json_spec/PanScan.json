@@ -1,0 +1,53 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "PanScan.{i}.",
+  "object": {
+    "path": "PanScan.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "",
+    "parameters": [
+      {
+        "name": "PanID",
+        "access": "readOnly",
+        "description": "Personal Area Network Identifier (ex: 0xFFFF).",
+        "type": "hexBinary",
+        "minLength": 2,
+        "maxLength": 2
+      },
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "MAC Extended Address.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "Channel",
+        "access": "readOnly",
+        "description": "Radio channels in the range [11-26].",
+        "type": "unsignedInt",
+        "minInclusive": 11,
+        "maxInclusive": 26
+      },
+      {
+        "name": "RSSI",
+        "access": "readOnly",
+        "description": "Received Signal Strength Indicator, this field SHALL have the units of {{units}}, having the range -128 {{units}} to 0 {{units}}.",
+        "type": "int",
+        "minInclusive": -128,
+        "maxInclusive": 0
+      },
+      {
+        "name": "LQI",
+        "access": "readOnly",
+        "description": "Link Quality Indicator (LQI) depending on the Link Margin value average of the received relative signal strength.",
+        "type": "dataType:ThreadLinkQuality"
+      }
+    ],
+    "description": "This table list the set of PAN discovered and reachable from the node.",
+    "children": []
+  }
+}

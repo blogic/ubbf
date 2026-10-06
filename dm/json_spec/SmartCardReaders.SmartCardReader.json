@@ -1,0 +1,74 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SmartCardReaders.SmartCardReader.{i}.",
+  "object": {
+    "path": "Device.SmartCardReaders.SmartCardReader.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "SmartCardReaderNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this smart card reader.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the status of this smart card reader.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "Human-readable name associated with this smart card reader.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ResetTime",
+        "access": "readOnly",
+        "description": "The time at which this SmartCard Reader was reset. Reset can be caused by: * {{param|Status}} transition from Disabled to Enabled * {{template|Reset}}. * An internal reset of the SmartCard Reader (including a reboot of the device). Unknown Time value indicates that this SmartCard Reader has never been reset, which can only happen if it has never been enabled.",
+        "type": "dateTime"
+      },
+      {
+        "name": "DecryptionFailedCounter",
+        "access": "readOnly",
+        "description": "Counter incremented once each time decryption cannot be carried out. This counter relates to the smart card reader, not to the smart card itself, i.e. it is reset when the {{template|Reset}} and not when a Smart Card is inserted or removed.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "DecryptionFailedNoKeyCounter",
+        "access": "readOnly",
+        "description": "Counter incremented once each time the key is not available to decrypt it. This is a subset of the more general {{param|DecryptionFailedCounter}} within the same object and thus will always be less than that parameter. This counter relates to the smart card reader, not to the smart card itself, i.e. it is reset when the {{template|Reset}} and not when a Smart Card is inserted or removed.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "This object describes the characteristics of the smart card reader.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Name"
+      ]
+    }
+  }
+}

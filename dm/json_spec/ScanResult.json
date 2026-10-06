@@ -1,0 +1,37 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "ScanResult.{i}.",
+  "object": {
+    "path": "ScanResult.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "TimeStamp",
+        "access": "readOnly",
+        "description": "The timestamp of the last scan. Formatted with the date-and-time string format as defined in {{bibref|RFC3339|Section 3}}.",
+        "type": "dateTime"
+      },
+      {
+        "name": "AggregateScanDuration",
+        "access": "readOnly",
+        "description": "Total time spent performing the scan of this channel in {{units}}.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "ScanType",
+        "access": "readOnly",
+        "description": "Indicates whether the scan was performed passively (false) or with active probing (true).",
+        "type": "boolean",
+        "version": "2.17"
+      }
+    ],
+    "description": "The list of neighboring Access Points discovered by a Radio organized per Operating Class and Channel tuple.",
+    "children": []
+  }
+}

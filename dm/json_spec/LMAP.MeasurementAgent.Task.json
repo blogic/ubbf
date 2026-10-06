@@ -1,0 +1,62 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.MeasurementAgent.{i}.Task.{i}.",
+  "object": {
+    "path": "Device.LMAP.MeasurementAgent.{i}.Task.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "TaskNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} instance. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "Name of the task.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Tags",
+        "access": "readWrite",
+        "description": "{{list|each entry represents tags that are to be reported together with the measurement results.}}",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "OptionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RegistryNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The {{object}} object defines the configuration for a task that can be performed by {{object|##.MeasurementAgent}} objects. Tasks are performed by {{object|##.MeasurementAgent}} objects when a {{object|#.Schedule}} object invokes the Task.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

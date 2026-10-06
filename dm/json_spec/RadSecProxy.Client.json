@@ -1,0 +1,84 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.RadSecProxy.Client.{i}.",
+  "object": {
+    "path": "Device.RadSecProxy.Client.{i}.",
+    "access": "readWrite",
+    "minEntries": "1",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ClientNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enable or disable this {{object}} instance.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this entry. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "Address",
+        "access": "readWrite",
+        "description": "Specifies the Fully Qualified Domain Name (FQDN) or IP address of RADIUS client that the RadSecProxy service communicates with.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "Specifies the type (protocol) of the Client.",
+        "type": "string",
+        "enumerations": [
+          "UDP",
+          "TCP",
+          "TLS",
+          "DTLS"
+        ]
+      },
+      {
+        "name": "Secret",
+        "access": "readWrite",
+        "description": "Specifies the shared RADIUS key with the server. This option is optional for TLS/DTLS and if omitted will default to \"radsec\". Note that using a secret other than \"radsec\" for TLS is a violation of the standard {{bibref|RFC6614}} and that the proposed standard for DTLS stipulates that the secret must be \"radius/dtls\".",
+        "secured": true,
+        "type": "string"
+      },
+      {
+        "name": "TLS",
+        "access": "readWrite",
+        "description": "Specifies the TLS Block to be used by this client.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.TLS.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "Client block configuration of the RadSecProxy service.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

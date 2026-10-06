@@ -1,0 +1,79 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.Event.{i}.CalendarTimer.",
+  "object": {
+    "path": "Device.LMAP.Event.{i}.CalendarTimer.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "StartTime",
+        "access": "readWrite",
+        "description": "Date and time that the {{object}} instance is to begin this operation.",
+        "type": "dateTime"
+      },
+      {
+        "name": "EndTime",
+        "access": "readWrite",
+        "description": "Date and time that the {{object}} instance is to end this operation.",
+        "type": "dateTime"
+      },
+      {
+        "name": "ScheduleMonths",
+        "access": "readWrite",
+        "description": "This parameter represents either a list of the months of year that are applied to the schedule or an asterisk (*) that represents all the elements of the list. Each entry in the months of the year list can be a numeric value or the name of the month (january (1), february (2), march (3), april (4), may (5), june (6), july (7), august (8), september (9), october (10), november (11), december (12)).",
+        "type": "string"
+      },
+      {
+        "name": "ScheduleDaysOfMonth",
+        "access": "readWrite",
+        "description": "This parameter represents either a list of the days of the month (1-31) that are applied to the schedule or an asterisk (*) that represents all the elements of the list.",
+        "type": "string"
+      },
+      {
+        "name": "ScheduleDaysOfWeek",
+        "access": "readWrite",
+        "description": "This parameter represents either a list of the days of the week that are applied to the schedule or an asterisk (*) that represents all the elements of the list. Each entry in the days of the week list can be a numeric value or the name of the day (sunday (1), monday (2), tuesday (3), wednesday (4), thursday (5), friday (6), saturday (7)).",
+        "type": "string"
+      },
+      {
+        "name": "ScheduleHoursOfDay",
+        "access": "readWrite",
+        "description": "This parameter represents either a list of the hours of the day (0-23) that are applied to the schedule or an asterisk (*) that represents all the elements of the list.",
+        "type": "string"
+      },
+      {
+        "name": "ScheduleMinutesOfHour",
+        "access": "readWrite",
+        "description": "This parameter represents either a list of the minutes of the hour (0-59) that are applied to the schedule or an asterisk (*) that represents all the elements of the list.",
+        "type": "string"
+      },
+      {
+        "name": "ScheduleSecondsOfMinute",
+        "access": "readWrite",
+        "description": "This parameter represents either a list of the minutes of the hour (0-59) that are applied to the schedule or an asterisk (*) that represents all the elements of the list.",
+        "type": "string"
+      },
+      {
+        "name": "EnableScheduleTimezoneOffset",
+        "access": "readWrite",
+        "description": "When {{true}}, the value of the {{param|ScheduleTimezoneOffset}} parameter is applied to the schedule elements. When {{false}}, the device's system timezone offset is applied to the schedule elements.",
+        "type": "boolean"
+      },
+      {
+        "name": "ScheduleTimezoneOffset",
+        "access": "readWrite",
+        "description": "The timezone offset, in {{units}}, to be applied to the schedule elements.",
+        "type": "int",
+        "minInclusive": -23,
+        "maxInclusive": 23
+      }
+    ],
+    "description": "This object defines a calendar timer instance. The calendar timer instance has attributes for when the timer is to begin ({{param|StartTime}}) and end ({{param|EndTime}}) as well as the schedule of the recurrence. The algrorithm that defines how the schedule elements are evaluated is defined in {{bibref|LMAPIFM}}. If the value of any of the {{param|ScheduleMonths}}, {{param|ScheduleDaysOfMonth}}, {{param|ScheduleDaysOfWeek}}, {{param|ScheduleHoursOfDay}}, {{param|ScheduleMinutesOfHour}} or {{param|ScheduleSecondsOfMinute}} is {{empty}} then any actions that use this object will not be invoked.",
+    "children": []
+  }
+}

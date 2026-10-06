@@ -1,0 +1,44 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SoftwareModules.ExecutionUnit.{i}.EnvVariable.{i}.",
+  "object": {
+    "path": "Device.SoftwareModules.ExecutionUnit.{i}.EnvVariable.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "EnvVariableNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Key",
+        "access": "readOnly",
+        "description": "The Environment variable name that needs to be passed to the Execution unit when the execution unit is activated.",
+        "type": "string",
+        "maxLength": 2048
+      },
+      {
+        "name": "Value",
+        "access": "readOnly",
+        "description": "The Environment variable value associated with the name that needs to be passed to the Execution unit it is activated.",
+        "type": "string",
+        "maxLength": 2048
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.17"
+      }
+    ],
+    "description": "This parameter describes the environment variables which are accessible to the ExecutionUnit.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

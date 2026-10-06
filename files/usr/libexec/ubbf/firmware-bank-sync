@@ -1,0 +1,53 @@
+#!/usr/bin/env ucode
+
+'use strict';
+
+import * as fs from 'fs';
+import * as ubus from 'ubus';
+
+function fw_printenv(name) {
+	let p = fs.popen(sprintf("fw_printenv -n '%s' 2>/dev/null", name), 'r');
+	if (!p)
+		return null;
+	let val = trim(p.read('all') ?? '');
+	p.close();
+	return (val != '') ? val : null;
+}
+
+function fw_setenv(name, value) {
+	return system(sprintf("fw_setenv '%s' '%s'", name, value)) == 0;
+}
+
+function boot_bank_status() {
+	let p = fs.popen('/usr/libexec/boot-bank status 2>/dev/null', 'r');
+	if (!p)
+		return null;
+	let output = p.read('all');
+	let rc = p.close();
+	if (rc != 0 || !output || trim(output) == '')
+		return null;
+	try {
+		return json(output);
+	} catch (e) {
+		return null;
+	}
+}
+
+let board = ubus.call({ object: 'system', method: 'board' });
+let revision = board?.release?.revision;
+
+if (!revision)
+	exit(0);
+
+let status = boot_bank_status();
+if (!status)
+	exit(0);
+
+let key = sprintf('ubbf-bank-%s', status.active.env_value);
+let current = fw_printenv(key);
+
+if (current == revision)
+	exit(0);
+
+fw_setenv(key, revision);
+exit(0);

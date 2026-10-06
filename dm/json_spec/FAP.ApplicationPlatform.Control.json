@@ -1,0 +1,31 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FAP.ApplicationPlatform.Control.",
+  "object": {
+    "path": "Device.FAP.ApplicationPlatform.Control.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "AuthenticationMethod",
+        "access": "readWrite",
+        "description": "Specifies how 3rd Party Applications have to authenticate against Femto APIs in order to use it. {{reference}} '''''Note:''''' The credentials are not part of the data model and have to be supplied externally.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "TunnelInst",
+        "access": "readWrite",
+        "description": "This is the reference to the IPsec tunnel instance to be used by the Application Platform traffic. The {{param}} MUST point to a tunnel instance defined in the data model. If the referenced object is deleted, the parameter value MUST be set to an empty string.",
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "This object contains parameters related to the operation of the Femtozone APIs.",
+    "children": []
+  }
+}

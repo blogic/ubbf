@@ -1,0 +1,56 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.STAMLD.{i}.STATIDLinkMap.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.STAMLD.{i}.STATIDLinkMap.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "STATIDLinkMapNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Direction",
+        "access": "readOnly",
+        "description": "The direction of the traffic flow from the perspective of the APMLD. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down"
+        ]
+      },
+      {
+        "name": "TID",
+        "access": "readOnly",
+        "description": "The traffic identifier (TID) for this mapping.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "BSSID",
+        "access": "readOnly",
+        "description": "The BSSID of the preferred link (affiliated AP) to use for traffic with matching direction and TID values.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "LinkID",
+        "access": "readOnly",
+        "description": "{{list}} The Link ID of the preferred link (affiliated AP) to use for traffic with matching direction and TID values.",
+        "list": true,
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 15
+      }
+    ],
+    "description": "Table of Traffic Identifier (TID) to Link Mappings of the Multi-Link Operation (MLO) capable station (STA). Each table entry describes the mapping between a particular TID and direction and preferred link. {{bibref|EasyMesh}} source: TID-to-Link Mapping Policy TLV.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "TID"
+      ]
+    }
+  }
+}

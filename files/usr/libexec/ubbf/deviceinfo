@@ -1,0 +1,95 @@
+#!/usr/bin/env ucode
+
+'use strict';
+
+import * as fs from 'fs';
+import * as ubus from 'ubus';
+
+function mac_read(device) {
+	if (!device)
+		return null;
+
+	let path = `/sys/class/net/${device}/address`;
+	let mac = fs.readfile(path);
+
+	if (!mac)
+		return null;
+
+	return join('', split(trim(uc(mac)), ':'));
+}
+
+function oui_extract(mac) {
+	if (!mac || length(mac) < 6)
+		return null;
+
+	return substr(mac, 0, 6);
+}
+
+function serial_extract(mac) {
+	if (!mac || length(mac) < 12)
+		return null;
+
+	return substr(mac, 6, 6);
+}
+
+// /etc/device_info is shell KEY='value'. It carries what the board says
+// about itself, which is more specific than the compatible string.
+function device_info_read() {
+	let raw = fs.readfile('/etc/device_info');
+	if (!raw)
+		return {};
+
+	let out = {};
+	for (let line in split(raw, '\n')) {
+		let m = match(trim(line), /^([A-Z_]+)='?([^']*)'?$/);
+		if (m)
+			out[m[1]] = m[2];
+	}
+
+	return out;
+}
+
+function board_name_parse(board_name) {
+	if (!board_name)
+		return {};
+
+	let parts = split(board_name, ',');
+
+	if (length(parts) < 2)
+		return {};
+
+	return {
+		manufacturer: parts[0],
+		model: parts[1]
+	};
+}
+
+let board = ubus.call({ object: 'system', method: 'board' });
+
+let capabilities_json = fs.readfile('/tmp/ubbf/capabilities.json');
+let capabilities = capabilities_json ? json(capabilities_json) : {};
+
+let wan_device = capabilities.network?.wan?.[0];
+let mac = mac_read(wan_device);
+let parsed = board_name_parse(board?.board_name);
+
+let info = device_info_read();
+
+// ProductClass, the OUI and the serial make up the DeviceId an ACS knows
+// the device by, so they are left as they are: changing one renames the
+// device to every ACS it has ever contacted.
+let deviceinfo = {
+	Manufacturer: info.DEVICE_MANUFACTURER ?? parsed.manufacturer ?? 'OpenWrt',
+	ManufacturerOUI: oui_extract(mac),
+	ModelName: board?.model ?? parsed.model,
+	Description: board?.model,
+	ProductClass: 'Router',
+	SerialNumber: serial_extract(mac),
+	HardwareVersion: info.DEVICE_REVISION ?? 'v1.0',
+	SoftwareVersion: board?.release?.description
+};
+
+fs.mkdir('/etc/usp', 0755);
+fs.writefile('/etc/usp/deviceinfo.json', sprintf('%J\n', deviceinfo));
+
+exit(0);

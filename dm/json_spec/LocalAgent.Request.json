@@ -1,0 +1,57 @@
+{
+  "source_file": "tr-181-2-19-1-usp.xml",
+  "path": "Device.LocalAgent.Request.{i}.",
+  "object": {
+    "path": "Device.LocalAgent.Request.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "RequestNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Originator",
+        "access": "readOnly",
+        "description": "The USP Endpoint Identifier that originated the command.",
+        "type": "string"
+      },
+      {
+        "name": "Command",
+        "access": "readOnly",
+        "description": "The command to be executed. This parameter is a Path Name that addresses a Command in an Object or Object Instance. The command is a result of the evaluation of the ''command'' argument of an ''Operate'' message.",
+        "type": "string"
+      },
+      {
+        "name": "CommandKey",
+        "access": "readOnly",
+        "description": "The ''command_key'' from the USP ''Operate'' message.",
+        "type": "string"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The operational status of the request to execute the command.",
+        "type": "string",
+        "enumerations": [
+          "Requested",
+          "Active",
+          "Canceling",
+          "Canceled",
+          "Success",
+          "Error"
+        ]
+      }
+    ],
+    "description": "{{object}} instances are created using USP ''Operate'' messages. Only ''Operate'' messages with ''async''=''true'' will create a {{object}} instance in the data model. New instances of {{object}} are created with {{param|Status}} as {{enum|Requested|Status}}. Once the command of the ''Operate'' begins to be executed, then the the {{param|Status}} changes to {{enum|Active|Status}}. When the command of the ''Operate'' completes, then this {{object}} instance is removed from this table, but not before the {{param|Status}} transitions to either {{enum|Success|Status}} or {{enum|Error|Status}} depending on whether the command of the ''Operate'' completed successfully or not.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Originator",
+        "Command",
+        "CommandKey"
+      ]
+    }
+  }
+}

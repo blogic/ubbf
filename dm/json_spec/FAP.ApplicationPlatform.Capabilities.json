@@ -1,0 +1,121 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FAP.ApplicationPlatform.Capabilities.",
+  "object": {
+    "path": "Device.FAP.ApplicationPlatform.Capabilities.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "PresenceApplicationSupport",
+        "access": "readOnly",
+        "description": "Specifies whether the Femto Application Platform supports Presence-Based Femtozone Applications",
+        "type": "boolean"
+      },
+      {
+        "name": "FemtoAwarenessAPISupport",
+        "access": "readOnly",
+        "description": "Specifies whether the Femto Awareness API is supported on this device.",
+        "type": "boolean"
+      },
+      {
+        "name": "SMSAPISupport",
+        "access": "readOnly",
+        "description": "Specifies whether the SMS API is supported on this device.",
+        "type": "boolean"
+      },
+      {
+        "name": "SubscribeToNotificationsOfSMSSentToApplicationSupport",
+        "access": "readOnly",
+        "description": "Specifies whether the SubscribeToNotificationsOfSMSSentToApplication functionality is supported by the FAP SMS API.",
+        "type": "boolean"
+      },
+      {
+        "name": "QuerySMSDeliveryStatusSupport",
+        "access": "readOnly",
+        "description": "Specifies whether the QuerySMSDeliveryStatus functionality is supported by the FAP SMS API.",
+        "type": "boolean"
+      },
+      {
+        "name": "MMSAPISupport",
+        "access": "readOnly",
+        "description": "Specifies whether the MMS API is supported on this device.",
+        "type": "boolean"
+      },
+      {
+        "name": "QueryMMSDeliveryStatusSupport",
+        "access": "readOnly",
+        "description": "Specifies whether the QueryMMSDeliveryStatus functionality is supported by the FAP MMS API.",
+        "type": "boolean"
+      },
+      {
+        "name": "SubscribeToNotificationsOfMMSSentToApplicationSupport",
+        "access": "readOnly",
+        "description": "Specifies whether the SubscribeToNotificationsOfMMSSentToApplication functionality is supported by the FAP MMS API.",
+        "type": "boolean"
+      },
+      {
+        "name": "TerminalLocationAPISupport",
+        "access": "readOnly",
+        "description": "Specifies whether the Terminal Location API is supported on this device.",
+        "type": "boolean"
+      },
+      {
+        "name": "AuthenticationMethodsSupported",
+        "access": "readOnly",
+        "description": "Specifies the supported methods that 3rd Party Applications can use to authenticate with the Femto Application Platform at initialization.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "Basic",
+          "Digest",
+          "DigitalSignature"
+        ]
+      },
+      {
+        "name": "AccessLevelsSupported",
+        "access": "readOnly",
+        "description": "Specifies the supported access levels that 3rd Party Applications can request when authenticating with the Femto Application Platform at initialization. This access level is with respect to resources within the Femto Application Platform only (not to be confused with Access Mode parameter in .FAPService.{i}.AccessMgmt).",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "Guest",
+          "Standard",
+          "Restricted",
+          "Administrator",
+          "Debug"
+        ]
+      },
+      {
+        "name": "SendSMSTargetAddressType",
+        "access": "readOnly",
+        "description": "Specifies the supported types of addresses SMSs can be sent to.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "TelUri",
+          "AnonymousReference",
+          "All"
+        ]
+      },
+      {
+        "name": "SendMMSTargetAddressType",
+        "access": "readOnly",
+        "description": "Specifies the supported types of addresses MMSs can be sent to.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "TelUri",
+          "AnonymousReference",
+          "All"
+        ]
+      }
+    ],
+    "description": "This object contains parameters related to the capabilities of the Femtozone Application Platform and the Femtozone APIs.",
+    "children": []
+  }
+}

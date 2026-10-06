@@ -1,0 +1,70 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FAP.PerfMgmt.Config.{i}.",
+  "object": {
+    "path": "Device.FAP.PerfMgmt.Config.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ConfigNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this entry. If this entry is disabled then its periodic uploads are not performed.",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "URL",
+        "access": "readWrite",
+        "description": "{{datatype}} specifying the destination file location. HTTP and HTTPS transports MUST be supported. Other transports MAY be supported. This argument specifies only the destination file location, and does not indicate in any way the name or location of the local file to be uploaded.",
+        "type": "dataType:URL"
+      },
+      {
+        "name": "Username",
+        "access": "readWrite",
+        "description": "Username to be used by the device to authenticate with the file server. This string is set to {{empty}} if no authentication is used.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Password",
+        "access": "readWrite",
+        "description": "Password to be used by the device to authenticate with the file server. This string is set to {{empty}} if no authentication is used.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "PeriodicUploadInterval",
+        "access": "readWrite",
+        "description": "The duration in {{units}} of the interval for which the device MUST create a Performance File and attempt to upload the file to {{param|URL}} if {{param|Enable}} is {{true}}.",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "PeriodicUploadTime",
+        "access": "readWrite",
+        "description": "An absolute time reference in UTC to determine when the device will initiate the periodic file upload. Each file upload MUST occur at this reference time plus or minus an integer multiple of the {{param|PeriodicUploadInterval}}. {{param}} is used only to set the \"phase\" of the periodic uploads. The actual value of {{param}} can be arbitrarily far into the past or future. For example, if {{param|PeriodicUploadInterval}} is 86400 (a day) and if {{param}} is set to UTC midnight on some day (in the past, present, or future) then periodic file uploads will occur every day at UTC midnight. These MUST begin on the very next midnight, even if {{param}} refers to a day in the future. The Unknown Time value as defined in {{bibref|TR-106|Section 3.2}} indicates that no particular time reference is specified. That is, the device MAY locally choose the time reference, and is REQUIRED only to adhere to the specified {{param|PeriodicUploadInterval}}. If absolute time is not available to the device, its periodic file upload behavior MUST be the same as if the {{param}} parameter was set to the Unknown Time value.",
+        "type": "dateTime"
+      }
+    ],
+    "description": "This object contains parameters relating to File Management configuration for uploading of Performance Files to a designated File Server. Each table entry can be referenced by zero or more radio-specific objects contained in the FAPService instances. The periodic upload will upload data for all of the radio-specific objects that reference it.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

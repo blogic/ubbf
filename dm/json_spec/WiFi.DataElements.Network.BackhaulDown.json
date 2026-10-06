@@ -1,0 +1,35 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.BackhaulDown.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.BackhaulDown.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "BackhaulDownNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "BackhaulDownALID",
+        "access": "readOnly",
+        "description": "The IEEE 1905 {{bibref|IEEE1905.1a}} Abstraction-Layer ID (ALID) of the EasyMesh Agent on the network that is downstream of this EasyMesh Agent and has backhaul to this EasyMesh Agent.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "BackhaulDownMACAddress",
+        "access": "readOnly",
+        "description": "MAC address of the EasyMesh Agent's interface that is downstream of this EasyMesh Agent and has backhaul to this EasyMesh Agent.",
+        "type": "dataType:MACAddress"
+      }
+    ],
+    "description": "This object identifies EasyMesh Agents and their interfaces that are downstream of this EasyMesh Agent and have backhaul to this EasyMesh Agent.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "BackhaulDownALID"
+      ]
+    }
+  }
+}

@@ -1,0 +1,242 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.",
+  "object": {
+    "path": "Device.DeviceInfo.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "DeviceCategory",
+        "access": "readOnly",
+        "description": "Each list item is a device category (e.g. \"AV_TV\" and \"AV_Recorder\"), or the value is {{empty}} if no such element is provided by the device. Note: It is assumed that this list might be used for HTIP (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and {{bibref|G.9973}}. Standard HTIP device categories are defined in {{bibref|JJ-300.01}}. In this case, the maximum length of the list is 127 and of each item is 31, and any non-HTIP device categories SHOULD NOT conflict with standard HTIP device categories.",
+        "list": true,
+        "type": "string",
+        "version": "2.12"
+      },
+      {
+        "name": "Manufacturer",
+        "access": "readOnly",
+        "description": "The manufacturer of the CPE (human readable string).",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "ManufacturerOUI",
+        "access": "readOnly",
+        "description": "Organizationally unique identifier of the device manufacturer. Represented as a six hexadecimal-digit value using all upper-case letters and including any leading zeros. {{pattern}} The value MUST be a valid OUI as defined in {{bibref|OUI}}. This value MUST remain fixed over the lifetime of the device, including across firmware updates. Any change would indicate that it's a new Agent and would therefore require a {{event|#.Boot!}} Event with a {{enum|LocalFactoryReset|#.Boot!.Cause}} enumerated value in the {{param|#.Boot!.Cause}} argument.",
+        "type": "string",
+        "minLength": 6,
+        "maxLength": 6,
+        "pattern": "[0-9A-F]{6}"
+      },
+      {
+        "name": "CID",
+        "access": "readOnly",
+        "description": "Company identifier assigned and registered by the IEEE Registration Authority to the entity responsible for this Agent. Represented as a six hexadecimal-digit value using all upper-case letters and including any leading zeros. {{pattern}} This value MUST remain fixed over the lifetime of the Agent, including across firmware updates. Any change would indicate that it's a new Agent and would therefore require a {{event|#.Boot!}} Event with a {{enum|LocalFactoryReset|#.Boot!.Cause}} enumerated value in the {{param|#.Boot!.Cause}} argument.",
+        "type": "string",
+        "minLength": 6,
+        "maxLength": 6,
+        "pattern": "[0-9A-F]{6}"
+      },
+      {
+        "name": "ModelName",
+        "access": "readOnly",
+        "description": "Model name of the CPE (human readable string).",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "ModelNumber",
+        "access": "readOnly",
+        "description": "The model number of the device (human readable string), or {{empty}} if no model number is provided by the device. Note: It is assumed that this string might be used for HTIP (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and {{bibref|G.9973}}. In this case, the maximum length of the string is 31.",
+        "type": "string",
+        "maxLength": 64,
+        "version": "2.12"
+      },
+      {
+        "name": "Description",
+        "access": "readOnly",
+        "description": "A full description of the CPE device (human readable string).",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ProductClass",
+        "access": "readOnly",
+        "description": "Identifier of the class of product for which the serial number applies. That is, for a given manufacturer, this parameter is used to identify the product or class of product over which the {{param|SerialNumber}} parameter is unique. This value MUST remain fixed over the lifetime of the device, including across firmware updates.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "SerialNumber",
+        "access": "readOnly",
+        "description": "Identifier of the particular device that is unique for the indicated class of product and manufacturer. This value MUST remain fixed over the lifetime of the device, including across firmware updates.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "HardwareVersion",
+        "access": "readOnly",
+        "description": "A string identifying the particular CPE model and version.",
+        "type": "string",
+        "maxLength": 64,
+        "forcedInform": "true"
+      },
+      {
+        "name": "SoftwareVersion",
+        "access": "readOnly",
+        "description": "A string identifying the software version currently installed in the CPE (i.e. version of the overall CPE firmware). To allow version comparisons, this element SHOULD be in the form of dot-delimited integers, where each successive integer represents a more minor category of variation. For example, ''3.0.21'' where the components mean: ''Major.Minor.Build''.",
+        "type": "string",
+        "maxLength": 64,
+        "activeNotify": "forceEnabled",
+        "forcedInform": "true"
+      },
+      {
+        "name": "ActiveFirmwareImage",
+        "access": "readOnly",
+        "description": "{{noreference}}A full path reference to the row in the {{object|FirmwareImage}} table representing the currently running firmware image.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "FirmwareImage.",
+          "targetType": "row"
+        },
+        "version": "2.12"
+      },
+      {
+        "name": "BootFirmwareImage",
+        "access": "readWrite",
+        "description": "{{noreference}}A full path reference to the row in the {{object|FirmwareImage}} table of the firmware image that is to be loaded the next time the device boots. This parameter value cannot be empty and must point to a valid and enabled {{object|FirmwareImage}} object where the ({{param|FirmwareImage.{i}.Available}} parameter is set to 'true'). Out of the factory, this parameter should be set to point to the firmware image the CPE will attempt to boot when first powered on. The firmware image instance referenced by this parameter must also have an Available parameter value of 'true'. Attempting to set this parameter to point to a non-enabled firmware image MUST result in the CPE responding with a CWMP fault (9007). In situations where the CPE cannot boot the firmware image specified by this parameter and manages to boot a different firmware image, the CPE MUST NOT modify this value to point to the alternate firmware image that is currently active.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "FirmwareImage.",
+          "targetType": "row"
+        },
+        "version": "2.12"
+      },
+      {
+        "name": "AdditionalHardwareVersion",
+        "access": "readOnly",
+        "description": "{{list}} Each entry is an additional version. Represents any additional hardware version information the vendor might wish to supply.",
+        "list": true,
+        "listMaxLength": 64,
+        "type": "string"
+      },
+      {
+        "name": "AdditionalSoftwareVersion",
+        "access": "readOnly",
+        "description": "{{list}} Each entry is an additional version. Represents any additional software version information the vendor might wish to supply.",
+        "list": true,
+        "listMaxLength": 64,
+        "type": "string"
+      },
+      {
+        "name": "ProvisioningCode",
+        "access": "readWrite",
+        "description": "Identifier of the primary service provider and other provisioning information, which MAY be used by the ACS to determine service provider-specific customization and provisioning parameters.",
+        "type": "string",
+        "maxLength": 64,
+        "activeNotify": "forceEnabled",
+        "forcedInform": "true"
+      },
+      {
+        "name": "UpTime",
+        "access": "readOnly",
+        "description": "Time in {{units}} since the CPE was last restarted.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "FirstUseDate",
+        "access": "readOnly",
+        "description": "Date and time in UTC that the CPE first both successfully established an IP-layer network connection and acquired an absolute time reference using NTP or equivalent over that network connection. The CPE MAY reset this date after a factory reset. If NTP or equivalent is not available, this parameter, if present, SHOULD be set to the Unknown Time value.",
+        "type": "dateTime"
+      },
+      {
+        "name": "HostName",
+        "access": "readWrite",
+        "description": "The hostname of the device {{bibref|RFC1123|Section 2 General issues}}. This can be either a Fully Qualified Domain Name (FQDN) or just the first component of an FQDN. For example, myhgw, myhgw.home, myhgw.home.arpa, myhgw.isp.net.",
+        "type": "string",
+        "maxLength": 255,
+        "version": "2.16"
+      },
+      {
+        "name": "FirmwareImageNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "VendorConfigFileNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ProcessorNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}} {{deprecated|2.18|because the only contained parameter, {{param|Processor.{i}.Architecture}}, is no longer relevant for modern devices.}}",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "LogRotateNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "VendorLogFileNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "LocationNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "DeviceImageNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "FriendlyName",
+        "access": "readWrite",
+        "description": "The friendly name of the device. In {{bibref|TR-369}} the friendly name is used during the advertisement of an endpoint - see section IANA-Registered USP Service Names of {{bibref|TR-369}}.",
+        "type": "string",
+        "maxLength": 32
+      },
+      {
+        "name": "PEN",
+        "access": "readOnly",
+        "description": "Private Enterprise Number assigned and registered by IANA to the entity responsible for this Agent. Represented as a decimal encoding of the IANA-assigned number. This value MUST remain fixed over the lifetime of the Agent, including across firmware updates. Any change would indicate that it's a new Agent and would therefore require a {{event|#.Boot!}} Event with a {{enum|LocalFactoryReset|#.Boot!.Cause}} enumerated value in the {{param|#.Boot!.Cause}} argument.",
+        "type": "string",
+        "maxLength": 10
+      },
+      {
+        "name": "MaxNumberOfActivateTimeWindows",
+        "access": "readOnly",
+        "description": "The maximum number of time windows in a {{command|FirmwareImage.{i}.Activate()}} Command that the Device supports.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 5,
+        "version": "2.16"
+      }
+    ],
+    "description": "This object contains general device information.",
+    "children": []
+  }
+}

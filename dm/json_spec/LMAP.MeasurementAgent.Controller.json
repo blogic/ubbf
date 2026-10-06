@@ -1,0 +1,57 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.MeasurementAgent.{i}.Controller.",
+  "object": {
+    "path": "Device.LMAP.MeasurementAgent.{i}.Controller.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ControllerTimeout",
+        "access": "readWrite",
+        "description": "The timer, in {{units}}, that is started after each successful contact with a measurement controller. When the timer reaches the timeout an event is raised indicating that connectivity to the controller has been lost.",
+        "type": "int",
+        "minInclusive": 0
+      },
+      {
+        "name": "ControlSchedules",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|a {{object|#.Schedule}} object}} This parameter lists the available control schedules for invoking control tasks by the measurement agent.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Schedule.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ControlTasks",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|a {{object|#.Task}} object}} This parameter lists the available control tasks that can be invoked by the measurement agent.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Task.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ControlChannels",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|a {{object|#.CommunicationChannel}} object}} The measurement agent to measurement controller channel is used for conveying results of communication sessions with the configuration, instruction status and logging information elements defined in defined in {{bibref|LMAPIFM}}.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.CommunicationChannel.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "This objects represents the measurement controller that is assigned to a measurement agent.",
+    "children": []
+  }
+}

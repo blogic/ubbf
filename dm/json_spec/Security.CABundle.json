@@ -1,0 +1,47 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Security.CABundle.{i}.",
+  "object": {
+    "path": "Device.Security.CABundle.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "CABundleNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this CA group. When disabled, the certificates within this group will not be used for validation.",
+        "type": "boolean"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name assigned to this CA group for identification.",
+        "type": "string"
+      },
+      {
+        "name": "CACertificates",
+        "access": "readWrite",
+        "description": "Specifies the CA certificate(s) that the client must use to validate the certificate presented by the remote server. These CA certificates form a trust chain that the server certificate must match, ensuring that only servers with trusted certificates can establish a connection. This parameter supports multiple CA certificates to accommodate different server certificate issuers. This parameter is applicable only when a TLS session is being used.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.Certificate.",
+          "targetType": "row"
+        },
+        "version": "2.19"
+      }
+    ],
+    "description": "This table stores information about a group of Certificate Authorities (CAs). A CA is a trusted entity that issues digital certificates used to verify the identity of servers, clients, or other entities in secure communication protocols like TLS. This group defines a collection of trusted CA certificates that can be used to validate server certificates during TLS connections.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Name"
+      ]
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "source_file": "tr-181-2-19-0-ip.xml",
+  "path": "IPLayerCapacityAuthCode.{i}.",
+  "object": {
+    "path": "IPLayerCapacityAuthCode.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "256",
+    "enableParameter": "",
+    "numEntriesParameter": "IPLayerCapacityAuthCodeNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "AuthenticationKey",
+        "access": "readWrite",
+        "description": "A passphrase that is used by the client to authenticate with the server.",
+        "secured": true,
+        "type": "string",
+        "version": "2.19"
+      }
+    ],
+    "description": "Authentication Code table containing list of keys to be used by the client when connecting to the server.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

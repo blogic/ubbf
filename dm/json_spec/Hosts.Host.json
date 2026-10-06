@@ -1,0 +1,180 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Hosts.Host.{i}.",
+  "object": {
+    "path": "Device.Hosts.Host.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "HostNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}} {{deprecated|2.11|because {{object}} is a transient object}} {{obsoleted|2.14}} {{deleted|2.15}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "PhysAddress",
+        "access": "readOnly",
+        "description": "Unique physical identifier of the host. For many layer 2 technologies this is typically a MAC address.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "IPAddress",
+        "access": "readOnly",
+        "description": "Current IP Address of the host. {{empty}} if no address is available. If more than one IP address for this host is known, the CPE will choose a ''primary'' address. All known IP addresses can be listed in the {{object|IPv4Address}} and {{object|IPv6Address}} tables.",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "AddressSource",
+        "access": "readOnly",
+        "description": "Indicates whether the IP address of the host was allocated by the CPE using DHCP, was assigned to the host statically, or was assigned using automatic IP address allocation. {{enum}} {{deprecated|2.11|because only {{enum|None}} and {{enum|DHCP}} made sense (the CPE doesn't know whether the address is {{enum|Static}} or {{enum|AutoIP}}). The {{enum|DHCP}} case is now handled via the {{param|DHCPClient}} reference}} {{obsoleted|2.14}} {{deleted|2.15}}",
+        "type": "string",
+        "enumerations": [
+          "DHCP",
+          "Static",
+          "AutoIP",
+          "None"
+        ]
+      },
+      {
+        "name": "DHCPClient",
+        "access": "readOnly",
+        "description": "{{reference}} Each list item is the DHCPv4 or DHCPv6 server's client entry that corresponds to the host.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "                   ##.DHCPv4.Server.Pool.{i}.Client.                   ##.DHCPv6.Server.Pool.{i}.Client.",
+          "targetType": "row"
+        },
+        "version": "2.12"
+      },
+      {
+        "name": "LeaseTimeRemaining",
+        "access": "readOnly",
+        "description": "DHCP lease time remaining in {{units}}. A value of -1 indicates an infinite lease. The value MUST be 0 (zero) if the {{param|AddressSource}} is not {{enum|DHCP|AddressSource}}. {{deprecated|2.11|because DHCP lease/lifetime information can be accessed via the {{param|DHCPClient}} reference}} {{obsoleted|2.14}} {{deleted|2.15}}",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "AssociatedDevice",
+        "access": "readOnly",
+        "description": "{{noreference}}The value MUST be the path name of the ''AssociatedDevice'' (or equivalent) table row that models the host, or {{null}} if either there is no such table or the host isn't directly connected to this device (e.g. the host is connected to a Wi-Fi Access Point). For example: ''Device.WiFi.AccessPoint.1.AssociatedDevice.2''",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        },
+        "version": "2.12"
+      },
+      {
+        "name": "Layer1Interface",
+        "access": "readOnly",
+        "description": "{{noreference}}The value MUST be the path name of a row in a layer 1 interface table. If either the layer 1 interface isn't known or the host isn't directly connected to this device (e.g. the host is connected to a Wi-Fi Access Point), then {{param}} will be {{null}}. For example: ''Device.Ethernet.Interface.2''",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Layer3Interface",
+        "access": "readOnly",
+        "description": "{{reference}} If either the layer 3 interface isn't known or the host isn't directly connected to this device (e.g. the host is connected to a Wi-Fi Access Point), then {{param}} will be {{null}}.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "InterfaceType",
+        "access": "readOnly",
+        "description": "Type of physical interface through which this host is connected.",
+        "type": "string",
+        "enumerations": [
+          "Ethernet",
+          "G.hn",
+          "HPNA",
+          "HomePlug",
+          "MoCA",
+          "UPA",
+          "Wi-Fi",
+          "Other"
+        ],
+        "version": "2.13"
+      },
+      {
+        "name": "VendorClassID",
+        "access": "readOnly",
+        "description": "Vendor Class Identifier DHCP option (Option 60) of the host. This is a normal string, e.g. \"abc\" is represented as \"abc\" and not say \"616263\" hex. However, if the value includes non-printing characters then such characters have to be represented using XML escapes, e.g. #x0a for line-feed. It MAY be defined when {{param|AddressSource}} is {{enum|DHCP|AddressSource}}. {{empty}} indicates this option is not used. Note: DHCPv4 Option values are limited to a length of 255, while DHCPv6 Option values can have a maximum length of 65535. {{deprecated|2.11|because host-supplied DHCP options can be accessed via the {{param|DHCPClient}} reference}} {{obsoleted|2.14}} {{deleted|2.15}}",
+        "type": "string",
+        "maxLength": 255
+      },
+      {
+        "name": "ClientID",
+        "access": "readOnly",
+        "description": "A hexbinary string, Client Identifier DHCP option (Option 61) for the specific IP connection of the client. The option value is binary, so an exact match is REQUIRED. It MAY be defined when {{param|AddressSource}} is {{enum|DHCP|AddressSource}}. {{empty}} indicates this option is not used. Note: DHCPv4 Option values are limited to a length of 255, while DHCPv6 Option values can have a maximum length of 65535. {{deprecated|2.11|because host-supplied DHCP options can be accessed via the {{param|DHCPClient}} reference}} {{obsoleted|2.14}} {{deleted|2.15}}",
+        "type": "hexBinary",
+        "maxLength": 65535
+      },
+      {
+        "name": "UserClassID",
+        "access": "readOnly",
+        "description": "A hexbinary string, User Class Identifier DHCP option (Option 77) of the host. It MAY be defined when {{param|AddressSource|deleted}} is {{enum|DHCP|AddressSource}}. {{empty}} indicates this option is not used. Note: DHCPv4 Option values are limited to a length of 255, while DHCPv6 Option values can have a maximum length of 65535. {{deprecated|2.11|because host-supplied DHCP options can be accessed via the {{param|DHCPClient}} reference}} {{obsoleted|2.15}} {{deleted|2.16}}",
+        "type": "hexBinary",
+        "maxLength": 65535
+      },
+      {
+        "name": "HostName",
+        "access": "readOnly",
+        "description": "The device's host name or {{empty}} if unknown.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Active",
+        "access": "readOnly",
+        "description": "Whether or not the host is currently present on the LAN. The method of presence detection is a local matter to the CPE. The ability to list inactive hosts is OPTIONAL. If the CPE includes inactive hosts in this table, {{param}} MUST be set to {{false}} for each inactive host. The length of time an inactive host remains listed in this table is a local matter to the CPE. Entries in Device.Hosts.Host SHOULD NOT be removed when they become inactive if there are {{object|WANStats}} statistics collected for the entry in the past seven days.",
+        "type": "boolean"
+      },
+      {
+        "name": "ActiveLastChange",
+        "access": "readOnly",
+        "description": "The datetime when {{param|Active}} last changed from {{true}} to {{false}} or from {{false}} to {{true}}. The initial detection of a host SHOULD be treated as a transition from {{false}} to {{true}}, showing the datetime when the host was first detected. The ability to list inactive hosts is OPTIONAL. The length of time an inactive host remains listed in this table is a local matter to the CPE. Entries in Device.Hosts.Host SHOULD NOT be removed when they become inactive if there are {{object|WANStats}} statistics collected for the entry in the past seven days.",
+        "type": "dateTime",
+        "version": "2.12"
+      },
+      {
+        "name": "IPv4AddressNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "IPv6AddressNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.12"
+      }
+    ],
+    "description": "Host table.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "PhysAddress"
+      ]
+    }
+  }
+}

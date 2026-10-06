@@ -1,0 +1,79 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IoTCapability.{i}.LevelSensor.",
+  "object": {
+    "path": "Device.IoTCapability.{i}.LevelSensor.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:IoTLevelType"
+      },
+      {
+        "name": "Description",
+        "access": "readOnly",
+        "description": "Human-readable description of the {{object}}. e.g. a more detailed description of {{param|Type}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Value",
+        "access": "readOnly",
+        "description": "The current value reading of this {{object}} in units defined in {{param|Unit}}.",
+        "type": "decimal"
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The date and time in UTC when {{param|Value}} has been changed to the current value.",
+        "type": "dateTime"
+      },
+      {
+        "name": "LastContactTime",
+        "access": "readOnly",
+        "description": "The date and time in UTC when the {{object}} has received data.",
+        "type": "dateTime",
+        "version": "2.18"
+      },
+      {
+        "name": "Unit",
+        "access": "readOnly",
+        "description": "{{datatype|expand}} Unit in which {{param|Value}} is expressed.",
+        "type": "dataType:IoTUnitType"
+      },
+      {
+        "name": "LowLevel",
+        "access": "readOnly",
+        "description": "Low level indicator. Is set to {{true}} if {{param|Value}} is equal or less than the value defined in {{param|LowLevelThreshold}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "LowLevelThreshold",
+        "access": "readWrite",
+        "description": "The threshold value in for {{param|LowLevel}} expressed in the same units like {{param|Value}}.",
+        "type": "decimal"
+      },
+      {
+        "name": "HighLevel",
+        "access": "readOnly",
+        "description": "High level indicator. Is set to {{true}} if {{param|Value}} is equal or higher than the value defined in {{param|HighLevelThreshold}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "HighLevelThreshold",
+        "access": "readWrite",
+        "description": "The threshold value in for {{param|HighLevel}} expressed in the same units like {{param|Value}}.",
+        "type": "decimal"
+      }
+    ],
+    "description": "LevelSensor is used to reflect the functionality of a sensor that reports a {{param|Value}} in {{param|Unit}}.",
+    "children": []
+  }
+}

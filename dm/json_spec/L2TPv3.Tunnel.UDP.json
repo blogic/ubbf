@@ -1,0 +1,43 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.L2TPv3.Tunnel.{i}.UDP.",
+  "object": {
+    "path": "Device.L2TPv3.Tunnel.{i}.UDP.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "SourcePort",
+        "access": "readWrite",
+        "description": "The source (local) port used to transmit PDUs. A value of 0 indicates that the port selection is performed by the device.",
+        "default": "1701",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "RemotePort",
+        "access": "readWrite",
+        "description": "The remote port used to by the remote endpoint to transmit PDUs.",
+        "default": "1701",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "EnableChecksum",
+        "access": "readWrite",
+        "description": "Enables or disables checksum processing.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      }
+    ],
+    "description": "This {{object}} provides the parameters when the value of the {{param|##.Tunnel.{i}.TunnelEncapsulation}} parameter is {{enum|UDP|##.Tunnel.{i}.TunnelEncapsulation}}.",
+    "children": []
+  }
+}

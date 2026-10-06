@@ -1,0 +1,67 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.UserInterface.HTTPAccess.{i}.Session.{i}.",
+  "object": {
+    "path": "Device.UserInterface.HTTPAccess.{i}.Session.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "SessionNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "SessionID",
+        "access": "readOnly",
+        "description": "Session identifier.",
+        "type": "string",
+        "maxLength": 4096
+      },
+      {
+        "name": "User",
+        "access": "readOnly",
+        "description": "The user to whom the session belongs. When the user is unknown {{empty}} string SHOULD be used. Note: This parameter was demoted to readOnly in the Device:2.17 version.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": ".Users.User.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "IPAddress",
+        "access": "readOnly",
+        "description": "The IP address of the remote web client, connected to the web interface.",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "Port",
+        "access": "readOnly",
+        "description": "Port number of the remote web client, connected to the web interface.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Protocol",
+        "access": "readOnly",
+        "description": "Protocol being used.",
+        "type": "string"
+      },
+      {
+        "name": "StartDate",
+        "access": "readOnly",
+        "description": "Indicates when the session was created.",
+        "type": "dateTime"
+      }
+    ],
+    "description": "Web server session list. Note: This parameter was demoted to readOnly in the Device:2.17 version.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "SessionID"
+      ]
+    }
+  }
+}

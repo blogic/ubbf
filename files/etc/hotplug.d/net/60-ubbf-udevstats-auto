@@ -1,0 +1,21 @@
+#!/bin/sh
+# Ensure wireless netdevs get monitored by udevstats as they come up.
+# Kernel names for wifi interfaces are assigned when mac80211 brings them
+# up, after ubbf-apply has already rendered /etc/config/udevstats, so we
+# can't pre-populate them from the datamodel. Pick them up here.
+
+case "$ACTION" in
+add)
+	;;
+*)
+	exit 0
+	;;
+esac
+
+case "$INTERFACE" in
+wlan*|phy*|ath*|ppp*|pppoe-*)
+	ubus call udevstats add_device "{\"device\":\"$INTERFACE\"}" >/dev/null 2>&1
+	;;
+esac
+
+exit 0

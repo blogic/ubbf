@@ -1,0 +1,48 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.Processor.{i}.",
+  "object": {
+    "path": "Device.DeviceInfo.Processor.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ProcessorNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Architecture",
+        "access": "readOnly",
+        "description": "The architecture of the processor on the underlying hardware. {{enum}} For processor architectures not included in this list, the vendor MAY include vendor-specific values, which MUST use the format defined in {{bibref|TR-106|Section 3.3}}.",
+        "type": "string",
+        "enumerations": [
+          "arm",
+          "i386",
+          "m68010",
+          "m68k",
+          "mipseb",
+          "mipsel",
+          "powerpc",
+          "sh3eb",
+          "sh3el",
+          "x86_64"
+        ]
+      }
+    ],
+    "description": "Each table entry represents a hardware or virtual processor that resides on this device. {{deprecated|2.18|because the only contained parameter, {{param|Architecture}}, is no longer relevant for modern devices.}}",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

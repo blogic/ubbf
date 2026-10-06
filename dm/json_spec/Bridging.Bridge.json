@@ -1,0 +1,99 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Bridging.Bridge.{i}.",
+  "object": {
+    "path": "Device.Bridging.Bridge.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "BridgeNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this {{object}}. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the bridge as assigned by the device.",
+        "type": "string",
+        "maxLength": 64,
+        "version": "2.16"
+      },
+      {
+        "name": "Standard",
+        "access": "readWrite",
+        "description": "Selects the standard supported by this Bridge table entry.",
+        "type": "string",
+        "enumerations": [
+          "802.1D-2004",
+          "802.1Q-2005",
+          "802.1Q-2011"
+        ]
+      },
+      {
+        "name": "AgingTime",
+        "access": "readWrite",
+        "description": "The timeout period in {{units}} for aging out dynamically-learned forwarding information as described in {{bibref|802.1Q-2011|Section 7.9.2}}. The Dynamic Filtering Entries are not modeled. They are part of the bridge's internal Forwarding Database.",
+        "default": "300",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 10,
+        "maxInclusive": 1000000,
+        "version": "2.16"
+      },
+      {
+        "name": "PortNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "VLANNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "VLANPortNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Bridge table.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv6.Server.Pool.{i}.Client.{i}.IPv6Address.{i}.",
+  "object": {
+    "path": "Device.DHCPv6.Server.Pool.{i}.Client.{i}.IPv6Address.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "IPv6AddressNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "IPAddress",
+        "access": "readOnly",
+        "description": "IPv6 address.",
+        "type": "dataType:IPv6Address"
+      },
+      {
+        "name": "PreferredLifetime",
+        "access": "readOnly",
+        "description": "The time at which this address will cease to be preferred (i.e. will become deprecated), or {{null}} if not known. For an infinite lifetime, the parameter value MUST be 9999-12-31T23:59:59Z.",
+        "type": "dateTime"
+      },
+      {
+        "name": "ValidLifetime",
+        "access": "readOnly",
+        "description": "The time at which this address will cease to be valid (i.e. will become invalid), or {{null}} if unknown. For an infinite lifetime, the parameter value MUST be 9999-12-31T23:59:59Z.",
+        "type": "dateTime"
+      }
+    ],
+    "description": "IPv6 addresses assigned to this client via IA_NA.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "IPAddress"
+      ]
+    }
+  }
+}

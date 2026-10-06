@@ -1,0 +1,65 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.UserInterface.LocalDisplay.",
+  "object": {
+    "path": "Device.UserInterface.LocalDisplay.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Movable",
+        "access": "readWrite",
+        "description": "Controls whether the user is allowed to change the GUI window position on the local CPE's display.",
+        "type": "boolean"
+      },
+      {
+        "name": "Resizable",
+        "access": "readWrite",
+        "description": "Controls whether the user is allowed to resize the GUI window on the local CPE's display.",
+        "type": "boolean"
+      },
+      {
+        "name": "PosX",
+        "access": "readWrite",
+        "description": "The horizontal position of the User Interface's top left corner within the local CPE's display measured from the top left corner, expressed in {{units}}.",
+        "type": "int"
+      },
+      {
+        "name": "PosY",
+        "access": "readWrite",
+        "description": "The vertical position of the User Interface's top left corner within the local CPE's display measured from the top left corner, expressed in {{units}}.",
+        "type": "int"
+      },
+      {
+        "name": "Width",
+        "access": "readWrite",
+        "description": "The width of the user interface within the local CPE's display, expressed in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Height",
+        "access": "readWrite",
+        "description": "The height of the user interface within the local CPE's display, expressed in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DisplayWidth",
+        "access": "readOnly",
+        "description": "The width of the local CPE's display, expressed in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DisplayHeight",
+        "access": "readOnly",
+        "description": "The height of the local CPE's display, expressed in {{units}}.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object describes how to remotely manage the initial positioning of a user interface on a device's local display.",
+    "children": []
+  }
+}

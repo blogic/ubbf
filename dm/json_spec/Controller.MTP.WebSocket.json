@@ -1,0 +1,99 @@
+{
+  "source_file": "tr-181-2-19-0-localagent.xml",
+  "path": "Controller.{i}.MTP.{i}.WebSocket.",
+  "object": {
+    "path": "Controller.{i}.MTP.{i}.WebSocket.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Host",
+        "access": "readWrite",
+        "description": "The hostname or IP Address of the Controller's WebSocket server.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "The port number used by the Controller's WebSocket server to receive USP messages.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Path",
+        "access": "readWrite",
+        "description": "The service path that is provided by the Controller's WebSocket server in order to exchange USP messages. The value MUST be used as defined in {{bibref|RFC3986|Section 3.3}}.",
+        "type": "string"
+      },
+      {
+        "name": "IsEncrypted",
+        "access": "readOnly",
+        "description": "This parameter represents whether or not communications that utilize this {{object}} object instance are encrypted. {{deprecated|2.14|because the {{param|EnableEncryption}} parameter will dictate whether this {{object}} is or is not encrypted}} {{obsoleted|2.16}} {{deleted|2.17}}",
+        "type": "boolean"
+      },
+      {
+        "name": "EnableEncryption",
+        "access": "readWrite",
+        "description": "When {{true}}, encryption MUST be used for this MTP instance.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.14"
+      },
+      {
+        "name": "KeepAliveInterval",
+        "access": "readWrite",
+        "description": "The duration in {{units}} between when WebSocket ping control frames are transmitted by the Agent's WebSocket client to the Controller's WebSocket server.",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "CurrentRetryCount",
+        "access": "readOnly",
+        "description": "The current retry count of the session. When zero (0), the session is not in a retry state.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SessionRetryMinimumWaitInterval",
+        "access": "readWrite",
+        "description": "Configures the first retry wait interval, in {{units}}, as specified in {{bibref|TR-369|Section \"WebSocket Session Retry\"}}. The USP Agent MUST use a random value between {{param}} and ({{param}} * {{param|SessionRetryIntervalMultiplier}} / 1000) as the first retry wait interval. Other values in the retry pattern MUST be calculated using this value as a starting point.",
+        "default": "5",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "SessionRetryIntervalMultiplier",
+        "access": "readWrite",
+        "description": "Configures the retry interval multiplier as specified in {{bibref|TR-369|Section \"WebSocket Session Retry\"}}. This value is expressed in units of 0.001. Hence the values of the multiplier range between 1.000 and 65.535. The USP Agent MUST use a random value between {{param|SessionRetryMinimumWaitInterval}} and ({{param|SessionRetryMinimumWaitInterval}} * {{param}} / 1000) as the first retry wait interval. Other values in the retry pattern MUST be calculated using this value as a starting point.",
+        "default": "2000",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1000,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "USPServiceRef",
+        "access": "readOnly",
+        "description": "A reference to the USP Service associated with this Agent when communicating via the WebSocket MTP.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".USPServices.USPService.",
+          "targetType": "row"
+        },
+        "version": "2.16"
+      }
+    ],
+    "description": "If the USP Endpoint uses the WebSocket Message Transfer Protocol (MTP) as a WebSocket client, then this object contains WebSocket specific configuration parameters.",
+    "children": []
+  }
+}

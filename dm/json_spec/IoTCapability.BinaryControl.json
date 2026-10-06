@@ -1,0 +1,40 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IoTCapability.{i}.BinaryControl.",
+  "object": {
+    "path": "Device.IoTCapability.{i}.BinaryControl.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "Describes the type of functionality that {{object}} is representing.",
+        "type": "string",
+        "enumerations": [
+          "Switch",
+          "Locked"
+        ]
+      },
+      {
+        "name": "Description",
+        "access": "readOnly",
+        "description": "Human-readable description of the {{object}}. e.g. a more detailed description of {{param|Type}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Value",
+        "access": "readWrite",
+        "description": "Value of {{true}} or {{false}} that reflects the functionality.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This capability provides a boolean function that is mapped to the type of function it represents. E.g. If the instance represents a door lock ({{param|Type}} is {{enum|Locked|Type}}), a {{param|Value}} of {{true}} says the door lock is locked.",
+    "children": []
+  }
+}

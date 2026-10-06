@@ -1,0 +1,40 @@
+{
+  "source_file": "tr-181-2-19-1-usp.xml",
+  "path": "Device.LocalAgent.Controller.{i}.BootParameter.{i}.",
+  "object": {
+    "path": "Device.LocalAgent.Controller.{i}.BootParameter.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "BootParameterNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "ParameterName",
+        "access": "readWrite",
+        "description": "A pattern that describes the Parameter(s) to be included in the ''param_map'' element of a ''Boot!'' event. Specifically, patterns with wildcards (an \"*\" character) in place of Instance Identifiers are allowed. If the pattern does not match any existing Parameters at the time that the Agent is creating the ''Boot!'' event, then this {{object|#.BootParameter}} instance is not included in the ''param_map'' of the ''Boot!'' event.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "This table provides the Controller with the ability to dictate the Parameters that are delivered via ''Boot!'' events. Any Parameter (identified by {{param|ParameterName}}) contained in this table MUST be included within the ''param_map'' element of the ''Boot!'' event.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "ParameterName"
+      ]
+    }
+  }
+}

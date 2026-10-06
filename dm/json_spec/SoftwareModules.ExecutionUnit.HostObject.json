@@ -1,0 +1,51 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SoftwareModules.ExecutionUnit.{i}.HostObject.{i}.",
+  "object": {
+    "path": "Device.SoftwareModules.ExecutionUnit.{i}.HostObject.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "HostObjectNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Source",
+        "access": "readOnly",
+        "description": "The object identifier by which the object may be accessed in the host OS environment. This object identifier MUST be valid in the host OS environment. For security reasons, Execution Environments may impose restrictions on the object identifiers which may be specified.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Destination",
+        "access": "readOnly",
+        "description": "The object identifier by which the object may be accessed by the ExecutionUnit. This object identifier MUST be valid in the context of the Execution Environment in which the ExecutionUnit is installed.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Options",
+        "access": "readOnly",
+        "description": "May be used to pass implementation-dependent options which are to be applied to the mapping,",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.16"
+      }
+    ],
+    "description": "This parameter describes the host OS objects (such as peripherals, files or directories, communication sockets, ...) which are accessible to the ExecutionUnit.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SFPs.SFPCage.{i}.",
+  "object": {
+    "path": "Device.SFPs.SFPCage.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "SFPCageNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The internal name used to identify the SFP Cage instance.",
+        "type": "string"
+      },
+      {
+        "name": "SFPPresent",
+        "access": "readOnly",
+        "description": "The value {{true}} indicates the presence of a SFP in the SFP Cage instance. The value is always {{true}} for a SFF. Note: A value of 0x02 in {{param|SFF8024Identifier}} will also indicate the presence of an SFF.",
+        "type": "boolean"
+      },
+      {
+        "name": "SFF8024Identifier",
+        "access": "readOnly",
+        "description": "Ths identifier describes the type of SFP and the management protocol as per \"Identifier Value\" listed in {{bibref|SFF-8024|Table 4-1}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "MgmtInterface",
+        "access": "readOnly",
+        "description": "This parameter indicates the management interface used by the SFP. Refer {{bibref|SFF-8024|Table 4-1}} and {{bibref|SFF-8472}}.",
+        "type": "string",
+        "enumerations": [
+          "SFF-8472",
+          "Unknown"
+        ]
+      },
+      {
+        "name": "SFPType",
+        "access": "readOnly",
+        "description": "This value is applicable only when {{param|SFPPresent}} is {{true}}. The SFP Type is classified as one of: GPON, XGS-PON, Optical Ethernet, Copper Ethernet. If the SFP Type cannot be classified, the value is reported as \"Unsupported\".",
+        "type": "string",
+        "enumerations": [
+          "Unsupported",
+          "G-PON",
+          "XG-PON",
+          "NG-PON2",
+          "XGS-PON",
+          "EPON",
+          "MoCA",
+          "Optical Ethernet",
+          "Electrical Ethernet"
+        ]
+      },
+      {
+        "name": "SFPReference",
+        "access": "readOnly",
+        "description": "The path to the SFP management object associated with this interface.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.SFPs.Mgmt.SFF8472.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "This object describes a cage into which an SFP is inserted. This object can also describe an instance of Small Form Factor (SFF) units soldered on to the platform.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

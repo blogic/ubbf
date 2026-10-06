@@ -1,0 +1,97 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FaultMgmt.CurrentAlarm.{i}.",
+  "object": {
+    "path": "Device.FaultMgmt.CurrentAlarm.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "CurrentAlarmNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "AlarmIdentifier",
+        "access": "readOnly",
+        "description": "Identifies one Alarm Entry in the Alarm List. This value MUST be uniquely allocated by the device to the alarm instance during the lifetime of the individual alarm.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "AlarmRaisedTime",
+        "access": "readOnly",
+        "description": "Indicates the date and time when the alarm was first raised by the device.",
+        "type": "dateTime"
+      },
+      {
+        "name": "AlarmChangedTime",
+        "access": "readOnly",
+        "description": "Indicates the date and time when the alarm was last changed by the device.",
+        "type": "dateTime"
+      },
+      {
+        "name": "ManagedObjectInstance",
+        "access": "readOnly",
+        "description": "Specifies the instance of the Informational Object Class in which the alarm occurred by carrying the Distinguished Name (DN) of this object instance. The format of the DN is specific to the application that is using this {{object}}.",
+        "type": "string",
+        "maxLength": 512
+      },
+      {
+        "name": "EventType",
+        "access": "readOnly",
+        "description": "Indicates the type of event.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "ProbableCause",
+        "access": "readOnly",
+        "description": "Qualifies the alarm and provides further information than {{param|EventType}}.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "SpecificProblem",
+        "access": "readOnly",
+        "description": "Provides further qualification on the alarm beyond {{param|EventType}} and {{param|ProbableCause}}. This is vendor defined and will be {{empty}} if the device doesn't support inclusion of this information.",
+        "type": "string",
+        "maxLength": 128
+      },
+      {
+        "name": "PerceivedSeverity",
+        "access": "readOnly",
+        "description": "Indicates the relative level of urgency for operator attention, see {{bibref|ITU-X.733}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Critical",
+          "Major",
+          "Minor",
+          "Warning",
+          "Indeterminate"
+        ]
+      },
+      {
+        "name": "AdditionalText",
+        "access": "readOnly",
+        "description": "This provides a textual string which is vendor defined. This will be {{empty}} if the device doesn't support inclusion of this information.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "AdditionalInformation",
+        "access": "readOnly",
+        "description": "This contains additional information about the alarm and is vendor defined.",
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "Contains all currently active alarms (whose {{param|#.SupportedAlarm.{i}.PerceivedSeverity}} is not {{enum|Cleared|#.SupportedAlarm.{i}.PerceivedSeverity}}). Newly raised alarms result in a new entry in this table being added, any changes to the alarm as a result of an update event are updated in the existing table entry, and a clear event raised against an alarm results in the alarm being removed from this table. If maximum entries as indicated by {{param|#.MaxCurrentAlarmEntries}} is reached, the next event overrides the object with the oldest {{param|AlarmChangedTime}}. When a new alarm replaces an existing alarm, then all parameter values for that instance are considered as changed for the purposes of value change notifications to the Controller (even if their new values are identical to those of the prior alarm).",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "AlarmIdentifier"
+      ]
+    }
+  }
+}

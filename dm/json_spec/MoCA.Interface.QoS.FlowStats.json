@@ -1,0 +1,137 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MoCA.Interface.{i}.QoS.FlowStats.{i}.",
+  "object": {
+    "path": "Device.MoCA.Interface.{i}.QoS.FlowStats.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "FlowStatsNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "FlowID",
+        "access": "readOnly",
+        "description": "The flow ID used to identify a flow in the network. This parameter is based on ''mocaIfFlowID'' from {{bibref|MOCA11-MIB}}. Note that the data type has changed from ''unsignedInt'' to ''MACAddress''. This is because the original data type was an error and could not have been implemented as specified.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "PacketDA",
+        "access": "readOnly",
+        "description": "The Destination Address (DA) for the packets in this flow. This parameter is based on ''mocaIfPacketDA'' from {{bibref|MOCA11-MIB}}.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "MaxRate",
+        "access": "readOnly",
+        "description": "Maximum required rate in {{units}}. This parameter is based on ''mocaIfPeakDataRate'' from {{bibref|MOCA11-MIB}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxBurstSize",
+        "access": "readOnly",
+        "description": "Maximum burst size. This parameter is based on ''mocaIfBurstSize'' from {{bibref|MOCA11-MIB}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LeaseTime",
+        "access": "readOnly",
+        "description": "Flow lease time (expressed in {{units}}). A {{param}} of 0 means unlimited lease time. This parameter is based on ''mocaIfLeaseTime'' from {{bibref|MOCA11-MIB}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Tag",
+        "access": "readOnly",
+        "description": "The FLOW_TAG of the PQoS flow identified by {{param|FlowID}} in which this MoCA interface is an Ingress Node for this PQoS flow. The FLOW_TAG carries application specific content of this PQoS flow. See {{bibref|MoCAv2.0|Section 6.3.13.1}}.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "LeaseTimeLeft",
+        "access": "readOnly",
+        "description": "Flow lease time remaining (expressed in {{units}}). If {{param|LeaseTime}} is 0 then a {{param}} of 0 means unlimited lease time; otherwise, a {{param}} of 0 means expired. This parameter is based on ''mocaIfLeaseTimeLeft'' from {{bibref|MOCA11-MIB}}.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "FlowPackets",
+        "access": "readOnly",
+        "description": "The number of packets transmitted for this flow. This parameter is based on ''mocaIfTxPacketsFlow'' from {{bibref|MOCA11-MIB}}.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "IngressGuid",
+        "access": "readOnly",
+        "description": "The MAC address of the MoCA Node specified by the INGRESS_NODE_ID parameter of the flow. See {{bibref|MoCAv2.0|Section 6.3.13.1}}.",
+        "type": "dataType:MACAddress",
+        "version": "2.17"
+      },
+      {
+        "name": "EgressGuid",
+        "access": "readOnly",
+        "description": "The MAC address of the MoCA Node specified by the EGRESS_NODE_ID parameter of the flow. See {{bibref|MoCAv2.0|section 6.3.13.1}}.",
+        "type": "dataType:MACAddress",
+        "version": "2.17"
+      },
+      {
+        "name": "MaximumLatency",
+        "access": "readOnly",
+        "description": "The MAXIMUM_LATENCY parameter of the flow in units of milliseconds. A value of 0 indicates no value available. See {{bibref|MoCAv2.0|section 6.3.13.1}}.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "ShortTermAvgRatio",
+        "access": "readOnly",
+        "description": "The SHORT_TERM_AVERAGE_RATIO parameter of the flow. See {{bibref|MoCAv2.0|section 6.3.13.1}}.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "FlowPer",
+        "access": "readOnly",
+        "description": "The FLOW_PER parameter of this flow, where a value of 0 indicates NPER and 1 indicates VLPER. See {{bibref|MoCAv2.0|section 6.3.13.1}}.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "IngressClassify",
+        "access": "readOnly",
+        "description": "The INGRESS_CLASSIFICATION_RULE parameter of the flow. See {{bibref|MoCAv2.0|section 6.3.13.1}}.",
+        "type": "dataType:MocaFlowIngrClassRule",
+        "version": "2.17"
+      },
+      {
+        "name": "VlanTag",
+        "access": "readOnly",
+        "description": "The VLAN_TAG parameter of the flow. See {{bibref|MoCAv2.0|section 6.3.13.1}}.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "DscpMoca",
+        "access": "readOnly",
+        "description": "The DSCP_MOCA parameter of the flow. See {{bibref|MoCAv2.0|section 6.3.13.1}}.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "Dfid",
+        "access": "readOnly",
+        "description": "The destination flow ID of the flow assigned by the Ingress Node. See {{bibref|MoCAv2.0|section 7.8.1.2}}.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      }
+    ],
+    "description": "The flow statistics table provides information on the MoCA parameterized QoS flows this interface has allocated onto the MoCA network.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "FlowID"
+      ]
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WWC.",
+  "object": {
+    "path": "Device.WWC.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.14",
+    "parameters": [
+      {
+        "name": "HwCapabilities",
+        "access": "readOnly",
+        "description": "{{list}} Wireline Wireless Convergence hardware capabilities supported by the CPE. {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "NG-RAN",
+          "E-UTRAN",
+          "W-5GAN"
+        ]
+      },
+      {
+        "name": "SwCapabilities",
+        "access": "readOnly",
+        "description": "{{list}} Wireline Wireless Convergence software capabilities supported by the CPE. {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "FN-RG",
+          "5G-RG",
+          "ATSSS"
+        ]
+      },
+      {
+        "name": "Mode",
+        "access": "readWrite",
+        "description": "Sets the mode the CPE is operating in. Whilst the CPE is expected to auto-negotiate, a service provider may need to lock the CPE in {{enum|FN-RG}} or {{enum|5G-RG}} mode for stability. {{enum}}",
+        "default": "Auto",
+        "defaultType": "factory",
+        "type": "string",
+        "enumerations": [
+          "FN-RG",
+          "5G-RG",
+          "Auto"
+        ]
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The mode the CPE is operating in. A CPE in {{enum|Negotiating}} is deemed to be auto-negotiating its operational mode. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "FN-RG",
+          "5G-RG",
+          "Negotiating"
+        ]
+      },
+      {
+        "name": "AccessNetworkNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "URSPNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Base object for Wireline Wireless Convergence. The controller can use this object to learn the supported 5G features and whether the 5G-RG is operating in 5G mode.",
+    "children": []
+  }
+}

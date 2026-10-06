@@ -1,0 +1,30 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LLDP.Discovery.Device.{i}.Port.{i}.LinkInformation.",
+  "object": {
+    "path": "Device.LLDP.Discovery.Device.{i}.Port.{i}.LinkInformation.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "InterfaceType",
+        "access": "readOnly",
+        "description": "The port's interface type, or 0 if no interface type has been received. Note: It is assumed that it might be used for HTIP (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and {{bibref|G.9973}}. In this case, it's an IANA interface type {{bibref|IANAifType}}. For example, IANAifType defines the following interface types for wired line (UTP cable), wireless line, power line, and coaxial cable: * ''6'' (Wired line) * ''71'' (Wireless) * ''174'' (PLC) * ''236'' (Coaxial cable)",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MACForwardingTable",
+        "access": "readOnly",
+        "description": "The port's MAC forwarding table, or the value is {{empty}} if no forwarding table was supplied.",
+        "list": true,
+        "type": "dataType:MACAddress"
+      }
+    ],
+    "description": "The port's link information, which is included in the value of the ''LLDPDU's'' Organizationally Specific TLV (TLV Type = 127). Note: It is assumed that this object might be used for HTIP (Home-network Topology Identifying Protocol) {{bibref|JJ-300.00}} and {{bibref|G.9973}}. In this case, the {{bibref|OUI}} in the third octet is E0271A (''TTC-OUI'') and the organizationally defined subtype in the sixth octet is 2 (''Link Information'').",
+    "children": []
+  }
+}

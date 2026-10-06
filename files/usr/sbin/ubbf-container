@@ -1,0 +1,11 @@
+#!/usr/bin/ucode
+'use strict';
+
+import * as uloop from 'uloop';
+import { log_init } from 'ubbf.utils.logging';
+import { daemon_start } from 'ubbf.container.daemon';
+
+log_init('ubbf-container');
+uloop.init();
+daemon_start();
+uloop.run();

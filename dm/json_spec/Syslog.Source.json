@@ -1,0 +1,101 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Syslog.Source.{i}.",
+  "object": {
+    "path": "Device.Syslog.Source.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "SourceNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.17"
+      },
+      {
+        "name": "KernelMessages",
+        "access": "readWrite",
+        "description": "This option enables the collection of kernel log messages that are specific to the Device.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SystemMessages",
+        "access": "readWrite",
+        "description": "This option enables the collection of the system log messages that are specific to the Device.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Severity",
+        "access": "readWrite",
+        "description": "Specifies the default Severity. When an incoming message lacks a valid syslog header, this parameter can be used to configure the required Severity level.",
+        "default": "All",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Emergency",
+          "Alert",
+          "Critical",
+          "Error",
+          "Warning",
+          "Notice",
+          "Info",
+          "Debug",
+          "All",
+          "None"
+        ]
+      },
+      {
+        "name": "FacilityLevel",
+        "access": "readWrite",
+        "description": "Specifies the default Facility Level. When an incoming message lacks a valid syslog header, this parameter can be used to configure the required Facility level.",
+        "default": "All",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Kern",
+          "User",
+          "Mail",
+          "Daemon",
+          "Auth",
+          "Syslog",
+          "LPR",
+          "News",
+          "UUCP",
+          "Cron",
+          "AuthPriv",
+          "FTP",
+          "NTP",
+          "Audit",
+          "Console",
+          "Cron2",
+          "Local0",
+          "Local1",
+          "Local2",
+          "Local3",
+          "Local4",
+          "Local5",
+          "Local6",
+          "Local7",
+          "All"
+        ]
+      }
+    ],
+    "description": "This table describes where and how the syslog service receives log messages.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

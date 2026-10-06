@@ -1,0 +1,43 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.BASAPM.MeasurementEndpoint.{i}.ISPDevice.",
+  "object": {
+    "path": "Device.BASAPM.MeasurementEndpoint.{i}.ISPDevice.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ReferencePoint",
+        "access": "readWrite",
+        "description": "This parameter describes the measurement reference point of the measurement endpoint. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "STP",
+          "IDTP",
+          "RNTP",
+          "IRTP",
+          "MTP",
+          "IATP",
+          "UNITP",
+          "CEDTP"
+        ]
+      },
+      {
+        "name": "GeographicalLocation",
+        "access": "readWrite",
+        "description": "{{reference|a {{object|###.DeviceInfo.Location}} object that describes the geographic location of the measurement endpoint}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "###.DeviceInfo.Location.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "This object represents the information necessary to utilize an ISP owned device within the measurement endpoint.",
+    "children": []
+  }
+}

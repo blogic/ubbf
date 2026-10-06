@@ -1,0 +1,42 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Resources.",
+  "object": {
+    "path": "Resources.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "AllocatedDiskSpace",
+        "access": "readOnly",
+        "description": "The amount of disk space measured in {{units}} allocated to any {{object|###.ExecutionUnit}} created by this command. A value of -1 indicates that no disk space constraint is applicable. If this parameter is not present then the allocated disk space will remain unchanged.",
+        "type": "int",
+        "minInclusive": -1,
+        "version": "2.16"
+      },
+      {
+        "name": "AllocatedMemory",
+        "access": "readOnly",
+        "description": "The amount of physical RAM measured in {{units}} allocated to any {{object|###.ExecutionUnit}} created by this command. A value of -1 indicates that no memory constraint is applicable. If this parameter is not present then the allocated memory will remain unchanged.",
+        "type": "int",
+        "minInclusive": -1,
+        "version": "2.16"
+      },
+      {
+        "name": "AllocatedCPUPercent",
+        "access": "readOnly",
+        "description": "The CPU power measured in {{units}} allocated to any {{object|###.ExecutionUnit}} created by this command, as a fraction (in {{units}}) of the CPU allocation of the {{object|###.ExecEnv}} in which this {{object}} resides. A value of -1 indicates that no CPU power constraint is applicable. If this parameter is not present then the allocated memory will remain unchanged.",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 100,
+        "version": "2.16"
+      }
+    ],
+    "description": "Can be used to modify the resource restrictions for any Execution Unit which is created by the DeploymentUnit. If this object is absent then the resource restrictions will remain as they were before the command was invoked.",
+    "children": []
+  }
+}

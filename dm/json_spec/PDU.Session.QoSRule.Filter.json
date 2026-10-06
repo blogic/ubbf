@@ -1,0 +1,54 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PDU.Session.{i}.QoSRule.{i}.Filter.{i}.",
+  "object": {
+    "path": "Device.PDU.Session.{i}.QoSRule.{i}.Filter.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "FilterNumberOfEntries",
+    "version": "2.14",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.14"
+      },
+      {
+        "name": "Direction",
+        "access": "readOnly",
+        "description": "The packet filter direction field is used to indicate for what traffic direction the filter applies. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.13}} {{enum}} {{deprecated|2.19|because it has moved to {{param|Device.SessionManagement.PDU.{i}.QoSRule.{i}.Filter.{i}.Direction}}}}",
+        "type": "string",
+        "enumerations": [
+          "downlink",
+          "uplink",
+          "bidirectional"
+        ]
+      },
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "Packet filter component type identifier. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.13}}. {{deprecated|2.19|because it has moved to {{param|Device.SessionManagement.PDU.{i}.QoSRule.{i}.Filter.{i}.Type}}}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Value",
+        "access": "readOnly",
+        "description": "Matching value for the component type. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.13}}. {{deprecated|2.19|because it has moved to {{param|Device.SessionManagement.PDU.{i}.QoSRule.{i}.Filter.{i}.Value}}}}",
+        "type": "string",
+        "maxLength": 1024
+      }
+    ],
+    "description": "This object describes the PDU QoS Rule Filter table. As each packet filter is logically anded with the others, there shall not be more than one occurrence of each packet filter component type. {{deprecated|2.19|because it has moved to {{object|Device.SessionManagement.PDU.{i}.QoSRule.{i}.Filter.{i}}}}}",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

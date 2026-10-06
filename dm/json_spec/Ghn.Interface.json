@@ -1,0 +1,293 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Ghn.Interface.{i}.",
+  "object": {
+    "path": "Device.Ghn.Interface.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "InterfaceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the interface. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}. Because the interface includes layer 1, the {{enum|LowerLayerDown}} value SHOULD never be used.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the interface as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}. Note: Since {{object}} is a layer 1 interface, it is expected that {{param}} will not be used.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Upstream",
+        "access": "readOnly",
+        "description": "Indicates whether the interface points towards the Internet ({{true}}) or towards End Devices ({{false}}). For example: * For an Internet Gateway Device, {{param}} will be {{true}} for all WAN interfaces and {{false}} for all LAN interfaces. * For a standalone WiFi Access Point that is connected via Ethernet to an Internet Gateway Device, {{param}} will be {{true}} for the Ethernet interface and {{false}} for the WiFi Radio interface. * For an End Device, {{param}} will be {{true}} for all interfaces.",
+        "type": "boolean"
+      },
+      {
+        "name": "MaxBitRate",
+        "access": "readOnly",
+        "description": "The maximum upstream and downstream PHY bit rate supported by this interface (expressed in {{units}}).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "The MAC Address of the interface, denoted as node MAC address or REGID in {{bibref|G.9961}}. Note: This is not necessarily the same as the Ethernet header source or destination MAC address, which is associated with the IP interface and is modeled via the {{param|##.Ethernet.Link.{i}.MACAddress}} parameter.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "FirmwareVersion",
+        "access": "readOnly",
+        "description": "The firmware version of the interface.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "ConnectionType",
+        "access": "readOnly",
+        "description": "{{deprecated|2.8|because it has been replaced by {{param|MediumType}}}} {{obsoleted|2.14}} {{deleted|2.15}}",
+        "type": "string",
+        "enumerations": [
+          "Powerline",
+          "Phone",
+          "Coax"
+        ]
+      },
+      {
+        "name": "MaxTransmitRate",
+        "access": "readOnly",
+        "description": "The maximum PHY data rate that the interface is capable of transmitting (expressed in {{units}}).",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "TargetDomainNames",
+        "access": "readWrite",
+        "description": "{{list}} Identifies the target domains configured by the user, as described in {{bibref|G.9961|Section 8.6.1}}. When registering or re-registering, the G.hn interface SHOULD try to register to one of these domains in the given order.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "maxLength": 32
+      },
+      {
+        "name": "DomainName",
+        "access": "readOnly",
+        "description": "This is the domain name to which the interface is currently registered. {{empty}} indicates that the interface is currently not registered.",
+        "type": "string",
+        "maxLength": 32
+      },
+      {
+        "name": "DomainNameIdentifier",
+        "access": "readOnly",
+        "description": "The Domain Name Identifier, a shortened version of {{param|DomainName}}, denoted as DNI in {{bibref|G.9961|Section 8.6.11.2.1}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DomainId",
+        "access": "readOnly",
+        "description": "The Domain Identifier of the domain to which the interface is registered, denoted as DOD in {{bibref|G.9961}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DeviceId",
+        "access": "readOnly",
+        "description": "The Device Identifier assigned by the Domain Master, denoted as DEVICE_ID in {{bibref|G.9961}}. The value 0 indicates that the device is not currently registered.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "NodeTypeDMCapable",
+        "access": "readOnly",
+        "description": "Indicates whether this interface has the capability to act as Domain Master in the G.hn domain.",
+        "type": "boolean"
+      },
+      {
+        "name": "DMRequested",
+        "access": "readWrite",
+        "description": "Indicates a request to force the role of the G.hn interface to Domain Master (DM) for the G.hn domain it is connected to. The selection of the Domain Master follows the procedures described in {{bibref|G.9961|Clause 8.6.6}}.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "IsDM",
+        "access": "readOnly",
+        "description": "Indicates whether this G.hn interface is currently the Domain Master (DM) for the G.hn domain it is connected to, as described in {{bibref|G.9961|Clause 8.6}}.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "NodeTypeSCCapable",
+        "access": "readOnly",
+        "description": "Indicates whether this interface has the capability to act as Security Controller in the G.hn domain.",
+        "type": "boolean"
+      },
+      {
+        "name": "SCRequested",
+        "access": "readWrite",
+        "description": "Indicates a request to force the role of the G.hn interface to Security Controller (SC) for the G.hn domain it is connected to. The selection of the Security Controller follows the procedures described in {{bibref|G.9961|Clause 9.2}}.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "IsSC",
+        "access": "readOnly",
+        "description": "Indicates whether this G.hn interface is currently the Security Controller (SC) for the G.hn domain it is connected to, as described in {{bibref|G.9961|Clause 9.2}}.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "StandardVersions",
+        "access": "readOnly",
+        "description": "The standard versions that the interface supports. The list MUST have an even number of items. The first item of each pair represents an ITU-T G.hn Recommendation while the second element of each pair represents the amendment version of the indicated Recommendation that this interface supports (the value 0 corresponds to the base Recommendation). For example, to indicate support for the G.9960 base document and G.9961 amendment 1, the corresponding list would be \"G9960,0,G9961,1\".",
+        "list": true,
+        "type": "string",
+        "version": "2.12"
+      },
+      {
+        "name": "MaxBandPlan",
+        "access": "readOnly",
+        "description": "The largest bandplan that the interface can support, as defined in {{bibref|G.9961|Clause 8.8.5.5}}.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "MediumType",
+        "access": "readOnly",
+        "description": "The medium type that the interface currently operates on. Refer to {{bibref|G.9962|Table 7-5}}.",
+        "type": "string",
+        "enumerations": [
+          "PowerLineBaseband",
+          "PhoneLineBaseband",
+          "CoaxBaseband",
+          "CoaxRF",
+          "PlasticOpticalFiber"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "TAIFG",
+        "access": "readOnly",
+        "description": "The Acknowledgement InterFrame Gap, or TAIFG, as defined in {{bibref|G.9961|Clause 8.4}}. It is represented as multiples of {{units}}.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "NotchedAmateurRadioBands",
+        "access": "readWrite",
+        "description": "A bit map representing usage of international amateur bands (0 = masked, 1 = unmasked). The LSB represents the lowest band (1.8-2.0 MHz), the second LSB represents the second lowest band (3.5-4.0 MHz), and so on. The maximum value for this parameter is 0x03FF, i.e. it is a 10-bit quantity represented in 16 bits and the top 6 bits are always zero. International Radio amateur bands are described in {{bibref|G.9964|Table D-1}} and conveyed by the Domain Master in the Amateur radio band descriptor (see {{bibref|G.9961|Table 8-77}}).",
+        "type": "hexBinary",
+        "maxLength": 2,
+        "version": "2.12"
+      },
+      {
+        "name": "PHYThroughputDiagnosticsEnable",
+        "access": "readWrite",
+        "description": "{{nolist}} Comma-separated list of DeviceIDs of nodes that need to enable their PHY throughput diagnostics mode. All devices that are enabled will participate in the G.hn network PHY throughput diagnostics process.",
+        "list": true,
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "PerformanceMonitoringDiagnosticsEnable",
+        "access": "readWrite",
+        "description": "{{nolist}} Comma-separated list of DeviceIDs of nodes that need to enable their Performance Monitoring diagnostics mode on this node. All devices that are enabled will participate in the G.hn network Performance Monitoring diagnostics process.",
+        "list": true,
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "SMMaskedBandNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "NodeTypeDMConfig",
+        "access": "readWrite",
+        "description": "Requests the interface to become the Domain Master in the G.hn domain. This parameter is valid only if {{param|NodeTypeDMCapable}} is {{true}}. Note that, if more than one node is configured to act as Domain Master, G.hn specifies a protocol to ensure only one device actually becomes DM.",
+        "type": "boolean"
+      },
+      {
+        "name": "NodeTypeDMStatus",
+        "access": "readOnly",
+        "description": "Indicates whether the interface is acting as Domain Master ({{true}}) or not ({{false}}). See Note in {{param|NodeTypeDMConfig}} regarding the possibility of more than one node being configured with {{param|NodeTypeDMConfig}} = {{true}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "NodeTypeSCStatus",
+        "access": "readOnly",
+        "description": "Indicates whether the interface is acting as Security Controller ({{true}}) or not ({{false}}).",
+        "type": "boolean"
+      },
+      {
+        "name": "AssociatedDeviceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PSM",
+        "access": "readWrite",
+        "description": "Specifies the list of PSD shaping mask (PSM) breakpoints to be applied to the G.hn interface. {{list|with each list item consisting of the following}} {{datatype|expand}} The PSM level is 0.1*(the value of the level of the PSM) - 140 dBm/Hz. For example, a PSM defined by two breakpoints (subcarrier 450, PSM level -80 dBm/Hz) and (subcarrier 1050, PSM level -90 dBm/Hz) is represented by PSM [450,600],[1050,500] .",
+        "list": true,
+        "type": "dataType:PSMBreakPointIndexAndLevel",
+        "version": "2.12"
+      }
+    ],
+    "description": "G.hn interface table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}). Each table entry models the PHY {{bibref|G.9960}} and MAC {{bibref|G.9961}} layers of a G.hn interface.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

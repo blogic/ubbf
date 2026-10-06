@@ -1,0 +1,45 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Default8021Q.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Default8021Q.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "Default8021QNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables default 802.1Q settings.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "PrimaryVID",
+        "access": "readWrite",
+        "description": "The primary 802.1Q C-TAG (VLAN ID).",
+        "type": "unsignedInt",
+        "maxInclusive": 4095
+      },
+      {
+        "name": "DefaultPCP",
+        "access": "readWrite",
+        "description": "The default Priority Code Point (PCP).",
+        "type": "unsignedInt",
+        "maxInclusive": 7
+      }
+    ],
+    "description": "The default 802.1Q settings for EasyMesh service prioritization {{bibref|EasyMesh}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "PrimaryVID"
+      ]
+    }
+  }
+}

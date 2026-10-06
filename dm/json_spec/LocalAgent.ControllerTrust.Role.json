@@ -1,0 +1,50 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LocalAgent.ControllerTrust.Role.{i}.",
+  "object": {
+    "path": "Device.LocalAgent.ControllerTrust.Role.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "RoleNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enable/Disable this {{object}} instance.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "The Role assigned to this {{object}} instance.",
+        "type": "string"
+      },
+      {
+        "name": "PermissionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Each instance of this table represents a Role that can be assigned to or inherited by a Controller via the Controller Trust mechanism. The Role contains a set of permissions that determine how the Controller can interact with the data model. If multiple permission entries associated with this table contain a Target that evaluates to the same instantiated Object/Parameter for multiple Roles, then the permissions to be used are a union of the identified permissions.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Name"
+      ]
+    }
+  }
+}

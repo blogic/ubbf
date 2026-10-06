@@ -1,0 +1,41 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.PLOAM.",
+  "object": {
+    "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.PLOAM.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "MICErrors",
+        "access": "readOnly",
+        "description": "PLOAM MIC errors. Counter of received PLOAM messages with MIC errors. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "DownstreamMessageCount",
+        "access": "readOnly",
+        "description": "Downstream PLOAM message count. Count of PLOAM messages sent by OLT, received by ONU, either broadcast or directed to the specific ONU-ID. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "RangingTime",
+        "access": "readOnly",
+        "description": "Count of Ranging_Time PLOAM messages sent by OLT. It provides a base for transmission time drift estimation. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "UpstreamMessageCount",
+        "access": "readOnly",
+        "description": "Upstream PLOAM message count. Count of messages (other than Acknowledgement) sent by ONU to OLT. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter64"
+      }
+    ],
+    "description": "PLOAM PM.",
+    "children": []
+  }
+}

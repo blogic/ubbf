@@ -1,0 +1,59 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.MultiAP.APDevice.{i}.Radio.{i}.AP.{i}.AssociatedDevice.{i}.Stats.",
+  "object": {
+    "path": "Device.WiFi.MultiAP.APDevice.{i}.Radio.{i}.AP.{i}.AssociatedDevice.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "BytesSent",
+        "access": "readOnly",
+        "description": "The total number of bytes transmitted to the Associated Device.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BytesReceived",
+        "access": "readOnly",
+        "description": "The total number of bytes received from the Associated Device.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "PacketsSent",
+        "access": "readOnly",
+        "description": "The total number of packets transmitted to the Associated Device.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "PacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of packets received from the Associated Device.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "ErrorsSent",
+        "access": "readOnly",
+        "description": "The total number of outbound packets that could not be transmitted because of errors. These might be due to the number of retransmissions exceeding the retry limit, or from other causes.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "ErrorsReceived",
+        "access": "readOnly",
+        "description": "The total number of inbound packets that contained errors preventing them from being delivered to a higher-layer protocol.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "RetransCount",
+        "access": "readOnly",
+        "description": "The total number of transmitted packets which were retransmissions. Two retransmissions of the same packet results in this counter incrementing by two.",
+        "type": "dataType:StatsCounter64"
+      }
+    ],
+    "description": "Object describing the Statistics for a single Associated Device (STA). {{deprecated|2.15|because it is duplicated in {{object|######.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}}}} {{obsoleted|2.17}} {{deleted|2.18}}",
+    "children": []
+  }
+}

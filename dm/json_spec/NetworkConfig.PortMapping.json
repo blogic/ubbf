@@ -1,0 +1,50 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "NetworkConfig.PortMapping.{i}.",
+  "object": {
+    "path": "NetworkConfig.PortMapping.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Interface",
+        "access": "readOnly",
+        "description": "Name of a row within either {{object|.Logical.Interface.}} or {{object|.IP.Interface.}}. If Name is present in both {{object|.Logical.Interface.}} and {{object|.IP.Interface.}}, the Interface referenced in {{object|.Logical.Interface.}} must be selected. Specifies the interface to which the port mapping applies.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ExternalPort",
+        "access": "readOnly",
+        "description": "The external port that the NAT gateway would listen on for traffic to a corresponding InternalPort. Inbound packets to this external port on the selected interface MUST be forwarded to the IP address associated with the ExecutionUnit on the InternalPort.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "InternalPort",
+        "access": "readOnly",
+        "description": "The port on ExecutionUnit that the gateway MUST forward traffic to.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Protocol",
+        "access": "readOnly",
+        "description": "The protocol of the port mapping.",
+        "type": "string",
+        "enumerations": [
+          "TCP",
+          "UDP"
+        ]
+      }
+    ],
+    "description": "Defines the list of required port mapping rules for any ExecutionUnit which is created as a result of this command. If this command encounters any issue in providing the requested mapping, such as the port already being used or reserved, then it will fail. When the argument {{object|NetworkConfig}} is absent or {{empty}} for the {{command|.SoftwareModules.DeploymentUnit.{i}.Update()}}, the {{object}} network configuration remains unaltered. When the argument {{object|NetworkConfig}} provided in {{command|.SoftwareModules.DeploymentUnit.{i}.Update()}}, {{object}} configuration supersedes any previous configuration. If {{object}} is absent or {{empty}}, it indicate that no port mapping is required for the resulting ExecutionUnit to function.",
+    "children": []
+  }
+}

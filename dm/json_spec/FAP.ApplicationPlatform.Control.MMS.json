@@ -1,0 +1,67 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FAP.ApplicationPlatform.Control.MMS.",
+  "object": {
+    "path": "Device.FAP.ApplicationPlatform.Control.MMS.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "APIEnable",
+        "access": "readWrite",
+        "description": "Enable or disable MMS API exposure on FAP",
+        "type": "boolean"
+      },
+      {
+        "name": "QueueEnable",
+        "access": "readWrite",
+        "description": "Enable or disable Request queueing for the API",
+        "type": "boolean"
+      },
+      {
+        "name": "Queueing",
+        "access": "readWrite",
+        "description": "Determines how FAP handles simultaneous requests from different Applications to MMS API.",
+        "type": "string",
+        "enumerations": [
+          "FiFo",
+          "Priority"
+        ]
+      },
+      {
+        "name": "MaxAPIUsersNumber",
+        "access": "readWrite",
+        "description": "Determines the Max Number of different Applications that can send Requests to MMS API.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "MinSendMMSTimeInterval",
+        "access": "readWrite",
+        "description": "Determines the Minimum Time Interval in {{units}} between two consecutive Send MMS Requests by the same Application.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 3599
+      },
+      {
+        "name": "EnableQueryMMSDeliveryStatus",
+        "access": "readWrite",
+        "description": "Enable or disable \"QuerySMSDeliveryStatus\" Operation on MMS API. When disabled, QuerySMSDeliveryStatus Requests to MMS API are ignored.",
+        "type": "boolean"
+      },
+      {
+        "name": "EnableSubscribeToNotificationsOfMessageSentToApplication",
+        "access": "readWrite",
+        "description": "Enable or disable \"SubscribeTo NotificationsOfMessageSentToApplication\" Operation on MMS API. When disabled, SubscribeTo NotificationsOfMessageSentToApplication Requests to MMS API are ignored.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object contains parameters related to the MMS API.",
+    "children": []
+  }
+}

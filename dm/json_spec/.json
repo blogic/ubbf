@@ -1,0 +1,61 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.",
+  "object": {
+    "path": "Device.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "RootDataModelVersion",
+        "access": "readOnly",
+        "description": "Root data model version, e.g. ''2.4''. For a vendor-defined root data model, this is the standard Broadband Forum model on which the vendor-defined model is based.",
+        "type": "string",
+        "maxLength": 32,
+        "pattern": "2\\.\\d+",
+        "version": "2.12",
+        "forcedInform": "true"
+      },
+      {
+        "name": "InterfaceStackNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ProxiedDeviceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "CollectionDeviceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.16"
+      },
+      {
+        "name": "IoTCapabilityNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.13"
+      },
+      {
+        "name": "NodeNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.13"
+      }
+    ],
+    "description": "The top-level object for a Device.",
+    "children": []
+  }
+}

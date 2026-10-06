@@ -1,0 +1,53 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.ZigBee.Interface.{i}.AssociatedDevice.{i}.",
+  "object": {
+    "path": "Device.ZigBee.Interface.{i}.AssociatedDevice.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "AssociatedDeviceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "IEEEAddress",
+        "access": "readOnly",
+        "description": "The IEEE address assigned to this device. A value of \"FF:FF:FF:FF:FF:FF:FF:FF\" indicates that this address is unknown.",
+        "type": "dataType:IEEE_EUI64"
+      },
+      {
+        "name": "NetworkAddress",
+        "access": "readOnly",
+        "description": "The ZigBee network address assigned to this device.",
+        "type": "dataType:ZigBeeNetworkAddress"
+      },
+      {
+        "name": "Active",
+        "access": "readOnly",
+        "description": "Whether or not this device is currently present in the ZigBee network as defined in {{bibref|ZigBee2007|section 2.4.4.1}}. The ability to list inactive devices is OPTIONAL. If the CPE includes inactive devices in this table, {{param}} MUST be set to {{false}} for each inactive device. The length of time an inactive device remains listed in this table is a local matter to the CPE.",
+        "type": "boolean"
+      },
+      {
+        "name": "ZDOReference",
+        "access": "readOnly",
+        "description": "The ZigBee Device Object assigned to this interface.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.ZDO.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "This table provides information about other ZigBee devices that are directly accessible via this interface. {{keys}} It is possible that instances of this object have the same key value when the value of {{param|IEEEAddress}} parameter is \"FF:FF:FF:FF:FF:FF:FF:FF\" and the ZigBee Coordinators on two or more separate area networks assign the same value for the {{param|NetworkAddress}}. This is because the ZigBee specification describes only intra-area network topologies {{bibref|ZigBee2007|Section 1.1.4 Network Topology}}. As such if two or more {{object}} instances have the same key value the implementation is undefined.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "IEEEAddress",
+        "NetworkAddress"
+      ]
+    }
+  }
+}

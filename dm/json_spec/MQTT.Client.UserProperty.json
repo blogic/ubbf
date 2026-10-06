@@ -1,0 +1,70 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MQTT.Client.{i}.UserProperty.{i}.",
+  "object": {
+    "path": "Device.MQTT.Client.{i}.UserProperty.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "UserPropertyNumberOfEntries",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.13"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Setting Enable to {{true}} means the user property is used in the indicated control packet(s). The user property will be applied to all control packets of the same control packet type (e.g PUBLISH).",
+        "type": "boolean"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "Name of the user property",
+        "type": "string",
+        "maxLength": 65535
+      },
+      {
+        "name": "Value",
+        "access": "readWrite",
+        "description": "Value of the user property",
+        "type": "string",
+        "maxLength": 65535
+      },
+      {
+        "name": "PacketType",
+        "access": "readWrite",
+        "description": "{{list}} Each entry defines the control packet type(s) in which the user property is included.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "AUTH",
+          "CONNECT",
+          "DISCONNECT",
+          "PUBLISH",
+          "PUBACK",
+          "PUBREC",
+          "PUBREL",
+          "PUBCOMP",
+          "SUBSCRIBE",
+          "UNSUBSCRIBE",
+          "WILL"
+        ]
+      }
+    ],
+    "description": "List of user properties used by the MQTT client. This table only applies if {{param|#.ProtocolVersion}} is set to {{enum|5.0|##.Capabilities.ProtocolVersionsSupported}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

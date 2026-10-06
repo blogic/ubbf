@@ -1,0 +1,124 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.QoS.App.{i}.",
+  "object": {
+    "path": "Device.QoS.App.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "AppNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this App table entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this App table entry. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "ProtocolIdentifier",
+        "access": "readWrite",
+        "description": "URN identifying the protocol associated with the given application. A set of defined URNs is given in {{bibref|TR-181i2|Annex A}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "Human-readable name associated with this entry in the App table.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "DefaultForwardingPolicy",
+        "access": "readWrite",
+        "description": "Identifier of the forwarding policy associated with traffic associated with this App table entry, but not associated with any specified flow.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DefaultTrafficClass",
+        "access": "readWrite",
+        "description": "Identifier of the traffic class associated with traffic associated with this App table entry, but not associated with any specified flow.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DefaultPolicer",
+        "access": "readWrite",
+        "description": "{{reference}} Indicates the ''Policer'' table entry for traffic associated with this {{object}} table entry, but not associated with any specified flow. {{empty}} indicates a null policer.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.Policer.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "DefaultDSCPMark",
+        "access": "readWrite",
+        "description": "DSCP to mark traffic associated with this App table entry, but not associated with any specified flow. A value of -1 indicates no change from the incoming packet. A value of -2 indicates automatic marking of DSCP based upon the EthernetPriority value of the incoming packet as defined in {{bibref|TR-181i2|Annex A}}.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -2
+      },
+      {
+        "name": "DefaultEthernetPriorityMark",
+        "access": "readWrite",
+        "description": "Ethernet priority code (as defined in {{bibref|802.1Q-2011}}) to mark traffic associated with this App table entry, but not associated with any specified flow. A value of -1 indicates no change from the incoming packet. A value of -2 indicates automatic marking of EthernetPriority based upon the DSCP value of the incoming packet as defined in {{bibref|TR-181i2|Annex A}}.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -2
+      },
+      {
+        "name": "DefaultInnerEthernetPriorityMark",
+        "access": "readWrite",
+        "description": "Ethernet priority code (as defined in {{bibref|802.1Q-2011}}) to mark the inner VLAN Tags as defined in 802.1Q with this {{object}} table entry where the packet is not associated with any specified flow. This parameter is only applicable when the PDU has 2 VLAN Tags. A value of -1 indicates no change from the incoming packet. A value of -2 indicates automatic marking of EthernetPriority based upon the DSCP value of the incoming packet as defined in {{bibref|TR-181i2|Annex A}}.",
+        "type": "int",
+        "minInclusive": -2,
+        "version": "2.12"
+      }
+    ],
+    "description": "Application table.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

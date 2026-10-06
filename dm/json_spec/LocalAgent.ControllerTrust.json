@@ -1,0 +1,80 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LocalAgent.ControllerTrust.",
+  "object": {
+    "path": "Device.LocalAgent.ControllerTrust.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "UntrustedRole",
+        "access": "readWrite",
+        "description": "{{list|each entry is a Role that is associated with Controllers whose identity cannot be authenticated. The value of the {{param}} parameter is appended to the {{param|#.Controller.{i}.AssignedRole}} parameter}} In some instances, this policy is set by the Agent and cannot be modified by Controllers. If the Agent does not allow modification of this parameter, the Agent MUST respond with an error to the request to set this parameter.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "Role.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "BannedRole",
+        "access": "readWrite",
+        "description": "The Role that is associated with Controllers indicate banned access. When assigned to a Controller or associated with an entry in the {{object|Credential}} table, this MUST be the only value of the {{param}} parameter of the {{param|#.Controller.{i}.AssignedRole}} parameter. The Agent SHOULD refuse to accept USP messages from, or send USP messages to, any Controller that has this Role.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "Role.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "SecuredRoles",
+        "access": "readWrite",
+        "description": "{{list|each entry is a Role that is associated with Controllers to indicate their access to secured parameters (e.g. {{param|.WiFi.AccessPoint.{i}.Security.WEPKey}}). The value of the {{param}} parameter is appended to the {{param|#.Controller.{i}.AssignedRole}} parameter}} Only Controllers with a secured role assigned (and the appropriate permissions set) MUST be able to have access to secured parameters content.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "Role.",
+          "targetType": "row"
+        },
+        "version": "2.16"
+      },
+      {
+        "name": "TOFUAllowed",
+        "access": "readWrite",
+        "description": "When {{true}}, Agent has active policy that allows for self-signed certificates and certificates from unknown Certificate Authorities (CAs) to be trusted on first use (TOFU).",
+        "type": "boolean"
+      },
+      {
+        "name": "TOFUInactivityTimer",
+        "access": "readWrite",
+        "description": "Inactivity timer in {{units}}. This timer is started when trust on first use (TOFU) policy is used to accept a Controller certificate. If no USP Message is received before this timer elapses, the Agent MUST tear down the MTP connection and underlying (D)TLS session. A value of 0 means that the TOFU inactivity timer is effectively disabled.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RoleNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "CredentialNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ChallengeNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object contains information that an Agent applies when establishing a trust relationship with a Controller.",
+    "children": []
+  }
+}

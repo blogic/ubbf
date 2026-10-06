@@ -1,0 +1,66 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PCP.Client.{i}.Server.{i}.InboundMapping.{i}.Filter.{i}.",
+  "object": {
+    "path": "Device.PCP.Client.{i}.Server.{i}.InboundMapping.{i}.Filter.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "FilterNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "RemoteHostIPAddress",
+        "access": "readWrite",
+        "description": "Permitted remote peer IP address for this filter.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "PrefixLength",
+        "access": "readWrite",
+        "description": "Indicates how many bits of {{param|RemoteHostIPAddress}} are relevant for this filter.",
+        "default": "128",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 128
+      },
+      {
+        "name": "RemotePort",
+        "access": "readWrite",
+        "description": "Permitted remote peer port number for this filter. The value 0 indicates ''all ports''.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "RemotePortEndRange",
+        "access": "readWrite",
+        "description": "Indicates the last port of the remote port range that starts with {{param|RemotePort}}. If an external port range is specified, then the behavior described for {{param|RemotePort}} applies to all ports within the range. A value of zero (0) indicates that no remote port range is specified, i.e. that the range consists only of {{param|RemotePort}}. Note: This parameter was promoted to readWrite in the Device:2.18 version.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      }
+    ],
+    "description": "Filter table. This table contains all Filters restricting this Inbound Mapping, as defined in {{bibref|RFC6887|}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "source_file": "tr-181-2-19-1-usp.xml",
+  "path": "Device.LocalAgent.",
+  "object": {
+    "path": "Device.LocalAgent.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "SupportedThresholdOperator",
+        "access": "readOnly",
+        "description": "{{list|each entry is a threshold operation for {{param|Threshold.{i}.ThresholdOperator}} supported by the Agent}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "Rise",
+          "Fall",
+          "Cross",
+          "Eq",
+          "NotEq"
+        ],
+        "version": "2.13"
+      },
+      {
+        "name": "ThresholdNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.13"
+      },
+      {
+        "name": "WatchdogNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.18"
+      },
+      {
+        "name": "SubscriptionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RequestNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MonitorNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.16"
+      },
+      {
+        "name": "SupportedNumberOfSubscriptions",
+        "access": "readOnly",
+        "description": "An indication of the maximum number of {{object|Subscription}} instances supported by this implementation or -1 if no hard limit exists.",
+        "default": "-1",
+        "defaultType": "implementation",
+        "type": "int",
+        "version": "2.16"
+      }
+    ],
+    "description": "This object contains general information about the USP Agent itself. For information related to the Device that hosts the Agent, please reference the {{object|#.DeviceInfo}} object. NOTE: The Vendor Log File table ({{object|#.DeviceInfo.VendorLogFile}}) details are located on the {{object|#.DeviceInfo}} object.",
+    "children": []
+  }
+}

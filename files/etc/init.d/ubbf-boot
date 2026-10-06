@@ -1,0 +1,9 @@
+#!/bin/sh /etc/rc.common
+
+START=18
+
+boot() {
+	/usr/libexec/ubbf/capabilities
+	/usr/libexec/ubbf/boot-cause
+	/usr/libexec/ubbf/kernel-faults
+}

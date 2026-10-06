@@ -1,0 +1,72 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.Event.{i}.",
+  "object": {
+    "path": "Device.LMAP.Event.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "EventNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} instance. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "Name of the Event.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Type",
+        "access": "readWrite",
+        "description": "This parameter describes the type of {{object}} for this object instance. The timing of the event occurrence is adjusted based on the value of the {{param|RandomnessSpread}} parameter. {{enum}}",
+        "default": "Immediate",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "PeriodicTiming",
+          "CalendarTiming",
+          "OneOffTiming",
+          "Immediate",
+          "Startup",
+          "ControllerLost",
+          "ControllerConnected"
+        ]
+      },
+      {
+        "name": "RandomnessSpread",
+        "access": "readWrite",
+        "description": "The spread, in {{units}}, of the Uniform Discrete random distribution algorithm. A value of 0 means that the random algorithm is not applied.",
+        "type": "int"
+      },
+      {
+        "name": "CycleInterval",
+        "access": "readWrite",
+        "description": "The duration of the time interval, in {{units}}, that used to calculate cycle numbers.",
+        "type": "int"
+      }
+    ],
+    "description": "This object defines the information associated with an event used within the measurement agent. Event instances may be referenced by various objects within the LMAP model.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

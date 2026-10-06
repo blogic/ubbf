@@ -1,0 +1,550 @@
+{
+  "Device": {
+    "DeviceInfo": {
+      "HostName": "ubbf-router",
+      "FriendlyName": "ubbf-router"
+    },
+
+    "IP": {
+      "Interface": {
+        "1": {
+          "Enable": "true",
+          "Alias": "WAN",
+          "Name": "wan",
+          "LowerLayers": "Device.Ethernet.Link.1",
+          "Upstream": "true",
+          "Type": "Normal",
+          "IPv4Enable": "true",
+          "IPv6Enable": "true",
+          "IPv4Address": {
+            "1": {
+              "Enable": "true",
+              "Alias": "WanIPv4",
+              "IPAddress": "",
+              "SubnetMask": "",
+              "AddressingType": "DHCP"
+            }
+          },
+          "IPv6Address": {
+            "1": {
+              "Enable": "true",
+              "Alias": "WanIPv6",
+              "IPAddress": "",
+              "Origin": "DHCPv6",
+              "Prefix": ""
+            }
+          }
+        },
+        "2": {
+          "Enable": "true",
+          "Alias": "LAN",
+          "Name": "lan",
+          "LowerLayers": "Device.Bridging.Bridge.1.Port.1",
+          "Upstream": "false",
+          "Type": "Normal",
+          "IPv4Enable": "true",
+          "IPv6Enable": "true",
+          "IPv4Address": {
+            "1": {
+              "Enable": "true",
+              "Alias": "LanIPv4",
+              "IPAddress": "192.168.1.1",
+              "SubnetMask": "255.255.255.0",
+              "AddressingType": "Static"
+            }
+          },
+          "IPv6Prefix": {
+            "1": {
+              "Enable": "true",
+              "Alias": "LanPrefix",
+              "Prefix": "",
+              "Origin": "Child",
+              "StaticType": "Inapplicable",
+              "ParentPrefix": "Device.IP.Interface.1.IPv6Prefix.1",
+              "ChildPrefixBits": "60",
+              "OnLink": "true",
+              "Autonomous": "true"
+            }
+          }
+        },
+        "3": {
+          "Enable": "true",
+          "Alias": "Guest",
+          "Name": "guest",
+          "LowerLayers": "Device.Bridging.Bridge.2.Port.1",
+          "Upstream": "false",
+          "Type": "Normal",
+          "IPv4Enable": "true",
+          "IPv6Enable": "false",
+          "IPv4Address": {
+            "1": {
+              "Enable": "true",
+              "Alias": "GuestIPv4",
+              "IPAddress": "192.168.100.1",
+              "SubnetMask": "255.255.255.0",
+              "AddressingType": "Static"
+            }
+          }
+        }
+      },
+      "Diagnostics": {
+        "UDPEchoConfig": {
+          "Enable": "false",
+          "UDPPort": "0",
+          "EchoPlusEnabled": "false",
+          "Interface": "",
+          "SourceIPAddress": ""
+        }
+      }
+    },
+
+    "DHCPv4": {
+      "Client": {
+        "1": {
+          "Enable": "true",
+          "Alias": "WanDHCPv4Client",
+          "Interface": "Device.IP.Interface.1",
+          "Status": "Enabled",
+          "Renew": "false"
+        }
+      },
+      "Server": {
+        "Enable": "true",
+        "Pool": {
+          "1": {
+            "Enable": "true",
+            "Alias": "LanPool",
+            "Interface": "Device.IP.Interface.2",
+            "MinAddress": "192.168.1.100",
+            "MaxAddress": "192.168.1.200",
+            "SubnetMask": "255.255.255.0",
+            "LeaseTime": "86400",
+            "DNSServers": "192.168.1.1",
+            "DomainName": "lan.local",
+            "IPRouters": "192.168.1.1",
+            "StaticAddress": {
+            }
+          },
+          "2": {
+            "Enable": "true",
+            "Alias": "GuestPool",
+            "Interface": "Device.IP.Interface.3",
+            "MinAddress": "192.168.100.100",
+            "MaxAddress": "192.168.100.200",
+            "SubnetMask": "255.255.255.0",
+            "LeaseTime": "3600",
+            "DNSServers": "192.168.100.1",
+            "DomainName": "guest.local",
+            "IPRouters": "192.168.100.1"
+          }
+        }
+      }
+    },
+
+    "DHCPv6": {
+      "Client": {
+        "1": {
+          "Enable": "true",
+          "Alias": "WanDHCPv6Client",
+          "Interface": "Device.IP.Interface.1",
+          "RequestAddresses": "true",
+          "RequestPrefixes": "true"
+        }
+      },
+      "Server": {
+        "Enable": "true",
+        "Pool": {
+          "1": {
+            "Enable": "true",
+            "Alias": "LanDHCPv6Pool",
+            "Interface": "Device.IP.Interface.2",
+            "IANAEnable": "true",
+            "IAPDEnable": "true",
+            "IAPDAddLength": "0"
+          }
+        }
+      }
+    },
+
+    "RouterAdvertisement": {
+      "Enable": "true",
+      "InterfaceSetting": {
+        "1": {
+          "Enable": "true",
+          "Alias": "LanRA",
+          "Interface": "Device.IP.Interface.2",
+          "AdvManagedFlag": "true",
+          "AdvOtherConfigFlag": "true",
+          "MaxRtrAdvInterval": "600",
+          "MinRtrAdvInterval": "200",
+          "AdvDefaultLifetime": "1800",
+          "AdvPreferredRouterFlag": "Medium",
+          "RDNSS": "",
+          "DNSSL": ""
+        }
+      }
+    },
+
+    "NeighborDiscovery": {
+      "Enable": "true",
+      "InterfaceSetting": {
+        "1": {
+          "Enable": "true",
+          "Alias": "LanND",
+          "Interface": "Device.IP.Interface.2",
+          "DADTransmits": "1",
+          "RetransTimer": "1000",
+          "RtrSolicitationInterval": "4000",
+          "MaxRtrSolicitations": "3",
+          "NUDEnable": "true",
+          "RSEnable": "true"
+        }
+      }
+    },
+
+    "Firewall": {
+      "Enable": "true",
+      "Config": "Advanced",
+      "AdvancedLevel": "Device.Firewall.Level.1",
+      "X_UBBF_RespondToPing": "true",
+      "X_UBBF_DoSProtection": {
+        "SynFloodProtection": "true",
+        "DropInvalidPackets": "true",
+        "IcmpRateLimit": "true",
+        "DropMulticastWAN": "true",
+        "DropMalformedTCP": "true"
+      },
+      "Level": {
+        "1": {
+          "Alias": "DefaultLevel",
+          "Name": "Default",
+          "Description": "Default firewall level",
+          "DefaultPolicy": "Drop"
+        }
+      },
+      "Chain": {
+        "1": {
+          "Enable": "true",
+          "Alias": "InputChain",
+          "Name": "INPUT"
+        },
+        "2": {
+          "Enable": "true",
+          "Alias": "ForwardChain",
+          "Name": "FORWARD",
+          "Rule": {
+            "1": {
+              "Enable": "true",
+              "Alias": "LANtoWAN",
+              "SourceInterface": "Device.IP.Interface.2",
+              "DestInterface": "Device.IP.Interface.1",
+              "Target": "Accept"
+            },
+            "2": {
+              "Enable": "true",
+              "Alias": "GuestToWAN",
+              "SourceInterface": "Device.IP.Interface.3",
+              "DestInterface": "Device.IP.Interface.1",
+              "Target": "Accept"
+            },
+            "3": {
+              "Enable": "true",
+              "Alias": "DropNetBIOSUDPToWAN",
+              "SourceAllInterfaces": "true",
+              "DestInterface": "Device.IP.Interface.1",
+              "Protocol": "17",
+              "DestPort": "137",
+              "DestPortRangeMax": "138",
+              "Target": "Drop"
+            },
+            "4": {
+              "Enable": "true",
+              "Alias": "DropNetBIOSTCPToWAN",
+              "SourceAllInterfaces": "true",
+              "DestInterface": "Device.IP.Interface.1",
+              "Protocol": "6",
+              "DestPort": "139",
+              "Target": "Drop"
+            },
+            "5": {
+              "Enable": "true",
+              "Alias": "DropSSDPToWAN",
+              "SourceAllInterfaces": "true",
+              "DestInterface": "Device.IP.Interface.1",
+              "Protocol": "17",
+              "DestPort": "1900",
+              "Target": "Drop"
+            },
+            "6": {
+              "Enable": "true",
+              "Alias": "DropMulticastIPv4ToWAN",
+              "SourceAllInterfaces": "true",
+              "DestInterface": "Device.IP.Interface.1",
+              "IPVersion": "4",
+              "DestIP": "224.0.0.0",
+              "DestMask": "4",
+              "Target": "Drop"
+            },
+            "7": {
+              "Enable": "true",
+              "Alias": "DropMulticastIPv6ToWAN",
+              "SourceAllInterfaces": "true",
+              "DestInterface": "Device.IP.Interface.1",
+              "IPVersion": "6",
+              "DestIP": "ff00::",
+              "DestMask": "8",
+              "Target": "Drop"
+            }
+          }
+        }
+      }
+    },
+
+    "NAT": {
+      "X_UBBF_Hairpinning": {
+        "Enable": "false"
+      },
+      "InterfaceSetting": {
+        "1": {
+          "Enable": "true",
+          "Alias": "WanNAT",
+          "Interface": "Device.IP.Interface.1"
+        },
+        "2": {
+          "Enable": "false",
+          "Alias": "LanZone",
+          "Interface": "Device.IP.Interface.2"
+        },
+        "3": {
+          "Enable": "true",
+          "Alias": "GuestNAT",
+          "Interface": "Device.IP.Interface.3"
+        }
+      }
+    },
+
+    "Syslog": {
+      "Enable": "true",
+      "Source": {
+        "1": {
+          "Enable": "true",
+          "Alias": "LocalSource",
+          "KernelMessages": "true",
+          "SystemMessages": "true",
+          "Severity": "All",
+          "FacilityLevel": "All"
+        }
+      },
+      "Action": {
+        "1": {
+          "Alias": "LocalFile",
+          "SourceRef": "Device.Syslog.Source.1",
+          "FilterRef": "",
+          "TemplateRef": "",
+          "StructuredData": "false",
+          "LogFile": {
+            "Enable": "false",
+            "FilePath": "file:///var/log/messages"
+          }
+        }
+      }
+    },
+
+    "Time": {
+      "Enable": "true",
+      "LocalTimeZone": "CET-1CEST,M3.5.0,M10.5.0/3",
+      "Client": {
+        "1": {
+          "Enable": "true",
+          "Alias": "NTPClient",
+          "Servers": "0.pool.ntp.org,1.pool.ntp.org"
+        }
+      },
+      "Server": {
+        "1": {
+          "Enable": "true",
+          "Alias": "NTPServer",
+          "Interface": "Device.IP.Interface.2"
+        }
+      }
+    },
+
+    "ManagementServer": {
+      "EnableCWMP": "true",
+      "URL": "",
+      "Username": "",
+      "Password": "",
+      "PeriodicInformEnable": "true",
+      "PeriodicInformInterval": "300",
+      "PeriodicInformTime": "0001-01-01T00:00:00Z",
+      "ParameterKey": "",
+      "ConnectionRequestUsername": "",
+      "ConnectionRequestPassword": "",
+      "UpgradesManaged": "false",
+      "CWMPRetryMinimumWaitInterval": "5",
+      "CWMPRetryIntervalMultiplier": "2000",
+      "InstanceMode": "InstanceNumber",
+      "AutoCreateInstances": "false"
+    },
+
+    "WiFi": {},
+
+    "QoS": {},
+
+    "X_UBBF": {
+      "QoSify": {
+      "Enable": "false",
+      "ClassifierNumberOfEntries": "27",
+      "DNSClassifierNumberOfEntries": "16",
+      "DSCPMapNumberOfEntries": "4",
+      "InterfaceConfigNumberOfEntries": "2",
+      "Config": {
+        "DefaultUDPDSCP": "besteffort",
+        "ICMPDSCP": "+CS0",
+        "PriorityDSCP": "AF41",
+        "PriorityMaxAvgPktLen": "500"
+      },
+      "DSCPMap": {
+        "1": { "Enable": "true", "Alias": "besteffort", "Name": "besteffort", "IngressDSCP": "CS0", "EgressDSCP": "CS0" },
+        "2": { "Enable": "true", "Alias": "bulk", "Name": "bulk", "IngressDSCP": "LE", "EgressDSCP": "LE" },
+        "3": { "Enable": "true", "Alias": "video", "Name": "video", "IngressDSCP": "AF41", "EgressDSCP": "AF41" },
+        "4": { "Enable": "true", "Alias": "voice", "Name": "voice", "IngressDSCP": "CS6", "EgressDSCP": "CS6" }
+      },
+      "InterfaceConfig": {
+        "1": { "Enable": "true", "Alias": "wan", "Interface": "Device.IP.Interface.1", "BandwidthUp": "2500mbit", "BandwidthDown": "2500mbit", "Ingress": "true", "Egress": "true", "Mode": "diffserv4", "NAT": "true", "HostIsolate": "true" },
+        "2": { "Enable": "true", "Alias": "lan", "Interface": "Device.IP.Interface.2", "BandwidthUp": "2500mbit", "BandwidthDown": "2500mbit", "Ingress": "true", "Egress": "true", "Mode": "diffserv4", "NAT": "false", "HostIsolate": "false" }
+      },
+      "Classifier": {
+        "1": { "Enable": "true", "Alias": "STUN_UDP", "Order": "1", "Protocol": "17", "DestPort": "3478", "DSCPMark": "AF43" },
+        "2": { "Enable": "true", "Alias": "STUN_TCP", "Order": "2", "Protocol": "6", "DestPort": "3478", "DSCPMark": "AF43" },
+        "3": { "Enable": "true", "Alias": "TURNS_UDP", "Order": "3", "Protocol": "17", "DestPort": "5349", "DSCPMark": "AF43" },
+        "4": { "Enable": "true", "Alias": "TURNS_TCP", "Order": "4", "Protocol": "6", "DestPort": "5349", "DSCPMark": "AF43" },
+        "5": { "Enable": "true", "Alias": "RTP1_UDP", "Order": "5", "Protocol": "17", "DestPort": "50000", "DestPortRangeEnd": "50019", "DSCPMark": "AF43" },
+        "6": { "Enable": "true", "Alias": "RTP1_TCP", "Order": "6", "Protocol": "6", "DestPort": "50000", "DestPortRangeEnd": "50019", "DSCPMark": "AF43" },
+        "7": { "Enable": "true", "Alias": "RTP2_UDP", "Order": "7", "Protocol": "17", "DestPort": "50020", "DestPortRangeEnd": "50039", "DSCPMark": "AF41" },
+        "8": { "Enable": "true", "Alias": "RTP2_TCP", "Order": "8", "Protocol": "6", "DestPort": "50020", "DestPortRangeEnd": "50039", "DSCPMark": "AF41" },
+        "9": { "Enable": "true", "Alias": "Zoom1_TCP", "Order": "9", "Protocol": "6", "DestPort": "8801", "DestPortRangeEnd": "8802", "DSCPMark": "AF41" },
+        "10": { "Enable": "true", "Alias": "Zoom2_UDP", "Order": "10", "Protocol": "17", "DestPort": "3478", "DestPortRangeEnd": "3479", "DSCPMark": "AF41" },
+        "11": { "Enable": "true", "Alias": "Zoom3_UDP", "Order": "11", "Protocol": "17", "DestPort": "8801", "DestPortRangeEnd": "8810", "DSCPMark": "AF41" },
+        "12": { "Enable": "true", "Alias": "WebRTC_UDP", "Order": "12", "Protocol": "17", "DestPort": "9000", "DestPortRangeEnd": "9999", "DSCPMark": "AF41" },
+        "13": { "Enable": "true", "Alias": "Media1_UDP", "Order": "13", "Protocol": "17", "DestPort": "52100", "DestPortRangeEnd": "52199", "DSCPMark": "AF41" },
+        "14": { "Enable": "true", "Alias": "Media1_TCP", "Order": "14", "Protocol": "6", "DestPort": "52100", "DestPortRangeEnd": "52199", "DSCPMark": "AF41" },
+        "15": { "Enable": "true", "Alias": "Steam1_TCP", "Order": "15", "Protocol": "6", "DestPort": "27015", "DestPortRangeEnd": "27030", "DSCPMark": "AF41" },
+        "16": { "Enable": "true", "Alias": "Steam2_TCP", "Order": "16", "Protocol": "6", "DestPort": "27036", "DestPortRangeEnd": "27037", "DSCPMark": "AF41" },
+        "17": { "Enable": "true", "Alias": "Xbox_UDP", "Order": "17", "Protocol": "17", "DestPort": "3074", "DSCPMark": "AF41" },
+        "18": { "Enable": "true", "Alias": "Xbox_TCP", "Order": "18", "Protocol": "6", "DestPort": "3074", "DSCPMark": "AF41" },
+        "19": { "Enable": "true", "Alias": "PSN_TCP", "Order": "19", "Protocol": "6", "DestPort": "3075", "DSCPMark": "AF41" },
+        "20": { "Enable": "true", "Alias": "Steam3_UDP", "Order": "20", "Protocol": "17", "DestPort": "4380", "DSCPMark": "AF41" },
+        "21": { "Enable": "true", "Alias": "Steam4_UDP", "Order": "21", "Protocol": "17", "DestPort": "27000", "DestPortRangeEnd": "27036", "DSCPMark": "AF41" },
+        "22": { "Enable": "true", "Alias": "FaceTime1_UDP", "Order": "22", "Protocol": "17", "DestPort": "16384", "DestPortRangeEnd": "16387", "DSCPMark": "AF41" },
+        "23": { "Enable": "true", "Alias": "FaceTime2_UDP", "Order": "23", "Protocol": "17", "DestPort": "16393", "DestPortRangeEnd": "16402", "DSCPMark": "AF41" },
+        "24": { "Enable": "true", "Alias": "Voice1_UDP", "Order": "24", "Protocol": "17", "DestPort": "50070", "DestPortRangeEnd": "50089", "DSCPMark": "EF" },
+        "25": { "Enable": "true", "Alias": "Voice2_UDP", "Order": "25", "Protocol": "17", "DestPort": "52000", "DestPortRangeEnd": "52049", "DSCPMark": "EF" },
+        "26": { "Enable": "true", "Alias": "Voice2_TCP", "Order": "26", "Protocol": "6", "DestPort": "52000", "DestPortRangeEnd": "52049", "DSCPMark": "EF" },
+        "27": { "Enable": "true", "Alias": "Voice3_UDP", "Order": "27", "Protocol": "17", "DestPort": "3659", "DSCPMark": "EF" }
+      },
+      "DNSClassifier": {
+        "1": { "Enable": "true", "Alias": "YouTube", "Order": "1", "Domain": "youtube.com", "MatchType": "Suffix", "DSCPMark": "AF41" },
+        "2": { "Enable": "true", "Alias": "GoogleVideo", "Order": "2", "Domain": "googlevideo.com", "MatchType": "Suffix", "DSCPMark": "AF41" },
+        "3": { "Enable": "true", "Alias": "Facebook", "Order": "3", "Domain": "facebook.com", "MatchType": "Suffix", "DSCPMark": "AF45" },
+        "4": { "Enable": "true", "Alias": "WhatsApp", "Order": "4", "Domain": "whatsapp.net", "MatchType": "Suffix", "DSCPMark": "AF41" },
+        "5": { "Enable": "true", "Alias": "Instagram", "Order": "5", "Domain": "instagram.com", "MatchType": "Suffix", "DSCPMark": "AF41" },
+        "6": { "Enable": "true", "Alias": "CDNInstagram", "Order": "6", "Domain": "cdninstagram.com", "MatchType": "Suffix", "DSCPMark": "AF41" },
+        "7": { "Enable": "true", "Alias": "FBCDN", "Order": "7", "Domain": "fbcdn.com", "MatchType": "Suffix", "DSCPMark": "AF41" },
+        "8": { "Enable": "true", "Alias": "TwitchCDN", "Order": "8", "Domain": "twitchcdn.net", "MatchType": "Suffix", "DSCPMark": "AF41" },
+        "9": { "Enable": "true", "Alias": "LiveVideo", "Order": "9", "Domain": "live-video.net", "MatchType": "Suffix", "DSCPMark": "AF41" },
+        "10": { "Enable": "true", "Alias": "Twitch", "Order": "10", "Domain": "twitch.net", "MatchType": "Suffix", "DSCPMark": "AF41" },
+        "11": { "Enable": "true", "Alias": "DashPVCDN", "Order": "11", "Domain": "dash.pv-cdn.net", "MatchType": "Suffix", "DSCPMark": "AF41" },
+        "12": { "Enable": "true", "Alias": "CloudFront", "Order": "12", "Domain": "cloudfront.net", "MatchType": "Suffix", "DSCPMark": "AF41" },
+        "13": { "Enable": "true", "Alias": "AmazonA2Z", "Order": "13", "Domain": "video.a2z.com", "MatchType": "Suffix", "DSCPMark": "AF41" },
+        "14": { "Enable": "true", "Alias": "AmazonVideo", "Order": "14", "Domain": "amazonvideo.com", "MatchType": "Suffix", "DSCPMark": "AF41" },
+        "15": { "Enable": "true", "Alias": "Akamai", "Order": "15", "Domain": "akamized.net", "MatchType": "Suffix", "DSCPMark": "AF41" },
+        "16": { "Enable": "true", "Alias": "Disney", "Order": "16", "Domain": "bamgrid.com", "MatchType": "Suffix", "DSCPMark": "AF41" }
+      }
+      }
+    },
+
+    "DNS": {
+      "Client": {
+        "Enable": "true",
+        "Server": {
+          "1": {
+            "Enable": "true",
+            "Alias": "PrimaryDNS",
+            "DNSServer": "8.8.8.8",
+            "Type": "Static"
+          },
+          "2": {
+            "Enable": "true",
+            "Alias": "SecondaryDNS",
+            "DNSServer": "8.8.4.4",
+            "Type": "Static"
+          }
+        }
+      },
+      "Relay": {
+        "Enable": "true",
+        "Forwarding": {
+          "1": {
+            "Enable": "true",
+            "Alias": "LanForwarder",
+            "DNSServer": "8.8.8.8",
+            "IngressInterface": "Device.IP.Interface.2"
+          },
+          "2": {
+            "Enable": "true",
+            "Alias": "GuestForwarder",
+            "DNSServer": "8.8.8.8",
+            "IngressInterface": "Device.IP.Interface.3"
+          }
+        },
+        "Caching": {
+          "Enable": "true",
+          "MaxEntries": "1000",
+          "MaxTTL": "86400",
+          "MinTTL": "0",
+          "NegativeTTL": "3600"
+        }
+      },
+      "RebindProtection": {
+        "Enable": "true",
+        "AllowedDomains": "lan.local"
+      },
+      "SD": {
+        "Enable": "true",
+        "Advertise": {
+          "1": {
+            "Enable": "true",
+            "Alias": "RouterWeb",
+            "InstanceName": "Router Web Interface",
+            "ServiceName": "_http._tcp",
+            "Port": "80",
+            "TextRecord": {
+              "1": {
+                "Key": "path",
+                "Value": "/"
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "LLDP": {
+      "Enable": "true"
+    },
+
+    "Routing": {
+      "Router": {
+        "1": {
+          "Enable": "true",
+          "Alias": "Main",
+          "IPv4Forwarding": {},
+          "IPv6Forwarding": {}
+        }
+      }
+    },
+
+    "Bridging": {}
+  }
+}

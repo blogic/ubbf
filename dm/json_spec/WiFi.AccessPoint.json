@@ -1,0 +1,160 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.AccessPoint.{i}.",
+  "object": {
+    "path": "Device.WiFi.AccessPoint.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "AccessPointNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this access point.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the status of this access point. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "SSIDReference",
+        "access": "readWrite",
+        "description": "{{reference}}",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.SSID.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "SSIDAdvertisementEnabled",
+        "access": "readWrite",
+        "description": "Indicates whether or not beacons include the SSID name.",
+        "type": "boolean"
+      },
+      {
+        "name": "RetryLimit",
+        "access": "readWrite",
+        "description": "The maximum number of retransmission for a packet. This corresponds to IEEE 802.11 parameter ''dot11ShortRetryLimit''. {{deprecated|2.11|because it is really a {{object|#.Radio}} attribute. Use {{param|#.Radio.{i}.RetryLimit}}}} {{obsoleted|2.14}} {{deleted|2.15}}",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 7
+      },
+      {
+        "name": "WMMCapability",
+        "access": "readOnly",
+        "description": "Indicates whether this access point supports WiFi Multimedia (WMM) Access Categories (AC) {{bibref|WMM}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "UAPSDCapability",
+        "access": "readOnly",
+        "description": "Indicates whether this access point supports WMM Unscheduled Automatic Power Save Delivery (U-APSD). Note: U-APSD support implies WMM support.",
+        "type": "boolean"
+      },
+      {
+        "name": "WMMEnable",
+        "access": "readWrite",
+        "description": "Whether WMM support is currently enabled. When enabled, this is indicated in beacon frames.",
+        "type": "boolean"
+      },
+      {
+        "name": "UAPSDEnable",
+        "access": "readWrite",
+        "description": "Whether U-APSD support is currently enabled. When enabled, this is indicated in beacon frames. Note: U-APSD can only be enabled if WMM is also enabled.",
+        "type": "boolean"
+      },
+      {
+        "name": "AssociatedDeviceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxAssociatedDevices",
+        "access": "readWrite",
+        "description": "The maximum number of devices that can simultaneously be connected to the access point. A value of 0 means that there is no specific limit. {{deprecated|2.13|in favor of {{param|MaxAllowedAssociations}}}} {{obsoleted|2.14-2.15}} {{deleted|2.16}}",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "IsolationEnable",
+        "access": "readWrite",
+        "description": "Enables or disables device isolation. A value of {{true}} means that the devices connected to the Access Point are isolated from all other devices within the home network (as is typically the case for a Wireless Hotspot).",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "MACAddressControlEnabled",
+        "access": "readWrite",
+        "description": "Indicates whether or not MAC Address Control is enabled on this {{object|#}}. MAC Address Control limits client devices to those whose hardware addresses match the {{param|AllowedMACAddress}} list.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "AllowedMACAddress",
+        "access": "readWrite",
+        "description": "Hardware addresses of client devices that are allowed to associate with this {{object|#}} if {{param|MACAddressControlEnabled}} is {{true}}.",
+        "list": true,
+        "type": "dataType:MACAddress",
+        "version": "2.12"
+      },
+      {
+        "name": "MaxAllowedAssociations",
+        "access": "readWrite",
+        "description": "Maximum number of associated devices allowed for this SSID. If the number is reached new device connections to this access point will be rejected. If the number is changed to a value less than the actual number of associated devices, new device connections will be rejected until the number of devices is below this number. It is not expected that any connections are dropped. If the parameter {{param|#.Radio.{i}.MaxSupportedAssociations}} exists, the value MUST be less than or equal to the maximum number specified in {{param|#.Radio.{i}.MaxSupportedAssociations}}.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "CpeOperationMode",
+        "access": "readWrite",
+        "description": "Reports information about the CPE operation mode (router or bridge/range extender).",
+        "default": "Router",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Router",
+          "Bridge/Extender"
+        ],
+        "version": "2.14"
+      }
+    ],
+    "description": "This object models an 802.11 connection from the perspective of a wireless access point. Each {{object}} entry is associated with a particular {{object|#.SSID}} interface instance via the {{param|SSIDReference}} parameter. For enabled table entries, if {{param|SSIDReference}} is not a valid reference then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}. Note: The {{object}} table includes a unique key parameter that is a strong reference. If a strongly referenced object is deleted, the CPE will set the referencing parameter to {{empty}}. However, doing so under these circumstances might cause the updated {{object}} row to then violate the table's unique key constraint; if this occurs, the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and disable the offending {{object}} row.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

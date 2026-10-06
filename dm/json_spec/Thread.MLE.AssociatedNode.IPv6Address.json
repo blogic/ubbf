@@ -1,0 +1,43 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Thread.MLE.{i}.AssociatedNode.{i}.IPv6Address.{i}.",
+  "object": {
+    "path": "Device.Thread.MLE.{i}.AssociatedNode.{i}.IPv6Address.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "IPv6AddressNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "The IPv6 address may by of one the following types. Enumeration of: * LinkLocal (Address reachable by a single radio transmission with the prefixes fe80::/16). * MeshLocal (Address reachable within the same Thread network with the prefix defined by the Thread network). * Global (Address reachable from outside a Thread network with the prefix provided by the Border Router).",
+        "type": "string"
+      },
+      {
+        "name": "IPAddress",
+        "access": "readOnly",
+        "description": "Router ID of the route table entry.",
+        "type": "dataType:IPv6Address"
+      }
+    ],
+    "description": "This object represents the list of IPv6 addresses associated with the Thread node.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias",
+        "IPAddress"
+      ]
+    }
+  }
+}

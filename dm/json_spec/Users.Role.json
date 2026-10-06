@@ -1,0 +1,69 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Users.Role.{i}.",
+  "object": {
+    "path": "Device.Users.Role.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "RoleNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.15"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables/disables this role object instance.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "RoleID",
+        "access": "readWrite",
+        "description": "Unique Identifier of the role. Depending on the implementation this can be the unique identifier assigned by the underlying system.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RoleName",
+        "access": "readWrite",
+        "description": "Name of the current Role. MUST NOT be {{empty}} for an enabled entry.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "StaticRole",
+        "access": "readOnly",
+        "description": "A static role is a fixed role that is always available in the system. When set to {{true}}, the role cannot be removed.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "RequiredCapabilities",
+        "access": "readWrite",
+        "description": "Capabilities that have been assigned to this {{object}}.",
+        "list": true,
+        "type": "string",
+        "version": "2.18"
+      }
+    ],
+    "description": "This object contains parameters relating to the role characteristics.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "RoleName"
+      ]
+    }
+  }
+}

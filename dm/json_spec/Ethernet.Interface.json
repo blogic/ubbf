@@ -1,0 +1,244 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Ethernet.Interface.{i}.",
+  "object": {
+    "path": "Device.Ethernet.Interface.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "InterfaceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the interface. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}. Because the interface includes layer 1, the {{enum|LowerLayerDown}} value SHOULD never be used.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the interface as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}. Note: Since {{object}} is a layer 1 interface, it is expected that {{param}} will not be used.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Upstream",
+        "access": "readOnly",
+        "description": "Indicates whether the interface points towards the Internet ({{true}}) or towards End Devices ({{false}}). For example: * For an Internet Gateway Device, {{param}} will be {{true}} for all WAN interfaces and {{false}} for all LAN interfaces. * For a standalone WiFi Access Point that is connected via Ethernet to an Internet Gateway Device, {{param}} will be {{true}} for the Ethernet interface and {{false}} for the WiFi Radio interface. * For an End Device, {{param}} will be {{true}} for all interfaces.",
+        "type": "boolean"
+      },
+      {
+        "name": "MaxBitRate",
+        "access": "readWrite",
+        "description": "The maximum upstream and downstream PHY bit rate supported by this interface (expressed in {{units}}). A value of -1 indicates automatic selection of the maximum bit rate.",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "The unique manufacturer-assigned Ethernet hardware address of the interface, also referred to as burned-in MAC address. Note: This is not necessarily the same as the MAC address used for higher-level protocols, which is modeled via the {{param|#.Link.{i}.MACAddress}} parameter. Its main purpose is the identification of a specific Ethernet interface; the information can also can be used to perform Wake on LAN.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "SupportedLinkModes",
+        "access": "readOnly",
+        "description": "Reports the supported link modes. MUST be reported in a compliant way as defined in {{bibref|IANAMauMIB|IANAifMauTypeListBits}}. For example, IANAifMauTypeListBits defines the following link mode types: * ''16'' (100BASE-TX full duplex mode) * ''26'' (1000BASE-SX full duplex mode) * ''30'' (1000BASE-T full duplex mode) * ''54'' (10GBASE-T) * ''103'' (2.5GBASE-T) * ''104'' (5GBASE-T)",
+        "list": true,
+        "type": "unsignedInt",
+        "version": "2.16"
+      },
+      {
+        "name": "AdvertisedLinkModes",
+        "access": "readWrite",
+        "description": "Sets the advertised link modes. MUST be set in a compliant way as defined in {{bibref|IANAMauMIB|IANAifMauTypeListBits}}. For example, IANAifMauTypeListBits defines the following link mode types: * ''16'' (100BASE-TX full duplex mode) * ''26'' (1000BASE-SX full duplex mode) * ''30'' (1000BASE-T full duplex mode) * ''54'' (10GBASE-T) * ''103'' (2.5GBASE-T) * ''104'' (5GBASE-T)",
+        "list": true,
+        "type": "unsignedInt",
+        "version": "2.19"
+      },
+      {
+        "name": "LinkPartnerAdvertisedLinkModes",
+        "access": "readOnly",
+        "description": "Reports the link modes advertised by the link partner. MUST be reported in a compliant way as defined in {{bibref|IANAMauMIB|IANAifMauTypeListBits}}. For example, IANAifMauTypeListBits defines the following link mode types: * ''16'' (100BASE-TX full duplex mode) * ''26'' (1000BASE-SX full duplex mode) * ''30'' (1000BASE-T full duplex mode) * ''54'' (10GBASE-T) * ''103'' (2.5GBASE-T) * ''104'' (5GBASE-T)",
+        "list": true,
+        "type": "unsignedInt",
+        "version": "2.19"
+      },
+      {
+        "name": "CurrentBitRate",
+        "access": "readOnly",
+        "description": "The current upstream and downstream PHY bit rate on this interface (expressed in {{units}}). A value of 0 indicates that the current bit rate is unknown.",
+        "type": "unsignedInt",
+        "version": "2.12",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "DuplexMode",
+        "access": "readWrite",
+        "description": "The duplex mode requested for this connection.",
+        "type": "string",
+        "enumerations": [
+          "Half",
+          "Full",
+          "Auto"
+        ]
+      },
+      {
+        "name": "CurrentDuplexMode",
+        "access": "readOnly",
+        "description": "The duplex mode currently in use by this connection.",
+        "type": "string",
+        "enumerations": [
+          "Unknown",
+          "Half",
+          "Full"
+        ],
+        "version": "2.18"
+      },
+      {
+        "name": "EEECapability",
+        "access": "readOnly",
+        "description": "Indicates whether this physical ethernet port supports Energy Efficient Ethernet as specified in {{bibref|802.3-2012_section6|Section 78}}.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "EEEEnable",
+        "access": "readWrite",
+        "description": "Whether Energy Efficient Ethernet {{bibref|802.3-2012_section6|Section 78}} support is currently enabled. When enabled, this ethernet port will be capable of entering or exiting Low Power Idle (LPI) mode.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "EEEStatus",
+        "access": "readOnly",
+        "description": "Indicates the active state of Energy Efficient Ethernet {{bibref|802.3-2012_section6|Section 78}}. The {{enum|Disabled}} value indicates that {{param|EEEEnable}} is disabled. The {{enum|Active}} value indicates that {{param|EEEEnable}} is enabled and that EEE support has been negotiated with the link partner. In this state EEE will be used. The {{enum|Inactive}} value indicates that {{param|EEEEnable}} is disabled, or that EEE support has not been negotiated with the link partner, either because the link parter is not EEE capable, or its support for EEE is disabled. The {{enum|Unsupported}} value indicates that this physical interface does not support EEE. In which case {{param|EEECapability}} will be {{false}}.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Active",
+          "Inactive",
+          "Unsupported"
+        ],
+        "version": "2.17"
+      },
+      {
+        "name": "EDPDCapability",
+        "access": "readOnly",
+        "description": "Indicates whether this physical ethernet port supports Energy Detect Power Down (EDPD). Implementations of this feature are vendor specific, Energy Detect Power Down is not part of the 802.3-2015 standard.",
+        "type": "boolean",
+        "version": "2.19"
+      },
+      {
+        "name": "EDPDEnable",
+        "access": "readWrite",
+        "description": "Indicates whether Energy Detect Power Down (EDPD) support is currently enabled. When enabled, depending on the type of hardware, either the transmit power is disabled or the link impulses are sent at a greater interval. Implementations of this feature are vendor specific, Energy Detect Power Down is not part of the 802.3-2015 standard.",
+        "type": "boolean",
+        "version": "2.19"
+      },
+      {
+        "name": "EDPDStatus",
+        "access": "readOnly",
+        "description": "Indicates the active state of Energy Detect Power Down (EDPD). Implementations of this feature are vendor specific, Energy Detect Power Down is not part of the 802.3-2015 standard.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Unsupported"
+        ],
+        "version": "2.19"
+      },
+      {
+        "name": "MDIX",
+        "access": "readWrite",
+        "description": "Configure the Medium Dependent Interface crossover functionality on the interface.",
+        "default": "Auto",
+        "defaultType": "factory",
+        "type": "string",
+        "enumerations": [
+          "Auto",
+          "On",
+          "Off"
+        ],
+        "version": "2.18"
+      },
+      {
+        "name": "CurrentMDIX",
+        "access": "readOnly",
+        "description": "The current Medium Dependent Interface crossover setting in use on the interface.",
+        "type": "string",
+        "enumerations": [
+          "Unsupported",
+          "Unknown",
+          "On",
+          "Off"
+        ],
+        "version": "2.18"
+      },
+      {
+        "name": "SFPReferenceList",
+        "access": "readOnly",
+        "description": "Small-form Factor Pluggable (SFP) entries associated with this interface.",
+        "list": true,
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.SFPs.SFPCage.",
+          "targetType": "row"
+        },
+        "version": "2.19"
+      }
+    ],
+    "description": "Ethernet interface table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}). This table models physical Ethernet ports, but in terms of the interface stack it only models the PHY and Connection Access Method of the Ethernet interface MAC. A {{object|#.Link}} is also required to model a full Ethernet device.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

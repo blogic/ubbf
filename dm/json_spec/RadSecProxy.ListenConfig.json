@@ -1,0 +1,61 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.RadSecProxy.ListenConfig.{i}.",
+  "object": {
+    "path": "Device.RadSecProxy.ListenConfig.{i}.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ListenConfigNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "Specifies the listening protocol.",
+        "type": "string",
+        "enumerations": [
+          "UDP",
+          "TCP",
+          "TLS",
+          "DTLS"
+        ]
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "The IP interface on which the RadSecProxy service listen for the corresponding {{param|Protocol}}.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": ".IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "Specifies the port used to receive corresponding {{param|Protocol}} packets. UDP {{param|Protocol}} will default to port 1812 and TCP and TLS {{param|Protocol}} will default to 2083.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      }
+    ],
+    "description": "Specifies the Listen configurations of the RadSecProxy service for each type of {{param|Protocol}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

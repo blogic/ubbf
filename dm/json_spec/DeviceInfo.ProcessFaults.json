@@ -1,0 +1,60 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.ProcessFaults.",
+  "object": {
+    "path": "Device.DeviceInfo.ProcessFaults.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "StoragePath",
+        "access": "readOnly",
+        "description": "Path where the process fault logs must be stored.",
+        "type": "string"
+      },
+      {
+        "name": "LastUpgradeCount",
+        "access": "readOnly",
+        "description": "Total number of process faults which occurred since last firmware upgrade.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PreviousBootCount",
+        "access": "readOnly",
+        "description": "The number of process faults which occurred during the previous boot cycle.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MinFreeSpace",
+        "access": "readWrite",
+        "description": "Minimum free space in {{units}} on the device that must be free before attempting to create a {{object|ProcessFault}} instance. This setting does not affect the counting of process faults.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RotateProcessFaultEntries",
+        "access": "readWrite",
+        "description": "When enabled and once the maximum {{object|ProcessFault}} entries as indicated by {{param|MaxProcessFaultEntries}} are reached, the oldest entry, determined by {{param|ProcessFault.{i}.TimeStamp}}, is removed to make space for a new one, which is assigned a new instance identifier and a new {{param|ProcessFault.{i}.Alias}}. This setting does not affect the counting of Process faults.",
+        "type": "boolean",
+        "version": "2.19"
+      },
+      {
+        "name": "MaxProcessFaultEntries",
+        "access": "readWrite",
+        "description": "The maximum number of entries available in the {{object|ProcessFault}} table. Defines the maximum number of {{object|ProcessFault}} instances that can be stored on the device. When {{param|RotateProcessFaultEntries}} is {{false}} and this limit is hit, no new {{object|ProcessFault}} instances will be created until sufficient Process fault instances are removed. When {{param|RotateProcessFaultEntries}} is {{true}} and this limit is hit, the table {{object|ProcessFault}} is rotated as specified by {{param|RotateProcessFaultEntries}}. Set this parameter to 0 to completely disable the creation of {{object|ProcessFault}} instances. Reducing the {{param}} will cause for the implementation to delete the oldest {{object|ProcessFault}} instances. This setting does not affect the counting of process faults.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ProcessFaultNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Monitoring process faults and configuring the operating system to generate crash dumps and core files is essential for diagnosing and troubleshooting issues with applications and processes.",
+    "children": []
+  }
+}

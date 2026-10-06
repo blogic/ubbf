@@ -1,0 +1,41 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.AL.NetworkingRegistrar.",
+  "object": {
+    "path": "Device.IEEE1905.AL.NetworkingRegistrar.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Registrar2dot4",
+        "access": "readOnly",
+        "description": "{{list}} 1905 AL MAC addresses as determined by source MAC address in received AP-autoconfiguration response messages with supported frequency band of 802.11 2.4 GHz.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "Registrar5",
+        "access": "readOnly",
+        "description": "{{list}} 1905 AL MAC addresses as determined by source MAC address in received AP-autoconfiguration response messages with supported frequency band of 802.11 5 GHz.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "Registrar60",
+        "access": "readOnly",
+        "description": "{{list}} 1905 AL MAC addresses as determined by source MAC address in received AP-autoconfiguration response messages with supported frequency band of 802.11 60 GHz.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "dataType:MACAddress"
+      }
+    ],
+    "description": "This object represents the detected Network Registrars detection function for the IEEE 1905 network. They are determined by received AP-autoconfiguration response messages with Registrar role, with supported band as defined in {{bibref|IEEE1905.1a|Table 6-25: SupportedFreqBand TLV}}",
+    "children": []
+  }
+}

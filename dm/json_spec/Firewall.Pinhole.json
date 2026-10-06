@@ -1,0 +1,232 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Firewall.Pinhole.{i}.",
+  "object": {
+    "path": "Device.Firewall.Pinhole.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "PinholeNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.16"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the pinhole.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this {{object}} entry.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Inactive",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Origin",
+        "access": "writeOnceReadOnly",
+        "description": "Indicates the Origin of the {{object}} instance. Note: This parameter was changed to writeOnceReadOnly in the Device:2.18 version.",
+        "default": "Controller",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "User",
+          "System",
+          "UPnP",
+          "Controller"
+        ]
+      },
+      {
+        "name": "Description",
+        "access": "readWrite",
+        "description": "Human-readable description associated with this {{object}} entry.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "Specifies the incoming L3 interface to which this pinhole applies.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "LeaseDuration",
+        "access": "readWrite",
+        "description": "Determines the time to live, in {{units}}, of a pin hole lease, where \"time to live\" means the number of {{units}} before the pin hole expires. A value of 0 means the pin hole is static. Support for dynamic (non-static) pin hole is OPTIONAL. That is, the only value for {{param}} that MUST be supported is 0.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "RemainingLeaseTime",
+        "access": "readOnly",
+        "description": "For a dynamic (non-static) pin hole, when this parameter is read, the value represents the time (in {{units}}) remaining on the pin hole lease. That is, for a dynamic pin hole, the value counts down toward 0. When a dynamic pin hole lease expires, the device MUST automatically terminate that pin hole, and MUST automatically delete the corresponding {{object}} table entry. For a static pin hole, this parameter is irrelevant and should return ''0''.",
+        "type": "unsignedInt",
+        "version": "2.17",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SourcePort",
+        "access": "readWrite",
+        "description": "Source port number of the incoming connection. A value of ''-1'' indicates this criterion is not used for matching.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "SourcePortRangeMax",
+        "access": "readWrite",
+        "description": "If specified, indicates the {{object}} criterion is to include the port range from {{param|SourcePort}} through {{param}} (inclusive). If specified, {{param}} MUST be greater than or equal to {{param|SourcePort}}. A value of -1 indicates that no port range is specified.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535,
+        "version": "2.18"
+      },
+      {
+        "name": "DestPort",
+        "access": "readWrite",
+        "description": "Destination port number. A value of ''-1'' indicates this criterion is not used for matching.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "DestPortRangeMax",
+        "access": "readWrite",
+        "description": "If specified, indicates the {{object}} criterion is to include the port range from {{param|DestPort}} through {{param}} (inclusive). If specified, {{param}} MUST be greater than or equal to {{param|DestPort}}. A value of -1 indicates that no port range is specified.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535,
+        "version": "2.18"
+      },
+      {
+        "name": "IPVersion",
+        "access": "readWrite",
+        "description": "Specifies the IP protocol version, following the definitions in {{bibref|IANA-ipversionnumbers}}. Valid values are: {{range}}.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "ranges": [
+          [
+            4,
+            4
+          ],
+          [
+            6,
+            6
+          ],
+          [
+            -1,
+            -1
+          ]
+        ],
+        "version": "2.16"
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "Protocol number as specified in {{bibref|IANA-protocolnumbers}} For example: * ''6'' (TCP) * ''17'' (UDP) A value of ''-1'' indicates this criterion is not used for matching.",
+        "default": "[-1]",
+        "defaultType": "object",
+        "list": true,
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 255
+      },
+      {
+        "name": "SourcePrefixes",
+        "access": "readWrite",
+        "description": "Only allow incoming connections that match one or more of the source IP addresses or prefixes that are specified in {{param}} for the applied pinhole.",
+        "list": true,
+        "type": "dataType:IPPrefix"
+      },
+      {
+        "name": "DestIP",
+        "access": "readWrite",
+        "description": "The IP address of a client on the internal network. Either {{param}} or {{param|DestMACAddress}} MUST be configured, it is not allowed to configure them both. {{empty}} indicates this criterion is not used for matching.",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "DestMACAddress",
+        "access": "readWrite",
+        "description": "The MAC address of a client on the internal network. Either {{param}} or {{param|DestIP}} MUST be configured, it is not allowed to configure them both. {{empty}} indicates this criterion is not used for matching.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "ScheduleRef",
+        "access": "readWrite",
+        "description": "Each reference provides a schedule where time based access can be enabled. When {{param}} is {{empty}} the {{object}} is not scheduled, and the {{param|Enable}} defines the operational state.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Schedules.Schedule.",
+          "targetType": "row"
+        },
+        "version": "2.18"
+      },
+      {
+        "name": "Log",
+        "access": "readWrite",
+        "description": "Enable or disable logging, in a {{object|.DeviceInfo.VendorLogFile}}, of packets matching this {{object}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.19"
+      },
+      {
+        "name": "LogRef",
+        "access": "readWrite",
+        "description": "Specifies the logging rules for this {{object}} entry. The {{param|Log}} parameter MUST be set to {{true}} for this setting to take effect. When {{param|Log}} is {{true}} and {{param}} is {{empty}} or contains an invalid reference, the system MUST treat the configuration as an error and set {{param|Status}} to {{enum|Error_Misconfigured|Status}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Firewall.Log.",
+          "targetType": "row"
+        },
+        "version": "2.19"
+      }
+    ],
+    "description": "Firewall Pinhole object that is used for configuring pinholes. Pinholes are similar to port mapping entries but without the NAT support. The Pinhole table is used for allowing certain incoming traffic, on the {{param|Interface}}, to be routed to the internal network. For enabled table entries, if {{param|DestMACAddress}} and {{param|DestIP}} are {{empty}}, or if {{param|Interface}} is not a valid reference, then the table entry is inoperable and the device MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

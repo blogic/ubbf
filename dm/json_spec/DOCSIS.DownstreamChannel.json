@@ -1,0 +1,101 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DOCSIS.DownstreamChannel.{i}.",
+  "object": {
+    "path": "Device.DOCSIS.DownstreamChannel.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "DownstreamChannelNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.15"
+      },
+      {
+        "name": "ID",
+        "access": "readOnly",
+        "description": "The Cable Modem Termination System identification of the downstream channel within this particular MAC interface. if the interface is down, the object returns the most current value. If the downstream channel ID is unknown, this object returns a value of 0.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "Frequency",
+        "access": "readOnly",
+        "description": "The center of the downstream frequency associated with this channel. This object will return the current tuner frequency, measured in {{units}}. See {{bibref|CM-SP-RFIv2.0|Section 6.3.3}}.",
+        "type": "int",
+        "minInclusive": 0,
+        "maxInclusive": 1000000000
+      },
+      {
+        "name": "Width",
+        "access": "readOnly",
+        "description": "The bandwidth in {{units}} of this downstream channel. Most implementations are expected to support a channel width of 6 MHz (North America) and/or 8 MHz (Europe). See {{bibref|CM-SP-RFIv2.0|Table 6-17}}.",
+        "type": "int",
+        "minInclusive": 0,
+        "maxInclusive": 16000000
+      },
+      {
+        "name": "Modulation",
+        "access": "readOnly",
+        "description": "The modulation type associated with this downstream channel. If the interface is down, this object either returns the configured value (from the CMTS), the most current value (from the CM), or the value of {{enum|Unknown}}. See the reference for specifics on the modulation profiles implied by {{enum|QAM64}} and {{enum|QAM256}}. {{enum}} See {{bibref|CM-SP-RFIv2.0|Table 6-17.}}",
+        "type": "string",
+        "enumerations": [
+          "Unknown",
+          "Other",
+          "QAM64",
+          "QAM256"
+        ]
+      },
+      {
+        "name": "Interleave",
+        "access": "readOnly",
+        "description": "The Forward Error Correction (FEC) interleaving used for this downstream channel. The value {{enum|Taps12increment17}} is supported by EuroDOCSIS cable systems only, and the others by DOCSIS cable systems. If the interface is down, this object either returns the configured value (from the CMTS), the most current value (from the CM), or the value of {{enum|Unknown}}. The value of {{enum|Other}} is returned if the interleave is known but not defined in the above list. See the reference for the FEC configuration described by the setting of this object. {{enum}} See {{bibref|CM-SP-RFIv2.0|Table 6-15}}.",
+        "type": "string",
+        "enumerations": [
+          "Unknown",
+          "Other",
+          "Taps8Increment16",
+          "Taps16Increment8",
+          "Taps32Increment4",
+          "Taps64Increment2",
+          "Taps128Increment1",
+          "Taps12increment17"
+        ]
+      },
+      {
+        "name": "Power",
+        "access": "readOnly",
+        "description": "The received power level. If the interface is down, this object either returns the configured value (from the CMTS), the most current value (from the CM) or the value of 0. See the reference for recommended and required power levels. See {{bibref|CM-SP-RFIv2.0|Tables 6-16, 6-17}}.",
+        "type": "dataType:TenthdBmV"
+      },
+      {
+        "name": "Annex",
+        "access": "readOnly",
+        "description": "The value of this object indicates the conformance of the implementation to important regional cable standards. {{enum}} See {{bibref|CM-SP-RFIv2.0|Sections 6.3.1, and H.3.1}}.",
+        "type": "string",
+        "enumerations": [
+          "Unknown",
+          "Other",
+          "AnnexA",
+          "AnnexB",
+          "AnnexC"
+        ]
+      }
+    ],
+    "description": "This table describes the attributes of downstream channels (frequency bands). See {{bibref|CM-SP-RFIv2.0|Tables 6-16, and 6-17}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

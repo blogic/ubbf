@@ -1,0 +1,42 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PCP.Client.{i}.PCPProxy.",
+  "object": {
+    "path": "Device.PCP.Client.{i}.PCPProxy.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the PCP Proxy for this PCP Client.",
+        "type": "boolean"
+      },
+      {
+        "name": "HighestVersion",
+        "access": "readOnly",
+        "description": "A string identifying the highest version of PCP that the proxy supports. This parameter is based on Version from {{bibref|RFC6887}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of the PCP Proxy for this PCP Client. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      }
+    ],
+    "description": "Properties for the Port Control Protocol (PCP) Proxy, as specified in {{bibref|PCPProxy}}.",
+    "children": []
+  }
+}

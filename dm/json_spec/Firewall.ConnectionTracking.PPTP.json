@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Firewall.ConnectionTracking.PPTP.",
+  "object": {
+    "path": "Device.Firewall.ConnectionTracking.PPTP.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the connection tracking support for the PPTP protocol (PPTP ALG).",
+        "type": "boolean"
+      }
+    ],
+    "description": "PPTP Connection Tracking configuration object.",
+    "children": []
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MoCA.Interface.{i}.Bridge.{i}.",
+  "object": {
+    "path": "Device.MoCA.Interface.{i}.Bridge.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "BridgeNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "NodeIndex",
+        "access": "readOnly",
+        "description": "The Node ID is used as an index to order the MAC entries in the MoCA bridge table.",
+        "type": "dataType:MocaNodeID"
+      },
+      {
+        "name": "MACAddresses",
+        "access": "readOnly",
+        "description": "The Ethernet MAC addresses identified by the Node ID.",
+        "list": true,
+        "type": "dataType:MACAddress"
+      }
+    ],
+    "description": "MoCA bridge Ethernet MAC address table. This table contains an entry for every MoCA Node in the MoCA network. Entries in this table cannot be created or deleted by the network management system. All entries are created or deleted by the device software.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "NodeIndex"
+      ]
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IoTCapability.{i}.BlobSensor.",
+  "object": {
+    "path": "Device.IoTCapability.{i}.BlobSensor.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:IoTBlobSensorType"
+      },
+      {
+        "name": "Description",
+        "access": "readOnly",
+        "description": "Human-readable description of the {{object}}. e.g. a more detailed description of {{param|Type}}. A Blob value is to be considered as a \"string of bytes\". The {{param|Type}} of this \"string of bytes\" is intended to be explained by {{param|Type}}. Examples do exist for Sensors used in traffic control, such as an image, numberplate, and face recognition, RFID readers and other areas where Sensors produce bytes.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The date and time in UTC when {{param|Value}} has been changed to the current value.",
+        "type": "dateTime"
+      },
+      {
+        "name": "LastContactTime",
+        "access": "readOnly",
+        "description": "The date and time in UTC when the {{object}} has received data.",
+        "type": "dateTime"
+      },
+      {
+        "name": "Value",
+        "access": "readOnly",
+        "description": "The Value is typically a string of bytes and its meaning is described by {{param|Type}}. A string of bytes will use the base64 type. The current value reading of this {{object}}.",
+        "type": "base64"
+      }
+    ],
+    "description": "BlobSensor is a sensor that is able to send specific data as a \"string of bytes\" depending on its use. For example in case of traffic control Sensors, A Sensor can forward an image, a numberplate. RFID-Sensors forward an RFID. They have all in common that a \"string of bytes\" have been sent. To identify the type of bytes, the IoTBlobSensorType provides information about this \"string of bytes\".",
+    "children": []
+  }
+}

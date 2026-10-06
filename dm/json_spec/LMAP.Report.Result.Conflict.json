@@ -1,0 +1,46 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.Report.{i}.Result.{i}.Conflict.{i}.",
+  "object": {
+    "path": "Device.LMAP.Report.{i}.Result.{i}.Conflict.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ResultConflictNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "TaskName",
+        "access": "readOnly",
+        "description": "Name of the task.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ScheduleName",
+        "access": "readOnly",
+        "description": "Name of the schedule.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ActionName",
+        "access": "readOnly",
+        "description": "Name of the action.",
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "This object represents actions that might have impacted the results being reported.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "ScheduleName",
+        "ActionName",
+        "TaskName"
+      ]
+    }
+  }
+}

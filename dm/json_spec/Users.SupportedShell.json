@@ -1,0 +1,45 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Users.SupportedShell.{i}.",
+  "object": {
+    "path": "Device.Users.SupportedShell.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "SupportedShellNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.15"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables/disables this SupportedShell object instance.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "Name of the Shell",
+        "type": "string",
+        "maxLength": 64
+      }
+    ],
+    "description": "This table provides a list of user accessible shells which can be used as a reference in {{param|#.User.{i}.Shell}}",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

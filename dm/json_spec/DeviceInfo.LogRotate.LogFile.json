@@ -1,0 +1,50 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.LogRotate.{i}.LogFile.{i}.",
+  "object": {
+    "path": "Device.DeviceInfo.LogRotate.{i}.LogFile.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "LogFileNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.17"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "Name of the rotated log file stored within the same directory that {{param|#.Name}} is specified. Which MUST use the uri scheme file {{bibref|RFC8089|The file URI Scheme}}.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Size",
+        "access": "readOnly",
+        "description": "The size of the log file in {{units}}. If the device doesn't know the file size then {{param}} will be 0.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "Last modification date of the file specified by {{param|Name}}.",
+        "type": "dateTime",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "Each table entry represents a Log File. This table of log files is informational only and does not allow the Controller to operate on these files in any way.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DNS.Relay.Config.{i}.",
+  "object": {
+    "path": "Device.DNS.Relay.Config.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ConfigNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.17"
+      },
+      {
+        "name": "Forwarders",
+        "access": "readWrite",
+        "description": "Specifies the list of the DNS forwarders to be used.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.Forwarding.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "{{reference}} Specifies the IP interface over which the DNS query is received. This is usually the LAN interface. {{template|INTERFACE-ROUTING}}",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "###.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "CacheSize",
+        "access": "readOnly",
+        "description": "Specifies the size of cache in kilobytes. When '0' is specified, no DNS results will be cached.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "CacheMinTTL",
+        "access": "readOnly",
+        "description": "Specifies the minimum TTL amount of time, in {{units}}, that an entry MUST be kept in the cache regardless of what has been specified by the domain owner. When '0' is specified, then the TTL chosen by the domain owner will be applied.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "CacheMaxTTL",
+        "access": "readOnly",
+        "description": "Specifies the maximum TTL amount of time, in {{units}}, than an entry MUST be kept in the cache regardless of what has been specified by the domain owner. When '0' is specified, then the TTL chosen by the domain owner will be applied.",
+        "default": "86400",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object is used to specify the cache configuration for each Forwarding relay.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

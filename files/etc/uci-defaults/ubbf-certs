@@ -1,0 +1,17 @@
+#!/bin/sh
+
+CERT_DIR=/etc/ubbf
+
+[ -f /usr/bin/pkgen -a ! -f $CERT_DIR/cert.pem ] && {
+	mkdir -p $CERT_DIR
+	cn=$(cat /etc/board.json | jsonfilter -e '@.system.label_macaddr')
+	[ -z "$cn" ] && cn=$(cat /sys/class/net/eth0/address)
+	cn=$(echo $cn | tr -d : | awk '{print tolower($0)}')
+	(
+		umask 077
+		/usr/bin/pkgen -s CN=$cn,O=OpenWrt ca $CERT_DIR/ca.pem
+		/usr/bin/pkgen -s CN=$cn,O=OpenWrt cert $CERT_DIR/ca.pem $CERT_DIR/cert.pem
+	)
+}
+
+exit 0

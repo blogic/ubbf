@@ -1,0 +1,45 @@
+{
+  "source_file": "tr-181-2-19-0-localagent.xml",
+  "path": "Controller.{i}.MTP.{i}.",
+  "object": {
+    "path": "Controller.{i}.MTP.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "MTPNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enable/Disable this {{object}} instance. If this {{object}} instance is to be disabled and currently used for communication with the requesting controller, the agent has to send the request response first, before disabling it.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "The Message Transfer Protocol (MTP) to be used for communications by a USP Endpoint.",
+        "type": "string"
+      },
+      {
+        "name": "Order",
+        "access": "readWrite",
+        "description": "The order (relative priority) to use when determining which {{object}} to use for communicating to the Controller. A value of ''1'' indicates the highest precedence. For each configured {{object}}, the instance with the lowest value is attempted first. When more than one {{object}} instance has the same value, then each instance with the same value SHOULD be attempted at the same time. The value of {{param}} on creation of a {{object}} table entry MUST be one greater than the largest current value (initially assigned the lowest precedence).",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "version": "2.15"
+      }
+    ],
+    "description": "Each instance of this table represents a MTP used by this Controller.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Protocol"
+      ]
+    }
+  }
+}

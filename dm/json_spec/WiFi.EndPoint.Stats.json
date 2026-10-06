@@ -1,0 +1,53 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.EndPoint.{i}.Stats.",
+  "object": {
+    "path": "Device.WiFi.EndPoint.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "LastDataDownlinkRate",
+        "access": "readOnly",
+        "description": "The data transmit rate in {{units}} that was most recently used for transmission from the access point to the end point device.",
+        "type": "unsignedInt",
+        "minInclusive": 1000,
+        "maxInclusive": 600000,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LastDataUplinkRate",
+        "access": "readOnly",
+        "description": "The data transmit rate in {{units}} that was most recently used for transmission from the end point to the access point device.",
+        "type": "unsignedInt",
+        "minInclusive": 1000,
+        "maxInclusive": 600000,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SignalStrength",
+        "access": "readOnly",
+        "description": "An indicator of radio signal strength of the downlink from the access point to the end point, measured in {{units}}, as an average of the last 100 packets received from the device.",
+        "type": "int",
+        "minInclusive": -200,
+        "maxInclusive": 0
+      },
+      {
+        "name": "Retransmissions",
+        "access": "readOnly",
+        "description": "The number of {{units}} that had to be re-transmitted, from the last 100 packets sent to the access point. Multiple re-transmissions of the same packet count as one.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 100
+      }
+    ],
+    "description": "Throughput statistics for this end point.",
+    "children": []
+  }
+}

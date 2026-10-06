@@ -1,0 +1,110 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XPON.ONU.{i}.EthernetUNI.{i}.",
+  "object": {
+    "path": "Device.XPON.ONU.{i}.EthernetUNI.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "EthernetUNINumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readOnly",
+        "description": "Indicates whether this interface is enabled ({{true}}) or not ({{false}}). If the ONU is managed via OMCI, the interface is enabled if the OLT set the parameter ''Administrative state'' of the ME managing the associated service to 0. (The value 0 unlocks the functions performed by the ME.) The ME is either the VEIP ME (see {{bibref|G.988|Section 9.5.5}}) or the PPTP Ethernet UNI ME (see {{bibref|G.988|Section 9.5.1}}. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}. Because the interface includes layer 1, the {{enum|LowerLayerDown}} value SHOULD never be used. If the ONU is managed via OMCI, then {{param}} can only be {{enum|Up}} if the ONU has been provisioned at OMCI level in such a way that this interface is able to pass traffic.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.16"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the interface as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}. Note: Since {{object}} is a layer 1 interface, it is expected that {{param}} will not be used. If {{object}} models a physical UNI, it represents a layer 1 interface; if {{object}} models a virtual UNI, it virtualizes a layer 1 interface.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Upstream",
+        "access": "readOnly",
+        "description": "Indicates whether the interface points towards the Internet ({{true}}) or towards End Devices ({{false}}). For example: * For an Internet Gateway Device, {{param}} will be {{true}} for all WAN interfaces and {{false}} for all LAN interfaces. * For a standalone WiFi Access Point that is connected via Ethernet to an Internet Gateway Device, {{param}} will be {{true}} for the Ethernet interface and {{false}} for the WiFi Radio interface. * For an End Device, {{param}} will be {{true}} for all interfaces.",
+        "type": "boolean",
+        "version": "2.19"
+      },
+      {
+        "name": "ANIs",
+        "access": "readOnly",
+        "description": "{{list}} {{reference}} References all associated ANI interfaces. An ONU is potentially capable of forwarding frames between a UNI and its associated ANI interfaces. This parameter defines such a relationship. However, the list does not mean that the forwarding is actually happening, or the forwarding policies have been provisioned, between the UNI and the associated ANI interfaces. For an ONU with a single TC layer device, the parameter value can be either empty for simplicity, or can be the path name of the associated ANI. For an ONU with multiple TC layer devices, this parameter value may have one or more path names.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.ANI.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "InterdomainID",
+        "access": "readOnly",
+        "description": "String to identify the associated service in the ONU management domain to the TR-181 management domain. If the ONU is managed via OMCI, it is recommended to format this string as \"(service_type,MEID)\", with service_type being an enumeration of ''VEIP'' or ''PPTPEthernetUNI'', and MEID the value of the attribute \"Managed entity ID\" of the ME instance managing the service associated with this EthernetUNI. Examples: * (VEIP,1025) * (PPTPEthernetUNI,257) An OSS (Operations Support System) having access to both the TR-181 and the OMCI domain can then find out which EthernetUNI instance represents a certain VEIP or PPTPEthernetUNI ME instance in the OMCI domain.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "InterdomainName",
+        "access": "readOnly",
+        "description": "String that provides an additional way to identify the associated service to the TR-181 management domain. If the ONU is managed via OMCI and if the service associated with this EthernetUNI is a VEIP, then the value of this parameter is the value of the attribute \"Interdomain name\" of the corresponding VEIP ME instance.",
+        "type": "string",
+        "maxLength": 25
+      }
+    ],
+    "description": "Ethernet UNI table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}). This object models User Network Interfaces carrying Ethernet frames. An EthernetUNI can be a virtual or a physical UNI. If the ONU is managed via OMCI, an EthernetUNI has an associated service, which is either a VEIP (see {{bibref|G.988|Section 9.5.5}}) or a PPTP Ethernet UNI (see {{bibref|G.988|Section 9.5.1}}). If the associated service is a VEIP, the ONU shows a VEIP ME in the OMCI MIB. If it's a PPTP Ethernet UNI, the ONU shows a PPTP Ethernet UNI ME in the OMCI MIB. It is expected the associated service is a VEIP for a virtual UNI, and that it is a PPTP Ethernet UNI for a physical UNI. However, some network operators require that the ONU shows a PPTP Ethernet UNI ME instead of a VEIP ME in its OMCI MIB even if the EthernetUNI models a virtual UNI.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

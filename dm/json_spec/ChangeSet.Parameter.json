@@ -1,0 +1,51 @@
+{
+  "source_file": "tr-181-2-19-1-usp.xml",
+  "path": "ChangeSet.{i}.Parameter.{i}.",
+  "object": {
+    "path": "ChangeSet.{i}.Parameter.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "",
+    "parameters": [
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "Name of the changed parameter.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Value",
+        "access": "readOnly",
+        "description": "New value of the parameter specified by {{param|Name}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "OldValue",
+        "access": "readOnly",
+        "description": "Previous value of the parameter specified by {{param|Name}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ChangeTime",
+        "access": "readOnly",
+        "description": "The date and time when the parameter was changed in UTC, which MUST be specified to microsecond precision. For example: 2008-04-09T15:01:05.123456Z",
+        "type": "dateTime"
+      }
+    ],
+    "description": "OnChange parameter(s) table for the report sent by this event. This table contains entries for parameters whose values have been changed during the configured {{param|###.Interval}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Name",
+        "ChangeTime"
+      ]
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.GEM.Port.{i}.PM.",
+  "object": {
+    "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.GEM.Port.{i}.PM.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "FramesSent",
+        "access": "readOnly",
+        "description": "(X)GEM frames transmitted by this (X)GEM port. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "FramesReceived",
+        "access": "readOnly",
+        "description": "(X)GEM frames received by this (X)GEM port. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter64"
+      }
+    ],
+    "description": "Performance monitoring (PM) counters for this (X)GEM port.",
+    "children": []
+  }
+}

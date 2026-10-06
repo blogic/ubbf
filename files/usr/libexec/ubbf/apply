@@ -1,0 +1,140 @@
+#!/usr/bin/ucode --
+'use strict';
+
+import { access, readfile, writefile } from 'fs';
+import { generate } from 'ubbf.render.renderer';
+import * as services from 'ubbf.render.services';
+import { log_init, log_info, log_err } from 'ubbf.utils.logging';
+import { update_after_apply } from 'ubbf.utils.uci_change_track';
+
+log_init('ubbf-apply');
+
+const SHADOW_DIR = '/etc/ubbf/shadow';
+const TMP_SHADOW = '/tmp/ubbf/shadow';
+
+let dry_run = false;
+let config_path;
+
+/**
+ * Returns the UCI packages that a batch writes to.
+ *
+ * @param {string} batch - UCI batch commands, one per line
+ * @returns {string[]} package names
+ */
+function batch_packages(batch) {
+	let packages = [];
+
+	for (let line in split(batch ?? '', '\n')) {
+		let m = match(line, /^(set|add|add_list|del_list|delete|rename|reorder) ([A-Za-z0-9_-]+)[. ]/);
+		if (m)
+			push(packages, m[2]);
+	}
+
+	return uniq(packages);
+}
+
+for (let arg in ARGV) {
+	if (arg == '--dry-run' || arg == '-n')
+		dry_run = true;
+	else if (arg == '--help' || arg == '-h') {
+		print("Usage: apply [OPTIONS] CONFIG_FILE\n");
+		print("\n");
+		print("Generate and apply UCI configuration from UBBF datamodel.\n");
+		print("\n");
+		print("Arguments:\n");
+		print("  CONFIG_FILE     Path to config.json (required)\n");
+		print("\n");
+		print("Options:\n");
+		print("  -n, --dry-run   Output JSON with UCI commands and logs\n");
+		print("  -h, --help      Show this help message\n");
+		exit(0);
+	} else if (substr(arg, 0, 1) != '-')
+		config_path = arg;
+}
+
+if (!config_path) {
+	log_err('config file path required');
+	exit(1);
+}
+
+let config_file = readfile(config_path);
+if (!config_file) {
+	log_err('could not read %s', config_path);
+	exit(1);
+}
+
+let config = json(config_file);
+if (!config) {
+	log_err('invalid JSON in %s', config_path);
+	exit(1);
+}
+
+let logs = [];
+let result = generate(config, logs);
+
+if (dry_run) {
+	printf("%.J\n", {
+		uci: result.uci,
+		logs: result.logs,
+		services: services.services
+	});
+	exit(0);
+}
+
+log_info('applying config');
+
+system("mkdir -p /tmp/ubbf");
+system(`rm -rf ${TMP_SHADOW}`);
+system(`cp -r ${SHADOW_DIR} ${TMP_SHADOW}`);
+system(`cp /etc/config/system ${TMP_SHADOW}/`);
+
+// uci batch skips the commands for a package that has no file and still
+// exits 0, so a package without a shadow file would lose its config.
+for (let pkg in batch_packages(result.uci)) {
+	let path = `${TMP_SHADOW}/${pkg}`;
+	if (!access(path, 'r'))
+		writefile(path, '');
+}
+
+writefile('/tmp/ubbf/uci.batch', result.uci);
+
+let uci_cmd = sprintf("uci -q -c %s -C '' batch < /tmp/ubbf/uci.batch", TMP_SHADOW);
+let rc = system(uci_cmd);
+if (rc != 0) {
+	log_err('uci batch failed rc=%d', rc);
+	exit(1);
+}
+
+rc = system(sprintf("uci -q -c %s -C '' commit", TMP_SHADOW));
+if (rc != 0) {
+	log_err('uci commit failed rc=%d', rc);
+	exit(1);
+}
+
+try {
+	update_after_apply(TMP_SHADOW, '/tmp/ubbf/uci-last-changed.json');
+} catch (e) {
+	log_err('uci change tracking failed: %s', e);
+}
+
+system("rm -rf /var/run/uci");
+system("mkdir -p /var/run/uci");
+system(sprintf("cp %s/* /var/run/uci/", TMP_SHADOW));
+
+for (let service, enabled in services.services) {
+	if (enabled)
+		continue;
+	system(sprintf("/etc/init.d/%s disable 2>/dev/null", service));
+	system(sprintf("/etc/init.d/%s stop 2>/dev/null", service));
+}
+
+for (let service, enabled in services.services) {
+	if (!enabled)
+		continue;
+	system(sprintf("/etc/init.d/%s enable 2>/dev/null", service));
+	system(sprintf("/etc/init.d/%s start 2>/dev/null", service));
+}
+
+system("reload_config");
+
+log_info('complete');

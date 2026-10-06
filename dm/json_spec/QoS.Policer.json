@@ -1,0 +1,210 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.QoS.Policer.{i}.",
+  "object": {
+    "path": "Device.QoS.Policer.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "PolicerNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this policer.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this policer. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "CommittedRate",
+        "access": "readWrite",
+        "description": "Committed rate allowed for this policer in {{units}}. Note: To be able to support higher bit rates, this parameter was changed to unsignedLong in the Device:2.18 version.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "CommittedBurstSize",
+        "access": "readWrite",
+        "description": "Committed Burstsize in {{units}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ExcessBurstSize",
+        "access": "readWrite",
+        "description": "Excess Burstsize in {{units}}. Applied for a {{enum|SingleRateThreeColor|MeterType}} meter.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PeakRate",
+        "access": "readWrite",
+        "description": "Peak rate allowed for this Meter in {{units}}. Applied for {{enum|TwoRateThreeColor|MeterType}} meters. Note: To be able to support higher bit rates, this parameter was changed to unsignedLong in the Device:2.18 version.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "PeakBurstSize",
+        "access": "readWrite",
+        "description": "Peak Burstsize in {{units}}. Applied for {{enum|TwoRateThreeColor|MeterType}} meters.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MeterType",
+        "access": "readWrite",
+        "description": "Identifies the method of traffic measurement to be used for this policer. {{enum|SimpleTokenBucket}} makes use of {{param|CommittedRate}} and {{param|CommittedBurstSize}}. {{enum|SingleRateThreeColor}} makes use of {{param|CommittedRate}}, {{param|CommittedBurstSize}}, and {{param|ExcessBurstSize}} as defined in {{bibref|RFC2697}}. {{enum|TwoRateThreeColor}} makes use of {{param|CommittedRate}}, {{param|CommittedBurstSize}}, {{param|PeakRate}}, and {{param|PeakBurstSize}} as defined in {{bibref|RFC2698}}.",
+        "default": "SimpleTokenBucket",
+        "defaultType": "object",
+        "type": "string"
+      },
+      {
+        "name": "PossibleMeterTypes",
+        "access": "readOnly",
+        "description": "{{list}} Indicates supported meter types.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "SimpleTokenBucket",
+          "SingleRateThreeColor",
+          "TwoRateThreeColor"
+        ]
+      },
+      {
+        "name": "ConformingAction",
+        "access": "readWrite",
+        "description": "Instructions for how to handle traffic that is conforming. {{pattern}} {{pattern|Null}} corresponds with no action. ''<DSCP Value>'' is an unsigned integer that corresponds with a mark action overwriting the traffic's DSCP with the configured DSCP. ''<:Ethernet Priority>'' is a colon (\":\") followed by an unsigned integer (no white space). It corresponds with a mark action overwriting the traffic's Ethernet Priority with the configured Ethernet Priority. ''<DSCP Value:Ethernet Priority>'' is an unsigned integer followed by a colon (\":\") and a second unsigned integer (no white space). It corresponds with a mark action overwriting the traffic's DSCP and Ethernet Priority with the configured values. For example, \"24\" specifies a DSCP value of 24, \":3\" specifies an Ethernet Priority of 3, and \"24:3\" specifies both.",
+        "default": "Null",
+        "defaultType": "object",
+        "type": "string",
+        "pattern": "Null"
+      },
+      {
+        "name": "PartialConformingAction",
+        "access": "readWrite",
+        "description": "Instructions for how to handle traffic that is partially conforming (colored yellow). {{pattern}} {{pattern|Null}} corresponds with no action. ''<DSCP Value>'' is an unsigned integer that corresponds with a mark action overwriting the traffic's DSCP with the configured DSCP.Only applies for three-color meters. ''<:Ethernet Priority>'' is a colon (\":\") followed by an unsigned integer (no white space). It corresponds with a mark action overwriting the traffic's Ethernet Priority with the configured Ethernet Priority. ''<DSCP Value:Ethernet Priority>'' is an unsigned integer followed by a colon (\":\") and a second unsigned integer (no white space). It corresponds with a mark action overwriting the traffic's DSCP and Ethernet Priority with the configured values. For example, \"24\" specifies a DSCP value of 24, \":3\" specifies an Ethernet Priority of 3, and \"24:3\" specifies both.",
+        "default": "Drop",
+        "defaultType": "object",
+        "type": "string",
+        "pattern": "Null"
+      },
+      {
+        "name": "NonConformingAction",
+        "access": "readWrite",
+        "description": "Instructions for how to handle traffic that is non-conforming. {{pattern}} {{pattern|Null}} corresponds with no action. ''<DSCP Value>'' is an unsigned integer that corresponds with a mark action overwriting the traffic's DSCP with the configured DSCP. ''<:Ethernet Priority>'' is a colon (\":\") followed by an unsigned integer (no white space). It corresponds with a mark action overwriting the traffic's Ethernet Priority with the configured Ethernet Priority. ''<DSCP Value:Ethernet Priority>'' is an unsigned integer followed by a colon (\":\") and a second unsigned integer (no white space). It corresponds with a mark action overwriting the traffic's DSCP and Ethernet Priority with the configured values. For example, \"24\" specifies a DSCP value of 24, \":3\" specifies an Ethernet Priority of 3, and \"24:3\" specifies both.",
+        "default": "Drop",
+        "defaultType": "object",
+        "type": "string",
+        "pattern": "Null"
+      },
+      {
+        "name": "TotalCountedPackets",
+        "access": "readOnly",
+        "description": "Total number of Packets counted by this policer, regardless of meter action.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "TotalCountedBytes",
+        "access": "readOnly",
+        "description": "Total number of Bytes counted by this policer, regardless of meter action.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ConformingCountedPackets",
+        "access": "readOnly",
+        "description": "Number of conforming Packets counted by this policer, regardless of meter action.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ConformingCountedBytes",
+        "access": "readOnly",
+        "description": "Number of conforming Bytes counted by this policer, regardless of meter action.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "PartiallyConformingCountedPackets",
+        "access": "readOnly",
+        "description": "Number of partially conforming Packets counted by this policer, regardless of meter action.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "PartiallyConformingCountedBytes",
+        "access": "readOnly",
+        "description": "Number of partially conforming Bytes counted by this policer, regardless of meter action.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "NonConformingCountedPackets",
+        "access": "readOnly",
+        "description": "Number of non-conforming Packets counted by this policer, regardless of meter action.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "NonConformingCountedBytes",
+        "access": "readOnly",
+        "description": "Number of non-conforming Bytes counted by this policer, regardless of meter action.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "Policer table.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

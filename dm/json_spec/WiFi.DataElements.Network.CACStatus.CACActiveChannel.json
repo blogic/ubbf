@@ -1,0 +1,44 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.CACStatus.{i}.CACActiveChannel.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.CACStatus.{i}.CACActiveChannel.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "CACActiveChannelNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "OpClass",
+        "access": "readOnly",
+        "description": "Operating class of a channel that has ongoing CAC, from {{bibref|802.11ax|Table E-4}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "Channel",
+        "access": "readOnly",
+        "description": "Single channel number in the operating class that has an ongoing CAC.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "Countdown",
+        "access": "readOnly",
+        "description": "{{units}} remaining to complete the CAC.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object describes channels with ongoing Channel Availability Check (CAC).",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "OpClass",
+        "Channel"
+      ]
+    }
+  }
+}

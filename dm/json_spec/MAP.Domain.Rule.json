@@ -1,0 +1,139 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MAP.Domain.{i}.Rule.{i}.",
+  "object": {
+    "path": "Device.MAP.Domain.{i}.Rule.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "RuleNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enable or disable this {{object}} instance.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this {{object}} instance. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Origin",
+        "access": "readOnly",
+        "description": "The mechanism via which the {{object}} was created. If the CPE supports MAP configuration via both DHCPv6 and CWMP, it is up to the implementation to determine how the two mechanisms will interact.",
+        "default": "Static",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "DHCPv6",
+          "Static"
+        ]
+      },
+      {
+        "name": "IPv6Prefix",
+        "access": "readWrite",
+        "description": "The ''Rule IPv6 prefix''. The Rule IPv6 prefix is a leading part of the end-user {{param|#.IPv6Prefix}}, i.e. its length MUST be less than or equal to the length of the end-user ''IPv6Prefix'', and it MUST match the end-user ''IPv6Prefix''. Corresponds to the {{bibref|RFC7598}} ''S46_RULE'' option's ''ipv6-prefix'' field.",
+        "default": "/0",
+        "defaultType": "object",
+        "type": "dataType:IPv6Prefix"
+      },
+      {
+        "name": "IPv4Prefix",
+        "access": "readWrite",
+        "description": "The ''Rule IPv4 prefix''. Corresponds to the {{bibref|RFC7598}} ''S46_RULE'' option's ''ipv4-prefix'' field.",
+        "default": "/0",
+        "defaultType": "object",
+        "type": "dataType:IPv4Prefix"
+      },
+      {
+        "name": "EABitsLength",
+        "access": "readWrite",
+        "description": "The length in {{units}} of the ''Embedded Address (EA) bits'' in the end-user {{param|#.IPv6Prefix}}. Corresponds to the {{bibref|RFC7598}} ''S46_RULE'' option's ''ea-len'' field.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 48
+      },
+      {
+        "name": "IsFMR",
+        "access": "readWrite",
+        "description": "Indicates whether this rule is a ''Forwarding Mapping Rule'' (FMR), i.e. can be used for forwarding. Corresponds to the {{bibref|RFC7598}} ''S46_RULE'' option's ''flags'' field's ''F-Flag''.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "PSIDOffset",
+        "access": "readWrite",
+        "description": "''Port-set ID'' (PSID) offset in {{units}}. The number of Port-sets is 2^{{param}}^. Corresponds to the {{bibref|RFC7598}} ''S46_PORTPARAMS'' (Port Parameters) option's ''offset'' field.",
+        "default": "6",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 15,
+        "version": "2.12"
+      },
+      {
+        "name": "PSIDLength",
+        "access": "readWrite",
+        "description": "The length in {{units}} of the ''Port-set id'' (PSID) configured in the {{param|PSID}} parameter. Corresponds to the {{bibref|RFC7598}} ''S46_PORTPARAMS'' (Port Parameters) option's ''PSID-len'' field.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 16,
+        "version": "2.12"
+      },
+      {
+        "name": "PSID",
+        "access": "readWrite",
+        "description": "''Port-set ID'' (PSID) to use in preference to the value extracted from the ''Embedded Address'' (EA) bits. Only the high order {{param|PSIDLength}} bits of the {{param}} value are used, so the parameter is ignored when {{param|PSIDLength}} is zero. Corresponds to the {{bibref|RFC7598}} ''S46_PORTPARAMS'' (Port Parameters) option's ''PSID'' field.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535,
+        "version": "2.12"
+      },
+      {
+        "name": "IncludeSystemPorts",
+        "access": "readWrite",
+        "description": "Whether to include low-numbered (system) ports in the Port-sets. Normally ports in the range [0:2^(16-{{param|PSIDOffset}})^-1] are excluded, e.g. for the default {{param|PSIDOffset}} value of 6, ports [0:1023] are not included in the Port-sets. This parameter is related to {{bibref|RFC7597}}'s ''N'', which is defined as ''the number of ports (e.g., 1024) excluded from the lower end of the range''. The parameter is relevant only when {{param|PSIDOffset}} is 0; {{false}} corresponds to ''N=1024'' and {{true}} corresponds to ''N=0''.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.15"
+      }
+    ],
+    "description": "The MAP domain's Mapping Rules {{bibref|RFC7597}}. The rule with the longest match between its {{param|IPv6Prefix}} and the end-user {{param|#.IPv6Prefix}} is the Basic Mapping Rule (BMR). Any of the rules (including the BMR) can be a Forwarding Mapping Rule.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

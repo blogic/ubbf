@@ -1,0 +1,46 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanCapability.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.ScanCapability.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "OnBootOnly",
+        "access": "readOnly",
+        "description": "On boot only flag, Indicates whether the specified radio is capable only of On boot scans.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "Impact",
+        "access": "readOnly",
+        "description": "Scan Impact of using this radio to perform a scan. : 1: No impact, : 2: Reduced number of spatial streams, : 3: Time slicing impairment, : 4: Radio unavailable for >= 2 seconds.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 4,
+        "version": "2.15"
+      },
+      {
+        "name": "MinimumInterval",
+        "access": "readOnly",
+        "description": "Minimum Scan Interval, the minimum interval in {{units}} between the start of two consecutive channel scans on this radio.",
+        "type": "unsignedInt",
+        "version": "2.15"
+      },
+      {
+        "name": "OpClassChannelsNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object describes the channel scan capabilities of a radio.",
+    "children": []
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.OpClassPreference.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.OpClassPreference.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "OpClassPreferenceNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "OpClass",
+        "access": "readOnly",
+        "description": "The operating class {{bibref|802.11ax|Table E-4}}. Note that the operating class identifies the band and channel width. Values represent the OpClass field of the Channel Preference TLV in the most recent Channel Preference Report message {{bibref|EasyMesh|17.2.13}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "ChannelList",
+        "access": "readOnly",
+        "description": "The channel numbers in this operating class. {{list}} Values represent the Channel List field of the Channel Preference TLV in the most recent Channel Preference Report message {{bibref|EasyMesh|17.2.13}}.",
+        "list": true,
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "Preference",
+        "access": "readOnly",
+        "description": "The reported preference for this {{param|OpClass}} and {{param|ChannelList}}, as defined in {{bibref|EasyMesh|17.2.13}}. Values represent the Preference field of the Channel Preference TLV in the most recent Channel Preference Report message {{bibref|EasyMesh|17.2.13}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 15
+      },
+      {
+        "name": "ReasonCode",
+        "access": "readOnly",
+        "description": "Reason Code. Indicates the reason for the {{param|Preference}}, as defined in {{bibref|EasyMesh|17.2.13}}. Values represent the Reason_Code field of the Channel Preference TLV in the most recent Channel Preference Report message {{bibref|EasyMesh|17.2.13}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 15
+      }
+    ],
+    "description": "Values represent Channel Preference TLV values in the most recent Channel Preference Report message {{bibref|EasyMesh|17.2.13}}. Each entry in this table describes one of the operating classes for which Channel Preference has been reported. A Preference score of 15 must be inferred for all channel/operating classes not present in this table, unless that channel/operating class has been reported as statically non-operable in the most recent AP Radio Basic Capabilities TLV {{bibref|EasyMesh|17.2.7}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "OpClass",
+        "Preference"
+      ]
+    }
+  }
+}

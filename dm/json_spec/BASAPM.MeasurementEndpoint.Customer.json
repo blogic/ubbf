@@ -1,0 +1,31 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.BASAPM.MeasurementEndpoint.{i}.CustomerDevice.",
+  "object": {
+    "path": "Device.BASAPM.MeasurementEndpoint.{i}.CustomerDevice.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "EquipmentIdentifier",
+        "access": "readWrite",
+        "description": "This parameter describes the customer equipment identifier of the measurement endpoint.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "CustomerIdentifier",
+        "access": "readWrite",
+        "description": "The unique customer identifier within the operational domain for this measurement endpoint.",
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "This object represents the information necessary to utilize customer owned device within the measurement endpoint.",
+    "children": []
+  }
+}

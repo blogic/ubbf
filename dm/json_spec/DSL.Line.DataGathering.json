@@ -1,0 +1,40 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DSL.Line.{i}.DataGathering.",
+  "object": {
+    "path": "Device.DSL.Line.{i}.DataGathering.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "LoggingDepthR",
+        "access": "readOnly",
+        "description": "This parameter is the maximum depth of the entire data gathering event buffer at the VTU-R, in number of {{units}}, where each of the {{units}} consists of 6 bytes indicating a data gathering event as defined in {{bibref|G.993.2}}. Note: This parameter is defined as LOGGING_DEPTH_R in Clause 7.5.3.2 of ITU-T Recommendation {{bibref|G.997.1}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ActLoggingDepthReportingR",
+        "access": "readOnly",
+        "description": "This parameter is actual logging depth that is used for reporting the VTU-R event trace buffer over the eoc channel, in number of {{units}}, where each of the {{units}} consists of 6 bytes indicating a data gathering event as defined in {{bibref|G.993.2}}. Note: This parameter is defined as ACT_LOGGING_DEPTH_REPORTING_R in Clause 7.5.3.4 of ITU-T Recommendation {{bibref|G.997.1}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "EventTraceBufferR",
+        "access": "readOnly",
+        "description": "This parameter identifies the log file of the the data gathering event trace buffer containing the event records that originated at the VTU-R. This indicates the table entry that represents a Vendor Log File that contains the data gathering buffer at the VTU-R in the {{object|###.DeviceInfo.VendorLogFile}} table. This data gathering buffer MAY be retrieved wia an upload RPC of the identified Vendor Log File. Note: This parameter is defined as EVENT_TRACE_BUFFER_R in Clause 7.5.3.6 of ITU-T Recommendation {{bibref|G.997.1}} and Clause 11.5 of ITU-T Recommendation {{bibref|G.993.2}}.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "###.DeviceInfo.VendorLogFile.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "This object models the DSL data gathering function at the VTU-R. This only applies to VDSL2. Note: see ITU-T Recommendation {{bibref|G.993.2}}.",
+    "children": []
+  }
+}

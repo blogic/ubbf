@@ -1,0 +1,54 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv4.Server.Pool.{i}.Client.{i}.",
+  "object": {
+    "path": "Device.DHCPv4.Server.Pool.{i}.Client.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ClientNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}} Note: There is no guarantee that the {{param}} value on automatically-created {{object}} instances will be retained. This is because automatically-created {{object}} instances can be transitory.",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Chaddr",
+        "access": "readOnly",
+        "description": "MAC address of the DHCPv4 client.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "Active",
+        "access": "readOnly",
+        "description": "Whether or not the DHCPv4 client is currently present on the LAN. The method of presence detection is a local matter to the CPE. The ability to list inactive DHCPv4 clients is OPTIONAL. If the CPE includes inactive DHCPv4 clients in this table, {{param}} MUST be set to {{false}} for each inactive DHCPv4 client. The length of time an inactive DHCPv4 client remains listed in this table is a local matter to the CPE.",
+        "type": "boolean"
+      },
+      {
+        "name": "IPv4AddressNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "OptionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "DHCPv4 client table. This table lists details of DHCPv4 clients that matched the filter criteria of this {{object|#}} entry.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

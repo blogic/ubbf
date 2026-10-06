@@ -1,0 +1,48 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.CaptivePortal.",
+  "object": {
+    "path": "Device.CaptivePortal.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the captive portal.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the status of the captive portal. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_URLEmpty",
+          "Error"
+        ]
+      },
+      {
+        "name": "AllowedList",
+        "access": "readWrite",
+        "description": "{{list}} List items represent Fully Qualified Domain Names (FQDNs) or IP addresses to which HTTP (port 80) traffic MUST always be permitted, regardless of whether the captive portal is enabled. Each entry in the list MUST be either an FQDN, IP address, or an IP prefix specified using Classless Inter-Domain Routing (CIDR) notation {{bibref|RFC4632}}. An IP prefix is specified as an IP address followed (with no intervening white space) by \"/n\", where ''n'' (the prefix size) is an integer in the range 0-32 (for IPv4) or 0-128 (for IPv6) that indicates the number of (leftmost) '1' bits of the prefix. IPv4 example: * 1.2.3.4 specifies a single IPv4 address, and 1.2.3.4/24 specifies a class C subnet with subnet mask 255.255.255.0. * 1.2.0.0/22 represents the 1024 IPv4 addresses from 1.2.0.0 to 1.2.3.255. IPv6 example: * fec0::220:edff:fe6a:f76 specifies a single IPv6 address. * 2001:edff:fe6a:f76::/64 represents the IPv6 addresses from 2001:edff:fe6a:f76:0:0:0:0 to 2001:edff:fe6a:f76:ffff:ffff:ffff:ffff.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "URL",
+        "access": "readWrite",
+        "description": "Captive portal {{datatype}} to which upstream HTTP (port 80) traffic to destinations not listed in the {{param|AllowedList}} will be redirected. The captive portal URL MUST be an HTTP (not HTTPS) URL. The CPE MUST permit the captive portal URL to be set to {{empty}}, which has the effect of disabling the captive portal (if {{param|Enable}} is {{true}} and the captive portal URL is {{empty}}, {{param|Status}} MUST be {{enum|Error_URLEmpty|Status}}).",
+        "type": "dataType:URL"
+      }
+    ],
+    "description": "This object contains parameters relating to the captive portal configuration on the CPE. The captive portal configuration defines the CPE's upstream HTTP (port 80) traffic redirect behavior. When the captive portal is disabled, upstream HTTP (port 80) traffic MUST be permitted to all destinations. When the captive portal is enabled, upstream HTTP (port 80) traffic MUST be permitted only to destinations listed in the {{param|AllowedList}}; traffic to all other destinations MUST be redirected to the {{param|URL}}.",
+    "children": []
+  }
+}

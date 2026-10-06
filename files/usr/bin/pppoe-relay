@@ -1,0 +1,536 @@
+#!/usr/bin/ucode
+'use strict';
+
+let bpf = require('bpf');
+let struct = require('struct');
+let fs = require('fs');
+let ubus = require('ubus');
+let uloop = require('uloop');
+let uci = require('uci');
+let log = require('log');
+
+const BPF_OBJECT = '/lib/bpf/pppoe-relay.o';
+const POLL_INTERVAL_MS = 2000;
+const TC_PRIO_LAN = 0x320;
+const TC_PRIO_WAN = 0x321;
+const SESSION_KEY_PACK = '>6sH';
+const SESSION_VAL_PACK = 'QQ';
+const CONFIG_PACK = 'IIIII6sxx';
+const SESSIONS_MAX = 256;
+
+let bpf_mod;
+let map_sessions;
+let prog_lan_in;
+let prog_wan_in;
+let instances = {};
+let ubus_conn;
+let ubus_obj;
+let boot_time;
+
+log.openlog('pppoe-relay', 0, log.LOG_DAEMON);
+
+/**
+ * Reads the unix-epoch boot time so monotonic ktime values can be
+ * formatted as wall-clock timestamps for TR-181 callers.
+ *
+ * @returns {number} Unix epoch seconds when the kernel booted
+ */
+function boot_time_read() {
+	let uptime_str = fs.readfile('/proc/uptime');
+	if (!uptime_str)
+		return time();
+	let secs = +split(trim(uptime_str), ' ')[0];
+	return time() - int(secs);
+}
+
+/**
+ * Converts a kernel monotonic ktime to a unix-epoch timestamp.
+ *
+ * @param {number} ktime_ns - bpf_ktime_get_ns() value, monotonic since boot
+ * @returns {number} Unix epoch seconds, or 0 when ktime_ns is falsy
+ */
+function ktime_to_unix(ktime_ns) {
+	if (!ktime_ns)
+		return 0;
+	return boot_time + int(ktime_ns / 1000000000);
+}
+
+/**
+ * Reads /sys/class/net/<name>/ifindex.
+ *
+ * @param {string} name - netdev name
+ * @returns {number} ifindex, or 0 when the netdev does not exist
+ */
+function ifindex_get(name) {
+	if (!name || name == '')
+		return 0;
+	let path = `/sys/class/net/${name}/ifindex`;
+	if (!fs.access(path))
+		return 0;
+	let s = fs.readfile(path);
+	return s ? int(trim(s)) : 0;
+}
+
+/**
+ * Resolves a bridge name to one of its member ports. The relay attaches
+ * BPF to the physical port (not the bridge) so it sees PPPoE frames
+ * before VLAN-aware bridge processing applies the PVID, and so the
+ * bpf_redirect on the WAN-side ingress lands on a port that egresses
+ * untagged rather than going through the bridge's VLAN-filtering xmit
+ * path. Returns the original name when it is not a bridge.
+ *
+ * @param {string} dev - netdev name (may be a bridge or a port)
+ * @returns {string|null} A physical port name, or null when a bridge has
+ *                        no members at all.
+ */
+function port_resolve(dev) {
+	let brif = `/sys/class/net/${dev}/brif`;
+	if (!fs.access(brif))
+		return dev;
+	let entries = fs.lsdir(brif) ?? [];
+	if (length(entries) == 0)
+		return null;
+	return entries[0];
+}
+
+/**
+ * Toggles IFF_PROMISC on a netdev via the ip(8) tool. The WAN ingress
+ * needs promisc on so the kernel delivers PADO/PADS/PADT/session frames
+ * addressed to LAN-client MACs (not the DUT's own MAC) to the rx path
+ * where the BPF wan_in classifier can pick them up.
+ *
+ * @param {string} dev - netdev name
+ * @param {boolean} on - true to enable, false to disable
+ */
+function promisc_set(dev, on) {
+	let state = on ? 'on' : 'off';
+	system(`ip link set dev ${dev} promisc ${state} >/dev/null 2>&1`);
+}
+
+/**
+ * Formats a 6-byte MAC string as colon-separated lowercase hex.
+ *
+ * @param {string} bytes - 6-byte binary string from a BPF map key
+ * @returns {string} MAC address in xx:xx:xx:xx:xx:xx form
+ */
+function mac_format(bytes) {
+	let parts = [];
+	for (let i = 0; i < 6; i++)
+		push(parts, sprintf('%02x', ord(bytes, i)));
+	return join(':', parts);
+}
+
+/**
+ * Reads /sys/class/net/<name>/address and packs it as 6 binary bytes
+ * for the BPF config map's wan_mac field. The BPF wan_in classifier
+ * compares each ingress frame's eth.h_dest against this value to skip
+ * frames that belong to the RG's own PPPoE session.
+ *
+ * @param {string} name - netdev name
+ * @returns {string} 6-byte binary string, or six zero bytes on failure
+ */
+function mac_bytes(name) {
+	let s = fs.readfile(`/sys/class/net/${name}/address`);
+	if (!s)
+		return '\x00\x00\x00\x00\x00\x00';
+	let parts = split(trim(s), ':');
+	if (length(parts) != 6)
+		return '\x00\x00\x00\x00\x00\x00';
+	let out = '';
+	for (let p in parts)
+		out += chr(hex(p) ?? 0);
+	return out;
+}
+
+/**
+ * Loads pppoe-relay UCI instances into a name-indexed dict.
+ *
+ * @returns {object} {section_name: {lan_interface, lan_dev, wan_dev, max_sessions}}
+ */
+function uci_instances_load() {
+	let cursor = uci.cursor();
+	let result = {};
+	try {
+		cursor.load('pppoe-relay');
+		cursor.foreach('pppoe-relay', 'instance', function(section) {
+			let name = section['.name'];
+			result[name] = {
+				lan_interface: section.lan_interface ?? '',
+				lan_dev: section.lan_dev ?? '',
+				wan_dev: section.wan_dev ?? '',
+				max_sessions: int(section.max_sessions ?? '0')
+			};
+		});
+	} catch (e) {
+		log.syslog(log.LOG_ERR, 'uci load failed: %s', e);
+	}
+	return result;
+}
+
+/**
+ * Writes the per-instance config map entry that the BPF programs read
+ * on every packet. The map is shared across instances; each instance
+ * occupies one index. Single-instance setups (the common case) all use
+ * index 0.
+ *
+ * @param {object} inst - Instance descriptor
+ */
+function bpf_config_write(inst) {
+	let map_config = bpf_mod.get_map('config');
+	if (!map_config)
+		return;
+
+	let value = struct.pack(CONFIG_PACK,
+		inst.lan_ifindex, inst.wan_ifindex,
+		inst.max_sessions, 0, 1,
+		mac_bytes(inst.wan_dev));
+	let key = struct.pack('I', 0);
+	map_config.set(key, value);
+}
+
+/**
+ * Disables the BPF programs by clearing the config map's enabled flag.
+ * Used on teardown so the LAN/WAN ingress hooks pass-through until they
+ * are detached.
+ */
+function bpf_config_disable() {
+	let map_config = bpf_mod.get_map('config');
+	if (!map_config)
+		return;
+	let value = struct.pack(CONFIG_PACK, 0, 0, 0, 0, 0,
+		'\x00\x00\x00\x00\x00\x00');
+	let key = struct.pack('I', 0);
+	map_config.set(key, value);
+}
+
+/**
+ * Attaches both BPF programs at TC ingress for one instance's
+ * (lan_dev, wan_dev) pair. Persists the resolved ifindices in the
+ * descriptor for poll-time map reads.
+ *
+ * @param {string} name - UCI section name
+ * @param {object} cfg - UCI section content (lan_dev/wan_dev/max_sessions)
+ * @returns {object|null} Attached instance descriptor, or null on failure
+ */
+function instance_attach(name, cfg) {
+	let lan_port = port_resolve(cfg.lan_dev);
+	if (!lan_port) {
+		log.syslog(log.LOG_ERR,
+			'%s: %s has no member ports', name, cfg.lan_dev);
+		return null;
+	}
+
+	let lan_idx = ifindex_get(lan_port);
+	let wan_idx = ifindex_get(cfg.wan_dev);
+	if (!lan_idx || !wan_idx) {
+		log.syslog(log.LOG_ERR,
+			'%s: ifindex resolve failed lan=%s wan=%s',
+			name, lan_port, cfg.wan_dev);
+		return null;
+	}
+
+	// Force-detach any stale tc filter at our priority left over from a
+	// previous daemon lifetime (procd kill -TERM doesn't run our exit
+	// handler reliably, and libbpf's bpf_tc_attach refuses to replace a
+	// pre-existing filter at the same priority with "Exclusivity flag
+	// on, cannot modify"). Errors are expected on the first attach when
+	// nothing is there yet, so we ignore them.
+	bpf.tc_detach(lan_port, 'ingress', TC_PRIO_LAN);
+	bpf.tc_detach(cfg.wan_dev, 'ingress', TC_PRIO_WAN);
+
+	if (prog_lan_in.tc_attach(lan_port, 'ingress', TC_PRIO_LAN) < 0) {
+		log.syslog(log.LOG_ERR,
+			'%s: tc_attach lan(%s) failed: %s', name, lan_port, bpf.error());
+		return null;
+	}
+	if (prog_wan_in.tc_attach(cfg.wan_dev, 'ingress', TC_PRIO_WAN) < 0) {
+		bpf.tc_detach(lan_port, 'ingress', TC_PRIO_LAN);
+		log.syslog(log.LOG_ERR,
+			'%s: tc_attach wan(%s) failed: %s', name, cfg.wan_dev, bpf.error());
+		return null;
+	}
+
+	promisc_set(cfg.wan_dev, true);
+
+	let inst = {
+		...cfg,
+		lan_port,
+		lan_ifindex: lan_idx,
+		wan_ifindex: wan_idx,
+		previous: {}
+	};
+	bpf_config_write(inst);
+
+	log.syslog(log.LOG_NOTICE,
+		'%s: attached lan=%s(port=%s) wan=%s max=%d',
+		name, cfg.lan_dev, lan_port, cfg.wan_dev, cfg.max_sessions);
+	return inst;
+}
+
+/**
+ * Detaches both BPF programs and clears the config map for an instance.
+ *
+ * @param {string} name - UCI section name
+ * @param {object} inst - Previously attached descriptor
+ */
+function instance_detach(name, inst) {
+	bpf_config_disable();
+	bpf.tc_detach(inst.lan_port ?? inst.lan_dev, 'ingress', TC_PRIO_LAN);
+	bpf.tc_detach(inst.wan_dev, 'ingress', TC_PRIO_WAN);
+	promisc_set(inst.wan_dev, false);
+	log.syslog(log.LOG_NOTICE, '%s: detached', name);
+}
+
+/**
+ * Reads the sessions BPF map and returns the active session list for
+ * one instance, filtered by the instance's LAN ifindex. With a single
+ * instance the filter is a no-op; with multiple instances it scopes
+ * sessions to the right (lan_dev, wan_dev) pair.
+ *
+ * @param {object} inst - Instance descriptor (used for ifindex filter)
+ * @returns {array} Session list with binary key, parsed fields, timestamps
+ */
+function sessions_snapshot(inst) {
+	let out = [];
+	if (!map_sessions)
+		return out;
+
+	let iter = map_sessions.iterator();
+	let key;
+	while ((key = iter.next()) != null) {
+		let value;
+		try {
+			value = map_sessions.get(key);
+		} catch (e) {
+			continue;
+		}
+		if (!value)
+			continue;
+
+		let kp = struct.unpack(SESSION_KEY_PACK, key);
+		let vp = struct.unpack(SESSION_VAL_PACK, value);
+		push(out, {
+			key: key,
+			client_mac: mac_format(kp[0]),
+			session_id: kp[1],
+			start_ns: vp[0],
+			last_ns: vp[1]
+		});
+	}
+	return out;
+}
+
+/**
+ * Logs session up/down transitions by diffing the current snapshot
+ * against the previous one. Stores the new snapshot keyed by binary
+ * key for the next diff round.
+ *
+ * @param {string} name - Instance name
+ * @param {object} inst - Instance descriptor (carries `previous` snapshot)
+ * @param {array} current - Latest sessions_snapshot output
+ */
+function sessions_diff_emit(name, inst, current) {
+	let now = {};
+	for (let s in current)
+		now[s.key] = s;
+
+	for (let k in inst.previous) {
+		if (k in now)
+			continue;
+		let s = inst.previous[k];
+		log.syslog(log.LOG_NOTICE,
+			'%s: session down mac=%s id=%d',
+			name, s.client_mac, s.session_id);
+	}
+
+	for (let k in now) {
+		if (k in inst.previous)
+			continue;
+		let s = now[k];
+		log.syslog(log.LOG_NOTICE,
+			'%s: session up mac=%s id=%d',
+			name, s.client_mac, s.session_id);
+	}
+
+	inst.previous = now;
+}
+
+/**
+ * Re-reads UCI and reconciles attached instances. New sections are
+ * attached, removed sections are detached, surviving sections keep
+ * their attachments (the BPF object and TC filters persist).
+ */
+function reconcile() {
+	let want = uci_instances_load();
+	let new_instances = {};
+
+	for (let name in want) {
+		let cfg = want[name];
+		if (!cfg.lan_dev || cfg.lan_dev == '' ||
+		    !cfg.wan_dev || cfg.wan_dev == '' ||
+		    cfg.max_sessions <= 0) {
+			log.syslog(log.LOG_WARNING,
+				'%s: incomplete config, skipping', name);
+			continue;
+		}
+
+		let existing = instances[name];
+		if (existing &&
+		    existing.lan_dev == cfg.lan_dev &&
+		    existing.wan_dev == cfg.wan_dev) {
+			existing.max_sessions = cfg.max_sessions;
+			bpf_config_write(existing);
+			new_instances[name] = existing;
+			delete instances[name];
+			continue;
+		}
+
+		if (existing) {
+			instance_detach(name, existing);
+			delete instances[name];
+		}
+
+		let inst = instance_attach(name, cfg);
+		if (inst)
+			new_instances[name] = inst;
+	}
+
+	for (let name in instances)
+		instance_detach(name, instances[name]);
+
+	instances = new_instances;
+}
+
+/**
+ * Periodic poll callback: walks every active instance's sessions,
+ * diffs against the previous snapshot, and emits syslog lines.
+ */
+function poll_tick() {
+	let want = uci_instances_load();
+	let pending = false;
+	for (let name in want) {
+		if (!instances[name])
+			pending = true;
+	}
+	if (pending)
+		reconcile();
+
+	for (let name in instances) {
+		let inst = instances[name];
+		let current = sessions_snapshot(inst);
+		sessions_diff_emit(name, inst, current);
+	}
+}
+
+/**
+ * Builds the ubus `status` response payload for one or all instances.
+ *
+ * @param {string} filter - LANInterface ref to filter by, or '' for all
+ * @returns {object} {instances: [...]} or single-instance fields when filtered
+ */
+function ubus_status_build(filter) {
+	let rows = [];
+	for (let name in instances) {
+		let inst = instances[name];
+		if (filter != '' && inst.lan_interface != filter)
+			continue;
+		let snap = sessions_snapshot(inst);
+		push(rows, {
+			lan_interface: inst.lan_interface,
+			lan_dev: inst.lan_dev,
+			wan_dev: inst.wan_dev,
+			max_sessions: inst.max_sessions,
+			session_count: length(snap),
+			enabled: true
+		});
+	}
+
+	if (filter != '') {
+		if (length(rows) == 0)
+			return { session_count: 0, enabled: false };
+		return rows[0];
+	}
+	return { instances: rows };
+}
+
+/**
+ * Builds the ubus `sessions` response payload for one matched instance.
+ *
+ * @param {string} filter - LANInterface ref
+ * @returns {object} {sessions: [{client_mac, session_id, start_time, last_activity}]}
+ */
+function ubus_sessions_build(filter) {
+	let out = [];
+	for (let name in instances) {
+		let inst = instances[name];
+		if (filter != '' && inst.lan_interface != filter)
+			continue;
+		let snap = sessions_snapshot(inst);
+		for (let s in snap)
+			push(out, {
+				client_mac: s.client_mac,
+				session_id: s.session_id,
+				start_time: ktime_to_unix(s.start_ns),
+				last_activity: ktime_to_unix(s.last_ns)
+			});
+	}
+	return { sessions: out };
+}
+
+boot_time = boot_time_read();
+
+bpf_mod = bpf.open_module(BPF_OBJECT);
+if (!bpf_mod) {
+	log.syslog(log.LOG_ERR, 'bpf.open_module(%s) failed: %s',
+		BPF_OBJECT, bpf.error());
+	exit(1);
+}
+
+map_sessions = bpf_mod.get_map('sessions');
+prog_lan_in = bpf_mod.get_program('pppoe_lan_in');
+prog_wan_in = bpf_mod.get_program('pppoe_wan_in');
+if (!map_sessions || !prog_lan_in || !prog_wan_in) {
+	log.syslog(log.LOG_ERR, 'BPF object missing required map/program');
+	exit(1);
+}
+
+uloop.init();
+
+reconcile();
+
+ubus_conn = ubus.connect();
+ubus_obj = ubus_conn.publish('pppoe-relay', {
+	status: {
+		call: function(req) {
+			return ubus_status_build(req.args.lan_interface ?? '');
+		},
+		args: { lan_interface: '' }
+	},
+	sessions: {
+		call: function(req) {
+			return ubus_sessions_build(req.args.lan_interface ?? '');
+		},
+		args: { lan_interface: '' }
+	},
+	reload: {
+		call: function(req) {
+			reconcile();
+			return 0;
+		},
+		args: {}
+	}
+});
+
+function cleanup_on_exit() {
+	for (let name in instances)
+		instance_detach(name, instances[name]);
+	instances = {};
+	uloop.end();
+}
+
+uloop.signal('SIGTERM', cleanup_on_exit);
+uloop.signal('SIGINT', cleanup_on_exit);
+
+uloop.interval(POLL_INTERVAL_MS, poll_tick);
+uloop.run();
+uloop.done();

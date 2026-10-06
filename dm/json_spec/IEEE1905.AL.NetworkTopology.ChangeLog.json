@@ -1,0 +1,61 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.AL.NetworkTopology.ChangeLog.{i}.",
+  "object": {
+    "path": "Device.IEEE1905.AL.NetworkTopology.ChangeLog.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ChangeLogNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "TimeStamp",
+        "access": "readOnly",
+        "description": "Date and Time at which the entry was added to the {{object}} table.",
+        "type": "dateTime"
+      },
+      {
+        "name": "EventType",
+        "access": "readOnly",
+        "description": "Type of event for this entry. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "NewNeighbor",
+          "LostNeighbor"
+        ]
+      },
+      {
+        "name": "ReporterDeviceId",
+        "access": "readOnly",
+        "description": "1905 AL MAC Address of device which reported the change.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "ReporterInterfaceId",
+        "access": "readOnly",
+        "description": "MAC Address of the interface of the reporting device on which the change has been detected.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "NeighborType",
+        "access": "readOnly",
+        "description": "Type of Neighbor for this event. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "IEEE1905",
+          "Non-IEEE1905"
+        ]
+      },
+      {
+        "name": "NeighborId",
+        "access": "readOnly",
+        "description": "MAC Address of the Neighbor of this event. If the value of the {{param|EventType}} parameter is {{enum|NewNeighbor|EventType}}, then the value of this parameter represents the MAC Address of the new Neighbor that joined the network; if the value of the {{param|EventType}} parameter is {{enum|LostNeighbor|EventType}}, then the value of this parameter represents the MAC Address of the Neighbor that left the network. If value of the {{param|NeighborType}} parameter is {{enum|IEEE1905|NeighborType}}, then the value of this parameter is the 1905 AL MAC Address of the Neighbor.",
+        "type": "dataType:MACAddress"
+      }
+    ],
+    "description": "This object represents log entries for changes in the 1905 Network Topology. The Change Log is a First In First Out queue where the oldest entries (defined by values of the {{param|TimeStamp}} parameter) are deleted once the log is full.",
+    "children": []
+  }
+}

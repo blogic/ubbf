@@ -1,0 +1,46 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Syslog.Template.{i}.",
+  "object": {
+    "path": "Device.Syslog.Template.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "TemplateNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.17"
+      },
+      {
+        "name": "Expression",
+        "access": "readWrite",
+        "description": "Describes the template syntax used for transforming the syslog message. The format is implementation specific and can consist of strings, macros, and template functions.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string"
+      },
+      {
+        "name": "EscapeMessage",
+        "access": "readWrite",
+        "description": "Enabling this option will cause the following characters to be escaped ', \" and \\. in the syslog message.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      }
+    ],
+    "description": "This table the describes the templates that can be referenced by objects that can use the template syntax. With templates, you have the flexibility to establish uniform message formats or even define standard filenames for different objects.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

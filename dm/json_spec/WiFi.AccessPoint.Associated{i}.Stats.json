@@ -1,0 +1,78 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.Stats.",
+  "object": {
+    "path": "Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "BytesSent",
+        "access": "readOnly",
+        "description": "The total number of bytes transmitted to the Associated Device, including framing characters. If the instance of this {{object|#}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.BytesSent}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BytesReceived",
+        "access": "readOnly",
+        "description": "The total number of bytes received from the Associated Device, including framing characters. If the instance of this {{object|#}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.BytesReceived}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "PacketsSent",
+        "access": "readOnly",
+        "description": "The total number of packets transmitted to the Associated Device. If the instance of this {{object|#}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.PacketsSent}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "PacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of packets received from the Associated Device. If the instance of this {{object|#}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.PacketsReceived}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "ErrorsSent",
+        "access": "readOnly",
+        "description": "The total number of outbound packets that could not be transmitted because of errors. These might be due to the number of retransmissions exceeding the retry limit, or from other causes. If the instance of this {{object|#}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.ErrorsSent}}.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ErrorsReceived",
+        "access": "readOnly",
+        "description": "The total number of inbound packets that contained errors preventing them from being delivered to a higher-layer protocol. If the instance of this {{object|#}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.ErrorsReceived}}.",
+        "type": "dataType:StatsCounter32",
+        "version": "2.14"
+      },
+      {
+        "name": "RetransCount",
+        "access": "readOnly",
+        "description": "The total number of transmitted packets which were retransmissions. Two retransmissions of the same packet results in this counter incrementing by two. If the instance of this {{object|#}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.RetransCount}}.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "FailedRetransCount",
+        "access": "readOnly",
+        "description": "The number of packets that were not transmitted successfully due to the number of retransmission attempts exceeding an 802.11 retry limit. This parameter is based on ''dot11FailedCount'' from {{bibref|802.11-2012}}.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "RetryCount",
+        "access": "readOnly",
+        "description": "The number of packets that were successfully transmitted after one or more retransmissions. This parameter is based on ''dot11RetryCount'' from {{bibref|802.11-2012}}.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "MultipleRetryCount",
+        "access": "readOnly",
+        "description": "The number of packets that were successfully transmitted after more than one retransmission. This parameter is based on ''dot11MultipleRetryCount'' from {{bibref|802.11-2012}}.",
+        "type": "dataType:StatsCounter32"
+      }
+    ],
+    "description": "These count bytes or packets sent to, or received from, this Associated Device, which is a WiFi station associated to this access point. Packet counters here count 802.11 WiFi frames. The CPE MUST reset these {{object}} parameters (unless otherwise stated in individual object or parameter descriptions) either when the {{param|##.Status}} of the parent {{object|##}} object transitions from {{enum|Disabled|##.Status}} to {{enum|Enabled|##.Status}}, or when it transitions from {{enum|Enabled|##.Status}} to {{enum|Disabled|##.Status}}.",
+    "children": []
+  }
+}

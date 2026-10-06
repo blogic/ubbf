@@ -1,0 +1,51 @@
+{
+  "source_file": "tr-181-2-19-0-localagent.xml",
+  "path": "MTP.{i}.MQTT.",
+  "object": {
+    "path": "MTP.{i}.MQTT.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "Reference",
+        "access": "readWrite",
+        "description": "A reference to the MQTT Client used by this Agent when communicating via the MQTT MTP.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".MQTT.Client.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ResponseTopicConfigured",
+        "access": "readWrite",
+        "description": "The Agent's configured \"reply to\" topic. When MQTT 5.0 is being used, this value is put in the PUBLISH Response Topic property for all PUBLISH packets with a USP Record, if no Response Information (value recorded in {{param|ResponseTopicDiscovered}}) is included in the CONNACK. When MQTT 3.1.1 is being used, this value is put at the end of the PUBLISH Topic Name property (as specified in {{bibref|TR-369|Section \"MQTT Binding\"}}. If the value of {{param}} is not a subset (wildcarded or precise match) of any of the {{param|Reference}} {{param|.MQTT.Client.{i}.Subscription.{i}.Topic}} values the Agent MUST subscribe to this Topic. The value MUST NOT contain any wild card characters (\u201c+\u201d, \u201c#\u201d).",
+        "type": "string",
+        "maxLength": 65535
+      },
+      {
+        "name": "ResponseTopicDiscovered",
+        "access": "readOnly",
+        "description": "Duplicate of {{param|Reference}} {{param|.MQTT.Client.{i}.ResponseInformation}}. This is the value of the CONNACK Response Information property supplied by a MQTT 5.0 server and is used by a MQTT 5.0 client as the basis for the PUBLISH Response Topic property for all PUBLISH packets that expect a response. If a value is received from the MQTT 5.0 server, it will be used instead of any value configured in {{param|ResponseTopicConfigured}}.",
+        "type": "string",
+        "maxLength": 65535
+      },
+      {
+        "name": "PublishQoS",
+        "access": "readWrite",
+        "description": "The Agent MUST use this QoS value when sending a USP Record on this MTP. If the referenced MQTT Client uses MQTT 5.0 and the MQTT server only indicates support for a QoS value in the CONNACK Maximum QoS property lower than this QoS value, the Agent MUST use the highest QoS value that is supported by the server.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 2
+      }
+    ],
+    "description": "If the USP Endpoint uses the MQTT Message Transfer Protocol (MTP), then this object contains MQTT Client specific configuration parameters related to how the Agent communicates with the MQTT broker.",
+    "children": []
+  }
+}

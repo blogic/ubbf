@@ -1,0 +1,131 @@
+{
+  "source_file": "tr-181-2-19-1-usp.xml",
+  "path": "Device.LocalAgent.Subscription.{i}.",
+  "object": {
+    "path": "Device.LocalAgent.Subscription.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "SubscriptionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables/disables this {{object}}. A disabled entry MUST NOT be processed by the USP Agent.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Recipient",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|#.Controller}} instance that will receive the Notification associated with this {{object}}|delete}} The value of this parameter is automatically populated by the USP Agent upon {{object}} creation using the reference to the USP Controller that created the instance.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Controller.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "TriggerAction",
+        "access": "readWrite",
+        "description": "Determines the action to take when the monitored event occurs.",
+        "default": "Notify",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Notify",
+          "Config",
+          "NotifyAndConfig"
+        ],
+        "version": "2.16"
+      },
+      {
+        "name": "TriggerConfigSettings",
+        "access": "readWrite",
+        "description": "Each entry is a name-value pair representing the name of the data model parameter to configure and the value to configure it with. Each entry in the comma-separated list will use the following format: <Parameter Name>=<Parameter Value> The Parameter Value will be formatted per the value type, which means that string values will be quoted while unsignedInt values will be unquoted numeric values, etc.. When the monitored event occurs, then the {{param}} will be executed if the {{param|TriggerAction}} is set to {{enum|Config|TriggerAction}} or {{enum|NotifyAndConfig|TriggerAction}}.",
+        "list": true,
+        "type": "string",
+        "version": "2.16"
+      },
+      {
+        "name": "ID",
+        "access": "readWrite",
+        "description": "Unique identifier of the {{object}} itself, which is specific to the USP Controller that creates the instance of the {{object}}. This value is used as the ''subscription_id'' element of every Notification message from a USP Agent to a USP Controller caused by this subscription entry.",
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64
+      },
+      {
+        "name": "CreationDate",
+        "access": "readOnly",
+        "description": "The date and time when this instance of {{object}} was created. This is internally used by the {{param|TimeToLive}} parameter to determine the expiration of this {{object}} instance. The value of this parameter is automatically populated by the USP Agent upon {{object}} creation.",
+        "type": "dateTime"
+      },
+      {
+        "name": "NotifType",
+        "access": "readWrite",
+        "description": "Type of Notification message that will be sent to the USP Controller specified by {{param|Recipient}} when this {{object}} is triggered.",
+        "type": "string",
+        "enumerations": [
+          "ValueChange",
+          "ObjectCreation",
+          "ObjectDeletion",
+          "OperationComplete",
+          "Event"
+        ]
+      },
+      {
+        "name": "ReferenceList",
+        "access": "readWrite",
+        "description": "Each entry in the list is a Path Name, Search Path, Command reference, or Event reference that determines the element(s) of the data model that the {{object}} is applicable to. Different values of the {{param|NotifType}} parameter will cause the {{object}} to interact with {{param}} differently. For example, an instance of {{object}} with {{enum|ValueChange|NotifType}} will utilize the value of this parameter differently than an instance with {{enum|Event|NotifType}}. Once the value of the {{param}} is written, the value cannot be changed as the {{object}} instance is considered to be immutable. If the value of a non-empty {{param}} parameter needs to change, the {{object}} instance MUST be deleted and a new {{object}} instance created. The following bullet points describe what is allowed as a value of {{param}} based on the different values of the {{param|NotifType}} parameter: * ValueChange: may be either a Path Name or Search Path; if an Object Path (one type of Path Name) then it is treated like a filter match such that all supported parameters in all objects below this point will be relevant for the subscription. * ObjectCreation: may be either a Path Name or Search Path as long as it only refers to a Multi-Instance Object; only the referenced Multi-Instance Objects will be relevant for the subscription. * ObjectDeletion: may be either a Path Name or Search Path as long as it only refers to instances of a Multi-Instance Object; only the referenced instances (wildcard references all instances over time) of the Multi-Instance Objects will be relevant for the subscription. * OperationComplete: may be either a Path Name, Search Path, or Command reference; if an Object Path (one type of Path Name) then it is treated like a filter match such that all supported data model commands in all objects below this point will be relevant for the subscription. * Event: may be either a Path Name, Search Path, or Event reference; if an Object Path (one type of Path Name) then it is treated like a filter match such that all supported Events in all objects below this point will be relevant for the subscription.",
+        "list": true,
+        "type": "string",
+        "maxLength": 256,
+        "version": "2.13"
+      },
+      {
+        "name": "Persistent",
+        "access": "readWrite",
+        "description": "Determines whether or not this {{object}} remains after the USP Agent is restarted (either via a reset of the software or reboot of the underlying device). If {{true}}, this {{object}} stays in existence until either a Delete message removes it or the {{param|TimeToLive}} parameter expires. If {{false}}, this {{object}} is automatically removed by the USP Agent whenever it is restarted.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "TimeToLive",
+        "access": "readWrite",
+        "description": "Specifies the duration of time (in {{units}}) that this {{object}} remains in existence. After {{param}} has expired, this {{object}} instance is automatically removed by the USP Agent. If the value of {{param}} is 0, then this parameter is ignored and this {{object}} stays in existence until either a Delete message removes it or the {{param|Persistent}} parameter determines that it needs to be removed. If the value of {{param}} is greater than 0, then this parameter determines the length of time (from {{object}} creation) until it will be automatically removed by the USP Agent (unless the {{param|Persistent}} parameter is {{false}} and the USP Agent is restarted, in which case it will be removed before the {{param}} expiration). NOTE: This parameter does not count down as time moves forward; it will always read back with the same value that it was last set to. If the USP Agent is incapable of maintaining absolute time then {{param}} will automatically expire if the USP Agent is restarted (either via a reset of the software or reboot of the underlying device) before {{param}} expiration.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "NotifRetry",
+        "access": "readWrite",
+        "description": "Specifies whether or not the USP Agent attempts to re-deliver the Notification in the event that it could not be delivered to the USP Controller. When {{param}} is {{true}}, the USP Agent MUST retry the delivery of the Notification. This implies that the Notification MUST be generated with the \"send_resp\" flag set to {{true}} such that the USP Agent knows when the Notification has been successfully delivered. The retry attempt(s) are performed using the retry algorithm defined in {{bibref|TR-369|Section \"Responses to Notifications and Notification Retry\"}}. When {{param}} is {{false}}, the USP Agent MUST NOT retry the delivery of the Notification, and SHOULD generate the notification with \"send_resp\" flag set to {{false}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "NotifExpiration",
+        "access": "readWrite",
+        "description": "Specifies the duration of time (in {{units}}) that the Notification associated with this {{object}} will continue to be retried. After {{param}} has expired, if the Notification has still not been successfully delivered then the USP Agent MUST stop attempting to re-deliver the Notification. If {{param|NotifRetry}} is set to {{false}} then this parameter is ignored. If {{param|NotifRetry}} is set to {{true}} and the value of {{param}} is 0, then the USP Agent will attempt to re-deliver the Notification until it has been successfully delivered or until the USP Agent is restarted (either via a reset of the software or reboot of the underlying device). If {{param|NotifRetry}} is set to {{true}} and the value of {{param}} is greater than 0, then the USP Agent will attempt to re-deliver the Notification until either it has been successfully delivered, until the length of time (from the time the Notification was initially attempted to be delivered) specified in this parameter expires, or until the USP Agent is restarted (either via a reset of the software or reboot of the underlying device). NOTE: This parameter does not count down as time moves forward; it will always read back with the same value that it was last set to.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "A Subscription dictates how a USP Agent issues USP Notification Messages to a USP Controller, executes an automated configuration action, or both, as controlled by {{param|TriggerAction}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

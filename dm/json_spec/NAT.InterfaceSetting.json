@@ -1,0 +1,98 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.NAT.InterfaceSetting.{i}.",
+  "object": {
+    "path": "Device.NAT.InterfaceSetting.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "InterfaceSettingNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the {{object}} entry, indicating if NAT is enabled for the referenced IP Interface instance. On creation, an {{object}} entry is disabled by default.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this entry. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Enabled_NATForcedDisabled",
+          "Enabled_PortMappingDisabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "{{reference}} The associated outgoing IP interface on which NAT is to be enabled.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "SourceNetwork",
+        "access": "readWrite",
+        "description": "Each list item MUST be the Path name of a {{object|.IP.Interface.{i}.IPv4Address.}} table or of one of its rows. If the referenced object is deleted, the corresponding item MUST be removed from the list. Specifies the source IPv4 network(s) that MUST be translated for all outgoing traffic associated with the {{param|Interface}} (e.g. ''Device.IP.Interface.2.IPv4Address.'' (table) or ''Device.IP.Interface.2.IPv4Address.1.'' (row)). The {{param|.IP.Interface.{i}.IPv4Address.{i}.IPAddress}} and {{param|.IP.Interface.{i}.IPv4Address.{i}.SubnetMask}} are used to construct an additional filter rule that specifies which address range needs to be translated.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "maxLength": 256,
+        "version": "2.16"
+      },
+      {
+        "name": "TCPTranslationTimeout",
+        "access": "readWrite",
+        "description": "Determines the timeout, in {{units}}, of NAT translations for TCP sessions. It is the time after which a NAT entry is removed from the NAT table if there is no activity. A value of -1 represents an infinite duration.",
+        "default": "300",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "version": "2.13"
+      },
+      {
+        "name": "UDPTranslationTimeout",
+        "access": "readWrite",
+        "description": "Determines the timeout, in {{units}}, of NAT translations for UDP bindings. It is the time after which a NAT entry is removed from the NAT table if there is no activity. A value of -1 represents an infinite duration.",
+        "default": "30",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "version": "2.13"
+      }
+    ],
+    "description": "NAT settings for an associated IP Interface on which NAT is enabled. For enabled table entries, if {{param|Interface}} is not a valid reference then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}. Note: The {{object}} table includes a unique key parameter that is a strong reference. If a strongly referenced object is deleted, the CPE will set the referencing parameter to {{empty}}. However, doing so under these circumstances might cause the updated {{object}} row to then violate the table's unique key constraint; if this occurs, the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and disable the offending {{object}} row.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IPv4Address.{i}.",
+  "object": {
+    "path": "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IPv4Address.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "IPv4AddressNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "MAC Address.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "IPv4Address",
+        "access": "readOnly",
+        "description": "IPv4 Address.",
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "IPv4AddressType",
+        "access": "readOnly",
+        "description": "The IPv4 Address Type of this {{param|IPv4Address}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Unknown",
+          "DHCP",
+          "Static",
+          "Auto-IP"
+        ]
+      },
+      {
+        "name": "DHCPServer",
+        "access": "readOnly",
+        "description": "Either IPv4 address of DHCPv4 server or IPv6 address of DHCPv6 server.",
+        "type": "dataType:IPAddress"
+      }
+    ],
+    "description": "This object represents represents all IPv4 addresses reported for a MAC address (AL or interface) in a Higher Layer response message for the IEEE1905Device as defined in {{bibref|IEEE1905.1a|Table 6-32: IPv4 type TLV}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "MACAddress",
+        "IPv4Address"
+      ]
+    }
+  }
+}

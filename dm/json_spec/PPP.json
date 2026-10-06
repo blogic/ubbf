@@ -1,0 +1,38 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PPP.",
+  "object": {
+    "path": "Device.PPP.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "InterfaceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SupportedNCPs",
+        "access": "readOnly",
+        "description": "The Network Control Protocols (NCPs) that are supported by the device. {{enum}} Note that {{enum|IPv6CP}} is an IPv6 capability.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "ATCP",
+          "IPCP",
+          "IPXCP",
+          "NBFCP",
+          "IPv6CP"
+        ],
+        "version": "2.12"
+      }
+    ],
+    "description": "Point-to-Point Protocol {{bibref|RFC1661}}. This object contains the {{object|Interface}} table.",
+    "children": []
+  }
+}

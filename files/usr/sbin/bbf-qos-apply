@@ -1,0 +1,386 @@
+#!/usr/bin/ucode
+'use strict';
+
+import * as uci from 'uci';
+import * as fs from 'fs';
+import { to_int } from 'ubbf';
+import { cmd_build } from 'ubbf.utils.process';
+import { log_init, log_info, log_warn, log_err, log_debug } from 'ubbf.utils.logging';
+
+log_init('bbf-qos');
+
+let cursor = uci.cursor();
+
+function valid_iface(s) {
+	return type(s) == 'string' && s != '' && length(s) <= 32 &&
+	       !!match(s, /^[a-zA-Z0-9._-]+$/);
+}
+
+function valid_ipv4(s) {
+	return type(s) == 'string' && !!match(s, /^(\d{1,3}\.){3}\d{1,3}$/);
+}
+
+function valid_ipv6(s) {
+	return type(s) == 'string' && length(s) <= 39 &&
+	       !!match(s, /^[0-9a-fA-F:]+$/);
+}
+
+function ip_family(s) {
+	if (valid_ipv4(s))
+		return 'ip';
+	if (valid_ipv6(s))
+		return 'ip6';
+	return null;
+}
+
+function valid_mask(s, family) {
+	if (type(s) != 'string' || s == '')
+		return false;
+	if (match(s, /^\d{1,3}$/))
+		return +s <= (family == 'ip' ? 32 : 128);
+	return family == 'ip' && valid_ipv4(s);
+}
+
+function valid_mac(s) {
+	return type(s) == 'string' &&
+	       !!match(s, /^[0-9a-fA-F]{2}(:[0-9a-fA-F]{2}){5}$/);
+}
+
+function tc_exec(parts) {
+	let cmd = cmd_build([{raw: 'tc'}, ...parts, {raw: '2>/dev/null'}]);
+	log_debug('tc: %s', cmd);
+	return system(cmd);
+}
+
+function nft_exec(parts) {
+	let cmd = cmd_build([{raw: 'nft'}, ...parts, {raw: '2>/dev/null'}]);
+	log_debug('nft: %s', cmd);
+	return system(cmd);
+}
+
+function tc_clear(iface) {
+	tc_exec(['qdisc', 'del', 'dev', iface, 'root']);
+	tc_exec(['qdisc', 'del', 'dev', iface, 'ingress']);
+}
+
+function tc_setup_htb(iface, rate, burst) {
+	tc_exec(['qdisc', 'add', 'dev', iface, 'root', 'handle', '1:', 'htb', 'default', '10']);
+
+	let parts = ['class', 'add', 'dev', iface, 'parent', '1:', 'classid', '1:1', 'htb',
+	             'rate', sprintf('%dkbit', rate)];
+	if (burst && burst > 0)
+		push(parts, 'burst', burst);
+
+	tc_exec(parts);
+}
+
+function tc_add_class(iface, classid, rate, weight, precedence, algorithm, burst) {
+	let parts = ['class', 'add', 'dev', iface, 'parent', '1:1',
+	             'classid', sprintf('1:%d', classid), 'htb',
+	             'rate', sprintf('%dkbit', rate)];
+
+	if (algorithm == 'WRR' || algorithm == 'WFQ')
+		push(parts, 'quantum', weight);
+	else
+		push(parts, 'prio', precedence);
+
+	if (burst && burst > 0)
+		push(parts, 'burst', burst);
+
+	tc_exec(parts);
+}
+
+function apply_shapers() {
+	cursor.foreach('bbf-qos', 'shaper', (s) => {
+		if (s.enabled != '1')
+			return;
+
+		let iface = s.interface;
+		if (!valid_iface(iface)) {
+			log_warn('shaper: invalid interface %s, skipping', iface);
+			return;
+		}
+
+		let rate = to_int(s.shaping_rate);
+		if (rate == null || rate <= 0)
+			return;
+
+		let burst = to_int(s.shaping_burst_size);
+
+		log_info('shaper: iface=%s rate=%d burst=%d alias=%s',
+			iface, rate, burst ?? 0, s.alias ?? '');
+
+		tc_clear(iface);
+		tc_setup_htb(iface, rate, burst);
+	});
+}
+
+function apply_queues() {
+	cursor.foreach('bbf-qos', 'queue', (q) => {
+		if (q.enabled != '1')
+			return;
+
+		let iface = q.interface;
+		if (!valid_iface(iface)) {
+			log_warn('queue: invalid interface %s, skipping', iface);
+			return;
+		}
+
+		let rate = to_int(q.shaping_rate) ?? 0;
+		let weight = to_int(q.weight) ?? 1;
+		let precedence = to_int(q.precedence) ?? 1;
+		let classid = to_int(q.traffic_classes) ?? 10;
+		let algo = q.scheduler_algorithm ?? 'SP';
+		let burst = to_int(q.shaping_burst_size);
+
+		log_info('queue: iface=%s class=%d weight=%d prec=%d algo=%s alias=%s',
+			iface, classid, weight, precedence, algo, q.alias ?? '');
+
+		tc_add_class(iface, classid, rate, weight, precedence, algo, burst);
+	});
+}
+
+/**
+ * Returns the nft families a classification applies to: the family of
+ * its addresses, or both when it has none. Returns null when an address
+ * is invalid or the addresses mix families.
+ */
+function classify_families(c) {
+	let families = [];
+
+	for (let addr in [ c.source_ip, c.dest_ip ]) {
+		if (!addr)
+			continue;
+
+		let family = ip_family(addr);
+		if (!family)
+			return null;
+
+		push(families, family);
+	}
+
+	families = uniq(families);
+	if (length(families) > 1)
+		return null;
+
+	return length(families) ? families : [ 'ip', 'ip6' ];
+}
+
+function addr_expr(addr, mask, family) {
+	if (!mask)
+		return addr;
+	if (!valid_mask(mask, family))
+		return null;
+	return sprintf('%s/%s', addr, mask);
+}
+
+function nft_build_match(c, family) {
+	let m = [ 'meta', 'nfproto', family == 'ip' ? 'ipv4' : 'ipv6' ];
+
+	let protocol = to_int(c.protocol);
+	if (protocol != null && protocol >= 0)
+		push(m, 'meta', 'l4proto', protocol);
+
+	if (c.source_ip) {
+		let src = addr_expr(c.source_ip, c.source_mask, family);
+		if (!src)
+			return null;
+		push(m, family, 'saddr', src);
+	}
+
+	if (c.dest_ip) {
+		let dst = addr_expr(c.dest_ip, c.dest_mask, family);
+		if (!dst)
+			return null;
+		push(m, family, 'daddr', dst);
+	}
+
+	let src_port = to_int(c.source_port);
+	if (src_port != null && src_port >= 0) {
+		let src_port_max = to_int(c.source_port_range_max);
+		if (src_port_max != null && src_port_max > src_port)
+			push(m, 'th', 'sport', sprintf('%d-%d', src_port, src_port_max));
+		else
+			push(m, 'th', 'sport', src_port);
+	}
+
+	let dst_port = to_int(c.dest_port);
+	if (dst_port != null && dst_port >= 0) {
+		let dst_port_max = to_int(c.dest_port_range_max);
+		if (dst_port_max != null && dst_port_max > dst_port)
+			push(m, 'th', 'dport', sprintf('%d-%d', dst_port, dst_port_max));
+		else
+			push(m, 'th', 'dport', dst_port);
+	}
+
+	if (c.source_mac_address && c.source_mac_address != '') {
+		if (!valid_mac(c.source_mac_address))
+			return null;
+		push(m, 'ether', 'saddr', c.source_mac_address);
+	}
+
+	if (c.dest_mac_address && c.dest_mac_address != '') {
+		if (!valid_mac(c.dest_mac_address))
+			return null;
+		push(m, 'ether', 'daddr', c.dest_mac_address);
+	}
+
+	let ethertype = to_int(c.ethertype);
+	if (ethertype != null && ethertype >= 0)
+		push(m, 'ether', 'type', sprintf('0x%04x', ethertype));
+
+	let dscp_check = to_int(c.dscp_check);
+	if (dscp_check != null && dscp_check >= 0)
+		push(m, family, 'dscp', dscp_check);
+
+	let eth_prio = to_int(c.ethernet_priority_check);
+	if (eth_prio != null && eth_prio >= 0)
+		push(m, 'meta', 'priority', eth_prio);
+
+	let vlan_id = to_int(c.vlan_id_check);
+	if (vlan_id != null && vlan_id >= 0)
+		push(m, 'vlan', 'id', vlan_id);
+
+	let ip_len_min = to_int(c.ip_length_min);
+	let ip_len_max = to_int(c.ip_length_max);
+	// In the forward hook meta length is the packet length from the
+	// network header on, which is the TR-181 IPLength for both families;
+	// ip6 length would leave out the 40-byte fixed header.
+	if (ip_len_min != null && ip_len_min > 0 && ip_len_max != null && ip_len_max > 0)
+		push(m, 'meta', 'length', sprintf('%d-%d', ip_len_min, ip_len_max));
+	else if (ip_len_min != null && ip_len_min > 0)
+		push(m, 'meta', 'length', '>=', ip_len_min);
+	else if (ip_len_max != null && ip_len_max > 0)
+		push(m, 'meta', 'length', '<=', ip_len_max);
+
+	return m;
+}
+
+function nft_build_actions(c, family) {
+	let actions = [];
+
+	let dscp_mark = to_int(c.dscp_mark);
+	if (dscp_mark != null && dscp_mark >= 0)
+		push(actions, family, 'dscp', 'set', dscp_mark);
+
+	let traffic_class = to_int(c.traffic_class);
+	if (traffic_class != null && traffic_class >= 0)
+		push(actions, 'meta', 'priority', 'set', sprintf('1:%d', traffic_class));
+
+	return actions;
+}
+
+let policer_map = {};
+
+function apply_policers() {
+	cursor.foreach('bbf-qos', 'policer', (p) => {
+		if (p.enabled != '1')
+			return;
+
+		let committed_rate = to_int(p.committed_rate);
+		if (committed_rate == null || committed_rate <= 0)
+			return;
+
+		let committed_burst = to_int(p.committed_burst_size) ?? 0;
+		let peak_rate = to_int(p.peak_rate) ?? 0;
+		let peak_burst = to_int(p.peak_burst_size) ?? 0;
+		let meter_type = p.meter_type ?? 'SimpleTokenBucket';
+
+		log_info('policer: %s rate=%d burst=%d peak_rate=%d peak_burst=%d type=%s',
+			p.path ?? p.alias ?? '', committed_rate, committed_burst,
+			peak_rate, peak_burst, meter_type);
+
+		if (!p.path)
+			return;
+
+		policer_map[p.path] = { committed_rate, committed_burst, peak_rate, peak_burst, meter_type };
+	});
+}
+
+function nft_policer_expr(pol) {
+	let rate = pol.committed_rate;
+	let burst = pol.committed_burst;
+
+	if (pol.meter_type == 'TwoRateThreeColor' && pol.peak_rate > 0) {
+		rate = pol.peak_rate;
+		if (pol.peak_burst > 0)
+			burst = pol.peak_burst;
+	}
+
+	let rate_bytes = rate * 1000 / 8;
+	if (burst <= 0)
+		burst = rate_bytes;
+
+	return ['limit', 'rate', 'over', rate_bytes, 'bytes/second',
+	        'burst', burst, 'bytes', 'counter', 'drop'];
+}
+
+function classify_rule_add(c, order, family) {
+	let matches = nft_build_match(c, family);
+	if (matches == null) {
+		log_warn('classify: invalid match criteria, skipping rule order=%d', order);
+		return;
+	}
+
+	let pol = c.policer ? policer_map[c.policer] : null;
+	if (pol) {
+		nft_exec([
+			'add', 'rule', 'inet', 'bbf_qos', 'classify',
+			...matches,
+			...nft_policer_expr(pol),
+		]);
+		log_info('classify: order=%d family=%s policer=%s', order, family, c.policer);
+	}
+
+	log_info('classify: order=%d family=%s iface=%s alias=%s',
+		order, family, c.interface ?? 'all', c.alias ?? '');
+
+	nft_exec([
+		'add', 'rule', 'inet', 'bbf_qos', 'classify',
+		...matches,
+		...nft_build_actions(c, family),
+	]);
+}
+
+function apply_classifications() {
+	nft_exec(['flush', 'table', 'inet', 'bbf_qos']);
+	nft_exec(['add', 'table', 'inet', 'bbf_qos']);
+	nft_exec(['add', 'chain', 'inet', 'bbf_qos', 'classify',
+	          {raw: '{ type filter hook forward priority mangle\\; }'}]);
+
+	let rules = [];
+	cursor.foreach('bbf-qos', 'classify', (c) => {
+		if (c.enabled != '1')
+			return;
+
+		let order = to_int(c.order) ?? 0;
+		push(rules, { order: order, config: c });
+	});
+
+	rules = sort(rules, (a, b) => a.order - b.order);
+
+	for (let r in rules) {
+		let families = classify_families(r.config);
+		if (families == null) {
+			log_warn('classify: invalid match criteria, skipping rule order=%d', r.order);
+			continue;
+		}
+
+		for (let family in families)
+			classify_rule_add(r.config, r.order, family);
+	}
+}
+
+if (!cursor.load('bbf-qos')) {
+	log_debug('no bbf-qos config found');
+	exit(0);
+}
+
+log_info('applying QoS configuration');
+
+apply_shapers();
+apply_queues();
+apply_policers();
+apply_classifications();
+
+log_info('QoS configuration applied');

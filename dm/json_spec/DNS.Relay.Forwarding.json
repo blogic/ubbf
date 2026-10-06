@@ -1,0 +1,87 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DNS.Relay.Forwarding.{i}.",
+  "object": {
+    "path": "Device.DNS.Relay.Forwarding.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ForwardNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this entry. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "DNSServer",
+        "access": "readWrite",
+        "description": "DNS server IP address. Note: {{param}} is only writable when {{param|Type}} is {{enum|Static|Type}}; otherwise, {{param}} is automatically configured as result of DHCP, IPCP, 3GPP-NAS or RA received DNS server information.",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "{{reference}} Specifies the IP interface over which the DNS query is sent. {{template|INTERFACE-ROUTING}} Note: {{param}} is only writable when {{param|Type}} is {{enum|Static|Type}}; otherwise, {{param}} is automatically configured as result of DHCP, IPCP, 3GPP-NAS or RA received DNS server information.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "###.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "Method used to assign the {{param|DNSServer}} address. {{enum}} Table entries that are automatically created as result of DHCP, IPCP, 3GPP-NAS, or RA received DNS server information will have {{param}} set to {{enum|DHCPv4}}, {{enum|DHCPv6}}, {{enum|IPCP}}, {{enum|3GPP-NAS}}, or {{enum|RouterAdvertisement}}, as the case may be. Manually created table entries will have their {{param}} set to {{enum|Static}}.",
+        "default": "Static",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "DHCP",
+          "DHCPv4",
+          "DHCPv6",
+          "RouterAdvertisement",
+          "IPCP",
+          "3GPP-NAS",
+          "Static"
+        ]
+      }
+    ],
+    "description": "DNS Server forwarding policy to be used by the DNS Relay. Entries are either automatically created as result of DHCP (v4 or v6), IPCP, 3GPP-NAS (3GPP Non Access Stratum) or RA received DNS server information, or are statically configured by the Controller. Note: Management of re-directing queries to the device embedded DNS server is not defined in this version of the specification.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "DNSServer"
+      ]
+    }
+  }
+}

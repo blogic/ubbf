@@ -1,0 +1,51 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Thread.MLE.{i}.AssociatedNode.{i}.Route.{i}.",
+  "object": {
+    "path": "Device.Thread.MLE.{i}.AssociatedNode.{i}.Route.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "RouteNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "ID",
+        "access": "readOnly",
+        "description": "Router ID of the route table entry.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "PathCost",
+        "access": "readOnly",
+        "description": "The routing cost advertised by the Next Hop to reach {{param|ID}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "LQIn",
+        "access": "readOnly",
+        "description": "Link Quality for messages received from {{param|ID}}, depending on the Link Margin value average of the received relative signal strength.",
+        "type": "dataType:ThreadLinkQuality"
+      },
+      {
+        "name": "LQOut",
+        "access": "readOnly",
+        "description": "Link Quality for messages sent to {{param|ID}}, depending on the Link Margin value average of the sent relative signal strength.",
+        "type": "dataType:ThreadLinkQuality"
+      }
+    ],
+    "description": "Entries in this table depend on the associated node routing capabilities defined by the {{param|#.RoutingRole}} and {{param|#.Mode}} according to the Thread Specification (i.e. a child node has an empty {{object}} table). It maintains information for each link to Router neighbor as follows: * the Router ID assigned to that neighbor. * the routing cost. * the incoming link quality metric calculated from the measured link margin for messages received from the neighbor. * the incoming link quality metric reported by the neighbor for messages arriving from this Router.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "ID"
+      ]
+    }
+  }
+}

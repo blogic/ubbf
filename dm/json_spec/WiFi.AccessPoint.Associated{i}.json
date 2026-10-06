@@ -1,0 +1,159 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.",
+  "object": {
+    "path": "Device.WiFi.AccessPoint.{i}.AssociatedDevice.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "AssociatedDeviceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "The MAC address of an associated device. If the instance of this {{object}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.MACAddress}}.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "Associated device type (Laptop, iPhone, Android, etc.).",
+        "type": "string",
+        "version": "2.14"
+      },
+      {
+        "name": "SetStaATF",
+        "access": "readWrite",
+        "description": "Configures the Air Time Fairness (ATF) setting of this individual associated device. Expressed as {{units}} of airtime, such that this associated device should not exceed this percentage. Setting this value overrides {{param|##.SSID.{i}.SetATF}} for this associated device.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 100,
+        "version": "2.14"
+      },
+      {
+        "name": "OperatingStandard",
+        "access": "readOnly",
+        "description": "The operating standard that this associated device is connected with.",
+        "type": "string",
+        "enumerations": [
+          "a",
+          "b",
+          "g",
+          "n",
+          "ac",
+          "ax",
+          "be"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "AuthenticationState",
+        "access": "readOnly",
+        "description": "Whether an associated device has authenticated ({{true}}) or not ({{false}}).",
+        "type": "boolean"
+      },
+      {
+        "name": "LastDataDownlinkRate",
+        "access": "readOnly",
+        "description": "The data transmit rate in {{units}} that was most recently used for transmission from the access point to the associated device. If the instance of this {{object}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.LastDataDownlinkRate}}.",
+        "type": "unsignedInt",
+        "minInclusive": 1000,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "MaxSupportedDataDownlinkRate",
+        "access": "readOnly",
+        "description": "Maximum supported data rate on the downlink from the associated device to the access point, measured in {{units}}.",
+        "type": "unsignedInt",
+        "minInclusive": 1000,
+        "version": "2.17"
+      },
+      {
+        "name": "LastDataUplinkRate",
+        "access": "readOnly",
+        "description": "The data transmit rate in {{units}} that was most recently used for transmission from the associated device to the access point. If the instance of this {{object}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.LastDataUplinkRate}}.",
+        "type": "unsignedInt",
+        "minInclusive": 1000,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "MaxSupportedDataUplinkRate",
+        "access": "readOnly",
+        "description": "Maximum supported data rate on the uplink from the associated device to the access point, measured in {{units}}.",
+        "type": "unsignedInt",
+        "minInclusive": 1000,
+        "version": "2.17"
+      },
+      {
+        "name": "AssociationTime",
+        "access": "readOnly",
+        "description": "Date and time in UTC when the device was associated If the instance of this {{object}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.LastConnectTime}}.",
+        "type": "dateTime",
+        "version": "2.12"
+      },
+      {
+        "name": "SignalStrength",
+        "access": "readOnly",
+        "description": "An indicator of radio signal strength of the uplink from the associated device to the access point, measured in {{units}}, as an average of the last 100 packets received from the device. If the instance of this {{object}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.SignalStrength}}.",
+        "type": "int",
+        "minInclusive": -200,
+        "maxInclusive": 0
+      },
+      {
+        "name": "Noise",
+        "access": "readOnly",
+        "description": "An indicator of radio noise on the uplink from the associated device to the access point, measured in {{units}}, as an average of the last 100 packets received from the device (see ANPI definition in {{bibref|802.11-2012|Clause 10.11.9.4}}) If the instance of this {{object}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.MultiAPSTA.Noise|deprecated}}.",
+        "type": "int",
+        "minInclusive": -200,
+        "maxInclusive": 0,
+        "version": "2.12"
+      },
+      {
+        "name": "SNR",
+        "access": "readOnly",
+        "description": "An indicator of signal to noise ratio, in {{units}}, on the uplink from the associated device to the access point, measured in {{units}}, as an average of the last 100 packets received from the device.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "Retransmissions",
+        "access": "readOnly",
+        "description": "The number of {{units}} that had to be re-transmitted, from the last 100 packets sent to the associated device. Multiple re-transmissions of the same packet count as one. If the instance of this {{object}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.STA.{i}.RetransCount}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 100
+      },
+      {
+        "name": "Active",
+        "access": "readOnly",
+        "description": "Whether or not this node is currently present in the WiFi AccessPoint network. The ability to list inactive nodes is OPTIONAL. If the CPE includes inactive nodes in this table, {{param}} MUST be set to {{false}} for each inactive node. The length of time an inactive node remains listed in this table is a local matter to the CPE.",
+        "type": "boolean"
+      },
+      {
+        "name": "MaxSupportedBandwidth",
+        "access": "readOnly",
+        "description": "Specifies the maximum supported bandwidth for the associated device to the access point.",
+        "type": "string",
+        "enumerations": [
+          "20MHz",
+          "40MHz",
+          "80MHz",
+          "160MHz",
+          "320MHz",
+          "Unknown"
+        ],
+        "version": "2.17"
+      }
+    ],
+    "description": "A table of the devices currently associated with the access point.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "MACAddress"
+      ]
+    }
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DOCSIS.Downstream.{i}.Stats.",
+  "object": {
+    "path": "Device.DOCSIS.Downstream.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "BytesSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} transmitted out of the interface, including framing characters.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "BytesReceived",
+        "access": "readOnly",
+        "description": "The total number of {{units}} received on the interface, including framing characters.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "PacketsSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} transmitted out of the interface.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "PacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of {{units}} received on the interface.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ErrorsSent",
+        "access": "readOnly",
+        "description": "The total number of outbound {{units}} that could not be transmitted because of errors.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ErrorsReceived",
+        "access": "readOnly",
+        "description": "The total number of inbound {{units}} that contained errors preventing them from being delivered to a higher-layer protocol.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "UnicastPacketsSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} requested for transmission which were not addressed to a multicast or broadcast address at this layer, including those that were discarded or not sent.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "DiscardPacketsSent",
+        "access": "readOnly",
+        "description": "The total number of outbound {{units}} which were chosen to be discarded even though no errors had been detected to prevent their being transmitted. One possible reason for discarding such a packet could be to free up buffer space.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "DiscardPacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of inbound {{units}} which were chosen to be discarded even though no errors had been detected to prevent their being delivered. One possible reason for discarding such a packet could be to free up buffer space.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "MulticastPacketsSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} that higher-level protocols requested for transmission and which were addressed to a multicast address at this layer, including those that were discarded or not sent.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "UnicastPacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of received {{units}}, delivered by this layer to a higher layer, which were not addressed to a multicast or broadcast address at this layer.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "MulticastPacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of received {{units}}, delivered by this layer to a higher layer, which were addressed to a multicast address at this layer.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "BroadcastPacketsSent",
+        "access": "readOnly",
+        "description": "The total number of {{units}} that higher-level protocols requested for transmission and which were addressed to a broadcast address at this layer, including those that were discarded or not sent.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "BroadcastPacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of received {{units}}, delivered by this layer to a higher layer, which were addressed to a broadcast address at this layer.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "UnknownProtoPacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of {{units}} received via the interface which were discarded because of an unknown or unsupported protocol.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "Throughput statistics for this interface. The CPE MUST reset the interface's Stats parameters (unless otherwise stated in individual object or parameter descriptions) either when the interface becomes operationally down due to a previous administrative down (i.e. the interface's {{param|#.Status}} parameter transitions to a down state after the interface is disabled) or when the interface becomes administratively up (i.e. the interface's {{param|#.Enable}} parameter transitions from {{false}} to {{true}}). Administrative and operational interface status is discussed in {{bibref|TR-181i2|section 4.2.2}}.",
+    "children": []
+  }
+}

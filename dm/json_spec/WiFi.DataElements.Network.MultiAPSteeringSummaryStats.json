@@ -1,0 +1,65 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.MultiAPSteeringSummaryStats.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.MultiAPSteeringSummaryStats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "NoCandidateAPFailures",
+        "access": "readOnly",
+        "description": "Number of times Associated Devices should have been steered but weren't because a better candidate AP couldn't be found.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BlacklistAttempts",
+        "access": "readOnly",
+        "description": "Number of times a Blacklist steer was attempted.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BlacklistSuccesses",
+        "access": "readOnly",
+        "description": "Number of times an attempted Blacklist steer succeeded.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BlacklistFailures",
+        "access": "readOnly",
+        "description": "Number of times an attempted Blacklist steer failed.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BTMAttempts",
+        "access": "readOnly",
+        "description": "Number of times a BTM (BSS Transition Management; {{bibref|802.11k}}) steer was attempted.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BTMSuccesses",
+        "access": "readOnly",
+        "description": "Number of times an attempted BTM (BSS Transition Management; {{bibref|802.11k}}) steer succeeded.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BTMFailures",
+        "access": "readOnly",
+        "description": "Number of times an attempted BTM (BSS Transition Management; {{bibref|802.11k}}) steer failed.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BTMQueryResponses",
+        "access": "readOnly",
+        "description": "Number of asynchronous BTM (BSS Transition Management; {{bibref|802.11k}}) Queries for which a BTM Request was issued.",
+        "type": "dataType:StatsCounter64"
+      }
+    ],
+    "description": "The summary of statistics related to Multi-AP Steering for the Wi-Fi network. The counters contained in {{object}} are all reset on reboot.",
+    "children": []
+  }
+}

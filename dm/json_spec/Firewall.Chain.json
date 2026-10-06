@@ -1,0 +1,67 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Firewall.Chain.{i}.",
+  "object": {
+    "path": "Device.Firewall.Chain.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ChainNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "Human-readable name associated with this {{object}} entry.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Creator",
+        "access": "readOnly",
+        "description": "Creator of this {{object}} entry and of its {{object|Rule}}s. {{enum}} Note that this is the entity that originally created the {{object}} entry. The value of this parameter does not change if the {{object}} entry or one of its rules is subsequently changed by another entity.",
+        "default": "ACS",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Defaults",
+          "PortMapping",
+          "WANIPv6FirewallControl",
+          "ACS",
+          "UserInterface",
+          "Other"
+        ]
+      },
+      {
+        "name": "RuleNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Firewall Chain table. Each entry contains an ordered list of {{object|Rule}} objects which can themselves reference other {{object}} instances. A hierarchy of rules can therefore be created. A given Firewall Chain's rules are all created by the same entity, as indicated by the {{param|Creator}} parameter.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

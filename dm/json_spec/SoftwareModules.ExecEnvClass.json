@@ -1,0 +1,68 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SoftwareModules.ExecEnvClass.{i}.",
+  "object": {
+    "path": "Device.SoftwareModules.ExecEnvClass.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ExecEnvClassNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.16"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The Name of this {{object}} as specified by the Vendor that implemented this {{object}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Vendor",
+        "access": "readOnly",
+        "description": "The author of this {{object}} formatted as a fully qualified domain name.",
+        "type": "string",
+        "maxLength": 128
+      },
+      {
+        "name": "Version",
+        "access": "readOnly",
+        "description": "The Version of this {{object}} as specified by the Vendor that implemented this {{object}}. Vendors are encouraged to use Semantic Versioning.",
+        "type": "string",
+        "maxLength": 32
+      },
+      {
+        "name": "DeploymentUnitRef",
+        "access": "readOnly",
+        "description": "A reference to the DeploymentUnit (if any) by which this {{object}} was created.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.DeploymentUnit.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "CapabilityNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.16"
+      }
+    ],
+    "description": "This table lists the kinds of Execution Environments which are available in this device. Rows in this table may possibly be be added, modified, or removed by as a result of respectively installing, updating, or removing a {{object|#.DeploymentUnit}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

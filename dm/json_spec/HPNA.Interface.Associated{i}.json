@@ -1,0 +1,72 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.HPNA.Interface.{i}.AssociatedDevice.{i}.",
+  "object": {
+    "path": "Device.HPNA.Interface.{i}.AssociatedDevice.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "AssociatedDeviceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "The physical address of this node.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "NodeID",
+        "access": "readOnly",
+        "description": "The Node ID of this node.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IsMaster",
+        "access": "readOnly",
+        "description": "Whether this node is the HPNA network master.",
+        "type": "boolean"
+      },
+      {
+        "name": "Synced",
+        "access": "readOnly",
+        "description": "Whether this node is synchronized with the HPNA network master. If this node is the HPNA network master, {{param}} MUST be {{true}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "TotalSyncTime",
+        "access": "readOnly",
+        "description": "Total time in {{units}} (since device reset) that this node has been up and synchronized to the HPNA network master.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "MaxBitRate",
+        "access": "readOnly",
+        "description": "This node's maximum HPNA PHY bit rate (expressed in {{units}}).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PHYDiagnosticsEnable",
+        "access": "readWrite",
+        "description": "Enable / disable PHY throughput diagnostics mode on this node. All devices that are enabled will participate in the HPNA network PHY throughput diagnostics process.",
+        "type": "boolean"
+      },
+      {
+        "name": "Active",
+        "access": "readOnly",
+        "description": "Whether or not this node is currently present in the HPNA network. The ability to list inactive nodes is OPTIONAL. If the CPE includes inactive nodes in this table, {{param}} MUST be set to {{false}} for each inactive node. The length of time an inactive node remains listed in this table is a local matter to the CPE.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This table provides information about other HPNA devices that are directly accessible via this HPNA interface.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "MACAddress"
+      ]
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.PerformanceThresholds.",
+  "object": {
+    "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.PerformanceThresholds.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "SignalFail",
+        "access": "readOnly",
+        "description": "Signal fail (SF) threshold. This parameter specifies the downstream bit error rate (BER) threshold to detect the SF alarm. When this value is y, the BER threshold is 10^-y^. This parameter is based on ''Signal fail (SF) threshold'' from {{bibref|G.988|Section 9.2.1}}.",
+        "type": "unsignedInt",
+        "minInclusive": 3,
+        "maxInclusive": 8
+      },
+      {
+        "name": "SignalDegrade",
+        "access": "readOnly",
+        "description": "Signal degrade (SD) threshold. This parameter specifies the downstream BER threshold to detect the SD alarm. When this value is x, the BER threshold for SD is 10^-x^. The SD threshold must be lower than the SF threshold; i.e., x > y. This parameter is based on ''Signal degrade (SD) threshold'' from {{bibref|G.988|Section 9.2.1}}.",
+        "type": "unsignedInt",
+        "minInclusive": 4,
+        "maxInclusive": 10
+      }
+    ],
+    "description": "Performance thresholds.",
+    "children": []
+  }
+}

@@ -1,0 +1,18 @@
+#!/bin/sh
+# Capture OpenWrt-generated DUID and ULA prefix into UBBF's network shadow.
+#
+# bbf-apply uses /etc/ubbf/shadow/network as the baseline it writes back to
+# /etc/config/network, so these per-device values must live in the shadow or
+# the first apply wipes them and odhcpd loses its stable DHCPv6 identity.
+
+SHADOW_DIR=/etc/ubbf/shadow
+
+duid=$(uci -q get network.globals.dhcp_default_duid)
+ula=$(uci -q get network.globals.ula_prefix)
+
+uci -q -c "$SHADOW_DIR" set network.globals=globals
+[ -n "$duid" ] && uci -q -c "$SHADOW_DIR" set network.globals.dhcp_default_duid="$duid"
+[ -n "$ula" ] && uci -q -c "$SHADOW_DIR" set network.globals.ula_prefix="$ula"
+uci -q -c "$SHADOW_DIR" commit network
+
+exit 0

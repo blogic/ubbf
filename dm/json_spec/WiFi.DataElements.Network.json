@@ -1,0 +1,420 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "DeviceNumberOfEntries",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "ID",
+        "access": "readOnly",
+        "description": "A unique identifier for this particular device within the Wi-Fi network as defined in {{bibref|DataElements|Section 3.1}}. If this {{object}} is represented in {{object|Device.IEEE1905.AL.NetworkTopology.}}, then this should match an IEEE 1905 AL MAC Address in {{param|Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IEEE1905Id}}.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "MultiAPCapabilities",
+        "access": "readOnly",
+        "description": "The Multi-AP capabilities supported by this device as defined by the APCapability TLV in {{bibref|EasyMesh|Section 17.2.6}}.",
+        "type": "base64",
+        "minLength": 1,
+        "maxLength": 1
+      },
+      {
+        "name": "CollectionInterval",
+        "access": "readOnly",
+        "description": "The interval between the collection of consecutive measurements of the most frequently updated Data Element from this device in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ReportUnsuccessfulAssociations",
+        "access": "readWrite",
+        "description": "Indicates whether the Multi-AP Agent or the single AP reports unsuccessful association attempts of client Stations (STAs) to the Multi-AP Controller.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "MaxReportingRate",
+        "access": "readOnly",
+        "description": "Maximum rate for reporting unsuccessful association attempts in {{units}}. {{deprecated|2.19|because it was the same as {{param|MaxUnsuccessfulAssociationReportingRate}}.}}",
+        "type": "unsignedInt",
+        "version": "2.15"
+      },
+      {
+        "name": "APMetricsReportingInterval",
+        "access": "readWrite",
+        "description": "AP Metrics Reporting Interval. : 0: Do not report AP Metrics periodically; : 1 - 255: AP Metrics reporting interval in {{units}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 255,
+        "version": "2.15"
+      },
+      {
+        "name": "AssociatedSTAReportingInterval",
+        "access": "readWrite",
+        "description": "Associated STA Reporting Interval. 0: Do not report associated STA Metrics periodically; 1 - 255: Associated STA Metrics reporting interval in {{units}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 255,
+        "version": "2.17"
+      },
+      {
+        "name": "Manufacturer",
+        "access": "readOnly",
+        "description": "Identifier of the manufacturer of the device. If the instance of this {{object}} is the same as {{object|Device.}}, then this parameter is the same as {{param|Device.DeviceInfo.Manufacturer}}.",
+        "type": "string",
+        "version": "2.15"
+      },
+      {
+        "name": "SerialNumber",
+        "access": "readOnly",
+        "description": "Identifier of the particular Access Point device that is unique for the indicated model and manufacturer. This value MUST remain fixed over the lifetime of the device, including across firmware updates. If the instance of this {{object}} is the same as {{object|Device.}}, then this parameter is the same as {{param|Device.DeviceInfo.SerialNumber}}.",
+        "type": "string",
+        "version": "2.15"
+      },
+      {
+        "name": "ManufacturerModel",
+        "access": "readOnly",
+        "description": "Identifier of the manufacturer model to help the user more easily identify a particular piece of equipment. If the instance of this {{object}} is the same as {{object|Device.}}, then this parameter is the same as {{param|Device.DeviceInfo.ModelName}}.",
+        "type": "string",
+        "version": "2.15"
+      },
+      {
+        "name": "SoftwareVersion",
+        "access": "readOnly",
+        "description": "Identifier of the software version currently installed in the Access Point device (i.e. version of the overall firmware). If the instance of this {{object}} is the same as {{object|Device.}}, then this parameter is the same as {{param|Device.DeviceInfo.SoftwareVersion}}.",
+        "type": "string",
+        "version": "2.15"
+      },
+      {
+        "name": "ExecutionEnv",
+        "access": "readOnly",
+        "description": "Identifier of the execution environment (operating system) in the device. This parameter can be an entry in the table {{object|####.SoftwareModules.ExecEnv}}. If the instance of this {{object}} is the same as {{object|Device.}}, then this parameter is the same as {{object|Device.SoftwareModules.ExecEnv.{i}.}}.",
+        "type": "string",
+        "version": "2.15"
+      },
+      {
+        "name": "DSCPMap",
+        "access": "readOnly",
+        "description": "A hexadecimal string of 64 Priority Code Point (PCP) values (one octet per value) corresponding to the Differentiated Services Code Point (DSCP) markings 0x00 to 0x3F, ordered by increasing DSCP value. Each octet is in the range 0x00 - 0x07. This is used to select a PCP value if a Service Prioritization Rule specifies Rule Output: 0x08",
+        "type": "hexBinary",
+        "maxLength": 64,
+        "version": "2.15"
+      },
+      {
+        "name": "MaxPrioritizationRules",
+        "access": "readOnly",
+        "description": "The maximum total number of service prioritization rules supported by the Agent.",
+        "type": "unsignedInt",
+        "maxInclusive": 255,
+        "version": "2.15"
+      },
+      {
+        "name": "PrioritizationSupport",
+        "access": "readOnly",
+        "description": "Indicates support for Service Prioritization.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "MaxVIDs",
+        "access": "readOnly",
+        "description": "Max Total Number of unique VLAN IDs (VIDs) the Multi-AP Agent supports.",
+        "type": "unsignedInt",
+        "version": "2.15"
+      },
+      {
+        "name": "APMetricsWiFi6",
+        "access": "readOnly",
+        "description": "Associated Wi-Fi6 STA Status Inclusion Policy. : {{true}}: Include Associated Wi-Fi6 STA Status TLV in AP Metrics Response. : {{false}}: Do not include Associated Wi-Fi6 STA Status TLV [3] in AP Metrics Response. {{deprecated|2.16|because it was the same as {{param|Radio.{i}.APMetricsWiFi6}}.}} {{obsoleted|2.18}} {{deleted|2.19}}",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "CountryCode",
+        "access": "readOnly",
+        "description": "Two-character country code in which the Multi-AP Agent is operating according to {{bibref|ISO3166-1}}. The characters are encoded as UTF-8. If the instance of this {{object|##}} is the same as {{object|Device.WiFi.Radio.{i}.}}, then this parameter is the same as {{param|Device.WiFi.Radio.{i}.RegulatoryDomain}}.",
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 2,
+        "version": "2.15"
+      },
+      {
+        "name": "LocalSteeringDisallowedSTAList",
+        "access": "readWrite",
+        "description": "{{list}} The STAs for which local steering is disallowed.",
+        "list": true,
+        "type": "dataType:MACAddress",
+        "version": "2.15"
+      },
+      {
+        "name": "BTMSteeringDisallowedSTAList",
+        "access": "readWrite",
+        "description": "{{list}} The STAs for which BSS Transition Management (BTM) steering is disallowed.",
+        "list": true,
+        "type": "dataType:MACAddress",
+        "version": "2.15"
+      },
+      {
+        "name": "DFSEnable",
+        "access": "readOnly",
+        "description": "Indicates if Dynamic Frequency Selection (DFS) is enabled or disabled.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "ReportIndependentScans",
+        "access": "readWrite",
+        "description": "Channel Scan Reporting Policy, Report Independent Channel Scans : {{true}}: report Independent Channel Scans, : {{false}}: do not report Independent Channel Scans unless explicitly requested in a Channel Scan Request.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "AssociatedSTAinAPMetricsWiFi6",
+        "access": "readWrite",
+        "description": "For EasyMesh {{bibref|EasyMesh}}, this is the Associated Wi-Fi6 STA Status Inclusion Policy. : {{true}}: Include Associated Wi-Fi6 STA Status TLV in AP Metrics Response; : {{false}}: Do not include Associated Wi-Fi6 STA Status TLV in AP Metrics Response. {{deprecated|2.16|because it was the same as {{param|Radio.{i}.APMetricsWiFi6}}.}} {{obsoleted|2.18}} {{deleted|2.19}}",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "MaxUnsuccessfulAssociationReportingRate",
+        "access": "readWrite",
+        "description": "For EasyMesh {{bibref|EasyMesh}}, this is the maximum rate for reporting unsuccessful association attempts (in attempts per {{units}}).",
+        "type": "unsignedInt",
+        "version": "2.15"
+      },
+      {
+        "name": "STASteeringState",
+        "access": "readOnly",
+        "description": "Indicates if EasyMesh {{bibref|EasyMesh}} controller-initiated station steering is disallowed or allowed on this device. : {{true}}: EasyMesh controller-initiated station steering disallowed; : {{false}}: EasyMesh controller-initiated station steering allowed.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "CoordinatedCACAllowed",
+        "access": "readWrite",
+        "description": "Allow or disallow the use of EasyMesh {{bibref|EasyMesh}} Coordinated Channel Availability Check (CAC) on this device. : {{true}}: allowed; : {{false}}: disallowed.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "TrafficSeparationAllowed",
+        "access": "readOnly",
+        "description": "This parameter indicates if EasyMesh traffic separation {{bibref|EasyMesh|Section 19.1}} is allowed or disallowed.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "ServicePrioritizationAllowed",
+        "access": "readOnly",
+        "description": "This parameter indicates if EasyMesh service prioritization {{bibref|EasyMesh|Section 20}} is allowed or disallowed.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "ControllerOperationMode",
+        "access": "readOnly",
+        "description": "This parameter represents the status of Wi-Fi EasyMesh controller functionality. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "NotSupported",
+          "SupportedNotEnabled",
+          "Running"
+        ],
+        "version": "2.17"
+      },
+      {
+        "name": "BackhaulMACAddress",
+        "access": "readOnly",
+        "description": "The MAC address of the interface on the network that is providing the backhaul for this EasyMesh Agent. For Wi-Fi backhaul, this is the BSSID or AP MLD address of the backhaul BSS. Interfaces of EasyMesh Agents that are downstream of this EasyMesh Agent are identified by {{param|BackhaulDown.{i}.BackhaulDownMACAddress}}.",
+        "type": "dataType:MACAddress",
+        "version": "2.17"
+      },
+      {
+        "name": "BackhaulALID",
+        "access": "readOnly",
+        "description": "The IEEE 1905 {{bibref|IEEE1905.1a}} Abstraction-Layer ID (ALID) of the EasyMesh Agent on the network that is providing the backhaul for this EasyMesh Agent. EasyMesh Agents that are downstream of this EasyMesh agent are identified by {{param|BackhaulDown.{i}.BackhaulDownALID}}.",
+        "type": "dataType:MACAddress",
+        "version": "2.17"
+      },
+      {
+        "name": "BackhaulDownMACAddress",
+        "access": "readOnly",
+        "description": "{{list}} Each MAC address is that of a downstream EasyMesh agent's backhaul link. {{deprecated|2.19|because it was replaced by {{param|BackhaulDown.{i}.BackhaulDownMACAddress}}.}}",
+        "list": true,
+        "type": "dataType:MACAddress",
+        "version": "2.17"
+      },
+      {
+        "name": "BackhaulMediaType",
+        "access": "readOnly",
+        "description": "Media type of the backhaul link of this EasyMesh Agent. This value can be derived from the neighbor's topology response message 1905 device information type TLV Media Type field defined in {{bibref|IEEE1905.1a|Table 6-12}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "IEEE 802.3u",
+          "IEEE 802.3ab",
+          "IEEE 802.11b",
+          "IEEE 802.11g",
+          "IEEE 802.11a",
+          "IEEE 802.11n 2.4",
+          "IEEE 802.11n 5.0",
+          "IEEE 802.11ac",
+          "IEEE 802.11ad",
+          "IEEE 802.11af",
+          "IEEE 802.11ax",
+          "IEEE 802.11be",
+          "IEEE 1901 Wavelet",
+          "IEEE 1901 FFT",
+          "MoCAv1.1",
+          "Generic PHY",
+          "IEEE 802.11ah"
+        ],
+        "version": "2.17"
+      },
+      {
+        "name": "BackhaulPHYRate",
+        "access": "readOnly",
+        "description": "The Physical Layer (PHY) rate in {{units}} on the backhaul link of this EasyMesh agent.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "TrafficSeparationCapability",
+        "access": "readOnly",
+        "description": "Indicator of EasyMesh Agent capability to support EasyMesh {{bibref|EasyMesh}} 802.1Q C-TAG Traffic Separation.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "EasyConnectCapability",
+        "access": "readOnly",
+        "description": "Indicator of the device capability to support Wi-Fi Easy Connect onboarding. Indicated in the DPP Onboarding field of the EasyMesh Profile-2 AP Capability TLV {{bibref|EasyMesh}}.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "TestCapabilities",
+        "access": "readOnly",
+        "description": "Indicates EasyMesh agent support for running a throughput or latency test. 0 indicates that the EasyMesh Agent or single-AP does not support any throughput test and does not support a latency test. 1 indicates that the EasyMesh Agent or single-AP supports a throughput test but does not support a latency test. 2 indicates that the EasyMesh Agent or single-AP supports a latency test but does not support a throughput test. 3 indicates that the EasyMesh Agent or single-AP supports a throughput test and a latency test.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "RadioNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Default8021QNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.15"
+      },
+      {
+        "name": "SSIDtoVIDMappingNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.15"
+      },
+      {
+        "name": "CACStatusNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.15"
+      },
+      {
+        "name": "IEEE1905SecurityNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.15"
+      },
+      {
+        "name": "SPRuleNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.15"
+      },
+      {
+        "name": "AnticipatedChannelsNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.15"
+      },
+      {
+        "name": "AnticipatedChannelUsageNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.15"
+      },
+      {
+        "name": "MaxNumMLDs",
+        "access": "readOnly",
+        "description": "The maximum number of MLDs that the EasyMesh Agent can support. {{bibref|EasyMesh}} source: Wi-Fi 7 Agent Capabilities TLV.",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "APMLDMaxLinks",
+        "access": "readOnly",
+        "description": "The maximum number of affiliated APs supported by any APMLD on this EasyMesh Agent. Set to a value between 0 and 14, which is the number of affiliated APs minus 1. The value of 15 is reserved. {{bibref|EasyMesh}} source: Wi-Fi 7 Agent Capabilities TLV.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 15,
+        "version": "2.17"
+      },
+      {
+        "name": "bSTAMLDMaxLinks",
+        "access": "readOnly",
+        "description": "The maximum number of affiliated bSTAs supported by the bSTAMLD on this EasyMesh Agent. Set to a value between 0 and 14, which is the number of affiliated bSTAs minus 1. The value of 15 is reserved. {{bibref|EasyMesh}} source: Wi-Fi 7 Agent Capabilities TLV.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 15,
+        "version": "2.17"
+      },
+      {
+        "name": "TIDLinkMapCapability",
+        "access": "readOnly",
+        "description": "Indicates the EasyMesh Agent support for TID to Link mapping. {{bibref|EasyMesh}} source: Wi-Fi 7 Agent Capabilities TLV. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "0",
+          "1",
+          "2"
+        ],
+        "version": "2.17"
+      },
+      {
+        "name": "APMLDNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "BackhaulDownNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.19"
+      }
+    ],
+    "description": "Each instance of this object represents an individual EasyMesh Agent or single-AP device in the Wi-Fi network.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "ID"
+      ]
+    }
+  }
+}

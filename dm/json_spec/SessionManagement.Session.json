@@ -1,0 +1,79 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SessionManagement.Session.{i}.",
+  "object": {
+    "path": "Device.SessionManagement.Session.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "SessionNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "Interface",
+        "access": "readOnly",
+        "description": "{{reference}} The IP Interface associated with the ''Session'' entry.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "SessionID",
+        "access": "readOnly",
+        "description": "3GPP session identity. For 3G and 4G, this will be the cid as defined in TS27.007 10.1.1. For 5G see {{bibref|3GPP-TS.24.501|Clause 9.4}}.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 15
+      },
+      {
+        "name": "SessionType",
+        "access": "readOnly",
+        "description": "The data session type indicating the protocol the session is capable of carrying. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.11}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "IPv4",
+          "IPv6",
+          "IPv4v6",
+          "Unstructured"
+        ]
+      },
+      {
+        "name": "APN",
+        "access": "readOnly",
+        "description": "The Access Point Name terminating the data session. For 3G and 4G it will be an APN, whilst 5G uses DNN. For all 3GPP generations, the APN can be specified at the time of session establishment or assigned by the network based on subscription. The format is defined in {{bibref|3GPP-TS.24.501|clause 9.11.2.1A}}.",
+        "type": "string",
+        "maxLength": 100
+      },
+      {
+        "name": "Reference",
+        "access": "readOnly",
+        "description": "Indicates the data session type. When the {{param}} is {{empty}} the data session is unknown.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "                   #.PDP.                   #.PDN.                   #.PDU.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "Contains all the properties of a 3GPP session instance common to all generations. This object contains the {{object}} table.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

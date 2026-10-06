@@ -1,0 +1,55 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DynamicDNS.Client.{i}.Hostname.{i}.",
+  "object": {
+    "path": "Device.DynamicDNS.Client.{i}.Hostname.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "HostnameNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this Hostname.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Status of this Hostname.",
+        "type": "string",
+        "enumerations": [
+          "Registered",
+          "UpdateNeeded",
+          "Updating",
+          "Error",
+          "Disabled"
+        ]
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "Fully qualified domain name that has to be updated with the IP address. If the name is set to another value, the Client MUST immediately send an update request to the Server.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "LastUpdate",
+        "access": "readOnly",
+        "description": "The date time of the last successful update of this name to the Dynamic DNS Server.",
+        "type": "dateTime"
+      }
+    ],
+    "description": "Each table entry represents a fully qualified domain name updated by this Dynamic DNS Client.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Name"
+      ]
+    }
+  }
+}

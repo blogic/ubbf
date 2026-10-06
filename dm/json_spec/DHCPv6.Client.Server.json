@@ -1,0 +1,42 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv6.Client.{i}.Server.{i}.",
+  "object": {
+    "path": "Device.DHCPv6.Client.{i}.Server.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ServerNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "SourceAddress",
+        "access": "readOnly",
+        "description": "The IP address from which the message most recently received from this server was sent.",
+        "type": "dataType:IPv6Address"
+      },
+      {
+        "name": "DUID",
+        "access": "readOnly",
+        "description": "The server's DHCP Unique Identifier (DUID) {{bibref|RFC8415|Section 11}} as received via OPTION_SERVERID.",
+        "type": "hexBinary",
+        "maxLength": 130
+      },
+      {
+        "name": "InformationRefreshTime",
+        "access": "readOnly",
+        "description": "The OPTION_INFORMATION_REFRESH_TIME value {{bibref|RFC4242}} that was most recently received from this server, converted to the ''dateTime'' at which the associated information will expire. If no such option has been received, the parameter value MUST be the \"Unknown Time\" {{null}}. If the information will never expire, the parameter value MUST be infinite time 9999-12-31T23:59:59Z.",
+        "type": "dateTime"
+      }
+    ],
+    "description": "This is a transitory table that lists the discovered DHCPv6 servers (it does ''not'' model a local DHCP server). Table entries are automatically created to correspond with these servers. However, it is a local matter to the CPE when to delete old table entries.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "SourceAddress"
+      ]
+    }
+  }
+}

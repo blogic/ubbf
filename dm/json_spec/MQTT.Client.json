@@ -1,0 +1,357 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MQTT.Client.{i}.",
+  "object": {
+    "path": "Device.MQTT.Client.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ClientNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "The textual name of the MQTT client.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Allows to enable or disable the MQTT client. If a MQTT client gets enabled then the MQTT client has first to establish a MQTT broker session and then subscribe for all enabled topics in the {{object|Subscription.}} table. If the {{param|ProtocolVersion}} is set to {{enum|3.1|#.Capabilities.ProtocolVersionsSupported}} or {{enum|3.1.1|#.Capabilities.ProtocolVersionsSupported}} and {{param|CleanSession}} is set to {{false}} a subscription MUST only be sent for topics which haven't been subscribed before (see {{bibref|MQTT311|section 3.1.2.4}}). If the {{param|ProtocolVersion}} is set to {{enum|5.0|#.Capabilities.ProtocolVersionsSupported}} and {{param|CleanStart}} is set to {{false}} a subscription MUST only be sent for topics which haven't been subscribed before (see {{bibref|MQTT50|section 3.1.2.4}}). If a connected MQTT client gets disabled ({{param|Status}} is either {{enum|Connecting|Status}} or {{enum|Connected|Status}}) then the MQTT client has to send a MQTT DISCONNECT packet to disconnect from the MQTT broker (see {{bibref|MQTT311|section 3.14}} or {{bibref|MQTT50|section 3.14}}), before setting the {{param|Status}} to {{enum|Disabled|Status}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the status of this MQTT client. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid (e.g. The MQTT client can not use the defined port, because it is blocked) The {{enum|Error_BrokerUnreachable}} value indicates that the connection to the MQTT broker could not be established. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Connecting",
+          "Connected",
+          "Error_Misconfigured",
+          "Error_BrokerUnreachable",
+          "Error"
+        ]
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "The IP Interface associated with the {{object}} entry. {{template|INTERFACE-ROUTING}}",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": ".IP.Interface.",
+          "targetType": "row"
+        },
+        "version": "2.16"
+      },
+      {
+        "name": "ProtocolVersion",
+        "access": "readWrite",
+        "description": "Specifies the MQTT protocol version used in the communication with the MQTT broker.",
+        "type": "string"
+      },
+      {
+        "name": "EnableEncryption",
+        "access": "readWrite",
+        "description": "When {{true}}, encryption MUST be used for this MQTT {{object}} instance. {{deprecated|2.15|because it duplicates the functionality already handled by the {{param|TransportProtocol}} parameter}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.14"
+      },
+      {
+        "name": "BrokerAddress",
+        "access": "readWrite",
+        "description": "Host name or IP address of the MQTT Broker.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "BrokerPort",
+        "access": "readWrite",
+        "description": "Port number of the MQTT broker.",
+        "default": "1883",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "TransportProtocol",
+        "access": "readWrite",
+        "description": "Indicates the transport protocol to be used for the MQTT broker connection.",
+        "default": "TCP/IP",
+        "defaultType": "object",
+        "type": "string"
+      },
+      {
+        "name": "CleanSession",
+        "access": "readWrite",
+        "description": "The value of the MQTT clean session flag in the MQTT CONNECT packet (see {{bibref|MQTT311|section 3.1}} and {{bibref|MQTT311|section 3.1.2.4}}). If this flag is set to {{true}} (default), the MQTT broker will delete all subscription information after a Disconnect. {{template|MQTTReconnect}} This parameter only applies if {{param|ProtocolVersion}} is set to {{enum|3.1|#.Capabilities.ProtocolVersionsSupported}} or {{enum|3.1.1|#.Capabilities.ProtocolVersionsSupported}}.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "CleanStart",
+        "access": "readWrite",
+        "description": "The value of the MQTT Clean Start flag in the MQTT CONNECT packet (see {{bibref|MQTT50|section 3.1.2.4}}. If this flag is set to {{true}} (default), the MQTT broker will delete all subscription information after a Disconnect. {{template|MQTTReconnect}}. {{template|MQTT50ONLY}}",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.13"
+      },
+      {
+        "name": "WillEnable",
+        "access": "readWrite",
+        "description": "Enables or disables the will handling (see {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section 3.1.2.5}}) or {{bibref|MQTT50|section 3.1.2.5}}). If the connection gets enabled and this parameter is set to {{true}} and either the parameter {{param|WillTopic}} or {{param|WillValue}} are {{empty}}, the CPE MUST set the {{param|Status}} to {{enum|Error_Misconfigured|Status}}. {{template|MQTTReconnect}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "WillQoS",
+        "access": "readWrite",
+        "description": "The MQTT QoS level assigned with the will message (see {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section 3.1.2.6}}) or {{bibref|MQTT50|section 3.1.2.6}}). This parameter is only used if {{param|WillEnable}} is set to {{true}}. {{template|MQTTWillChange}}",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 2
+      },
+      {
+        "name": "WillRetain",
+        "access": "readWrite",
+        "description": "Indicate to the MQTT broker to retain the Will over a Disconnect (see {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section 3.1.2.7}}) or {{bibref|MQTT50|section 3.1.2.7}}). This parameter is only used if {{param|WillEnable}} is set to {{true}}. {{template|MQTTWillChange}}",
+        "type": "boolean"
+      },
+      {
+        "name": "KeepAliveTime",
+        "access": "readWrite",
+        "description": "Keep Alive Time in {{units}} defines the maximum wait time after which a packet has to be sent to the MQTT broker (see {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section 3.1.2.10}}) or {{bibref|MQTT50|section 3.1.2.10}}). If no regular packet can be sent a MQTT PINGREQ packet is sent. A value of zero (0) means no keep alive packets are sent and the MQTT client is not disconnected by the server. {{template|MQTTReconnect}}",
+        "default": "60",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "SessionExpiryInterval",
+        "access": "readWrite",
+        "description": "Session expiry interval in {{units}} defines the wait time before a session expires after the connection has been closed by the MQTT client {{bibref|MQTT50|section 3.1.2.11.2}}). {{template|MQTT50ONLY}}",
+        "type": "unsignedInt",
+        "version": "2.13"
+      },
+      {
+        "name": "ReceiveMaximum",
+        "access": "readWrite",
+        "description": "The MQTT client uses this value to limit the number of QoS 1 and QoS 2 publications that it is willing to process concurrently (see {{bibref|MQTT50|section 3.1.2.11.3}}). {{template|MQTTReconnect}} {{template|MQTT50ONLY}}",
+        "type": "unsignedInt",
+        "version": "2.13"
+      },
+      {
+        "name": "MaximumPacketSize",
+        "access": "readWrite",
+        "description": "The maximum packet size in {{units}} the MQTT client can and will accept from the MQTT broker. A value of 0 means no limit. If the value is set to another value, the MQTT client will inform the broker in the next CONNECT packet {{bibref|MQTT50|section 3.1.2.11.4}}). {{template|MQTTReconnect}} {{template|MQTT50ONLY}}",
+        "type": "unsignedInt",
+        "version": "2.13"
+      },
+      {
+        "name": "TopicAliasMaximum",
+        "access": "readWrite",
+        "description": "This value indicates the highest value that the MQTT client will accept as a Topic Alias sent by the Server (see {{bibref|MQTT50|section 3.1.2.11.5}}). The MQTT client uses this value to limit the number of Topic Aliases that it is willing to hold on this connection. A value of 0 indicates that Topic Alias is not supported. {{template|MQTTReconnect}} {{template|MQTT50ONLY}}",
+        "type": "unsignedInt",
+        "maxInclusive": 65535,
+        "version": "2.13"
+      },
+      {
+        "name": "RequestResponseInfo",
+        "access": "readWrite",
+        "description": "The MQTT client uses this value in a MQTT CONNECT packet to request the Server to return Response Information in the MQTT CONNACK (see {{bibref|MQTT50|section 3.1.2.11.6}}). {{template|MQTTReconnect}} {{template|MQTT50ONLY}}",
+        "type": "boolean",
+        "version": "2.13"
+      },
+      {
+        "name": "RequestProblemInfo",
+        "access": "readWrite",
+        "description": "This value indicates whether the Reason String or User Properties are sent in the case of failures.(see {{bibref|MQTT50|section 3.1.2.11.7}}). {{template|MQTTReconnect}} {{template|MQTT50ONLY}}",
+        "type": "boolean",
+        "version": "2.13"
+      },
+      {
+        "name": "AuthenticationMethod",
+        "access": "readWrite",
+        "description": "This value defines the extended authentication method to be used (see {{bibref|MQTT50|section 3.1.2.11.9}}). If the parameter is empty, no extended authentication is performed. {{template|MQTTReconnect}} {{template|MQTT50ONLY}}",
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 256,
+        "version": "2.13"
+      },
+      {
+        "name": "ALPN",
+        "access": "readWrite",
+        "description": "The supported protocol(s) to be advertised in a TLS handshake using the `Application-Layer Protocol Negotiation (ALPN)` extension as defined in {{bibref|RFC7301}}. If the parameter is empty, that is an indication that ALPN is not being used. {{template|MQTTReconnect}}",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 256,
+        "version": "2.19"
+      },
+      {
+        "name": "ClientID",
+        "access": "readWrite",
+        "description": "The MQTT client identifier used in the MQTT CONNECT packet (see {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section 3.1.3.1}}) or {{bibref|MQTT50|section 3.1.3.1}}). If {{param|ProtocolVersion}} is set to {{enum|3.1|#.Capabilities.ProtocolVersionsSupported}} or {{enum|3.1.1|#.Capabilities.ProtocolVersionsSupported}}, this parameter MUST NOT be an empty string. If {{param|ProtocolVersion}} is set to {{enum|5.0|#.Capabilities.ProtocolVersionsSupported}}, an empty string is allowed. {{template|MQTTReconnect}}",
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 65535
+      },
+      {
+        "name": "WillDelayInterval",
+        "access": "readWrite",
+        "description": "The delay in {{units}} after the session is disconnected, before sending the Will message {{bibref|MQTT50|section 3.1.3.2.2}}). A value of 0 indicates that there is no delay. {{template|MQTTWillChange}} {{template|MQTT50ONLY}}",
+        "default": "5",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "version": "2.13"
+      },
+      {
+        "name": "WillMessageExpiryInterval",
+        "access": "readWrite",
+        "description": "The lifetime in {{units}} of a Will Message (see {{bibref|MQTT50|section 3.1.3.2.4}}). A value of 0 indicates that no message expiry interval value is specified for in the will message properties of a CONNECT packet. {{template|MQTT50ONLY}}",
+        "type": "unsignedInt",
+        "version": "2.13"
+      },
+      {
+        "name": "WillContentType",
+        "access": "readWrite",
+        "description": "Describes the type of the {{param|WillValue}} {{bibref|MQTT50|section 3.1.3.2.5}}). {{template|MQTTWillChange}} {{template|MQTT50ONLY}}",
+        "type": "string",
+        "maxLength": 256,
+        "version": "2.13"
+      },
+      {
+        "name": "WillResponseTopic",
+        "access": "readWrite",
+        "description": "Topic Name for a will response message. The presence of a Response Topic identifies the Will Message as a Request {{bibref|MQTT50|section 3.1.3.2.6}}). If the {{param}} is an empty string the will response topic will not be sent in a MQTT CONNECT packet. {{template|MQTTWillChange}} {{template|MQTT50ONLY}}",
+        "type": "string",
+        "maxLength": 65535,
+        "version": "2.13"
+      },
+      {
+        "name": "WillTopic",
+        "access": "readWrite",
+        "description": "The Topic sent in the Will Message (see {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section 3.1.3.3}}) or {{bibref|MQTT50|section 3.1.3.3}}). This parameter is only used if {{param|WillEnable}} is set to {{true}}. {{template|MQTTWillChange}}",
+        "type": "string",
+        "maxLength": 65535
+      },
+      {
+        "name": "WillValue",
+        "access": "readWrite",
+        "description": "The value sent in the Will Message (see {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section 3.1.2.5}}) or {{bibref|MQTT50|section 3.1.3.4}}). This parameter is only used if {{param|WillEnable}} is set to {{true}}. {{template|MQTTWillChange}}",
+        "type": "string",
+        "maxLength": 65535
+      },
+      {
+        "name": "Username",
+        "access": "readWrite",
+        "description": "Username used to authenticate the MQTT client when making a connection to the MQTT broker. The value is sent in the MQTT CONNECT packet (see {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section 3.1.3.4}} or {{bibref|MQTT50|section 3.1.3.5}}). If this parameter is {{empty}} no authentication parameters are sent in the MQTT CONNECT packet.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Password",
+        "access": "readWrite",
+        "description": "Password used to authenticate the MQTT client when making a connection to the MQTT broker. The value is sent in the MQTT CONNECT packet (see {{bibref|MQTT311|section 3.1}}, {{bibref|MQTT311|section 3.1.3.5}} or {{bibref|MQTT50|section 3.1.3.6}}). This password is only sent in the MQTT CONNECT packet if {{param|Username}} is not {{empty}}.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "PublishMessageExpiryInterval",
+        "access": "readWrite",
+        "description": "The lifetime in {{units}} of a PUBLISH Message (see {{bibref|MQTT50|section 3.3.2.3.3}}). A value of 0 indicates that no message expiry interval value is included in the PUBLISH packet. {{template|MQTT50ONLY}}",
+        "type": "unsignedInt",
+        "version": "2.13"
+      },
+      {
+        "name": "MessageRetryTime",
+        "access": "readWrite",
+        "description": "Message retry time in {{units}} defines the wait time before a MQTT message that expects a response (QoS value of message is > 0, or PUBLISH, PUBREL, SUBSCRIBE, UNSUBSCRIBE message) is resent, because the response is not received (see {{bibref|MQTT311|section 4.2}}). This parameter only applies if {{param|ProtocolVersion}} is set to {{enum|3.1|#.Capabilities.ProtocolVersionsSupported}}.",
+        "default": "5",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "ConnectRetryTime",
+        "access": "readWrite",
+        "description": "Connect retry time in {{units}} defines the wait time before a failed MQTT broker connection is retried. A failure can either be on the connection level (the TCP/IP or TLS can not be established) or on the Protocol level, the MQTT client does not receive a MQTT CONNACK packet on a MQTT CONNECT packet sent. If the parameter {{param|ConnectRetryIntervalMultiplier}} is defined, the MQTT client MUST use a random value between {{param}}*({{param|ConnectRetryIntervalMultiplier}}/1000)^(n-1)^ and {{param}}*({{param|ConnectRetryIntervalMultiplier}}/1000)^n^ for the connect retry time, with n equals the current retry number. The max number of n is 10, starting with the 11th retry always the value n = 10 is used. If the parameters {{param|ConnectRetryIntervalMultiplier}} and {{param|ConnectRetryMaxInterval}} are defined, the MQTT client MUST use the value of {{param|ConnectRetryMaxInterval}} if the calculated random value exceeds the value of {{param|ConnectRetryMaxInterval}}.",
+        "default": "5",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "ConnectRetryIntervalMultiplier",
+        "access": "readWrite",
+        "description": "Configures the retry interval multiplier. This value is expressed in units of 0.001. Hence the values of the multiplier range between 1.000 and 65.535.",
+        "default": "2000",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1000,
+        "maxInclusive": 65535,
+        "version": "2.13"
+      },
+      {
+        "name": "ConnectRetryMaxInterval",
+        "access": "readWrite",
+        "description": "The maximum reconnection wait interval, in {{units}}.",
+        "default": "30720",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "version": "2.13"
+      },
+      {
+        "name": "ResponseInformation",
+        "access": "readOnly",
+        "description": "The value of the CONNACK Response Information property supplied by a MQTT 5.0 server. This value is used by a MQTT 5.0 client as the basis for the PUBLISH Response Topic property for all PUBLISH packets that expect a response. If the value of {{param}} is not a subset (wildcarded or precise match) of any of the {{param|Subscription.{i}.Topic}} values the MQTT client MUST subscribe to this Topic.",
+        "type": "string",
+        "maxLength": 65535,
+        "version": "2.13"
+      },
+      {
+        "name": "SubscriptionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UserPropertyNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.13"
+      }
+    ],
+    "description": "MQTT client table. Contains a list of configured MQTT clients.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

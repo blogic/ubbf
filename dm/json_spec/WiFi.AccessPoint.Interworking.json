@@ -1,0 +1,95 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.AccessPoint.{i}.Interworking.",
+  "object": {
+    "path": "Device.WiFi.AccessPoint.{i}.Interworking.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Specifies whether the Interworking element is included in the wireless frames for this access point.",
+        "type": "boolean"
+      },
+      {
+        "name": "AccessNetworkType",
+        "access": "readWrite",
+        "description": "Type of access network to be specified in Interworking element as per {{bibref|802.11-2020|Table 9-236 Access Network Type}}.",
+        "type": "string",
+        "enumerations": [
+          "PrivateNetwork",
+          "PrivateNetworkWithGuestAccess",
+          "ChargeablePublicNetwork",
+          "FreePublicNetwork",
+          "PersonalDeviceNetwork",
+          "EmergencyServicesOnlyNetwork",
+          "TestOrExperimental",
+          "Wildcard"
+        ]
+      },
+      {
+        "name": "InternetAvailable",
+        "access": "readWrite",
+        "description": "Indicates that Internet Access is available at the AP when set to {{true}}. This MUST be set to {{false}} in case of walled-garden environments, where the AP may limit Wi-Fi access to locally available content. See {{bibref|802.11-2020|Section 9.4.2.91}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "ASRA",
+        "access": "readWrite",
+        "description": "Additional Step Required For Access as specified in the Interworking element of {{bibref|802.11-2020|Figure 9-484}}. Indicates that the network requires a further step for access when set to {{true}}. The Type of access is determined by {{param|#.ANQP.NetworkAuthTypes}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "VenueGroup",
+        "access": "readWrite",
+        "description": "Specifies the venue group as descriped in {{bibref|802.11-2020|Table 9-65-Venue group codes and descriptions}}.",
+        "type": "string",
+        "enumerations": [
+          "Unspecified",
+          "Assembly",
+          "Business",
+          "Educational",
+          "Factory-Industrial",
+          "Institutional",
+          "Mercantile",
+          "Residential",
+          "Storage",
+          "Utility-Miscellaneous",
+          "Vehicular",
+          "Outdoor"
+        ]
+      },
+      {
+        "name": "VenueType",
+        "access": "readWrite",
+        "description": "Specifies the Venue Type as described in {{bibref|802.11-2020|Table 9-66 Venue Type assignments}}.",
+        "type": "string"
+      },
+      {
+        "name": "HESSID",
+        "access": "readWrite",
+        "description": "Specifies the 6-octet MAC address that identifies the homogeneous ESS as described in {{bibref|802.11-2020|Section 9.4.2.91}}.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "EmergencyServiceReachable",
+        "access": "readWrite",
+        "description": "ESR (emergency services reachable) field of the Interworking element as described in {{bibref|802.11-2020|Section 9.4.2.91}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "UnauthenticatedEmergencyServiceAvailable",
+        "access": "readWrite",
+        "description": "UESA (unauthenticated emergency service accessible) field of the interworking element as described in {{bibref|802.11-2020|Section 9.4.2.91}}.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object contains the settings to the interworking element as described in {{bibref|802.11-2020|Section 9.4.2.91}}.",
+    "children": []
+  }
+}

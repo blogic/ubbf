@@ -1,0 +1,148 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE8021x.Supplicant.{i}.",
+  "object": {
+    "path": "Device.IEEE8021x.Supplicant.{i}.",
+    "access": "readWrite",
+    "minEntries": "1",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "SupplicantNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "This parameter controls whether this resource will utilize the 802.1x protocol as a supplicant for device authentication purposes.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational status of this 802.1x supplicant. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "{{reference}} The interface on which authentication is to be performed. Example: Device.Ethernet.Link.1",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "PAEState",
+        "access": "readOnly",
+        "description": "The current supplicant state machine as defined in {{bibref|802.1x-2004|9.5.1}}, Supplicant PAE (Port Access Entity) State. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Disconnected",
+          "Logoff",
+          "Connecting",
+          "Authenticating",
+          "Authenticated",
+          "Held",
+          "Restart",
+          "ForceAuth",
+          "ForceUnauth"
+        ]
+      },
+      {
+        "name": "EAPIdentity",
+        "access": "readWrite",
+        "description": "The identity to be exchanged between the supplicant and authenticator.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "MaxStart",
+        "access": "readWrite",
+        "description": "The maximum number of times the device will attempt to send an EAP start message before authentication fails as defined in {{bibref|802.1x-2004|9.5.1}}, maxStart. This is in support of {{bibref|802.1x-2004|Section 8.4.6}}, Migration Considerations.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 10
+      },
+      {
+        "name": "StartPeriod",
+        "access": "readWrite",
+        "description": "The period in {{units}} a supplicant will wait before the device will attempt to re-send an EAP start message as defined in {{bibref|802.1x-2004|9.5.1}}, startPeriod.",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "HeldPeriod",
+        "access": "readWrite",
+        "description": "The hold-off period in {{units}} a supplicant will wait before re-attempting authentication as defined in {{bibref|802.1x-2004|9.5.1}}, heldPeriod.",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "AuthPeriod",
+        "access": "readWrite",
+        "description": "The period in {{units}} after which a request will be considered timed out as defined in {{bibref|802.1x-2004|9.5.1}}, authPeriod.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AuthenticationCapabilities",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the authentication methods supported by the device. {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "EAP-TLS",
+          "EAP-MD5"
+        ]
+      },
+      {
+        "name": "StartFailurePolicy",
+        "access": "readWrite",
+        "description": "The action to be taken when authentication has failed, when the network fails to respond to the supplicant's start message, and the retries have been exceeded (since network does not yet support 802.1x). {{enum}} This is in support of {{bibref|802.1x-2004|Section 8.4.6}}, Migration Considerations.",
+        "type": "string",
+        "enumerations": [
+          "FailAuthentication",
+          "AssumeAuthentication"
+        ]
+      },
+      {
+        "name": "AuthenticationSuccessPolicy",
+        "access": "readWrite",
+        "description": "The action to be taken when authentication succeeds and a connection has already received an address and/or policy settings. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "NoAction",
+          "RenewConnection"
+        ]
+      }
+    ],
+    "description": "802.1x supplicant authentication provisioning and status information associated with an interface to be authenticated (e.g. an {{object|##.Ethernet.Link}} instance). For enabled table entries, if {{param|Interface}} is not a valid reference then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}. Note: The {{object}} table includes a unique key parameter that is a strong reference. If a strongly referenced object is deleted, the CPE will set the referencing parameter to {{empty}}. However, doing so under these circumstances might cause the updated {{object}} row to then violate the table's unique key constraint; if this occurs, the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and disable the offending {{object}} row.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

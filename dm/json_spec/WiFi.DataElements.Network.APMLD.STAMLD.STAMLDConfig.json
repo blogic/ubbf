@@ -1,0 +1,47 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.STAMLD.{i}.STAMLDConfig.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.STAMLD.{i}.STAMLDConfig.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "EMLMREnabled",
+        "access": "readOnly",
+        "description": "Indicates if the Enhanced Multi-Link Multi-Radio (EMLMR) operation is enabled.",
+        "type": "boolean"
+      },
+      {
+        "name": "EMLSREnabled",
+        "access": "readOnly",
+        "description": "Indicates if Enhanced Multi-Link Single-Radio (EMLSR) operation is enabled.",
+        "type": "boolean"
+      },
+      {
+        "name": "STREnabled",
+        "access": "readOnly",
+        "description": "Indicates if Simultaneous Transmit and Receive (STR) operation is enabled.",
+        "type": "boolean"
+      },
+      {
+        "name": "NSTREnabled",
+        "access": "readOnly",
+        "description": "Indicates if Non-Simultaneous Transmit and Receive (NSTR) operation is enabled.",
+        "type": "boolean"
+      },
+      {
+        "name": "TIDLinkMapNegotiation",
+        "access": "readOnly",
+        "description": "Indicates if Traffic Identifier (TID) to Link Mapping Negotiation is enabled. {{bibref|EasyMesh}} source: TID-to-Link Mapping Policy TLV.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object describes the Wi-Fi 7 Multi-Link Operation (MLO) configuration of the Multi-Link Device (MLD) station (STA, also called associated device). Note this may differ from the WiFi7 capabilities of the device. {{bibref|EasyMesh}} source: Associated STA MLD Configuration Report TLV.",
+    "children": []
+  }
+}

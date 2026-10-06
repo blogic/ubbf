@@ -1,0 +1,137 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.SSID.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.SSID.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "SSIDNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "SSID",
+        "access": "readOnly",
+        "description": "The SSID for fronthaul use across this Wi-Fi Multi-AP network.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Band",
+        "access": "readOnly",
+        "description": "The band(s) (GHz) for which this {{param|SSID}} applies. {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "All",
+          "2.4",
+          "5",
+          "6",
+          "5_UNII_1",
+          "5_UNII_2",
+          "5_UNII_3",
+          "5_UNII_4",
+          "6_UNII_5",
+          "6_UNII_6",
+          "6_UNII_7",
+          "6_UNII_8",
+          "Sub_1GHz"
+        ]
+      },
+      {
+        "name": "Enable",
+        "access": "readOnly",
+        "description": "Enable or disable of this {{param|SSID}}. Disable stops the use of this {{param|SSID}}, but the object is retained. : {{true}}: this {{param|SSID}} is enabled. : {{false}}: this {{param|SSID}} is disabled.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "AKMsAllowed",
+        "access": "readOnly",
+        "description": "{{list}} List items indicate Authentication and Key Management (AKM) suites/security modes allowed on this BSS. {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "psk",
+          "dpp",
+          "sae",
+          "psk+sae",
+          "dpp+sae",
+          "dpp+psk+sae",
+          "SuiteSelector"
+        ],
+        "version": "2.17"
+      },
+      {
+        "name": "SuiteSelector",
+        "access": "readOnly",
+        "description": "AKM suite selector, the AKM suite selector (OUI and type) is encoded as a 4-octet hex-encoded value without internal delimiters, e.g. 506F9A02 {{bibref|802.11-2020|Table 9-151}}. This parameter applies if {{param|AKMsAllowed}} includes value \"SuiteSelector\".",
+        "type": "hexBinary",
+        "minLength": 4,
+        "maxLength": 4,
+        "version": "2.17"
+      },
+      {
+        "name": "AdvertisementEnabled",
+        "access": "readOnly",
+        "description": "Indicates if the SSID is advertised in beacons, or not. : {{true}}: this {{param|SSID}} is to be advertised in beacons. : {{false}}: this {{param|SSID}} is not to be advertised in beacons.",
+        "type": "boolean",
+        "version": "2.17"
+      },
+      {
+        "name": "MFPConfig",
+        "access": "readOnly",
+        "description": "Management Frame Protection (MFP) configuration. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Optional",
+          "Required"
+        ],
+        "version": "2.17"
+      },
+      {
+        "name": "MobilityDomain",
+        "access": "readOnly",
+        "description": "The IEEE 802.11 mobility domain {{bibref|802.11-2020|Section 9.4.2.46}}.",
+        "type": "dataType:MACAddress",
+        "version": "2.17"
+      },
+      {
+        "name": "HaulType",
+        "access": "readOnly",
+        "description": "Indicates the use of this {{param|SSID}}. {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "Fronthaul",
+          "Backhaul"
+        ],
+        "version": "2.17"
+      },
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "Human-readable description for the BSS referenced by this {{object}}. For example {{param}} could be one of Primary, Home, Guest, Public, Private, Children, Video, Backhaul, Not Children, or Public 2.",
+        "type": "string",
+        "version": "2.19"
+      }
+    ],
+    "description": "This object specifies SSIDs for fronthaul use across all agents in this Wi-Fi Multi-AP network, or on this single-AP. Also specifies the {{param|Band}} for each {{param|SSID}}. The {{param|Alias}} can be used to uniquely refer to this table entry corresponding to a BSS even if the {{param|SSID}} were to change. Note that VLAN IDs (VIDs) can be configured per SSID with {{object|#.Device.{i}.SSIDtoVIDMapping.{i}}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

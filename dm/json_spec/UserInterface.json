@@ -1,0 +1,184 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.UserInterface.",
+  "object": {
+    "path": "Device.UserInterface.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables and disables the CPE's user interface.",
+        "default": "true",
+        "defaultType": "factory",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "PasswordRequired",
+        "access": "readWrite",
+        "description": "Present only if the CPE provides a password-protected LAN-side user interface. Indicates whether or not the local user interface MUST require a password to be chosen by the user. If {{false}}, the choice of whether or not a password is used is left to the user.",
+        "type": "boolean"
+      },
+      {
+        "name": "PasswordUserSelectable",
+        "access": "readWrite",
+        "description": "Present only if the CPE provides a password-protected LAN-side user interface and supports LAN-side Auto-Configuration. Indicates whether or not a password to protect the local user interface of the CPE MAY be selected by the user directly (i.e. {{param|#.Users.User.{i}.Password}}), or MUST be equal to the password used by the LAN-side Auto-Configuration protocol (i.e. {{param|#.LANConfigSecurity.ConfigPassword}}).",
+        "type": "boolean"
+      },
+      {
+        "name": "UpgradeAvailable",
+        "access": "readWrite",
+        "description": "Indicates that a CPE upgrade is available, allowing the CPE to display this information to the user.",
+        "type": "boolean"
+      },
+      {
+        "name": "WarrantyDate",
+        "access": "readWrite",
+        "description": "Indicates the date and time in UTC that the warranty associated with the CPE is to expire.",
+        "type": "dateTime"
+      },
+      {
+        "name": "ISPName",
+        "access": "readWrite",
+        "description": "The name of the customer's ISP.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "ISPHelpDesk",
+        "access": "readWrite",
+        "description": "The help desk phone number of the ISP.",
+        "type": "string",
+        "maxLength": 32
+      },
+      {
+        "name": "ISPHomePage",
+        "access": "readWrite",
+        "description": "The {{datatype}} of the ISP's home page.",
+        "type": "dataType:URL"
+      },
+      {
+        "name": "ISPHelpPage",
+        "access": "readWrite",
+        "description": "The {{datatype}} of the ISP's on-line support page.",
+        "type": "dataType:URL"
+      },
+      {
+        "name": "ISPLogo",
+        "access": "readWrite",
+        "description": "Base64 encoded GIF or JPEG image. The binary image is constrained to 4095 bytes or less.",
+        "type": "base64",
+        "minLength": 0,
+        "maxLength": 4095
+      },
+      {
+        "name": "ISPLogoSize",
+        "access": "readWrite",
+        "description": "Un-encoded binary image size in bytes. If ISPLogoSize input value is 0 then the ISPLogo is cleared. ISPLogoSize can also be used as a check to verify correct transfer and conversion of Base64 string to image size.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 4095
+      },
+      {
+        "name": "ISPMailServer",
+        "access": "readWrite",
+        "description": "The {{datatype}} of the ISP's mail server.",
+        "type": "dataType:URL"
+      },
+      {
+        "name": "ISPNewsServer",
+        "access": "readWrite",
+        "description": "The {{datatype}} of the ISP's news server.",
+        "type": "dataType:URL"
+      },
+      {
+        "name": "TextColor",
+        "access": "readWrite",
+        "description": "The color of text on the GUI screens in RGB hexadecimal notation (e.g., FF0088).",
+        "type": "hexBinary",
+        "minLength": 3,
+        "maxLength": 3
+      },
+      {
+        "name": "BackgroundColor",
+        "access": "readWrite",
+        "description": "The color of the GUI screen backgrounds in RGB hexadecimal notation (e.g., FF0088).",
+        "type": "hexBinary",
+        "minLength": 3,
+        "maxLength": 3
+      },
+      {
+        "name": "ButtonColor",
+        "access": "readWrite",
+        "description": "The color of buttons on the GUI screens in RGB hexadecimal notation (e.g., FF0088).",
+        "type": "hexBinary",
+        "minLength": 3,
+        "maxLength": 3
+      },
+      {
+        "name": "ButtonTextColor",
+        "access": "readWrite",
+        "description": "The color of text on buttons on the GUI screens in RGB hexadecimal notation (e.g., FF0088).",
+        "type": "hexBinary",
+        "minLength": 3,
+        "maxLength": 3
+      },
+      {
+        "name": "AutoUpdateServer",
+        "access": "readWrite",
+        "description": "The server the CPE can check to see if an update is available for direct download to it.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "UserUpdateServer",
+        "access": "readWrite",
+        "description": "The server where a user can check via a web browser if an update is available for download to a PC.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "AvailableLanguages",
+        "access": "readOnly",
+        "description": "{{list}} List items represent user-interface languages that are available, where each language is specified according to {{bibref|RFC3066}}.",
+        "list": true,
+        "listMaxLength": 256,
+        "type": "string"
+      },
+      {
+        "name": "CurrentLanguage",
+        "access": "readWrite",
+        "description": "Current user-interface language, specified according to {{bibref|RFC3066}}. The value MUST be a member of the list reported by the {{param|AvailableLanguages}} parameter.",
+        "type": "string",
+        "maxLength": 16
+      },
+      {
+        "name": "HTTPAccessSupportedProtocols",
+        "access": "readOnly",
+        "description": "Indicates the protocols that are supported by the CPE for the purpose of remotely accessing the user interface.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "HTTP",
+          "HTTPS"
+        ],
+        "version": "2.16"
+      },
+      {
+        "name": "HTTPAccessNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.16"
+      }
+    ],
+    "description": "This object contains parameters relating to the user interface of the CPE.",
+    "children": []
+  }
+}

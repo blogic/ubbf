@@ -1,0 +1,131 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IP.Interface.{i}.IPv6Address.{i}.",
+  "object": {
+    "path": "Device.IP.Interface.{i}.IPv6Address.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "IPv6AddressNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this {{object}} table entry. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "IPAddressStatus",
+        "access": "readOnly",
+        "description": "The status of {{param|IPAddress}}, indicating whether it can be used for communication. See also {{param|PreferredLifetime}} and {{param|ValidLifetime}}. {{enum}} This parameter is based on ''ipAddressStatus'' and ''ipAddressStatusTC'' from {{bibref|RFC4293}}.",
+        "default": "Invalid",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Preferred",
+          "Deprecated",
+          "Invalid",
+          "Inaccessible",
+          "Unknown",
+          "Tentative",
+          "Duplicate",
+          "Optimistic"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}} This parameter can only be modified if {{param|Origin}} is {{enum|Static|Origin}}.",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "IPAddress",
+        "access": "readWrite",
+        "description": "IPv6 address. This parameter can only be modified if the {{param|Origin}} is {{enum|Static|Origin}}. This parameter is based on ''ipAddressAddr'' from {{bibref|RFC4293}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPv6Address"
+      },
+      {
+        "name": "Origin",
+        "access": "readOnly",
+        "description": "Mechanism via which the IP address was assigned. {{enum}} This parameter is based on ''ipOrigin'' from {{bibref|RFC4293}}.",
+        "default": "Static",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "AutoConfigured",
+          "DHCPv6",
+          "IKEv2",
+          "MAP",
+          "WellKnown",
+          "3GPP-NAS",
+          "Static"
+        ]
+      },
+      {
+        "name": "Prefix",
+        "access": "readWrite",
+        "description": "IPv6 address prefix. Some addresses, e.g. addresses assigned via the DHCPv6 IA_NA option, are not associated with a prefix, and some {{enum|WellKnown|#.IPv6Prefix.{i}.Origin}} prefixes might not be modeled. In both of these cases {{param}} will be {{null}}. This parameter can only be modified if the {{param|Origin}} is {{enum|Static|Origin}}. This parameter is based on ''ipAddressPrefix'' from {{bibref|RFC4293}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.IPv6Prefix.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "PreferredLifetime",
+        "access": "readWrite",
+        "description": "The time at which this address will cease to be preferred (i.e. will become deprecated), or {{null}} if not known. For an infinite lifetime, the parameter value MUST be 9999-12-31T23:59:59Z. This parameter can only be modified if the {{param|Origin}} is {{enum|Static|Origin}}.",
+        "default": "9999-12-31T23:59:59Z",
+        "defaultType": "object",
+        "type": "dateTime"
+      },
+      {
+        "name": "ValidLifetime",
+        "access": "readWrite",
+        "description": "The time at which this address will cease to be valid (i.e. will become invalid), or {{null}} if unknown. For an infinite lifetime, the parameter value MUST be 9999-12-31T23:59:59Z. This parameter can only be modified if the {{param|Origin}} is {{enum|Static|Origin}}.",
+        "default": "9999-12-31T23:59:59Z",
+        "defaultType": "object",
+        "type": "dateTime"
+      },
+      {
+        "name": "Anycast",
+        "access": "readWrite",
+        "description": "Indicates whether this is an anycast address {{bibref|RFC4291|Section 2.6}}. Anycast addresses are syntactically identical to unicast addresses and so need to be configured explicitly. This parameter can only be modified if the {{param|Origin}} is {{enum|Static|Origin}}. This parameter is based on ''ipAddressType'' from {{bibref|RFC4293}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      }
+    ],
+    "description": "This table contains the IP interface's IPv6 unicast addresses. There MUST be an entry for each such address, including anycast addresses. There are several ways in which entries can be added to and deleted from this table, including: * Automatically via SLAAC {{bibref|RFC4862}}, which covers generation of link-local addresses (for all types of device) and global addresses (for non-router devices). * Automatically via DHCPv6 {{bibref|RFC8415}}, which covers generation of any type of address (subject to the configured DHCP server policy). * Manually via a GUI or some other local management interface. * Manually via factory default configuration. * By the Controller. This table MUST NOT include entries for the Subnet-Router anycast address {{bibref|RFC4291|Section 2.6.1}}. Such entries would be identical to others but with a zero interface identifier, and would add no value. A loopback interface will always have address ''::1'' {{bibref|RFC4291|Section 2.5.3}} and MAY also have link-local address ''fe80::1''. This object is based on ''ipAddressTable'' from {{bibref|RFC4293}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

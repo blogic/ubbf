@@ -1,0 +1,93 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Ghn.Interface.{i}.DMInfo.",
+  "object": {
+    "path": "Device.Ghn.Interface.{i}.DMInfo.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "DomainName",
+        "access": "readWrite",
+        "description": "This is the domain name to which the interface is currently registered. {{empty}} indicates that the interface is currently not registered.",
+        "type": "hexBinary",
+        "maxLength": 32
+      },
+      {
+        "name": "DomainNameIdentifier",
+        "access": "readOnly",
+        "description": "The Domain Name Identifier, a shortened version of {{param|DomainName}}, denoted as DNI in {{bibref|G.9961|Section 8.6.11.2.1}}.",
+        "type": "hexBinary",
+        "maxLength": 2
+      },
+      {
+        "name": "DomainId",
+        "access": "readOnly",
+        "description": "The Domain Identifier of the domain to which the interface is registered, denoted as DOD in {{bibref|G.9961}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MACCycleDuration",
+        "access": "readWrite",
+        "description": "The MAC cycle duration, as specified in {{bibref|G.9961|Clause 8.4}}. It is represented as multiples of {{units}}. In the case of power line, writing to this parameter has no effect and it reads back as 0, which is a special value indicating that the MAC cycle is synchronized with 2 AC cycles as defined in {{bibref|G.9961|Clause 8.6.3.1}}.",
+        "type": "unsignedInt",
+        "ranges": [
+          [
+            0,
+            0
+          ],
+          [
+            10,
+            200
+          ]
+        ]
+      },
+      {
+        "name": "SCDeviceId",
+        "access": "readWrite",
+        "description": "The DEVICE_ID of the Security Controller selected by the Domain Master.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SCMACAddress",
+        "access": "readWrite",
+        "description": "The REGID of the Security Controller selected by the Domain Master.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "ReregistrationTimePeriod",
+        "access": "readWrite",
+        "description": "The time interval for periodic re-registration, as specified in {{bibref|G.9961|Clause 8.8.5.8}}. It is represented as multiples of {{units}}.",
+        "type": "unsignedInt",
+        "minInclusive": 5,
+        "maxInclusive": 63
+      },
+      {
+        "name": "TopologyPeriodicInterval",
+        "access": "readWrite",
+        "description": "The time interval that a node sends out the periodic topology update using TM_NodeTopologyChange.ind message, as specified in {{bibref|G.9961|Clause 8.8.5.8.1}}. It is represented as multiples of {{units}}. The special value 0 represents an infinite interval (i.e., no periodic topology update).",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "MinSupportedBandplan",
+        "access": "readWrite",
+        "description": "Indicates the value of the minimal bandplan capability for a node that is allowed to register to the domain.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxSupportedBandplan",
+        "access": "readWrite",
+        "description": "Indicates the value of the minimal bandplan capability for a node that is allowed to register to the domain.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object specifies management parameters pertaining to the domain functionality (Domain Master function; see {{bibref|G.9961|Clause 8.6}}). The object exists only on G.hn interfaces that are currently the Domain Master, i.e. for which parameter {{param|#.IsDM}} is {{true}}.",
+    "children": []
+  }
+}

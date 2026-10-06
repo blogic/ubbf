@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PPP.Interface.{i}.IPv6CP.",
+  "object": {
+    "path": "Device.PPP.Interface.{i}.IPv6CP.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "LocalInterfaceIdentifier",
+        "access": "readOnly",
+        "description": "The interface identifier for the local end of the PPP link, negotiated using the IPv6CP ''Interface-Identifier'' option {{bibref|RFC5072|Section 4.1}}. The identifier is represented as the rightmost 64 bits of an IPv6 address (the leftmost 64 bits MUST be zero and MUST be ignored by the recipient).",
+        "type": "dataType:IPv6Address"
+      },
+      {
+        "name": "RemoteInterfaceIdentifier",
+        "access": "readOnly",
+        "description": "The interface identifier for the remote end of the PPP link, negotiated using the IPv6CP ''Interface-Identifier'' option {{bibref|RFC5072|Section 4.1}}. The identifier is represented as the rightmost 64 bits of an IPv6 address (the leftmost 64 bits MUST be zero and MUST be ignored by the recipient).",
+        "type": "dataType:IPv6Address"
+      }
+    ],
+    "description": "IPv6 Control Protocol (IPv6CP) client object for this PPP interface {{bibref|RFC5072}}. {{object}} only applies to IPv6.",
+    "children": []
+  }
+}

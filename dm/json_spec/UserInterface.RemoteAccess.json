@@ -1,0 +1,47 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.UserInterface.RemoteAccess.",
+  "object": {
+    "path": "Device.UserInterface.RemoteAccess.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables/Disables remotely accessing the CPE's user interface.",
+        "type": "boolean"
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "Destination TCP port required for remote access connection.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "SupportedProtocols",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the protocols that are supported by the CPE for the purpose of remotely accessing the user interface.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "HTTP",
+          "HTTPS"
+        ]
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "This is the protocol currently being used for remote access.",
+        "type": "string"
+      }
+    ],
+    "description": "This object contains parameters relating to remotely accessing the CPE's user interface. Remote access is defined as any entity not of a local subnet attempting to connect to the CPE. Remote access requires user authentication. To provide remote access authentication the CPE MUST support a \"User\" table with at least one instance that has \"RemoteAccessCapable\" set to {{true}}. {{deprecated|2.16|due to the introduction of {{object|#.HTTPAccess}}}} {{obsoleted|2.18}} {{deleted|2.19}}",
+    "children": []
+  }
+}

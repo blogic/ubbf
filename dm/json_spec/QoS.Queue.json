@@ -1,0 +1,216 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.QoS.Queue.{i}.",
+  "object": {
+    "path": "Device.QoS.Queue.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "QueueNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this queue.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this queue. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Children",
+        "access": "readWrite",
+        "description": "{{list}} Each reference can be associated with another {{object|##.QoS.Queue.{i}}}, {{object|##.QoS.Shaper.{i}}}, {{object|##.QoS.Scheduler.{i}}} instance object. The references in this parameter are used to build a hierarchy.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        },
+        "version": "2.16"
+      },
+      {
+        "name": "TrafficClasses",
+        "access": "readWrite",
+        "description": "{{list}} Each list item identifies the set of traffic classes associated with this queue. Traffic is sent to this queue if a {{object|#.Classification}}, {{object|#.App}} or {{object|#.Flow}} table entry specifies a traffic class, e.g. via the {{param|#.Classification.{i}.TrafficClass}} parameter. If more than one queue on a given egress interface is associated with a given traffic class, the implementation will choose which queue to send traffic of this class to.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "listMaxLength": 256,
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "{{reference}} Specifies the egress interface for which the specified queue MUST exist. This MAY be a layer 1, 2 or 3 interface, however, the types of interfaces for which ''Queues'' can be instantiated is a local matter to the CPE.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "AllInterfaces",
+        "access": "readWrite",
+        "description": "Indicates that the specified queue MUST exist for all egress interfaces (i.e. this queue entry is to apply to all egress interfaces). If {{true}}, the value of {{param|Interface}} is ignored since all egress interfaces are indicated.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "HardwareAssisted",
+        "access": "readOnly",
+        "description": "Indicates whether ''all'' the queues corresponding to this table entry are hardware assisted. If any of the queues corresponding to this table entry are not hardware assisted, the parameter value MUST be {{false}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "BufferLength",
+        "access": "readOnly",
+        "description": "Number of {{units}} in the buffer. Queue buffer size for all egress interfaces for which this queue exists. If the buffer size is not the same for all such egress interfaces, this parameter MUST be 0.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Weight",
+        "access": "readWrite",
+        "description": "Weight of this queue in case of {{enum|WFQ|SchedulerAlgorithm}} or {{enum|WRR|SchedulerAlgorithm}}, but only used for queues of equal precedence.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Precedence",
+        "access": "readWrite",
+        "description": "Precedence of this queue relative to others. Lower numbers imply greater precedence.",
+        "default": "1",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "REDThreshold",
+        "access": "readWrite",
+        "description": "Random Early Detection threshold, used only when {{param|DropAlgorithm}} is {{enum|RED|DropAlgorithm}}. This is the minimum threshold (''min_th'') and is measured as a percentage of the queue size. If the value is set to zero, the CPE MUST choose a sensible value, e.g. 5 (but the value MUST still read back as zero). In this version of the data model, there is no way to set the maximum threshold (''max_th''). The CPE MUST choose a sensible value, e.g. three times the minimum threshold. In this version of the data model, there is no way to set the RED weight (''w_q''). The CPE MUST choose a sensible value, e.g. 0.002.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "maxInclusive": 100
+      },
+      {
+        "name": "REDPercentage",
+        "access": "readWrite",
+        "description": "Random Early Detection percentage, used only when {{param|DropAlgorithm}} is {{enum|RED|DropAlgorithm}}. This is the maximum value of the packet marking probability (''max_p''). If the value is set to zero, the CPE MUST choose a sensible value, e.g. 10 (but the value MUST still read back as zero). In this version of the data model, there is no way to set the RED weight (''w_q''). The CPE MUST choose a sensible value, e.g. 0.002.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "maxInclusive": 100
+      },
+      {
+        "name": "DropAlgorithm",
+        "access": "readWrite",
+        "description": "Dropping algorithm used for this queue if congested.",
+        "default": "DT",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "RED",
+          "DT",
+          "WRED",
+          "BLUE"
+        ]
+      },
+      {
+        "name": "SchedulerAlgorithm",
+        "access": "readWrite",
+        "description": "Scheduling Algorithm used by scheduler.",
+        "default": "SP",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "WFQ",
+          "WRR",
+          "SP"
+        ]
+      },
+      {
+        "name": "ShapingRate",
+        "access": "readWrite",
+        "description": "Rate to shape this queue's traffic to. For leaky bucket (constant rate shaping), this is the constant rate. For token bucket (variable rate shaping), this is the average rate. If <= 100, in percent of the rate of the highest rate-constrained layer over which the packet will travel on egress. If > 100, in bits per second. A value of -1 indicates no shaping. For example, for packets destined for a WAN DSL interface, if the egress will be on a PPP or IP link with a specified ''ShapingRate'', the percentage is calculated relative to this rate. Otherwise, if the ATM layer is rate-constrained, then the rate is calculated relative to this rate. Otherwise, the rate is calculated relative to the physical-layer DSL rate. Note: To be able to support higher bit rates, this parameter was changed to unsignedLong in the Device:2.18 version.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "long",
+        "minInclusive": -1
+      },
+      {
+        "name": "CurrentShapingRate",
+        "access": "readOnly",
+        "description": "If the Queue is active, the CurrentShapingRate must reflect the actual configured ShapingRate, in {{units}} per second. -1 means no rate due to do Queue not active. Note: To be able to support higher bit rates, this parameter was changed to unsignedLong in the Device:2.18 version.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "long",
+        "minInclusive": -1,
+        "version": "2.16"
+      },
+      {
+        "name": "AssuredRate",
+        "access": "readWrite",
+        "description": "Minimum rate to shape this queue's traffic to. If <= 100, in percent of the rate of the highest rate-constrained layer over which the packet will travel on egress. If > 100, in bits per second. A value of -1 indicates no shaping. Note: To be able to support higher bit rates, this parameter was changed to unsignedLong in the Device:2.18 version.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "long",
+        "minInclusive": -1,
+        "version": "2.16"
+      },
+      {
+        "name": "CurrentAssuredRate",
+        "access": "readOnly",
+        "description": "If the Queue is active, the CurrentAssuredRate must reflect the actual configured AssuredRate, in bits per second. -1 means no rate due to do Queue not active. Note: To be able to support higher bit rates, this parameter was changed to unsignedLong in the Device:2.18 version.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "long",
+        "minInclusive": -1,
+        "version": "2.16"
+      },
+      {
+        "name": "ShapingBurstSize",
+        "access": "readWrite",
+        "description": "Burst size in {{units}}. For both leaky bucket (constant rate shaping) and token bucket (variable rate shaping) this is the bucket size and is therefore the maximum burst size.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Queue table. Each entry is associated with a set of traffic classes, which are specified via the {{param|TrafficClasses}} parameter, and is configured with weight, precedence, drop algorithm, scheduler algorithm etc as appropriate for the traffic classes. An entry can be associated either with all egress interfaces (in which case an actual queue will be instantiated on each egress interface on which traffic of that traffic class can be generated) or else with a single specified egress interface. For enabled table entries, if {{param|Interface}} is not a valid reference and {{param|AllInterfaces}} is {{false}}, then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

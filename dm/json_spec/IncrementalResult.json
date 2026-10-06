@@ -1,0 +1,73 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "IncrementalResult.{i}.",
+  "object": {
+    "path": "IncrementalResult.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.14",
+    "parameters": [
+      {
+        "name": "IPLayerCapacity",
+        "access": "readOnly",
+        "description": "Results of measurements using the maximum IP-Layer Capacity metric calculation for a single interval from {{bibref|TR-471}} Equation 1, for time interval of duration {{param|#.TestSubInterval}} ending at {{param|TimeOfSubInterval}} across all connections for this test. Result is expressed in {{units}} with 2 digits beyond the decimal. 10^6^ bits/second = 1 {{units}}.",
+        "type": "decimal"
+      },
+      {
+        "name": "TimeOfSubInterval",
+        "access": "readOnly",
+        "description": "Time in UTC of end of sub-interval when {{param|IPLayerCapacity}} was measured. Value MUST be specified to {{param|#.TimestampResolution}} precision. For example: 2008-04-09T15:01:05.123456Z",
+        "type": "dateTime"
+      },
+      {
+        "name": "LossRatio",
+        "access": "readOnly",
+        "description": "Ratio of lost packets to total packets, for time interval of duration {{param|#.TestSubInterval}} ending at {{param|TimeOfSubInterval}} across all connections for this test. This value is expressed as a decimal to 9 decimal digits.",
+        "type": "decimal"
+      },
+      {
+        "name": "RTTRange",
+        "access": "readOnly",
+        "description": "The range of Round Trip Time (RTT), for time interval of duration {{param|#.TestSubInterval}} ending at {{param|TimeOfSubInterval}} across all connections for this test. See {{bibref|TR-471}} for description of how value is calculated. This value is expressed in {{units}}. This value is expressed as a decimal to 9 decimal digits.",
+        "type": "decimal"
+      },
+      {
+        "name": "PDVRange",
+        "access": "readOnly",
+        "description": "The range of Packet Delay Variation (PDV), for time interval of duration {{param|#.TestSubInterval}} ending at {{param|TimeOfSubInterval}} across all connections for this test. See {{bibref|TR-471}} for description of how value is calculated. This value is expressed in {{units}}. This value is expressed as a decimal to 9 decimal digits.",
+        "type": "decimal"
+      },
+      {
+        "name": "MinOnewayDelay",
+        "access": "readOnly",
+        "description": "The minimum one-way delay, for time interval of duration {{param|#.TestSubInterval}} ending at {{param|TimeOfSubInterval}} across all connections for this test. The minimum one-way delay is calculated at the conclusion of the test and SHALL be calculated using the conditional distribution of all packets with a finite one-way delay value (undefined delays are excluded). This value is expressed in {{units}}. This value is expressed as a decimal to 9 decimal digits.",
+        "type": "decimal"
+      },
+      {
+        "name": "ReorderedRatio",
+        "access": "readOnly",
+        "description": "Ratio of reordered packets to total packets, for time interval of duration {{param|#.TestSubInterval}} ending at {{param|TimeOfSubInterval}} across all connections for this test. This value is expressed as a decimal to 9 decimal digits.",
+        "type": "decimal"
+      },
+      {
+        "name": "ReplicatedRatio",
+        "access": "readOnly",
+        "description": "Ratio of replicated packets to total packets, for time interval of duration {{param|#.TestSubInterval}} ending at {{param|TimeOfSubInterval}} across all connections for this test. This value is expressed as a decimal to 9 decimal digits.",
+        "type": "decimal",
+        "version": "2.15"
+      },
+      {
+        "name": "InterfaceEthMbps",
+        "access": "readOnly",
+        "description": "The number of bits observed on the {{param|#.Interface}} during an IP-Layer Capacity test for time interval of duration {{param|#.TestSubInterval}} ending at {{param|TimeOfSubInterval}}, divided by the duration of {{param|#.TestSubInterval}}. Result is expressed in Mbps with 2 digits beyond the decimal. 10^6^ bits/second = 1 {{units}}. This is primarily a diagnostic measurement. Measurement direction follows the {{param|#.Role}}.",
+        "type": "decimal",
+        "version": "2.15"
+      }
+    ],
+    "description": "Results for time segmented tests (tests where {{param|#.NumberTestSubIntervals}} > 1). This data is calculated across all connections in the test. A new object is created every {{param|#.TestSubInterval}} after that interval has completed. Instance numbers MUST start at 1 and sequentially increment as new instances are created. All instances are removed when new test is started or results are otherwise cleared.",
+    "children": []
+  }
+}

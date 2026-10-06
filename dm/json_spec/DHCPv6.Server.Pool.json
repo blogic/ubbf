@@ -1,0 +1,236 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv6.Server.Pool.{i}.",
+  "object": {
+    "path": "Device.DHCPv6.Server.Pool.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "PoolNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this entry. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Order",
+        "access": "readWrite",
+        "description": "{{datatype|expand}} For each DHCPv6 request, the highest ordered entry that matches the association criteria is applied. All lower order entries are ignored.",
+        "type": "dataType:Order"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "{{reference}} The IP Interface associated with the {{object}} entry.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "###.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "DUID",
+        "access": "readWrite",
+        "description": "Pool association criterion. A hexbinary string used to identify one or more LAN devices, value of the DHCPv6 Client Identifier (Option 1) {{bibref|RFC8415|Section 21.2}}. The option value is binary, so an exact match is REQUIRED. {{empty}} indicates this criterion is not used. Note: DHCPv6 Option 1 (DUID) is sometimes referred to as ''Client Identifier''.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "maxLength": 130
+      },
+      {
+        "name": "DUIDExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, matching packets are those that match the {{param|DUID}} entry, if specified. If {{true}}, matching packets are those that do not match the {{param|DUID}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "VendorClassID",
+        "access": "readWrite",
+        "description": "Pool association criterion. A hexbinary string used to identify one or more LAN devices, value of the DHCPv6 Vendor Class Identifier (Option 16) {{bibref|RFC8415|Section 21.16}}. The option value is binary, so an exact match is REQUIRED. {{empty}} indicates this criterion is not used.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "maxLength": 65535
+      },
+      {
+        "name": "VendorClassIDExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, matching packets are those that match the {{param|VendorClassID}} entry, if specified. If {{true}}, matching packets are those that do not match the {{param|VendorClassID}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "UserClassID",
+        "access": "readWrite",
+        "description": "Pool association criterion. A hexbinary string used to identify one or more LAN devices, value of the DHCPv6 User Class Identifier (Option 15) {{bibref|RFC8415|Section 21.15}}. {{empty}} indicates this criterion is not used.",
+        "default": "",
+        "defaultType": "object",
+        "type": "hexBinary",
+        "maxLength": 65535
+      },
+      {
+        "name": "UserClassIDExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, matching packets are those that match the {{param|UserClassID}} entry, if specified. If {{true}}, matching packets are those that do not match the {{param|UserClassID}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "SourceAddress",
+        "access": "readWrite",
+        "description": "Pool association criterion. Source address (link-layer address) of DHCPv6 messages sent from the DHCPv6 client. This criterion is only likely to be useful if this is a link-layer address. {{empty}} indicates this criterion is not used for serving.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPv6Address"
+      },
+      {
+        "name": "SourceAddressMask",
+        "access": "readWrite",
+        "description": "Bit-mask for the source address, where matching of a packet's source address with the {{param|SourceAddress}} is only to be done for bit positions set to one in the mask. A mask of {{empty}} indicates all bits of the {{param|SourceAddress}} are to be used.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPv6Address"
+      },
+      {
+        "name": "SourceAddressExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, matching packets are those that match the (masked) {{param|SourceAddress}} entry, if specified. If {{true}}, matching packets are those that do not match the (masked) {{param|SourceAddress}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "IANAEnable",
+        "access": "readWrite",
+        "description": "Enables or disables IANA offers.",
+        "type": "boolean"
+      },
+      {
+        "name": "IANAManualPrefixes",
+        "access": "readWrite",
+        "description": "{{list}} {{reference}} Manually-configured prefixes from which IA_NA addresses will be assigned. Each referenced prefix MUST have a {{param|###.IP.Interface.{i}.IPv6Prefix.{i}.StaticType}} of {{enum|Static|###.IP.Interface.{i}.IPv6Prefix.{i}.StaticType}} or {{enum|Child|###.IP.Interface.{i}.IPv6Prefix.{i}.StaticType}}. All clients that request IA_NA and match filter criteria on this {{param|Interface}} MUST be offered IA_NA addresses from all of the ''Valid'' ({{param|###.IP.Interface.{i}.IPv6Prefix.{i}.ValidLifetime}} is infinite or in the future) /64 prefixes in this list. Prefixes MUST be associated with the interface instance referenced by {{param|Interface}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "###.IP.Interface.{i}.IPv6Prefix.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "IANAPrefixes",
+        "access": "readOnly",
+        "description": "{{list}} {{reference}} All prefixes from which IA_NA addresses will be assigned. This list can include: * Prefixes from {{param|IANAManualPrefixes}} that are used for IA_NA offers. * Prefixes with {{param|###.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} = {{enum|Child|###.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} or {{enum|AutoConfigured|###.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} associated with the interface instance referenced by {{param|Interface}}.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "###.IP.Interface.{i}.IPv6Prefix.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "IAPDEnable",
+        "access": "readWrite",
+        "description": "Enables or disables IAPD offers.",
+        "type": "boolean"
+      },
+      {
+        "name": "IAPDManualPrefixes",
+        "access": "readWrite",
+        "description": "{{list}} {{reference}} Manually-configured prefixes from which IA_PD prefixes will be derived. This list can include: * Prefixes with {{param|###.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} = {{enum|Static|###.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} or {{enum|PrefixDelegation|###.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} associated with upstream interfaces (i.e. interfaces for which the physical layer interface object has ''Upstream'' = {{true}}). * Prefixes with {{param|###.IP.Interface.{i}.IPv6Prefix.{i}.StaticType}} = {{enum|Static|###.IP.Interface.{i}.IPv6Prefix.{i}.StaticType}} or {{enum|Child|###.IP.Interface.{i}.IPv6Prefix.{i}.StaticType}} associated with with the interface instance referenced by {{param|Interface}}. All clients that request IA_PD and match filter criteria on this {{param|Interface}} MUST be offered IA_PD prefixes derived from all of the ''Valid'' ({{param|###.IP.Interface.{i}.IPv6Prefix.{i}.ValidLifetime}} is infinite or in the future) prefixes in this list.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "###.IP.Interface.{i}.IPv6Prefix.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "IAPDPrefixes",
+        "access": "readOnly",
+        "description": "{{list}} {{reference}} All prefixes for which IA_PD prefixes will be assigned. This list can include: * Prefixes from {{param|IAPDManualPrefixes}} that are used for IA_PD offers. * Prefixes with {{param|###.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} = {{enum|PrefixDelegation|###.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} or {{enum|AutoConfigured|###.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} associated with upstream interfaces (i.e. interfaces for which the physical layer interface object has ''Upstream'' = {{true}}). * Prefixes with {{param|###.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} = {{enum|Child|###.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} or {{enum|AutoConfigured|###.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} associated with the interface instance referenced by {{param|Interface}}.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "###.IP.Interface.{i}.IPv6Prefix.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "IAPDAddLength",
+        "access": "readWrite",
+        "description": "The RECOMMENDED minimum number of bits to add to {{param|IAPDManualPrefixes}} or {{param|IAPDPrefixes}} in order to determine the length of prefixes that are offered in an IA_PD. The device is responsible for ensuring that it does not delegate a prefix longer than /64. The device can have additional logic that is used (in conjunction with this parameter) to determine the actual length of prefixes offered in an IA_PD.",
+        "type": "unsignedInt",
+        "maxInclusive": 64
+      },
+      {
+        "name": "DSCPMark",
+        "access": "readWrite",
+        "description": "Diffserv code point to be used for outgoing DHCP messages.",
+        "default": "48",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 63,
+        "version": "2.19"
+      },
+      {
+        "name": "ClientNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "OptionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "DHCPv6 server pool table. Each instance of this object defines a DHCPv6 server pool. Client requests are associated with pools based on criteria such as source interface, supplied DHCPv6 options, and source address. Overlapping pool ranges MUST be supported. For enabled table entries, if {{param|Interface}} is not a valid reference to an IPv6-capable interface (that is attached to the IPv6 stack) then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PDU.Session.{i}.",
+  "object": {
+    "path": "Device.PDU.Session.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "SessionNumberOfEntries",
+    "version": "2.14",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.14"
+      },
+      {
+        "name": "Interface",
+        "access": "readOnly",
+        "description": "{{reference}} The IP Interface associated with the ''PDU'' entry. {{deprecated|2.19|because it has moved to {{object|Device.SessionManagement.Session.{i}}}}}",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "SessionID",
+        "access": "readOnly",
+        "description": "PDU session identity. See {{bibref|3GPP-TS.24.501|Clause 9.4}}. {{deprecated|2.19|because it has moved to {{object|Device.SessionManagement.Session.{i}}}}}",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 15
+      },
+      {
+        "name": "PTI",
+        "access": "readOnly",
+        "description": "Procedure transaction identity. See {{bibref|3GPP-TS.24.501|Clause 9.6}}. {{deprecated|2.19|because it has moved to {{object|Device.SessionManagement.PDU.{i}}}}}",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 254
+      },
+      {
+        "name": "SessionType",
+        "access": "readOnly",
+        "description": "The PDU session type indicating the protocol the PDU is capable of carrying. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.11}}. {{enum}} {{deprecated|2.19|because it has moved to {{object|Device.SessionManagement.Session.{i}}}}}",
+        "type": "string",
+        "enumerations": [
+          "IPv4",
+          "IPv6",
+          "IPv4v6",
+          "Unstructured"
+        ]
+      },
+      {
+        "name": "SSC",
+        "access": "readOnly",
+        "description": "Session and Service Continuity (SSC) Mode: Indicates that the traffic of the matching application shall be routed via a PDU Session supporting the included SSC Mode. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.16}} {{deprecated|2.19|because it has moved to {{object|Device.SessionManagement.PDU.{i}}}}}",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 3
+      },
+      {
+        "name": "SessionAMBRDownlink",
+        "access": "readOnly",
+        "description": "Downlink Aggregate Maximum Bit Rate in {{units}}. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.14}}. {{deprecated|2.19|because it has moved to {{object|Device.SessionManagement.PDU.{i}}}}}",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "SessionAMBRUplink",
+        "access": "readOnly",
+        "description": "Uplink Aggregate Maximum Bit Rate in {{units}}. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.14}}. {{deprecated|2.19|because it has moved to {{object|Device.SessionManagement.PDU.{i}}}}}",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "LastError",
+        "access": "readOnly",
+        "description": "Error code. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.2}} {{deprecated|2.19|because it is no longer required}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PDUIPv4Address",
+        "access": "readOnly",
+        "description": "The IPv4 address allocated to the PDU session by the SMF. This parameter is only valid if {{param|SessionType}} has a value of {{enum|IPv4|SessionType}} or {{enum|IPv4v6|SessionType}}. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.10}}. {{deprecated|2.19|because it has moved to {{param|Device.SessionManagement.Session.{i}.Interface}}}}",
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "PDUIPv6InterfaceIdentifier",
+        "access": "readOnly",
+        "description": "The interface identifier for the IPv6 link local address allocated to the PDU session by the SMF. This parameter is only valid if {{param|SessionType}} has a value of {{enum|IPv6|SessionType}} or {{enum|IPv4v6|SessionType}}. See {{bibref|3GPP-TS.24.501|Clause 9.11.4.10}}. {{deprecated|2.19|because it has moved to {{param|Device.SessionManagement.Session.{i}.Interface}}}}",
+        "type": "string"
+      },
+      {
+        "name": "RQTimerValue",
+        "access": "readOnly",
+        "description": "Reflective QoS timeout in {{units}}. See {{bibref|3GPP-TS.24.501|Clause 9.11.2.3}}. {{deprecated|2.19|because it has moved to {{object|Device.SessionManagement.PDU.{i}}}}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AlwaysOn",
+        "access": "readOnly",
+        "description": "Always on PDU session indication. The purpose of the Always-on PDU session indication information element is to indicate whether a PDU session is established as an always-on PDU session. See {{bibref|3GPP-TS.24.501|clause 9.11.4.3}}. {{deprecated|2.19|because it has moved to {{object|Device.SessionManagement.PDU.{i}}}}}",
+        "type": "boolean"
+      },
+      {
+        "name": "DNN",
+        "access": "readOnly",
+        "description": "The Data Network Name used by the PDU. The DNN value may be from the optional S-NSSAI specified at the time of PDU establishment or a default determined by the 5G core. A DNN is analogous to an LTE APN used the same format defined in {{bibref|3GPP-TS.24.501|clause 9.11.2.1A}}. {{deprecated|2.19|because it has moved to {{param|Device.SessionManagement.Session.{i}.APN}}}}",
+        "type": "string",
+        "maxLength": 100
+      },
+      {
+        "name": "QoSRuleNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}} {{deprecated|2.19|because it has moved to {{param|Device.SessionManagement.PDU.{i}.QoSRuleNumberOfEntries}}}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "QoSFlowNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}} {{deprecated|2.19|because it has moved to {{param|Device.SessionManagement.PDU.{i}.QoSFlowNumberOfEntries}}}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Contains all the properties of a PDU session instance, ranging from maximum bitrate through to assigned network slice. This object contains the {{object}} table. {{deprecated|2.19|because it has moved to {{object|Device.SessionManagement.PDU.{i}}}}}",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

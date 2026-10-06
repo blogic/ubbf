@@ -1,0 +1,95 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LocalAgent.ControllerTrust.Role.{i}.Permission.{i}.",
+  "object": {
+    "path": "Device.LocalAgent.ControllerTrust.Role.{i}.Permission.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "PermissionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enable/Disable this {{object}} instance.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Order",
+        "access": "readWrite",
+        "description": "The order (relative priority) to use when determining the permissions for overlapping Targets that are contained within the same {{object|#.}}. The larger value of this parameter takes priority over a permission with a smaller value (i.e., 0 has the lowest priority).",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Targets",
+        "access": "readWrite",
+        "description": "{{list|each entry is a target to which the value of the permissions parameters are assigned}} When an entry is a value of a Partial Path, the permissions are associated to that Object and any child Object/Parameter. When the value of an entry is an Object instance then the permissions are associated to all Parameters of the Object instance. When an entry is a value of a Search Path as defined in {{bibref|TR-369}} that resolves to zero or more Parameter Paths, then all Parameter Paths that result from the evaluation of the Search Path are subject to the permissions assigned by this {{object}} instance.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "Param",
+        "access": "readWrite",
+        "description": "The permissions of a Role for the specified Targets. A string of 4 characters where each character represents a permission (\"`r`\" for Read, \"`w`\" for Write, \"`x`\" for Execute\", and \"`n`\" for Notify). The string is always in the same order (`rwxn`) and the lack of a permission is signified by a \"`-`\" character (e.g., `r--n`). The following describes the meaning of the permissions for Parameter type of Targets: # Read: Grants the capability to read the value of the Parameter via Get and read the meta-information of the Parameter via GetSupportedDM. # Write: Grants the capability to update the value of the Parameter via Add or Set. # Execute: Grants no capabilities; Parameters can not be executed. # Notify: Grants the capability to receive Notify Messages of type ValueChange for this Parameter.",
+        "default": "----",
+        "defaultType": "object",
+        "type": "string",
+        "minLength": 4,
+        "maxLength": 4
+      },
+      {
+        "name": "Obj",
+        "access": "readWrite",
+        "description": "The permissions of a Role for the specified Targets. A string of 4 characters where each character represents a permission (\"`r`\" for Read, \"`w`\" for Write, \"`x`\" for Execute\", and \"`n`\" for Notify). The string is always in the same order (`rwxn`) and the lack of a permission is signified by a \"`-`\" character (e.g., `r--n`). The following describes the meaning of the permissions for Object type of Targets: # Read: Grants the capability for Get to resolve Object paths. Grants the capability to read the meta-information of the Object via GetSupportedDM. # Write: Grants no capabilities for Static Objects. Grants the capability to create a new instance of a Multi-Instanced Object via Add (e.g. Device.LocalAgent.Controller.). # Execute: Grants no capabilities; Objects are not executable and Commands are controlled by the CommandEventPermissions. # Notify: Grants the capability to receive Notify Messages of type ObjectCreation for this Object (multi-instance objects only).",
+        "default": "----",
+        "defaultType": "object",
+        "type": "string",
+        "minLength": 4,
+        "maxLength": 4
+      },
+      {
+        "name": "InstantiatedObj",
+        "access": "readWrite",
+        "description": "The permissions of a Role for the specified Targets. A string of 4 characters where each character represents a permission (\"`r`\" for Read, \"`w`\" for Write, \"`x`\" for Execute\", and \"`n`\" for Notify). The string is always in the same order (`rwxn`) and the lack of a permission is signified by a \"`-`\" character (e.g., `r--n`). The following describes the meaning of the permissions for Instantiated Object type of Targets: # Read: Grants the capability to read the instance numbers and unique keys of the Instantiated Object via GetInstances. # Write: Grants the capability to remove an existing instance of an Instantiated Object via Delete (e.g. Device.LocalAgent.Controller.1.). # Execute: Grants no capabilities; Object Instances are not executable and Commands are controlled by the CommandEventPermissions. # Notify: Grants the capability to receive Notify Messages of type ObjectDeletion for this Instantiated Object.",
+        "default": "----",
+        "defaultType": "object",
+        "type": "string",
+        "minLength": 4,
+        "maxLength": 4
+      },
+      {
+        "name": "CommandEvent",
+        "access": "readWrite",
+        "description": "The permissions of a Role for the specified Targets. A string of 4 characters where each character represents a permission (\"`r`\" for Read, \"`w`\" for Write, \"`x`\" for Execute\", and \"`n`\" for Notify). The string is always in the same order (`rwxn`) and the lack of a permission is signified by a \"`-`\" character (e.g., `r--n`). The following describes the meaning of the permissions for Command and Event type of Targets: # Read: Grants the capability to read the meta-information of the Command (including input and output arguments) and Event (including arguments) via GetSupportedDM. # Write: Grants no capabilities; Commands are executed instead of written to and Events are read only. # Execute: Grants the capability to execute the Command via Operate, but grants no capabilities to an Event. # Notify: Grants the capability to receive Notify Messages of type OperationComplete for this Event or Command.",
+        "default": "----",
+        "defaultType": "object",
+        "type": "string",
+        "minLength": 4,
+        "maxLength": 4
+      }
+    ],
+    "description": "Each instance of this table represents the permissions that are extended to a set of Targets for a specified Role. If there are multiple entries in this table for a specific Role where the Targets overlap, the permissions for the entry with the highest value takes priority over all others.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Order"
+      ]
+    }
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.QoS.QueueStats.{i}.",
+  "object": {
+    "path": "Device.QoS.QueueStats.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "QueueStatsNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this object.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this object.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Queue",
+        "access": "readWrite",
+        "description": "{{reference}} Indicates ''Queue'' entry with which this object is associated.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.Queue.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "{{reference}} Specifies the egress interface for which this object contains statistics. This MAY be a layer 1, 2 or 3 interface, however, the types of interfaces for which ''QueueStats'' can be instantiated is a local matter to the CPE.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "OutputPackets",
+        "access": "readOnly",
+        "description": "Number of packets output through the queue.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "OutputBytes",
+        "access": "readOnly",
+        "description": "Number of {{units}} output through the queue.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "DroppedPackets",
+        "access": "readOnly",
+        "description": "Number of packets dropped by the queue.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "DroppedBytes",
+        "access": "readOnly",
+        "description": "Number of {{units}} dropped by the queue.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "QueueOccupancyPackets",
+        "access": "readOnly",
+        "description": "Queue occupancy in packets (gives a measure of queue latency).",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "QueueOccupancyPercentage",
+        "access": "readOnly",
+        "description": "Queue occupancy measured as a {{units}}, i.e. 100 * queue occupancy in bytes / queue size in bytes (gives a measure of queue usage).",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 100,
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "Queue statistics table. This table is managed by the Controller, which will create entries only for those {Queue, Interface} combinations for which statistics are to be collected. Note: The {{object}} table includes unique key parameters that are strong references. If a strongly referenced object is deleted, the CPE will set the referencing parameter to {{empty}}. However, doing so under these circumstances might cause the updated {{object}} row to then violate the table's unique key constraint; if this occurs, the CPE MUST disable the offending {{object}} row.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

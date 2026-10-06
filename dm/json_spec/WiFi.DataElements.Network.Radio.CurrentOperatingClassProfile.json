@@ -1,0 +1,60 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CurrentOperatingClassProfile.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CurrentOperatingClassProfile.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "CurrentOperatingClassProfileNumberOfEntries",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "Class",
+        "access": "readOnly",
+        "description": "The Operating Class per {{bibref|802.11ax|Table E-4}} that this radio is currently operating on.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "Channel",
+        "access": "readOnly",
+        "description": "This Channel number in the Operating Class that this Radio is currently operating on.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "TxPower",
+        "access": "readOnly",
+        "description": "Nominal Transmit Power EIRP that this radio is currently using for the current Channel in the Opeating Class. Represented as 2's complement signed integer in units of decibels relative to 1 mW ({{units}}).",
+        "type": "int",
+        "minInclusive": -127,
+        "maxInclusive": 127
+      },
+      {
+        "name": "TransmitPowerLimit",
+        "access": "readOnly",
+        "description": "This is the upper limit on nominal transmit Equivalent Isotropically Radiated Power (EIRP) that this radio is allowed to use for the current {{param|Class}}. In units of decibels relative to 1 mW {{units}}.",
+        "type": "int",
+        "minInclusive": -128,
+        "maxInclusive": 127,
+        "version": "2.15"
+      },
+      {
+        "name": "TimeStamp",
+        "access": "readOnly",
+        "description": "The time this group was collected. Formatted with the date-and-time string format as defined in {{bibref|RFC3339|Section 3}}.",
+        "type": "dateTime"
+      }
+    ],
+    "description": "Describes one of the current Operating Classes in use by this Radio. One Operating Class is indicated for each current Operating Channel Bandwidth. The Channel indicated for the 20 MHz Operating Class is equal to the current primary channel.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Class"
+      ]
+    }
+  }
+}

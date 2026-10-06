@@ -1,0 +1,42 @@
+#!/bin/sh
+
+PSTORE_DIR="/sys/fs/pstore"
+OUTPUT_DIR="/tmp/ubbf"
+OUTPUT_FILE="$OUTPUT_DIR/kernel-faults-boot.json"
+
+json_str() {
+	printf '%s' "$1" | sed 's/\\/\\\\/g;s/"/\\"/g'
+}
+
+mkdir -p "$OUTPUT_DIR"
+
+found=0
+sep=""
+echo "[" > "$OUTPUT_FILE"
+
+for f in "$PSTORE_DIR"/dmesg-ramoops-*; do
+	[ -f "$f" ] || continue
+
+	reason=$(grep -m1 -E 'Kernel panic|Unable to handle|BUG:|general protection fault' "$f" 2>/dev/null)
+	process_name=$(grep -m1 '^Comm:' "$f" 2>/dev/null | sed 's/^Comm: *//;s/ .*//')
+	last_instruction=$(grep -m1 -E '^ *pc :| *RIP:' "$f" 2>/dev/null | sed 's/.*\[<//;s/>\].*//')
+	fault_location=$(sed -n '/Call trace:/,/^$/{ /Call trace:/d; s/^ *//; p; q; }' "$f" 2>/dev/null)
+
+	[ -z "$reason" ] && reason="Unknown kernel fault"
+	[ -z "$process_name" ] && process_name=""
+	[ -z "$last_instruction" ] && last_instruction=""
+	[ -z "$fault_location" ] && fault_location=""
+
+	printf '%s\n\t{\n\t\t"reason": "%s",\n\t\t"process_name": "%s",\n\t\t"last_instruction": "%s",\n\t\t"fault_location": "%s"\n\t}' \
+		"$sep" "$(json_str "$reason")" "$(json_str "$process_name")" \
+		"$(json_str "$last_instruction")" "$(json_str "$fault_location")" >> "$OUTPUT_FILE"
+	sep=","
+	found=$((found + 1))
+
+	rm -f "$f"
+done
+
+echo "" >> "$OUTPUT_FILE"
+echo "]" >> "$OUTPUT_FILE"
+
+[ "$found" -eq 0 ] && rm -f "$OUTPUT_FILE"

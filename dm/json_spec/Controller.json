@@ -1,0 +1,129 @@
+{
+  "source_file": "tr-181-2-19-0-localagent.xml",
+  "path": "Controller.{i}.",
+  "object": {
+    "path": "Controller.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ControllerNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "EndpointID",
+        "access": "readWrite",
+        "description": "The unique USP identifier for this USP Controller.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string"
+      },
+      {
+        "name": "ControllerCode",
+        "access": "readWrite",
+        "description": "Information about the configuration state of an Agent as it pertains to the {{object}} instance. This is not information related to an operator's installation or usage of the protocol, that information is maintained in {{param|ProvisioningCode}}. This parameter could be used in scenarios where the Controller needs to perform some kind of initialization or periodic configuration monitoring. For example, a Controller might perform some initial configuration of an Agent on first contact (perhaps to configure the Subscriptions). The Controller could inspect this parameter to determine the current state of the Agent's configuration, allowing the Controller to streamline the configuration process.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 128
+      },
+      {
+        "name": "ProvisioningCode",
+        "access": "readWrite",
+        "description": "Identifying information which MAY be used by the {{object}} instance to determine {{object}} instance specific customization and provisioning parameters.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enable/Disable this {{object}} instance. If the Controller instance is to be disabled, the Agent MUST send the ValueChange notification to all subscribed recipients, even if the recipient is the disabled Controller itself. This notification is the last notification sent to this Controller until it is enabled again. The USP Endpoint MUST terminate the MTP connection. When {{false}}, messages (notifications) are not sent to the remote endpoint represented by this {{object}} instance, and any MTP session establishment are refused.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "AssignedRole",
+        "access": "readWrite",
+        "description": "{{list|each entry is a Role that has been assigned to this {{object}} instance by means other than the {{param|#.ControllerTrust.Credential.{i}.Role}} parameter}}",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.ControllerTrust.Role.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "InheritedRole",
+        "access": "readOnly",
+        "description": "{{list|each entry is a Role that has been assigned to this {{object}} instance from the {{param|#.ControllerTrust.Credential.{i}.Role}} parameter associated with the CA credential ({{param|#.ControllerTrust.Credential.{i}.Credential}}) used to validate the Controller certificate}}",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.ControllerTrust.Role.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Credential",
+        "access": "readWrite",
+        "description": "{{nolist}}{{noreference}} Comma-separated list of strings, the set of certificates from {{object|#.Certificate.{i}}} that a Controller can present for use in authenticating the identity of this {{object}} instance.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Certificate.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "PeriodicNotifInterval",
+        "access": "readWrite",
+        "description": "If a Periodic Event Notification Subscription instance is associated with this USP Controller, then this is the duration in {{units}} of the interval for which the USP Agent MUST attempt to issue a Periodic Notification to the USP Controller.",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "PeriodicNotifTime",
+        "access": "readWrite",
+        "description": "If a Periodic Event Notification Subscription instance is associated with this USP Controller, then this is an absolute time reference in UTC to determine when the USP Agent will issue a Periodic Notification. Each Periodic Notification MUST occur at this reference time plus or minus an integer multiple of the {{param|PeriodicNotifInterval}}. {{param}} is used only to set the ''phase'' of the Periodic Event Notifications. The actual value of {{param}} can be arbitrarily far into the past or future. For example, if {{param|PeriodicNotifInterval}} is 86400 (a day) and if {{param}} is set to UTC midnight on some day (in the past, present, or future) then Periodic Notifications will be sent every day at UTC midnight. These MUST begin on the very next midnight, even if {{param}} refers to a day in the future. The Unknown Time value defined in {{bibref|TR-106|section 3.2}} indicates that no particular time reference is specified. That is, the USP Agent MAY locally choose the time reference, and needs only to adhere to the specified {{param|PeriodicNotifInterval}}. If absolute time is not available to the USP Agent, its Periodic Notification behavior MUST be the same as if the {{param}} parameter was set to the Unknown Time value.",
+        "type": "dateTime"
+      },
+      {
+        "name": "USPNotifRetryMinimumWaitInterval",
+        "access": "readWrite",
+        "description": "This parameter is related to the retry mechanism for Notifications. Configures the first retry wait interval, in {{units}}, as specified in {{bibref|TR-369|Section \"Responses to Notifications and Notification Retry\"}}. A value of 5 corresponds to the default behavior. The USP Agent MUST use a random value between {{param}} and ({{param}} * {{param|USPNotifRetryIntervalMultiplier}} / 1000) as the first retry wait interval. Other values in the retry pattern MUST be calculated using this value as a starting point.",
+        "default": "5",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "USPNotifRetryIntervalMultiplier",
+        "access": "readWrite",
+        "description": "This parameter is related to the retry mechanism for Notifications. Configures the retry interval multiplier as specified in {{bibref|TR-369|Section \"Responses to Notifications and Notification Retry\"}}. This value is expressed in units of 0.001. Hence the values of the multiplier range between 1.000 and 65.535. A value of 2000 corresponds to the default behavior. The USP Agent MUST use a random value between {{param|USPNotifRetryMinimumWaitInterval}} and ({{param|USPNotifRetryMinimumWaitInterval}} * {{param}} / 1000) as the first retry wait interval. Other values in the retry pattern MUST be calculated using this value as a starting point.",
+        "default": "2000",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1000,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "MTPNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Each instance of this table represents a USP Controller that has access to this USP Agent. On the deletion of an entry from this table, the Agent MUST send the ObjectDeletion notification to all subscribed recipients, even if the recipient is the deleted Controller itself. This notification is the last notification sent to this Controller.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "EndpointID"
+      ]
+    }
+  }
+}

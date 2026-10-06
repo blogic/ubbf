@@ -1,0 +1,229 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Bridging.Bridge.{i}.Port.{i}.",
+  "object": {
+    "path": "Device.Bridging.Bridge.{i}.Port.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "PortNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the interface. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.",
+        "default": "Down",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the interface as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}. When {{param|ManagementPort}} is set to {{true}} the CPE MUST set {{param}} to reference all non-management bridge ports that are within the same {{object|##.Bridge}} instance (and update {{param}} when subsequent non-management bridge ports are added or deleted on that ''Bridge''). The Controller SHOULD NOT set {{param}} in this case.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ManagementPort",
+        "access": "readWrite",
+        "description": "If {{true}} then the entry is a management (upward facing) bridge port rather than a non-management (downward facing) bridge port. For a given {{object|##.Bridge}} instance, each management bridge port appears in the interface stack above all non-management bridge ports. The concept of Management Port is discussed in {{bibref|802.1Q-2005|chapter 8}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Type",
+        "access": "readWrite",
+        "description": "The type of bridge port as defined in 802.1Q {{bibref|802.1Q-2011|Section 17 IEEE8021BridgePortType}}. Enumeration of: {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "ProviderNetworkPort",
+          "CustomerNetworkPort",
+          "CustomerEdgePort",
+          "CustomerVLANPort",
+          "VLANUnawarePort"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "DefaultUserPriority",
+        "access": "readWrite",
+        "description": "Bridge Port Default User Priority.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 7
+      },
+      {
+        "name": "PriorityRegeneration",
+        "access": "readWrite",
+        "description": "{{list}} List items represent user priority regeneration values for each ingress user priority on this Bridge Port.",
+        "default": "[0,1,2,3,4,5,6,7]",
+        "defaultType": "object",
+        "list": true,
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 7
+      },
+      {
+        "name": "PortState",
+        "access": "readOnly",
+        "description": "Bridge Port state as defined in 802.1D {{bibref|802.1D-2004}} and 802.1Q {{bibref|802.1Q-2011}}.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Blocking",
+          "Listening",
+          "Learning",
+          "Forwarding",
+          "Broken"
+        ]
+      },
+      {
+        "name": "PVID",
+        "access": "readWrite",
+        "description": "PVID (or Port VID) is the VLAN ID with which an untagged or priority tagged frame that arrives on this port will be associated (i.e. default Port VLAN ID as defined in 802.1Q {{bibref|802.1Q-2011}}). For an 802.1D Bridge {{bibref|802.1D-2004}}, this parameter MUST be ignored.",
+        "default": "1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": 1,
+        "maxInclusive": 4094
+      },
+      {
+        "name": "TPID",
+        "access": "readWrite",
+        "description": "The Tag Protocol Identifier (TPID) assigned to this {{object}}. The TPID is an EtherType value used to identify the frame as a tagged frame. Standard {{bibref|802.1Q-2011|Table 9.1}} TPID values are: *S-TAG 0x88A8 = 34984 *C-TAG 0x8100 = 33024 Non-Standard TPID values are: *S-TAG 0x9100 = 37120",
+        "default": "33024",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "AcceptableFrameTypes",
+        "access": "readWrite",
+        "description": "Indicates which types of frame arriving on this port will be admitted to the bridge (i.e. Bridge Port acceptable frame types as defined in 802.1Q {{bibref|802.1Q-2011}}). {{enum}} For an 802.1D {{bibref|802.1D-2004}} Bridge, the value of this parameter MUST be {{enum|AdmitAll}}.",
+        "default": "AdmitAll",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "AdmitAll",
+          "AdmitOnlyVLANTagged",
+          "AdmitOnlyPrioUntagged"
+        ]
+      },
+      {
+        "name": "IngressFiltering",
+        "access": "readWrite",
+        "description": "Enables or disables Ingress Filtering as defined in 802.1Q {{bibref|802.1Q-2011}}. If enabled ({{true}}), causes frames arriving on this port to be discarded if the port is not in the VLAN ID's member set (which is configured via the {{object|#.VLANPort}} table). For an 802.1D {{bibref|802.1D-2004}} Bridge, the value of this parameter MUST be {{false}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "ServiceAccessPrioritySelection",
+        "access": "readWrite",
+        "description": "This parameter controls the Service Access Priority selection function as described in {{bibref|802.1Q-2011|section 6.13}}. The parameter is applicable to deployments of {{object|##.Bridge}} instances that are referenced by {{param|###.Bridging.ProviderBridge.{i}.SVLANcomponent}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "ServiceAccessPriorityTranslation",
+        "access": "readWrite",
+        "description": "{{list}} List items represent service access priority translation values for each ingress priority on this {{object}} as described in {{bibref|802.1Q-2011|section 6.13}}. The parameter is applicable to deployments of {{object|##.Bridge}} instances that are referenced by {{param|###.Bridging.ProviderBridge.{i}.SVLANcomponent}}.",
+        "default": "[0,1,2,3,4,5,6,7]",
+        "defaultType": "object",
+        "list": true,
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 7,
+        "version": "2.12"
+      },
+      {
+        "name": "PriorityTagging",
+        "access": "readWrite",
+        "description": "Enables or disables priority tagging on this Bridge Port. When {{true}}, egress frames leaving this interface will be priority tagged with the frame's associated priority value, which will either be derived directly from the ingress frame or else set via {{param|###.QoS.Classification.{i}.EthernetPriorityMark}}. When {{false}}, egress frames leaving this interface will be untagged. The parameter does not affect reception of ingress frames. Only applies on bridge ports that are untagged member of one or more VLAN's.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "PathCost",
+        "access": "readWrite",
+        "description": "The Port\u2019s contribution, when it is the Root Port, to the Root Path Cost for the Bridge as described in {{bibref|802.1D-2004|Section 17.13.11}}. This parameter apply only when {{param|###.Bridging.Bridge.{i}.STP.Enable}} is {{true}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535,
+        "version": "2.16"
+      },
+      {
+        "name": "Priority",
+        "access": "readWrite",
+        "description": "The first four components of the Port\u2019s port priority vector value as described in {{bibref|802.1D-2004|Section 17.19.21}}. This parameter apply only when {{param|###.Bridging.Bridge.{i}.STP.Enable}} is {{true}}.",
+        "default": "128",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 240,
+        "version": "2.16"
+      }
+    ],
+    "description": "Bridge Port table, which MUST contain an entry for each bridge port (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}). There are two types of bridge ports: management (upward facing) and non-management (downward facing). This is determined by configuring the Boolean {{param|ManagementPort}} parameter. The CPE will automatically configure each management bridge port to appear in the interface stack above all non-management bridge ports that share the same {{object|##.Bridge}} instance.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

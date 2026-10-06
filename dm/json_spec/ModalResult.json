@@ -1,0 +1,90 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "ModalResult.{i}.",
+  "object": {
+    "path": "ModalResult.{i}.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "MaxIPLayerCapacity",
+        "access": "readOnly",
+        "description": "The maximum IP-Layer Capacity metric from among all {{param|#.IncrementalResult.{i}.IPLayerCapacity}} values within corresponding mode across all connections for this test. This is calculated according to {{bibref|TR-471}} Equation 1. Result is expressed in {{units}} with 2 digits beyond the decimal. 10^6^ bits/second = 1 {{units}}.",
+        "type": "decimal"
+      },
+      {
+        "name": "TimeOfMax",
+        "access": "readOnly",
+        "description": "Time in UTC of end of the sub-interval when {{param|MaxIPLayerCapacity}} was measured. If the value of {{param|MaxIPLayerCapacity}} occurred in multiple sub-intervals, this MUST be the earliest of these sub-intervals. Value MUST be specified to {{param|#.TimestampResolution}} precision. For example: 2008-04-09T15:01:05.123456Z",
+        "type": "dateTime"
+      },
+      {
+        "name": "MaxETHCapacityNoFCS",
+        "access": "readOnly",
+        "description": "Results of measurements using the Maximum IP-Layer Capacity metric, according to {{bibref|TR-471}} Equation 1, and calculations to estimate the capacity at Layer 2 with Preamble and Inter-frame gap, but no ETH Frame Check Sequence. Result is expressed in {{units}} with 2 digits beyond the decimal. 10^6^ bits/second = 1 {{units}}.",
+        "type": "decimal"
+      },
+      {
+        "name": "MaxETHCapacityWithFCS",
+        "access": "readOnly",
+        "description": "Results of measurements using the Maximum IP-Layer Capacity metric, according to {{bibref|TR-471}} Equation 1, and calculations to estimate the capacity at Layer 2 with ETH Frame Check Sequence. Result is expressed in {{units}} with 2 digits beyond the decimal. 10^6^ bits/second = 1 {{units}}.",
+        "type": "decimal"
+      },
+      {
+        "name": "MaxETHCapacityWithFCSVLAN",
+        "access": "readOnly",
+        "description": "Results of measurements using the Maximum IP-Layer Capacity metric, according to {{bibref|TR-471}} Equation 1, and calculations to estimate the capacity at Layer 2 with ETH Frame Check Sequence and VLAN tag. Result is expressed in {{units}} with 2 digits beyond the decimal. 10^6^ bits/second = 1 {{units}}.",
+        "type": "decimal"
+      },
+      {
+        "name": "LossRatioAtMax",
+        "access": "readOnly",
+        "description": "Ratio of lost packets to total packets during sub-interval of {{param|MaxIPLayerCapacity}}. This value is expressed as a decimal to 9 decimal digits.",
+        "type": "decimal"
+      },
+      {
+        "name": "RTTRangeAtMax",
+        "access": "readOnly",
+        "description": "The range of Round Trip Time (RTT) during sub-interval of {{param|MaxIPLayerCapacity}}. This value is expressed in {{units}}. This value is expressed as a decimal to 9 decimal digits.",
+        "type": "decimal"
+      },
+      {
+        "name": "PDVRangeAtMax",
+        "access": "readOnly",
+        "description": "The range of Packet Delay Variation (PDV) during sub-interval of {{param|MaxIPLayerCapacity}}. This value is expressed in {{units}}. This value is expressed as a decimal to 9 decimal digits.",
+        "type": "decimal"
+      },
+      {
+        "name": "MinOnewayDelayAtMax",
+        "access": "readOnly",
+        "description": "The minimum one-way delay during the sub-interval of {{param|MaxIPLayerCapacity}}. The minimum one-way delay is calculated at the conclusion of the test and SHALL be calculated using the conditional distribution of all packets with a finite one-way delay value (undefined delays are excluded). This value is expressed in {{units}}. This value is expressed as a decimal to 9 decimal digits.",
+        "type": "decimal"
+      },
+      {
+        "name": "ReorderedRatioAtMax",
+        "access": "readOnly",
+        "description": "Ratio of reordered packets to total packets during the sub-interval of {{param|MaxIPLayerCapacity}}. This value is expressed as a decimal to 9 decimal digits.",
+        "type": "decimal"
+      },
+      {
+        "name": "ReplicatedRatioAtMax",
+        "access": "readOnly",
+        "description": "Ratio of replicated packets to total packets during the sub-interval of {{param|MaxIPLayerCapacity}}. This value is expressed as a decimal to 9 decimal digits.",
+        "type": "decimal"
+      },
+      {
+        "name": "InterfaceEthMbpsAtMax",
+        "access": "readOnly",
+        "description": "The number of bits observed on the {{param|#.Interface}} during an IP-Layer Capacity test for time interval of duration {{param|#.TestSubInterval}} ending at {{param|#.IncrementalResult.{i}.TimeOfSubInterval}} corresponding to the {{param|MaxIPLayerCapacity}}, divided by the duration of {{param|#.TestSubInterval}}. Result is expressed in Mbps with 2 digits beyond the decimal. 10^6^ bits/second = 1 {{units}}. This is primarily a diagnostic measurement. Measurement direction follows the {{param|#.Role}}.",
+        "type": "decimal",
+        "version": "2.15"
+      }
+    ],
+    "description": "Modal test results. Only returned when bimodal test mode is enabled ({{param|#.NumberFirstModeTestSubIntervals}} >=1). If returned, it MUST contain 1 or more entries, with instance number 1 corresponding to the second mode and instance number 2 corresponding to the third mode. Results for the Maximum in each mode/instance are calculated based on {{object|#.IncrementalResult.{i}.}} data within the boundary of its corresponding mode.",
+    "children": []
+  }
+}

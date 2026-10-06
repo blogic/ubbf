@@ -1,0 +1,105 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.AL.ForwardingTable.ForwardingRule.{i}.",
+  "object": {
+    "path": "Device.IEEE1905.AL.ForwardingTable.ForwardingRule.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ForwardingRuleNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "InterfaceList",
+        "access": "readWrite",
+        "description": "The list of interfaces to which a frame satisfying the following classification criteria should be forwarded (intfAddressList parameter as defined in {{bibref|IEEE1905.1a|Table 5-8: ALME-SET-FWD-RULE.request parameters and Table 5-12: fwdRuleList elements}}). {{list}} Each list item MUST be the path name of an object, which MUST be a row of an {{object|##.Interface}} object. If the referenced item is deleted, the corresponding item MUST be removed from the list. {{noreference}}",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "MACDestinationAddress",
+        "access": "readWrite",
+        "description": "Classification criterion. The destination MAC address.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "MACDestinationAddressFlag",
+        "access": "readWrite",
+        "description": "If {{false}}, the classification criterion {{param|MACDestinationAddress}} is ignored. If {{true}}, the classification criterion {{param|MACDestinationAddress}} is used.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "MACSourceAddress",
+        "access": "readWrite",
+        "description": "Classification criterion. The source MAC address.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "MACSourceAddressFlag",
+        "access": "readWrite",
+        "description": "If {{false}}, the classification criterion {{param|MACSourceAddress}} is ignored. If {{true}}, the classification criterion {{param|MACSourceAddress}} is used.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "EtherType",
+        "access": "readWrite",
+        "description": "Classification criterion. Ether Type Field in a frame.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "EtherTypeFlag",
+        "access": "readWrite",
+        "description": "If {{false}}, the classification criterion {{param|EtherType}} is ignored. If {{true}}, the classification {{param|EtherType}} is used.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Vid",
+        "access": "readWrite",
+        "description": "Classification criterion. IEEE 802.1Q VLAN ID in a frame.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 4095
+      },
+      {
+        "name": "VidFlag",
+        "access": "readWrite",
+        "description": "If {{false}}, the classification criterion {{param|Vid}} is ignored. If {{true}}, the classification {{param|Vid}} is used.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "PCP",
+        "access": "readWrite",
+        "description": "Classification criterion. IEEE 802.1Q Priority Code Point field.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 7
+      },
+      {
+        "name": "PCPFlag",
+        "access": "readWrite",
+        "description": "If {{false}}, the classification criterion {{param|PCP}} is ignored. If {{true}}, the classification {{param|PCP}} is used.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      }
+    ],
+    "description": "The 1905 forwarding rule for the ALME-SET-FWD-RULE.request and ALME-GET-FWD-RULES.response with classification criteria as defined in {{bibref|IEEE1905.1a|Table 5-9: ClassificationSet elements}}.",
+    "children": []
+  }
+}

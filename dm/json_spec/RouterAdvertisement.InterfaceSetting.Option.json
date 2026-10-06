@@ -1,0 +1,54 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.RouterAdvertisement.InterfaceSetting.{i}.Option.{i}.",
+  "object": {
+    "path": "Device.RouterAdvertisement.InterfaceSetting.{i}.Option.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "OptionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Tag",
+        "access": "readWrite",
+        "description": "Option tag (type) {{bibref|RFC4861|Section 4.6}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Value",
+        "access": "readWrite",
+        "description": "A hexbinary encoded option value {{bibref|RFC4861|Section 4.6}}.",
+        "type": "hexBinary",
+        "minLength": 0,
+        "maxLength": 65535
+      }
+    ],
+    "description": "This object specifies the options in a Router Advertisement (RA) message {{bibref|RFC4861|Section 4.6}}. {{object}} entries are created for use in sending Router Advertisements (enabled options MUST be included in RA messages sent). This includes support for sending DNS information in the RA message as described in {{bibref|RFC6106}}. This table is intended only for options that are not modeled elsewhere. For example, it is not appropriate for the MTU option (which is modeled via {{param|#.AdvLinkMTU}}).",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

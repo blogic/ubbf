@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# odhcp6c hook: capture the RA PIO prefix set for this interface so the
+# TR-181 IP.Interface.{i}.IPv6Prefix handler can surface RA-learned
+# prefixes with Origin=RouterAdvertisement. With accept_ra=0 on the
+# WAN l3 device the kernel FIB has no RTPROT_RA routes, so the rtnl-
+# based ra_prefixes_get() path returns nothing; this hook is the
+# userspace counterpart fed from odhcp6c's RA_ADDRESSES env var.
+
+case "$2" in
+	bound|informed|updated|rebound|ra-updated)
+		mkdir -p /tmp/ubbf
+		tmp="/tmp/ubbf/ra-prefix.$INTERFACE.$$"
+		: > "$tmp"
+		for entry in $RA_ADDRESSES; do
+			printf '%s\n' "$entry" >> "$tmp"
+		done
+		mv "$tmp" "/tmp/ubbf/ra-prefix.$INTERFACE"
+		;;
+	stopped|unbound)
+		rm -f "/tmp/ubbf/ra-prefix.$INTERFACE"
+		;;
+esac

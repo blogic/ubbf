@@ -1,0 +1,64 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MQTT.Client.{i}.Subscription.{i}.",
+  "object": {
+    "path": "Device.MQTT.Client.{i}.Subscription.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "SubscriptionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "When a MQTT client connects to a MQTT server, it MUST send a SUBSCRIBE message including all instances with {{param}} set to {{true}}. If the MQTT client is already connected with the MQTT server ({{param|#.Status}} is {{enum|Connected|#.Status}}), a MQTT SUBSCRIBE or UNSUBSCRIBE message MUST be sent directly when {{param}} is changed to {{true}} or {{false}}, respectively. The actual status of the subscription is indicated with {{param|Status}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the status of this subscription. {{enum}} The {{enum|Subscribed}} value indicates that the topic was successfully subscribed with the MQTT broker, the MQTT client received the SUBACK message for this topic from the server. The {{enum|Subscribing}} value MAY be used by the CPE to indicate that the a SUBSCRIBE message for this topic was sent, and the CPE is waiting for a SUBACK message. The {{enum|Unsubscribed}} value indicates that the topic is not registered with the MQTT broker. The {{enum|Unsubscribing}} value MAY be used by the CPE to indicate that an UNSUBSCRIBE message for this topic was sent, and the CPE is waiting for an UNSUBACK message. If the {{param|Enable}} is set to {{false}} the status MUST be either {{enum|Unsubscribed}} or if the unsubscription failed {{enum|Error}}.",
+        "type": "string",
+        "enumerations": [
+          "Unsubscribed",
+          "Subscribed",
+          "Subscribing",
+          "Unsubscribing",
+          "Error"
+        ]
+      },
+      {
+        "name": "Topic",
+        "access": "readWrite",
+        "description": "Name of the subscribed topic. Topic names may contain wildcards according to the rules specified in {{bibref|MQTT311|section Appendix A}}, {{bibref|MQTT311|section 4.7}} or {{bibref|MQTT50|4.7}}.",
+        "type": "string",
+        "maxLength": 65535
+      },
+      {
+        "name": "QoS",
+        "access": "readWrite",
+        "description": "The MQTT QoS level assigned with the subscription (see {{bibref|MQTT311|section 4.1}}, {{bibref|MQTT311|section 4.3}}) or {{bibref|MQTT50|4.3}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 2
+      }
+    ],
+    "description": "List of MQTT subscriptions handled by the MQTT client. The MQTT client MUST subscribe with the MQTT broker for all subscription instances, whose parameter {{param|Enable}} is set to {{true}}, when it establishes a new connection to the MQTT broker. Disabled subscription instances with {{param|Enable}} set to {{false}} will be ignored during connection establishment.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IP.Interface.{i}.",
+  "object": {
+    "path": "Device.IP.Interface.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "InterfaceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the interface (regardless of {{param|IPv4Enable}} and {{param|IPv6Enable}}). This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "IPv4Enable",
+        "access": "readWrite",
+        "description": "If set to {{true}}, attaches this interface to the IPv4 stack. If set to {{false}}, detaches this interface from the IPv4 stack. Once detached from the IPv4 stack, the interface will now no longer be able to pass IPv4 packets, and will be operationally down (unless also attached to an enabled IPv6 stack). For an IPv4 capable device, if {{param}} is not present this interface SHOULD be permanently attached to the IPv4 stack. Note that {{param}} is independent of {{param|Enable}}, and that to administratively enable an interface for IPv4 it is necessary for both {{param|Enable}} and {{param}} to be {{true}}.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.",
+        "default": "Down",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the interface as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}. {{param}} MUST be {{empty}} and read-only when {{param|Type}} is {{enum|Loopback|Type}}, {{enum|Tunnel|Type}}, or {{enum|Tunneled|Type}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Router",
+        "access": "readWrite",
+        "description": "{{reference}} The ''Router'' instance that is associated with this IP Interface entry.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.Routing.Router.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "IPv6Enable",
+        "access": "readWrite",
+        "description": "If set to {{true}}, attaches this interface to the IPv6 stack. If set to {{false}}, detaches this interface from the IPv6 stack. Once detached from the IPv6 stack, the interface will now no longer be able to pass IPv6 packets, and will be operationally down (unless also attached to an enabled IPv4 stack). For an IPv6 capable device, if {{param}} is not present this interface SHOULD be permanently attached to the IPv6 stack. Note that {{param}} is independent of {{param|Enable}}, and that to administratively enable an interface for IPv6 it is necessary for both {{param|Enable}} and {{param}} to be {{true}}.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "ULAEnable",
+        "access": "readWrite",
+        "description": "Controls whether or not ULAs {{bibref|RFC4193}} are generated and used on this interface.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "MaxMTUSize",
+        "access": "readWrite",
+        "description": "The maximum transmission unit (MTU); the largest allowed size of an IP packet (including IP headers, but excluding lower layer headers such as Ethernet, PPP, or PPPoE headers) that is allowed to be transmitted by or through this device.",
+        "type": "unsignedInt",
+        "minInclusive": 64,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "IP interface type. {{enum}} For {{enum|Loopback}}, {{enum|Tunnel}}, and {{enum|Tunneled}} IP interface objects, the {{param|LowerLayers}} parameter MUST be {{empty}}.",
+        "default": "Normal",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Normal",
+          "Loopback",
+          "Tunnel",
+          "Tunneled"
+        ]
+      },
+      {
+        "name": "Loopback",
+        "access": "readWrite",
+        "description": "When set to {{true}}, the IP interface becomes a loopback interface and the CPE MUST set {{param|Type}} to {{enum|Loopback|Type}}. In this case, the CPE MUST also set {{param|LowerLayers}} to {{empty}} and fail subsequent attempts at setting {{param|LowerLayers}} until the interface is no longer a loopback. Support for manipulating loopback interfaces is OPTIONAL.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "IPv4AddressNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IPv6AddressNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "IPv6PrefixNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "AutoIPEnable",
+        "access": "readWrite",
+        "description": "If {{true}}, enables auto-IP on the interface {{bibref|RFC3927}}. This mechanism is only used with IPv4. When auto-IP is enabled on an interface, an {{object|IPv4Address}} object will dynamically be created and configured with auto-IP parameter values. The exact conditions under which an auto-IP address is created (e.g. always when enabled or only in absence of dynamic IP addressing) is implementation specific.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "TWAMPReflectorNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.12"
+      }
+    ],
+    "description": "IP interface table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}). This table models the layer 3 IP interface. Each IP interface can be attached to the IPv4 and/or IPv6 stack. The interface's IP addresses and prefixes are listed in the {{object|IPv4Address}}, {{object|IPv6Address}} and {{object|IPv6Prefix}} tables. Note that support for manipulating {{param|Loopback}} interfaces is OPTIONAL, so the implementation MAY choose not to create (or allow the Controller to create) {{object}} instances of type {{enum|Loopback|Type}}. When the Controller administratively disables the interface, i.e. sets {{param|Enable}} to {{false}}, the interface's automatically-assigned IP addresses and prefixes MAY be retained. When the Controller administratively enables the interface, i.e. sets {{param|Enable}} to {{true}}, these IP addresses and prefixes MUST be refreshed. It's up to the implementation to decide exactly what this means: it SHOULD take all reasonable steps to refresh everything but if it is unable, for example, to refresh a prefix that still has a significant lifetime, it might well choose to retain rather than discard it. Any {{enum|Tunneled|Type}} IP interface instances instantiated by the CPE MUST NOT have any statistics, writable parameters, IP addresses or IPv6 prefixes. Any read-only parameters, e.g. {{param|Status}}, MUST return the same information as for the corresponding {{enum|Tunnel|Type}} interface. The reason for these rules is that {{enum|Tunneled|Type}} IP interfaces exist only in order to be the targets of references (within the data model) and do not model any concepts over and above those already modeled by the {{enum|Tunnel|Type}} IP interfaces. Note that {{enum|Tunnel|Type}} and {{enum|Tunneled|Type}} IP interfaces are part of a legacy mechanism that is only used for {{object|##.IPv6rd}}, {{object|##.DSLite}} and {{object|##.IPsec}} tunnels and MUST NOT be used in any other context. For all other tunneling mechanisms {{enum|Normal|Type}} IP interfaces are stacked above technology-specific Tunnel Interfaces, e.g. above {{object|##.GRE.Tunnel.{i}.Interface}} or {{object|##.MAP.Domain.{i}.Interface}} objects.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

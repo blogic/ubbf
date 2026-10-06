@@ -1,0 +1,82 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IP.Interface.{i}.TWAMPReflector.{i}.",
+  "object": {
+    "path": "Device.IP.Interface.{i}.TWAMPReflector.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "TWAMPReflectorNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the TWAMP reflector.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the TWAMP reflector.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Active",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "The port used to listen for the TWAMP test packets.",
+        "default": "862",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "MaximumTTL",
+        "access": "readWrite",
+        "description": "The maximum TTL of a received packet that this TWAMP reflector will reflect to the TWAMP controller.",
+        "default": "1",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 255
+      },
+      {
+        "name": "IPAllowedList",
+        "access": "readWrite",
+        "description": "{{list}} List items represent source IP addresses and subnets from which test packets MUST always be received. {{empty}} list will allow test packets to be received from any source IP address. Each entry in the list MUST be either an IP address, or an IP prefix specified using Classless Inter-Domain Routing (CIDR) notation {{bibref|RFC4632}}. An IP prefix is specified as an IP address followed (with no intervening white space) by \"/n\", where ''n'' (the prefix size) is an integer in the range 0-32 (for IPv4) or 0-128 (for IPv6) that indicates the number of (leftmost) '1' bits of the prefix. IPv4 example: * 1.2.3.4 specifies a single IPv4 address, and 1.2.3.4/24 specifies a class C subnet with subnet mask 255.255.255.0. * 1.2.0.0/22 represents the 1024 IPv4 addresses from 1.2.0.0 to 1.2.3.255. IPv6 example: * fec0::220:edff:fe6a:f76 specifies a single IPv6 address. * 2001:edff:fe6a:f76::/64 represents the IPv6 addresses from 2001:edff:fe6a:f76:0:0:0:0 to 2001:edff:fe6a:f76:ffff:ffff:ffff:ffff.",
+        "list": true,
+        "listMaxLength": 255,
+        "type": "string"
+      },
+      {
+        "name": "PortAllowedList",
+        "access": "readWrite",
+        "description": "{{list}} List items represent source port ranges from which test packets MUST always be received. {{empty}} list will allow test packets to be received from any source port. Each entry in the list MUST be either a port number or a range of port numbers separated by a hyphen (-). For example, an entry with the value: '2-40' accepts test packets from any allowed source IP addresses with a source port between 2 and 40 inclusive. An entry of '3' accepts test packets from allow source IP addresses with a port of 3.",
+        "list": true,
+        "listMaxLength": 255,
+        "type": "string"
+      }
+    ],
+    "description": "This object contains parameters associated with the configuration that permits this interface to be used as Two-Way Active Measurement Protocol (TWAMP) reflector as defined in {{bibref|TR-390}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

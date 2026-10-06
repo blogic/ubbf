@@ -1,0 +1,42 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.QMDescriptor.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.QMDescriptor.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "QMDescriptorNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "BSSID",
+        "access": "readOnly",
+        "description": "The BSSID of BSS for which this descriptor applies.",
+        "type": "dataType:MACAddress",
+        "version": "2.17"
+      },
+      {
+        "name": "ClientMAC",
+        "access": "readOnly",
+        "description": "MAC address of STA for which this descriptor applies.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "DescriptorElement",
+        "access": "readOnly",
+        "description": "The descriptor element. One of: : MSCS descriptor element (as described in {{bibref|802.11-2020|Section 9.4.2.243}}, or : SCS descriptor element (as described in {{bibref|802.11-2020|Section 9.4.2.121}}, or : QoS Management DSCP policy element (as described in {{bibref|802.11-2020|Section 9.4.2.94}} and {{bibref|RFC8325|Section 6.3}}).",
+        "type": "hexBinary"
+      }
+    ],
+    "description": "This object contains a table of {{param|DescriptorElement}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "ClientMAC"
+      ]
+    }
+  }
+}

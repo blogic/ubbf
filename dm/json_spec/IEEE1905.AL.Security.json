@@ -1,0 +1,37 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.AL.Security.",
+  "object": {
+    "path": "Device.IEEE1905.AL.Security.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "SetupMethod",
+        "access": "readWrite",
+        "description": "{{list}} Supported security setup method(s) for the network. {{enum}}",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "enumerations": [
+          "UCPK",
+          "PBC",
+          "NFCNK"
+        ]
+      },
+      {
+        "name": "Password",
+        "access": "readWrite",
+        "description": "1905 network passphrase for generating security keys.",
+        "secured": true,
+        "type": "string"
+      }
+    ],
+    "description": "This object represents the Security configuration for the 1905 device as defined in {{bibref|IEEE1905.1a|Section 9.2 Security Setup Methods}}.",
+    "children": []
+  }
+}

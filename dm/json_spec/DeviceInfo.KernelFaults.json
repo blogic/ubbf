@@ -1,0 +1,60 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.KernelFaults.",
+  "object": {
+    "path": "Device.DeviceInfo.KernelFaults.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "StoragePath",
+        "access": "readOnly",
+        "description": "Path where the Kernel faults logs must be stored.",
+        "type": "string"
+      },
+      {
+        "name": "LastUpgradeCount",
+        "access": "readOnly",
+        "description": "Total number of Kernel faults which occurred since last firmware upgrade.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PreviousBootCount",
+        "access": "readOnly",
+        "description": "The number of Kernel faults which occurred during the previous boot cycle.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MinFreeSpace",
+        "access": "readWrite",
+        "description": "Minimum free space in {{units}} on the device that must be free before attempting to create a {{object|KernelFault}} instance. This setting does not affect the counting of Kernel faults.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RotateKernelFaultEntries",
+        "access": "readWrite",
+        "description": "When enabled and once the maximum {{object|KernelFault}} entries as indicated by {{param|MaxKernelFaultEntries}} are reached, the oldest entry, determined by {{param|KernelFault.{i}.TimeStamp}}, is removed to make space for a new one, which is assigned a new instance identifier and a new {{param|KernelFault.{i}.Alias}}. This setting does not affect the counting of Kernel faults.",
+        "type": "boolean",
+        "version": "2.19"
+      },
+      {
+        "name": "MaxKernelFaultEntries",
+        "access": "readWrite",
+        "description": "The maximum number of entries available in the {{object|KernelFault}} table. Defines the maximum number of {{object|KernelFault}} instances that can be stored on the device. When {{param|RotateKernelFaultEntries}} is {{false}} and this limit is hit, no new {{object|KernelFault}} instances will be created until sufficient Kernel fault instances are removed. When {{param|RotateKernelFaultEntries}} is {{true}} and this limit is hit, the table {{object|KernelFault}} is rotated as specified by {{param|RotateKernelFaultEntries}}. Set this parameter to 0 to completely disable the creation of {{object|KernelFault}} instances. Reducing the {{param}} will cause for the implementation to delete the oldest {{object|KernelFault}} instances. This setting does not affect the counting of Kernel faults.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "KernelFaultNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "A fault in the context of the Kernel refers to a situation where the kernel encounters a critical error or a bug that it cannot recover from. When this happens, the kernel generates a \"fault message\" or \"kernel panic\", which provides information about the error, the state of the system at the time of the error, and a stack trace of function calls leading up to the error.",
+    "children": []
+  }
+}

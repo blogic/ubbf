@@ -1,0 +1,16 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SoftwareModules.ExecutionUnit.{i}.Extensions.",
+  "object": {
+    "path": "Device.SoftwareModules.ExecutionUnit.{i}.Extensions.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [],
+    "description": "This object proposes a general location for vendor extensions specific to this Execution Unit, which allows multiple Execution Units to expose parameters without the concern of conflicting parameter names. These vendor extensions are related to displaying status and maintaining configuration for this Execution Unit. It is also possible for the Execution Unit to expose status and configuration parameters within Service objects or as embedded objects and parameters directly within the root data model, in which case the combination of {{param|#.References}} and use of GetSupportDM and GetInstances USP messages will be used to determine their locations.",
+    "children": []
+  }
+}

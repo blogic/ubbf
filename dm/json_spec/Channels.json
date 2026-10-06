@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Channels.",
+  "object": {
+    "path": "Channels.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "TimeStamp",
+        "access": "readOnly",
+        "description": "Time at which channel data was last collected.",
+        "type": "dateTime"
+      }
+    ],
+    "description": "Per-channel G.hn performance monitoring results. Note: channels are unidirectional.",
+    "children": []
+  }
+}

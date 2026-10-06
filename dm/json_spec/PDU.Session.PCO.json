@@ -1,0 +1,45 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PDU.Session.{i}.PCO.",
+  "object": {
+    "path": "Device.PDU.Session.{i}.PCO.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.14",
+    "parameters": [
+      {
+        "name": "IPv6PCSCF",
+        "access": "readOnly",
+        "description": "The IPv6 address of the P-CSCF used for VoLTE telephony. {{deprecated|2.19|because it has moved to {{param|Device.SessionManagement.Session.{i}.PCO.IPv6PCSCF}}}}",
+        "type": "dataType:IPv6Address"
+      },
+      {
+        "name": "IPv6DNS",
+        "access": "readOnly",
+        "description": "Each entry is an IPv6 DNS server. {{deprecated|2.19|because it has moved to {{param|Device.SessionManagement.Session.{i}.PCO.IPv6DNS}}}}",
+        "list": true,
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "IPv4PCSCF",
+        "access": "readOnly",
+        "description": "The IPv4 address of the P-CSCF used for VoLTE telephony. {{deprecated|2.19|because it has moved to {{param|Device.SessionManagement.Session.{i}.PCO.IPv4PCSCF}}}}",
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "IPv4DNS",
+        "access": "readOnly",
+        "description": "Each entry is an IPv4 DNS server. {{deprecated|2.19|because it has moved to {{param|Device.SessionManagement.Session.{i}.PCO.IPv4DNS}}}}",
+        "list": true,
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "Policy Configuration Options (PCO) is an optional set of configuration parameters supplied by the network at the request of the 5G-RG as defined in {{bibref|3GPP-TS.24.008|clause 10.5.6.3}}. {{deprecated|2.19|because it has moved to {{object|Device.SessionManagement.Session.{i}.PCO}}}}",
+    "children": []
+  }
+}

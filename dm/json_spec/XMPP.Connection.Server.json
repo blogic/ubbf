@@ -1,0 +1,71 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XMPP.Connection.{i}.Server.{i}.",
+  "object": {
+    "path": "Device.XMPP.Connection.{i}.Server.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ServerNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}}. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Priority",
+        "access": "readWrite",
+        "description": "The priority of this {{object}} that is used by the {{object|##.Connection}} when determining the {{object}} to connect. The {{object|##.Connection}} MUST contact the {{object}} with the lowest-numbered priority that the {{object|##.Connection}} can reach as defined in {{bibref|RFC2782}}. The selection of {{object}}s with the same {{param}} value utilizes the {{param|Weight}} parameter to determine which {{object}} is selected by the {{object|##.Connection}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Weight",
+        "access": "readWrite",
+        "description": "This parameter specifies a relative weight for entries with the same {{param|Priority}}. The mechanism is defined in {{bibref|RFC2782}}. A value of -1 indicates that the implementation of this parameter is specific to the Vendor.",
+        "type": "long",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "ServerAddress",
+        "access": "readWrite",
+        "description": "Fully Qualified Domain Name (FQDN) or IP address of the XMPP server for this {{object|##.Connection}}. If the value of this Parameter is a FQDN that resolves to multiple addresses then each address SHOULD be attempted (in an implementation-specific order) until a connection can be made or all addresses are exhausted, in which case the next {{object}} instance (based on {{param|Priority}} and {{param|Weight}}) SHOULD be used.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "Port number of the XMPP server for this {{object|##.Connection}}.",
+        "default": "5222",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      }
+    ],
+    "description": "The {{object}} represents an XMPP server to be used for a {{object|##.Connection}}. This table is only relevant when {{param|##.Connection.{i}.ServerConnectAlgorithm}} is set to {{enum|ServerTable|##.Connection.{i}.ServerConnectAlgorithm}}. If {{param|##.Connection.{i}.ServerConnectAlgorithm}} is set to {{enum|DNS-SRV|##.Connection.{i}.ServerConnectAlgorithm}} then any instances of this table are ignored by this {{object|##.Connection}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

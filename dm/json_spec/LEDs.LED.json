@@ -1,0 +1,109 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LEDs.LED.{i}.",
+  "object": {
+    "path": "Device.LEDs.LED.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "LEDNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Switches on or off the power of the LED.",
+        "type": "boolean",
+        "version": "2.19"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "The internal name used to identify this LED.",
+        "type": "string"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of the LED.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "InUse",
+          "Controlled",
+          "Error"
+        ]
+      },
+      {
+        "name": "Reason",
+        "access": "readOnly",
+        "description": "The textual purpose that represents the visual display of the LED (e.g., Broadband Down).",
+        "type": "string",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "CyclePeriodRepetitions",
+        "access": "readOnly",
+        "description": "The number of cycle periods left for this LED. As each cycle period is completed this parameter is reduced by 1. A value of -1 indicates an infinite number of cycle period repetitions.",
+        "type": "int",
+        "minInclusive": -1,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Location",
+        "access": "readOnly",
+        "description": "The location of the LED as the user looks at the front of the device in its typical orientation (e.g., on-end, flat).",
+        "type": "string",
+        "enumerations": [
+          "Front",
+          "Back",
+          "Left",
+          "Right",
+          "Top",
+          "Bottom"
+        ]
+      },
+      {
+        "name": "RelativeXPosition",
+        "access": "readOnly",
+        "description": "The relative x position of the LED from left to right (x) and top to bottom (y) as the user looks at the device from the orientation identified in the {{param|Location}} parameter in its typical orientation (e.g., on-end, flat).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RelativeYPosition",
+        "access": "readOnly",
+        "description": "The relative y position of the LED from left to right (x) and top to bottom (y) as the user looks at the device from the orientation identified in the {{param|Location}} parameter in its typical orientation (e.g., on-end, flat).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxBrightness",
+        "access": "readOnly",
+        "description": "The maximum allowed brightness level for the LED. This value is determined by the hardware capabilities.",
+        "type": "unsignedInt",
+        "version": "2.19"
+      },
+      {
+        "name": "CycleElementNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Each instance of this object describes an LED on the device. The default illumination characteristics (e.g., Color, Brightness) of an in use LED is vendor specific. When a cycle completes (i.e., {{param|CyclePeriodRepetitions}} = 0), the LED reverts back to its default illumination characteristics. When the value of the {{param|Status}} parameter is {{enum|Controlled|Status}}, then the value of {{param|CycleElementNumberOfEntries}} and {{param|CycleElementNumberOfEntries}} parameters SHOULD be 0. When the value of the {{param|RelativeXPosition}} and {{param|RelativeYPosition}} parameters are 0, this indicates that the position of the LED is unknown.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Name"
+      ]
+    }
+  }
+}

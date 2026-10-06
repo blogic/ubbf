@@ -1,0 +1,31 @@
+# PPP options for PPPoE server
+
+# Authentication
+require-chap
+refuse-pap
+
+# Network
+noipdefault
+usepeerdns
+defaultroute
+
+# IPv6 support
++ipv6
+
+# DNS servers to push to clients
+ms-dns 8.8.8.8
+ms-dns 8.8.4.4
+
+# Logging
+debug
+
+# MTU/MRU for PPPoE (1492 = 1500 - 8 byte PPPoE header)
+mtu 1492
+mru 1492
+
+# LCP echo for keepalive
+lcp-echo-interval 30
+lcp-echo-failure 4
+
+# Misc
+nologfd

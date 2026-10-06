@@ -1,0 +1,31 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DNS.SD.Service.{i}.TextRecord.{i}.",
+  "object": {
+    "path": "Device.DNS.SD.Service.{i}.TextRecord.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "TextRecordNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Key",
+        "access": "readOnly",
+        "description": "The key that identifies the text record",
+        "type": "string",
+        "maxLength": 255
+      },
+      {
+        "name": "Value",
+        "access": "readOnly",
+        "description": "The value of the text record.",
+        "type": "string",
+        "maxLength": 255
+      }
+    ],
+    "description": "This object maintains an instance of a (key/value pairs) of the service. The information is extracted from DNS TXT records {{bibref|RFC1035}} of the discovered service. When multiple instances of the {{object}} table have the same value for the {{param|Key}} parameter, the implementation is CPE specific.",
+    "children": []
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Firewall.ConnectionTracking.SIP.",
+  "object": {
+    "path": "Device.Firewall.ConnectionTracking.SIP.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the connection tracking support for the SIP protocol (SIP ALG).",
+        "type": "boolean"
+      },
+      {
+        "name": "Ports",
+        "access": "readWrite",
+        "description": "Port numbers of the SIP servers that need to be monitored.",
+        "list": true,
+        "type": "int",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "DirectMedia",
+        "access": "readWrite",
+        "description": "Allow media streams between signaling endpoints.",
+        "default": "true",
+        "defaultType": "implementation",
+        "type": "boolean"
+      },
+      {
+        "name": "DirectSignaling",
+        "access": "readWrite",
+        "description": "Allow incoming calls from registrar.",
+        "default": "true",
+        "defaultType": "implementation",
+        "type": "boolean"
+      },
+      {
+        "name": "ExternalMedia",
+        "access": "readWrite",
+        "description": "Allow media streams that are not passing through this router. When this feature is activated, the logic will maintain the SDP payload as is when it identifies that the interface towards the invited party is the same as the one towards the media endpoint.",
+        "default": "false",
+        "defaultType": "implementation",
+        "type": "boolean"
+      },
+      {
+        "name": "TimeOut",
+        "access": "readWrite",
+        "description": "SIP time out session.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "SIP is an application-layer control protocol used to establish, modify, and terminate multimedia sessions.",
+    "children": []
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Routing.Babel.DTLSCertSet.{i}.DTLSCert.{i}.",
+  "object": {
+    "path": "Device.Routing.Babel.DTLSCertSet.{i}.DTLSCert.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "DTLSCertNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.15"
+      },
+      {
+        "name": "CertValue",
+        "access": "writeOnceReadOnly",
+        "description": "The DTLS certificate in PEM format {{bibref|RFC7468}}. This value is immutable, once written.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "CertType",
+        "access": "readWrite",
+        "description": "The certificate type of {{param|CertValue}} (from among the supported types in {{param|##.SupportedDTLSCertTypes}}). This value is immutable, once written.",
+        "type": "string"
+      },
+      {
+        "name": "CertPrivateKey",
+        "access": "writeOnceReadOnly",
+        "description": "The private key of the certificate. {{param}} is only given a value if the certificate belongs to this device. If {{param}} is non-empty, this certificate can be supplied during DTLS handshaking. This value is immutable, once written.",
+        "secured": true,
+        "type": "hexBinary"
+      }
+    ],
+    "description": "This object provides the certificates used for verification and signing by the {{object|#.}} instance with DTLS.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

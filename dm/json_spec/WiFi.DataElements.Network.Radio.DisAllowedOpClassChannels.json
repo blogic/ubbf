@@ -1,0 +1,46 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.DisAllowedOpClassChannels.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.DisAllowedOpClassChannels.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "DisAllowedOpClassChannelsNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables disallowed operating classes and channels.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "OpClass",
+        "access": "readWrite",
+        "description": "The Operating Class per {{bibref|802.11ax|Table E-4}}. Note that the operating class identifies the band and channel width.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "ChannelList",
+        "access": "readWrite",
+        "description": "{{list}} The channel numbers in this Operating Class that are not allowed to be used on this radio.",
+        "list": true,
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      }
+    ],
+    "description": "The operating classes, and list of channels for each operating class, which are not allowed to be used on this radio.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "OpClass"
+      ]
+    }
+  }
+}

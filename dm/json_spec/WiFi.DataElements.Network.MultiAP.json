@@ -1,0 +1,64 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.MultiAPDevice.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.MultiAPDevice.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "ManufacturerOUI",
+        "access": "readOnly",
+        "description": "Organizationally unique identifier of the Access Point device manufacturer. Represented as a six hexadecimal-digit value using all upper-case letters and including any leading zeros. {{pattern}} The value MUST be a valid OUI as defined in {{bibref|OUI}}. This value MUST remain fixed over the lifetime of the device, including across firmware updates. If the instance of this {{object}} is the same as {{object|Device.}}, then this parameter is the same as {{param|Device.DeviceInfo.ManufacturerOUI}}. {{deprecated|2.18|because it was essentially the same as {{param|#.Manufacturer}}.}}",
+        "type": "string",
+        "minLength": 6,
+        "maxLength": 6,
+        "pattern": "[0-9A-F]{6}"
+      },
+      {
+        "name": "LastContactTime",
+        "access": "readOnly",
+        "description": "The last time that the Access Point device was contacted via the Multi-AP control protocol.",
+        "type": "dateTime"
+      },
+      {
+        "name": "AssocIEEE1905DeviceRef",
+        "access": "readOnly",
+        "description": "{{param}} is a reference to the IEEE 1905.1 Network Topology Device. Since IEEE 1905.1 is a common protocol used by Multi-AP Controllers for communications, this parameter allows the MultiAP portion of the data model to reference the associated IEEE 1905.1 portion of the data model.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#####.IEEE1905.AL.NetworkTopology.IEEE1905Device.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "EasyMeshControllerOperationMode",
+        "access": "readOnly",
+        "description": "This parameter represents the status of Wi-Fi CERTIFIED EasyMeshTM controller functionality. {{enum}} {{deprecated|2.18|because it was the same as {{param|#.ControllerOperationMode}}.}}",
+        "type": "string",
+        "enumerations": [
+          "NotSupported",
+          "SupportedNotEnabled",
+          "Running"
+        ]
+      },
+      {
+        "name": "EasyMeshAgentOperationMode",
+        "access": "readOnly",
+        "description": "This parameter represents the status of Wi-Fi CERTIFIED EasyMeshTM agent functionality. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "NotSupported",
+          "SupportedNotEnabled",
+          "Running"
+        ]
+      }
+    ],
+    "description": "This object represents an individual Access Point device.",
+    "children": []
+  }
+}

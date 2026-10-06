@@ -1,0 +1,60 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.",
+  "object": {
+    "path": "Device.WiFi.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "RadioNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SSIDNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AccessPointNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "EndPointNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ResetCounter",
+        "access": "readOnly",
+        "description": "This parameter counts the number of WiFi host or driver resets since the last device reset. This parameter is reset to zero after the device resets, and increments with each successive WiFi host or driver reset.",
+        "type": "dataType:StatsCounter32",
+        "version": "2.12"
+      },
+      {
+        "name": "ResetCause",
+        "access": "readOnly",
+        "description": "Reports the cause for the previous Wi-Fi driver reset.",
+        "type": "string",
+        "enumerations": [
+          "HostReinit",
+          "SpontaneousInterrupt",
+          "LossOfPower"
+        ],
+        "version": "2.14"
+      }
+    ],
+    "description": "The WiFi object is based on the IEEE 802.11 specifications ({{bibref|802.11-2020}}). It defines interface objects ({{object|Radio}} and {{object|SSID}}), and application objects ({{object|AccessPoint}} and {{object|EndPoint}}).",
+    "children": []
+  }
+}

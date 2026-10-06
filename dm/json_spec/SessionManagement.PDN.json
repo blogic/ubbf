@@ -1,0 +1,74 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SessionManagement.PDN.{i}.",
+  "object": {
+    "path": "Device.SessionManagement.PDN.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "PDNNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "QCI",
+        "access": "readOnly",
+        "description": "QoS Class Identifier. See {{bibref|3GPP-TS.24.301|Clause 9.9.4.3}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 254
+      },
+      {
+        "name": "UpstreamMaxBitRate",
+        "access": "readOnly",
+        "description": "Upstream Maximum Bit Rate in {{units}}. See {{bibref|3GPP-TS.24.301|Clause 9.9.4.3}}.",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "DownstreamMaxBitRate",
+        "access": "readOnly",
+        "description": "Downstream Maximum Bit Rate in {{units}}. See {{bibref|3GPP-TS.24.301|Clause 9.9.4.3}}.",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "UpstreamGuaranteedBitRate",
+        "access": "readOnly",
+        "description": "Upstream Guaranteed Bit Rate in {{units}}. See {{bibref|3GPP-TS.24.301|Clause 9.9.4.3}}.",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "DownstreamGuaranteedBitRate",
+        "access": "readOnly",
+        "description": "Downstream Guaranteed Bit Rate in {{units}}. See {{bibref|3GPP-TS.24.301|Clause 9.9.4.3}}.",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "UpstreamAggregateBitRate",
+        "access": "readOnly",
+        "description": "Upstream Aggregate Bit Rate in {{units}}. See {{bibref|3GPP-TS.24.301|Clause 9.9.4.3}}.",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "DownstreamAggregateBitRate",
+        "access": "readOnly",
+        "description": "Downstream Aggregate Bit Rate in {{units}}. See {{bibref|3GPP-TS.24.301|Clause 9.9.4.3}}.",
+        "type": "unsignedLong"
+      }
+    ],
+    "description": "Contains all 4G specific attributes needed to establish a PDN session.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

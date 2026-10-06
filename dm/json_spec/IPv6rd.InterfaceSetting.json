@@ -1,0 +1,107 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IPv6rd.InterfaceSetting.{i}.",
+  "object": {
+    "path": "Device.IPv6rd.InterfaceSetting.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "InterfaceSettingNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enable or disable this {{object}} instance.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this entry. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "BorderRelayIPv4Addresses",
+        "access": "readWrite",
+        "description": "List items are the IPv4 addresses (possibly anycast) of the 6rd Relay(s).",
+        "list": true,
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "AllTrafficToBorderRelay",
+        "access": "readWrite",
+        "description": "If {{true}}, the destination address for all 6rd traffic will be set (IPv4 destination address) to one of the {{param|BorderRelayIPv4Addresses}}. If {{false}}, traffic whose destination address begins with the same prefix as {{param|SPIPv6Prefix}} will be sent directly to the destination IPv4 address of the endpoint, which is in the same 6rd domain. See 6rd Theory of Operation for further explanation {{bibref|TR-181i2|Appendix VI}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "SPIPv6Prefix",
+        "access": "readWrite",
+        "description": "The Service Provider's 6rd IPv6 prefix for this deployment and this 6rd RG.",
+        "type": "dataType:IPv6Prefix"
+      },
+      {
+        "name": "IPv4MaskLength",
+        "access": "readWrite",
+        "description": "The number of high-order {{units}} that are identical across all IPv4 addresses within a given 6rd domain. This number of {{units}} MUST be removed from the start of the IPv4 address when generating the 6rd delegated prefix. For example, if this value is 8, only the final 24 {{units}} of the subscriber IPv4 prefix will be used when creating the IPv6 delegated prefix, determining the destination IPv4 encapsulation address, etc. If the value is 0, then the whole 32 {{units}} of the IPv4 address are used in the encoding.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 32
+      },
+      {
+        "name": "AddressSource",
+        "access": "readWrite",
+        "description": "{{reference}} Points to the IPv4 address that is the source of the IPv4 address embedded in the IPv6 6rd prefix, and used as the source encapsulating IPv4 address. If the value is {{empty}} or this parameter is not present, the device will use internal logic to determine which IPv4 source address to use.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.{i}.IPv4Address.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "TunnelInterface",
+        "access": "readOnly",
+        "description": "{{reference}} This is an IP interface of ''Type'' {{enum|Tunnel|##.IP.Interface.{i}.Type}} that is logically the tunnel entry point for upstream IPv6 traffic and is also logically the tunnel exit point for downstream IPv6 traffic (i.e. the entry point for non-tunneled upstream IPv6 traffic to enter a tunnel and become tunneled, or conversely, the exit point for downstream IPv6 traffic leaving a tunnel after being un-tunneled). IPv6 traffic that enters {{param}} from the LAN is expected to continue on through {{param|TunneledInterface}}, and traffic from the WAN is expected to come from {{param|TunneledInterface}} into {{param}}. {{param}} is a logical interface that can allow for classification, marking (of IPv6 headers), and policing of IPv6 traffic that will be going over a 6rd tunnel. These functions are modeled in the {{object|##.QoS}} object. {{param}} can be used also to represent the 6rd virtual interface defined in {{bibref|RFC5969}}. Note: In 6rd, IPv6 packets arriving over one or more device LAN IP interfaces are logically fed into this {{param}}. Likewise, 6rd traffic from the WAN gets logically sent from this {{param}} to LAN IP interfaces.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "TunneledInterface",
+        "access": "readOnly",
+        "description": "{{reference}} This is an IP interface of ''Type'' {{enum|Tunneled|##.IP.Interface.{i}.Type}} that provides information about the IPv4 headers used to encapsulate the IPv6 packets. Encapsulated IPv6 traffic that enters {{param}} from the WAN is expected to continue on through {{param|TunnelInterface}}, and traffic from the LAN is expected to come from {{param|TunnelInterface}} into {{param}}. {{param}} is a logical interface that can allow for classification, marking (of IPv4 headers and VLAN tags), and policing of IPv4 packets that encapsulate IPv6 packets in 6rd traffic. These functions are modeled in the {{object|##.QoS}} object. Note: In 6rd, {{param}} traffic originating from the LAN logically feeds into a WAN-side IPv4 capable IP interface that the \"IPv6 6rd tunnel\" goes over. 6rd traffic that enters over this IPv4 WAN interface gets logically sent to this {{param}}.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "6rd {{bibref|RFC5969}} settings. A 6rd delegated prefix is expected to be of maximum length 64 bits, and is the concatenation of the following two items: * Service provider IPv6 prefix: specified via the {{param|SPIPv6Prefix}} parameter * IPv4 address suffix: the IPv4 address with the first {{param|IPv4MaskLength}} bits removed This object definition is derived from {{bibref|RFC5969}} with some minor nomenclature changes.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

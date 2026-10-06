@@ -1,0 +1,509 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.Radio.{i}.",
+  "object": {
+    "path": "Device.WiFi.Radio.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "RadioNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the interface. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}. If the instance of this {{object}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.Enabled}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}. Because the interface includes layer 1, the {{enum|LowerLayerDown}} value SHOULD never be used.",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the interface as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}. Note: Since {{object}} is a layer 1 interface, it is expected that {{param}} will not be used.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "MaxBitRate",
+        "access": "readOnly",
+        "description": "The maximum upstream and downstream PHY bit rate supported by this interface (expressed in {{units}}).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Upstream",
+        "access": "readOnly",
+        "description": "Indicates whether the interface points towards the Internet ({{true}}) or towards End Devices ({{false}}). For example: * For an Internet Gateway Device, {{param}} will be {{true}} for all WAN interfaces and {{false}} for all LAN interfaces. * For a standalone WiFi Access Point that is connected via Ethernet to an Internet Gateway Device, {{param}} will be {{true}} for the Ethernet interface and {{false}} for the WiFi Radio interface. * For an End Device, {{param}} will be {{true}} for all interfaces. An interface might have some SSIDs pointing towards the Internet and other SSIDs pointing towards End Devices. This is indicated by the associated {{param|#.SSID.{i}.Upstream}} parameters. This interface's {{param}} parameter is set to {{true}} if any of the associated ''SSID.{i}.Upstream'' parameters are {{true}}, and is set to {{false}} otherwise. This parameter was DEPRECATED in 2.12 (and then OBSOLETED in 2.14) because it couldn't describe all multi-SSID use cases. It has now been restored, and its multi-SSID behavior has been clarified.",
+        "type": "boolean"
+      },
+      {
+        "name": "SupportedFrequencyBands",
+        "access": "readOnly",
+        "description": "{{list}} List items indicate the frequency bands at which the radio can operate.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "2.4GHz",
+          "5GHz",
+          "6GHz"
+        ]
+      },
+      {
+        "name": "OperatingFrequencyBand",
+        "access": "readWrite",
+        "description": "Indicates the frequency band at which the radio is operating. If the radio supports multiple bands, and {{param}} is changed, then all parameters whose value is not valid for the new frequency band (e.g. {{param|Channel}}) MUST be set to a valid value (according to some CPE vendor-specific behavior).",
+        "type": "string"
+      },
+      {
+        "name": "SupportedStandards",
+        "access": "readOnly",
+        "description": "{{list}} List items indicate which IEEE 802.11 standards this {{object}} instance can support simultaneously, in the frequency band specified by {{param|OperatingFrequencyBand}}. {{enum}} Each value indicates support for the indicated standard. If {{param|OperatingFrequencyBand}} is set to {{enum|2.4GHz|OperatingFrequencyBand}}, only values {{enum|b}}, {{enum|g}}, {{enum|n}}, {{enum|ax}}, {{enum|be}} are allowed. If {{param|OperatingFrequencyBand}} is set to {{enum|5GHz|OperatingFrequencyBand}}, only values {{enum|a}}, {{enum|n}}, {{enum|ac}}, {{enum|ax}}, {{enum|be}} are allowed. If {{param|OperatingFrequencyBand}} is set to {{enum|6GHz|OperatingFrequencyBand}}, only values {{enum|ax}}, {{enum|be}} are allowed.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "a",
+          "b",
+          "g",
+          "n",
+          "ac",
+          "ax",
+          "be"
+        ]
+      },
+      {
+        "name": "OperatingStandards",
+        "access": "readWrite",
+        "description": "{{list}} List items indicate which IEEE 802.11 standard this {{object}} instance is configured for. Each value indicates support for the indicated standard. If {{param|OperatingFrequencyBand}} is set to {{enum|2.4GHz|OperatingFrequencyBand}}, only values {{enum|b}}, {{enum|g}}, {{enum|n}}, {{enum|ax}}, {{enum|be}} are allowed. If {{param|OperatingFrequencyBand}} is set to {{enum|5GHz|OperatingFrequencyBand}}, only values {{enum|a}}, {{enum|n}}, {{enum|ac}}, {{enum|ax}}, {{enum|be}} are allowed. If {{param|OperatingFrequencyBand}} is set to {{enum|6GHz|OperatingFrequencyBand}}, only values {{enum|ax}}, {{enum|be}} are allowed. For example, a value of \"g,b\" (or \"b,g\" - order is not important) means that the 802.11g standard {{bibref|802.11g-2003}} is used with a backwards-compatible mode for 802.11b {{bibref|802.11b-1999}}. A value of \"g\" means that only the 802.11g standard can be used.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "PossibleChannels",
+        "access": "readOnly",
+        "description": "{{list}} List items represent possible radio channels for the wireless standard (a, b, g, n, ac, ax, be) and the regulatory domain. Ranges in the form \"n-m\" are permitted. For example, for 802.11b and North America, would be \"1-11\".",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string"
+      },
+      {
+        "name": "ChannelsInUse",
+        "access": "readOnly",
+        "description": "{{list}} List items represent channels that the radio determines to be currently in use (including any that it is using itself). Ranges in the form \"n-m\" are permitted.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Channel",
+        "access": "readWrite",
+        "description": "The current radio channel used by the connection. To request automatic channel selection, set {{param|AutoChannelEnable}} to {{true}}. Whenever {{param|AutoChannelEnable}} is {{true}}, the value of the {{param}} parameter MUST be the channel selected by the automatic channel selection procedure. For channels in \"wide mode\" (802.11n where a 40MHz channel bandwidth is used), this parameter is used for Primary Channel only. The secondary or extension channel information is available through {{param|ExtensionChannel}}. Note: Valid {{param}} values depend on the {{param|OperatingFrequencyBand}} value specified and the {{param|RegulatoryDomain}}. If the instance of this {{object}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CurrentOperatingClassProfile.{i}.Channel}}.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 255
+      },
+      {
+        "name": "AutoChannelSupported",
+        "access": "readOnly",
+        "description": "Indicates whether automatic channel selection is supported by this radio. If {{false}}, then {{param|AutoChannelEnable}} MUST be {{false}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "AutoChannelEnable",
+        "access": "readWrite",
+        "description": "Enable or disable automatic channel selection. Set to {{false}} to disable the automatic channel selection procedure, in which case the currently selected channel remains selected. Set to {{true}} to enable the automatic channel selection procedure. This procedure MUST automatically select the channel, and MAY also change it subsequently. {{param}} MUST automatically change to {{false}} whenever the channel is manually selected, i.e. whenever the {{param|Channel}} parameter is written. Whenever {{param}} is {{true}}, the value of the {{param|Channel}} parameter MUST be the channel selected by the automatic channel selection procedure.",
+        "type": "boolean"
+      },
+      {
+        "name": "AutoChannelRefreshPeriod",
+        "access": "readWrite",
+        "description": "The time period in {{units}} between two consecutive automatic channel selections. A value of 0 means that the automatic channel selection is done only at boot time. This parameter is significant only if {{param|AutoChannelEnable}} is set to {{true}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ChannelLastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the current {{param|Channel}} came into use.",
+        "type": "unsignedInt",
+        "version": "2.12",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ChannelLastSelectionReason",
+        "access": "readOnly",
+        "description": "The cause of the last channel selection.",
+        "type": "string",
+        "enumerations": [
+          "Manual",
+          "Auto_Startup",
+          "Auto_User",
+          "Auto_Refresh",
+          "Auto_Dynamic",
+          "Auto_DFS",
+          "Unknown"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "MaxSupportedSSIDs",
+        "access": "readOnly",
+        "description": "Maximum number of SSIDs supported on this radio.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "version": "2.12"
+      },
+      {
+        "name": "MaxSupportedAssociations",
+        "access": "readOnly",
+        "description": "Maximum number of associated devices supported.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "version": "2.12"
+      },
+      {
+        "name": "FirmwareVersion",
+        "access": "readOnly",
+        "description": "This radio's WiFi firmware version. If the instance of this {{object|##}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.SoftwareVersion}}.",
+        "type": "string",
+        "maxLength": 64,
+        "version": "2.12"
+      },
+      {
+        "name": "SupportedOperatingChannelBandwidths",
+        "access": "readOnly",
+        "description": "{{list}} These are the valid writable values for {{param|OperatingChannelBandwidth}}. Each list item is an enumeration of: {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "20MHz",
+          "40MHz",
+          "80MHz",
+          "160MHz",
+          "80+80MHz",
+          "320MHz-1",
+          "320MHz-2",
+          "Auto"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "OperatingChannelBandwidth",
+        "access": "readWrite",
+        "description": "The preferred channel bandwidth to be used (applicable to 802.11n, 802.11ac, 802.11ax and 802.11be specifications only).",
+        "type": "string"
+      },
+      {
+        "name": "CurrentOperatingChannelBandwidth",
+        "access": "readOnly",
+        "description": "The channel bandwidth currently in use. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "20MHz",
+          "40MHz",
+          "80MHz",
+          "160MHz",
+          "80+80MHz",
+          "320MHz-1",
+          "320MHz-2"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "ExtensionChannel",
+        "access": "readWrite",
+        "description": "The secondary extension channel position (applicable to the 802.11n specification only), applicable when operating in wide channel mode (i.e. when {{param|OperatingChannelBandwidth}} is set to {{enum|40MHz|OperatingChannelBandwidth}} or {{enum|Auto|OperatingChannelBandwidth}}).",
+        "type": "string",
+        "enumerations": [
+          "AboveControlChannel",
+          "BelowControlChannel",
+          "Auto"
+        ]
+      },
+      {
+        "name": "GuardInterval",
+        "access": "readWrite",
+        "description": "The guard interval value between OFDM symbols.",
+        "type": "string",
+        "enumerations": [
+          "400nsec",
+          "800nsec",
+          "1xLTF_0.8us",
+          "1xLTF_1.6us",
+          "2xLTF_0.8us",
+          "2xLTF_1.6us",
+          "4xLTF_0.8us",
+          "4xLTF_3.2us",
+          "Auto"
+        ]
+      },
+      {
+        "name": "CenterFrequencySegement0",
+        "access": "readWrite",
+        "description": "When operating in {{enum|80+80MHz|CurrentOperatingChannelBandwidth}}, this parameter determines the Center Frequency Segment 0 for the first 80 MHz channel. See {{bibref|802.11-2016|Section 9.4.2.161}} and Table 9-252. {{deprecated|2.14|due to a typo. Use {{param|CenterFrequencySegment0}} instead}} {{obsoleted|2.16}} {{deleted|2.17}}",
+        "type": "unsignedInt",
+        "version": "2.13"
+      },
+      {
+        "name": "CenterFrequencySegement1",
+        "access": "readWrite",
+        "description": "When operating in {{enum|80+80MHz|CurrentOperatingChannelBandwidth}}, this parameter determines the Center Frequency Segment 1 for the second 80 MHz channel. See {{bibref|802.11-2016|Section 9.4.2.161}} and Table 9-252. {{deprecated|2.14|due to a typo. Use {{param|CenterFrequencySegment1}} instead}} {{obsoleted|2.16}} {{deleted|2.17}}",
+        "type": "unsignedInt",
+        "version": "2.13"
+      },
+      {
+        "name": "CenterFrequencySegment0",
+        "access": "readWrite",
+        "description": "When operating in {{enum|80+80MHz|CurrentOperatingChannelBandwidth}}, this parameter determines the Center Frequency Segment 0 for the first 80 MHz channel. See {{bibref|802.11-2016|Section 9.4.2.161}} and Table 9-252.",
+        "type": "unsignedInt",
+        "version": "2.14"
+      },
+      {
+        "name": "CenterFrequencySegment1",
+        "access": "readWrite",
+        "description": "When operating in {{enum|80+80MHz|CurrentOperatingChannelBandwidth}}, this parameter determines the Center Frequency Segment 1 for the second 80 MHz channel. See {{bibref|802.11-2016|Section 9.4.2.161}} and Table 9-252.",
+        "type": "unsignedInt",
+        "version": "2.14"
+      },
+      {
+        "name": "MCS",
+        "access": "readWrite",
+        "description": "The Modulation Coding Scheme index (applicable to 802.11n, 802.11ac, 802.11ax and 802.11be specifications only). Values from 0 to 15 MUST be supported for ({{bibref|802.11n-2009}}). Values from 0 to 9 MUST be supported for {{bibref|802.11ac-2013}}. Values from 0 to 11 MUST be supported for {{bibref|802.11ax}}. Values from 0 to 15 MUST be supported for {{bibref|802.11be}}. A value of -1 indicates automatic selection of the MCS index.",
+        "type": "int",
+        "ranges": [
+          [
+            -1,
+            15
+          ],
+          [
+            16,
+            31
+          ]
+        ]
+      },
+      {
+        "name": "TransmitPowerSupported",
+        "access": "readOnly",
+        "description": "{{list}} List items represent supported transmit power levels as {{units}} of full power. For example, \"0,25,50,75,100\". A -1 item indicates auto mode (automatic decision by CPE). Auto mode allows the ''Radio'' to adjust transmit power accordingly. For example, this can be useful for power-save modes such as EU-CoC, where the ''Radio'' can adjust power according to activity in the CPE.",
+        "list": true,
+        "listMaxLength": 64,
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 100
+      },
+      {
+        "name": "TransmitPower",
+        "access": "readWrite",
+        "description": "Indicates the current transmit power level as a {{units}} of full power. The value MUST be one of the values reported by the {{param|TransmitPowerSupported}} parameter. A value of -1 indicates auto mode (automatic decision by CPE). If the instance of this {{object}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.CurrentOperatingClassProfile.{i}.TxPower}}.",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 100
+      },
+      {
+        "name": "IEEE80211hSupported",
+        "access": "readOnly",
+        "description": "Indicates whether IEEE 802.11h {{bibref|802.11h-2003}} functionality is supported by this radio. The value can be {{true}} only if the 802.11a or the 802.11n@5GHz standard is supported (i.e. {{param|SupportedFrequencyBands}} includes {{enum|5GHz|SupportedFrequencyBands}} and {{param|SupportedStandards}} includes {{enum|a|SupportedStandards}} and/or {{enum|n|SupportedStandards}}).",
+        "type": "boolean"
+      },
+      {
+        "name": "IEEE80211hEnabled",
+        "access": "readWrite",
+        "description": "Indicates whether IEEE 802.11h functionality is enabled on this radio. The value can be {{true}} only if the 802.11a or the 802.11n@5GHz standard is supported and enabled (i.e. {{param|OperatingFrequencyBand}} is {{enum|5GHz|OperatingFrequencyBand}} and {{param|OperatingStandards}} includes {{enum|a|OperatingStandards}} and/or {{enum|n|OperatingStandards}}).",
+        "type": "boolean"
+      },
+      {
+        "name": "RegulatoryDomain",
+        "access": "readWrite",
+        "description": "The 802.11d Regulatory Domain. First two octets are {{bibref|ISO3166-1}} two-character country code. The third octet is either \" \" (all environments), \"O\" (outside) or \"I\" (inside). If the instance of this {{object|##}} is the same as {{object|Device.WiFi.DataElements.Network.Device.{i}.}}, then this parameter is the same as {{param|Device.WiFi.DataElements.Network.Device.{i}.CountryCode}}.",
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 3,
+        "pattern": "[A-Z][A-Z][ OI]"
+      },
+      {
+        "name": "RetryLimit",
+        "access": "readWrite",
+        "description": "The maximum number of retransmissions of a short packet i.e. a packet that is no longer than the {{param|RTSThreshold}}. This corresponds to IEEE 802.11 parameter ''dot11ShortRetryLimit'' {{bibref|802.11-2012}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 7,
+        "version": "2.12"
+      },
+      {
+        "name": "CCARequest",
+        "access": "readWrite",
+        "description": "A request for the clear channel assessment (CCA) report in the format specified in {{bibref|802.11-2012|Clause 8.4.2.23.3}}.",
+        "type": "hexBinary",
+        "minLength": 11,
+        "maxLength": 11,
+        "version": "2.12"
+      },
+      {
+        "name": "CCAReport",
+        "access": "readOnly",
+        "description": "The clear channel assessment (CCA) report in the format specified in {{bibref|802.11-2012|Clause 8.4.2.24.3}}. When read, the value of this parameter MUST correspond to {{param|CCARequest}}. How this is achieved is a local matter to the CPE. If this parameter is read before a CCARequest has been issued, then its value is {{empty}}.",
+        "type": "hexBinary",
+        "minLength": 12,
+        "maxLength": 12,
+        "version": "2.12"
+      },
+      {
+        "name": "RPIHistogramRequest",
+        "access": "readWrite",
+        "description": "A request for a received power indicator (RPI) histogram in the format specified in {{bibref|802.11-2012|Clause 8.4.2.23.4}}.",
+        "type": "hexBinary",
+        "minLength": 11,
+        "maxLength": 11,
+        "version": "2.12"
+      },
+      {
+        "name": "RPIHistogramReport",
+        "access": "readOnly",
+        "description": "Received power indicator (RPI) histogram report in the format specified in {{bibref|802.11-2012|Clause 8.4.2.24.4}}.",
+        "type": "hexBinary",
+        "minLength": 19,
+        "maxLength": 19,
+        "version": "2.12"
+      },
+      {
+        "name": "FragmentationThreshold",
+        "access": "readWrite",
+        "description": "This specifies the current maximum size, in {{units}}, of the MPDU that can be delivered to the PHY. This parameter is based on ''dot11FragmentationThreshold'' from {{bibref|802.11-2012}}.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "RTSThreshold",
+        "access": "readWrite",
+        "description": "This indicates the number of {{units}} in an MPDU, below which an RTS/CTS handshake is not performed. This parameter is based on ''dot11RTSThreshold'' from {{bibref|802.11-2012}}.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "LongRetryLimit",
+        "access": "readWrite",
+        "description": "This indicates the maximum number of transmission attempts of a frame, the length of which is greater than {{param|RTSThreshold}}, that will be made before a failure condition is indicated. This parameter is based on ''dot11LongRetryLimit'' from {{bibref|802.11-2012}}.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "BeaconPeriod",
+        "access": "readWrite",
+        "description": "Time interval between transmitting beacons (expressed in {{units}}). This parameter is based on ''dot11BeaconPeriod'' from {{bibref|802.11-2012}}.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "DTIMPeriod",
+        "access": "readWrite",
+        "description": "This specifies the number of beacon intervals (measured in {{units}}) that elapse between transmission of Beacon frames containing a TIM element whose DTIM Count field is 0. This parameter is based on ''dot11DTIMPeriod'' from {{bibref|802.11-2020}}.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "PacketAggregationEnable",
+        "access": "readWrite",
+        "description": "This determines whether or not packet aggregation (commonly called \"frame aggregation\") is enabled. This applies only to 802.11n.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "PreambleType",
+        "access": "readWrite",
+        "description": "The type of preamble. Longer preambles (more overhead) are needed by 802.11g to coexist with legacy systems 802.11 and 802.11b.",
+        "type": "string",
+        "enumerations": [
+          "short",
+          "long",
+          "auto"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "BasicDataTransmitRates",
+        "access": "readWrite",
+        "description": "{{list}} The set of data rates, in ''Mbps'', that have to be supported by all stations that desire to join this BSS. The stations have to be able to receive and transmit at each of the data rates listed in {{param}}. For example, a value of \"1,2\", indicates that stations support 1 Mbps and 2 Mbps. Most control packets use a data rate in {{param}}.",
+        "list": true,
+        "type": "string",
+        "version": "2.12"
+      },
+      {
+        "name": "SupportedDataTransmitRates",
+        "access": "readOnly",
+        "description": "{{list}} Maximum radio data transmit rates in ''Mbps'' for unicast frames (a superset of {{param|BasicDataTransmitRates}}). Given the value of {{param|BasicDataTransmitRates}} from the example above, {{param}} might be \"1,2,5.5,11\", indicating that unicast frames can additionally be transmitted at 5.5 Mbps and 11 Mbps. {{param}} indicates equipment capability. This radio is capable of supporting these data rates.",
+        "list": true,
+        "type": "string",
+        "version": "2.12"
+      },
+      {
+        "name": "OperationalDataTransmitRates",
+        "access": "readWrite",
+        "description": "{{list}} Data transmit rates in ''Mbps'' for unicast frames at which the radio will permit operation with any associated station (a subset of {{param|SupportedDataTransmitRates}}). Given the values of {{param|BasicDataTransmitRates}} and {{param|SupportedDataTransmitRates}} from the examples above, {{param}} might be \"1,2,5.5\", indicating that the radio will only permit operation at 1 Mbps, 2 Mbps and 5.5 Mbps, even though it could theoretically operate at 11 Mbps. This radio is limited to allowing operation only at these data rates. Note: Setting {{param}} can't increase the set of possible data rates but could narrow them.",
+        "list": true,
+        "type": "string",
+        "version": "2.12"
+      },
+      {
+        "name": "EnableRRM",
+        "access": "readWrite",
+        "description": "Enables or disables 802.11k {{bibref|802.11k}} Radio Resource Management (RRM).",
+        "type": "boolean",
+        "version": "2.14"
+      },
+      {
+        "name": "ManagementPacketRate",
+        "access": "readWrite",
+        "description": "The rate of Wi-Fi management frames (expressed in {{units}}).",
+        "type": "unsignedInt",
+        "version": "2.15"
+      }
+    ],
+    "description": "This object models an 802.11 wireless radio on a device (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}). If the device can establish more than one connection simultaneously (e.g. a dual radio device), a separate {{object}} instance MUST be used for each physical radio of the device. See {{bibref|TR-181i2|Appendix III.1}} for additional information. Note: A dual-band single-radio device (e.g. an 802.11a/b/g radio) can be configured to operate at 2.4 or 5 GHz frequency bands, but only a single frequency band is used to transmit/receive at a given time. Therefore, a single {{object}} instance is used even for a dual-band radio.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

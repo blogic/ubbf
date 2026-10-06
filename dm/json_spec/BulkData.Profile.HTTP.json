@@ -1,0 +1,128 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.BulkData.Profile.{i}.HTTP.",
+  "object": {
+    "path": "Device.BulkData.Profile.{i}.HTTP.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "URL",
+        "access": "readWrite",
+        "description": "The {{datatype}} for the collection server to receive the Bulk Data transmitted by the CPE.",
+        "type": "dataType:URL"
+      },
+      {
+        "name": "Username",
+        "access": "readWrite",
+        "description": "Username used to authenticate the CPE when making a connection to the collection server.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Password",
+        "access": "readWrite",
+        "description": "Password used to authenticate the CPE when making a connection to the collection server.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "CompressionsSupported",
+        "access": "readOnly",
+        "description": "Indicates the HTTP Compression mechanism(s) supported by this CPE for the purposes of transferring bulk data.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "GZIP",
+          "Compress",
+          "Deflate"
+        ]
+      },
+      {
+        "name": "Compression",
+        "access": "readWrite",
+        "description": "The value of this parameter represents the HTTP Compression mechanism to be used by the CPE when transferring data to the collection server.",
+        "default": "None",
+        "defaultType": "object",
+        "type": "string"
+      },
+      {
+        "name": "MethodsSupported",
+        "access": "readOnly",
+        "description": "Indicates the HTTP method(s) supported by this CPE for the purposes of transferring bulk data.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "POST",
+          "PUT"
+        ]
+      },
+      {
+        "name": "Method",
+        "access": "readWrite",
+        "description": "The value of this parameter represents the HTTP method to be used by the CPE when transferring data to the collection server.",
+        "default": "POST",
+        "defaultType": "object",
+        "type": "string"
+      },
+      {
+        "name": "UseDateHeader",
+        "access": "readWrite",
+        "description": "When {{true}}, the CPE encodes the HTTP Date Header {{bibref|RFC2616|Section 14.18}} in the HTTP client request.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "RetryEnable",
+        "access": "readWrite",
+        "description": "When {{true}}, the CPE retries unsuccessful attempts to transfer data.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "RetryMinimumWaitInterval",
+        "access": "readWrite",
+        "description": "Configures the data transfer retry wait interval, in seconds, as specified in {{template|BULK-DATA-HTTP-RETRY-REF}}. The device MUST use a random value between {{param}} and ({{param}} * {{param|RetryIntervalMultiplier}} / 1000) as the first retry wait interval. Other values in the retry pattern MUST be calculated using this value as a starting point.",
+        "default": "5",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "RetryIntervalMultiplier",
+        "access": "readWrite",
+        "description": "Configures the retry interval multiplier as specified in {{template|BULK-DATA-HTTP-RETRY-REF}}. This value is expressed in units of 0.001. Hence the values of the multiplier range between 1.000 and 65.535. The device MUST use a random value between {{param|RetryMinimumWaitInterval}} and ({{param|RetryMinimumWaitInterval}} * {{param}} / 1000) as the first retry wait interval. Other values in the retry pattern MUST be calculated using this value as a starting point.",
+        "default": "2000",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1000,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "RequestURIParameterNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PersistAcrossReboot",
+        "access": "readWrite",
+        "description": "Determines whether or not data transfers that have failed are required to be persisted across reboots. If {{param}} is {{true}}, then failed data transfers MUST be persisted across reboots. If {{param}} is {{false}}, then failed data transfers are not required to be persisted across reboots.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.12"
+      }
+    ],
+    "description": "This object defines the properties to be used when transporting bulk data using the HTTP/HTTPS protocol. This object is used when the {{param|#.Protocol}} parameter has a value of {{enum|HTTP|##.Protocols}}. For authentication purposes the CPE MUST support HTTP Basic and Digest Access Authentication as defined in {{bibref|RFC7617}} and {{bibref|RFC7616}}.",
+    "children": []
+  }
+}

@@ -1,0 +1,170 @@
+#!/usr/bin/env python3
+"""Flash firmware to testbed or DUT via the management WebSocket API."""
+
+import argparse
+import asyncio
+import json
+import os
+import sys
+from http.client import HTTPConnection
+
+try:
+    import websockets
+except ImportError:
+    sys.exit('Missing dependency: pip install websockets')
+
+MGMT_PORT = 9000
+CHUNK_SIZE = 64 * 1024
+
+msg_id = 0
+notifications = []
+
+
+def next_id():
+    global msg_id
+    msg_id += 1
+    return msg_id
+
+
+def progress_bar(sent, total):
+    pct = sent * 100 // total if total else 0
+    bar_len = 40
+    filled = bar_len * sent // total if total else 0
+    bar = '#' * filled + '-' * (bar_len - filled)
+    mb_sent = sent / (1024 * 1024)
+    mb_total = total / (1024 * 1024)
+    sys.stderr.write(f'\r  [{bar}] {mb_sent:.1f}/{mb_total:.1f} MB ({pct}%)')
+    sys.stderr.flush()
+
+
+async def rpc_call(ws, method, params=None):
+    req_id = next_id()
+    msg = {'jsonrpc': '2.0', 'id': req_id, 'method': method}
+    if params:
+        msg['params'] = params
+
+    await ws.send(json.dumps(msg))
+
+    while True:
+        raw = await ws.recv()
+        resp = json.loads(raw)
+
+        if 'id' in resp and resp['id'] == req_id:
+            if 'error' in resp:
+                raise RuntimeError(f'{method}: {resp["error"]["message"]}')
+            return resp.get('result')
+
+        if 'method' in resp and 'id' not in resp:
+            notifications.append(resp)
+
+
+def upload_firmware(host, upload_url, firmware_path):
+    file_size = os.path.getsize(firmware_path)
+    conn = HTTPConnection(host, MGMT_PORT, timeout=300)
+    conn.putrequest('PUT', upload_url)
+    conn.putheader('Content-Type', 'application/octet-stream')
+    conn.putheader('Content-Length', str(file_size))
+    conn.endheaders()
+
+    sent = 0
+    with open(firmware_path, 'rb') as f:
+        while True:
+            chunk = f.read(CHUNK_SIZE)
+            if not chunk:
+                break
+            conn.send(chunk)
+            sent += len(chunk)
+            progress_bar(sent, file_size)
+
+    sys.stderr.write('\n')
+
+    resp = conn.getresponse()
+    body = resp.read().decode()
+    conn.close()
+
+    if resp.status != 201:
+        data = json.loads(body) if body else {}
+        raise RuntimeError(f'Upload failed ({resp.status}): {data.get("error", body)}')
+
+    return json.loads(body)['file_id']
+
+
+async def wait_for_notification(ws, *methods, timeout=120):
+    for n in list(notifications):
+        if n.get('method') in methods:
+            notifications.remove(n)
+            return n
+
+    try:
+        while True:
+            raw = await asyncio.wait_for(ws.recv(), timeout=timeout)
+            msg = json.loads(raw)
+            if msg.get('method') in methods:
+                return msg
+            notifications.append(msg)
+    except asyncio.TimeoutError:
+        raise RuntimeError(f'Timeout waiting for {methods}')
+
+
+def args_parse():
+    p = argparse.ArgumentParser(
+        prog='ubbf-flash',
+        description='Flash firmware to testbed or DUT via management WebSocket API')
+    p.add_argument('target', choices=['testbed', 'dut'])
+    p.add_argument('host', help='Testbed IP address')
+    p.add_argument('firmware', help='Path to sysupgrade firmware image')
+    p.add_argument('--keep-config', action='store_true',
+                   help='Preserve configuration across upgrade')
+    return p.parse_args()
+
+
+async def main():
+    args = args_parse()
+
+    if not os.path.isfile(args.firmware):
+        sys.exit(f'File not found: {args.firmware}')
+
+    file_size = os.path.getsize(args.firmware)
+    print(f'Target: {args.target}', file=sys.stderr)
+    print(f'Firmware: {args.firmware} ({file_size / (1024*1024):.1f} MB)', file=sys.stderr)
+    print(f'Testbed: {args.host}:{MGMT_PORT}', file=sys.stderr)
+
+    async with websockets.connect(f'ws://{args.host}:{MGMT_PORT}/') as ws:
+        print('Requesting upload token...', file=sys.stderr)
+        token = await rpc_call(ws, 'sysupgrade.token', {'target': args.target})
+
+        print(f'Uploading firmware...', file=sys.stderr)
+        file_id = upload_firmware(args.host, token['upload_url'], args.firmware)
+
+        print('Waiting for validation...', file=sys.stderr)
+        notif = await wait_for_notification(
+            ws, 'sysupgrade-validation-success', 'sysupgrade-validation-failed',
+            timeout=60)
+
+        if notif['method'] == 'sysupgrade-validation-failed':
+            sys.exit(f'Validation failed: {notif.get("params", {}).get("error", "unknown")}')
+
+        ws_file_id = notif.get('params', {}).get('file_id', file_id)
+        print('Validation passed, applying firmware...', file=sys.stderr)
+
+        try:
+            await rpc_call(ws, 'sysupgrade.apply', {
+                'target': args.target,
+                'file_id': ws_file_id,
+                'keep_config': args.keep_config,
+            })
+        except websockets.exceptions.ConnectionClosedOK:
+            pass
+
+        print(f'Firmware apply triggered, {args.target} is rebooting.', file=sys.stderr)
+
+
+if __name__ == '__main__':
+    try:
+        asyncio.run(main())
+    except (RuntimeError, ConnectionRefusedError, OSError,
+            websockets.exceptions.WebSocketException) as e:
+        print(f'Error: {e}', file=sys.stderr)
+        sys.exit(1)
+    except KeyboardInterrupt:
+        sys.exit(130)

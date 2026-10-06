@@ -1,0 +1,22 @@
+{
+  "source_file": "tr-181-2-19-0-wifi-base.xml",
+  "path": "Radio.{i}.",
+  "object": {
+    "path": "Radio.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "RadioNumberOfEntries",
+    "version": "2.0",
+    "parameters": [],
+    "description": "{{object}} table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}).",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

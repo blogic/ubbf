@@ -1,0 +1,227 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Ethernet.RMONStats.{i}.",
+  "object": {
+    "path": "Device.Ethernet.RMONStats.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "RMONStatsNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this instance.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this instance. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the {{object}} entry as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "The interface associated with this instance. {{reference|an interface that is capable of transporting Ethernet-encapsulated packets}} The term \"capable of transporting Ethernet-encapsulated packets\" means \"has an Ethernet header\" and therefore refers to any interface that is at or below an ''Ethernet''.{{object|#.Link}} instance in the interface stack.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "VLANID",
+        "access": "readWrite",
+        "description": "Filter criterion. The VLAN ID for which statistics are to be collected. A zero value indicates that all packets, whether or not they have a VLAN header, will be considered. A non-zero value indicates that only packets that have the the specified VLAN ID will be considered.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 4094
+      },
+      {
+        "name": "Queue",
+        "access": "readWrite",
+        "description": "Filter criterion. The egress queue with which this instance is associated. Only packets that are sent to the referenced queue will be considered.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.QoS.Queue.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "AllQueues",
+        "access": "readWrite",
+        "description": "Indicates whether this instance applies to all queues. If {{true}}, the value of {{param|Queue}} is ignored since all egress queues are indicated.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DropEvents",
+        "access": "readOnly",
+        "description": "The total number of events in which packets were dropped due to lack of resources. Note that this number is not necessarily the number of packets dropped; it is just the number of times this condition has been detected. This parameter is based on ''etherStatsDropEvents'' from {{bibref|RFC2819}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Bytes",
+        "access": "readOnly",
+        "description": "The total number of {{units}} (including those in bad packets) received (excluding framing bits but including FCS bytes). This parameter is based on ''etherStatsOctets'' from {{bibref|RFC2819}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedLong",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Packets",
+        "access": "readOnly",
+        "description": "The total number of {{units}} (including bad packets, broadcast packets, and multicast packets) received. This parameter is based on ''etherStatsPkts'' from {{bibref|RFC2819}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedLong",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "BroadcastPackets",
+        "access": "readOnly",
+        "description": "The total number of good {{units}} received that were directed to the broadcast address. Note that this does not include multicast packets. This parameter is based on ''etherStatsBroadcastPkts'' from {{bibref|RFC2819}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedLong",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "MulticastPackets",
+        "access": "readOnly",
+        "description": "The total number of good {{units}} received that were directed to a multicast address. Note that this number does not include packets directed to the broadcast address. This parameter is based on ''etherStatsMulticastPkts'' from {{bibref|RFC2819}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedLong",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "CRCErroredPackets",
+        "access": "readOnly",
+        "description": "The total number of {{units}} received that had a length (excluding framing bits, but including FCS bytes) of between 64 and 1518 bytes, inclusive, but had either a bad Frame Check Sequence (FCS) with an integral number of bytes (FCS Error) or a bad FCS with a non-integral number of bytes (Alignment Error). This parameter is based on ''etherStatsCRCAlignErrors'' from {{bibref|RFC2819}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "UndersizePackets",
+        "access": "readOnly",
+        "description": "The total number of {{units}} received that were less than 64 bytes long (excluding framing bits, but including FCS bytes) and were otherwise well formed. This parameter is based on ''etherStatsUndersizePkts'' from {{bibref|RFC2819}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "OversizePackets",
+        "access": "readOnly",
+        "description": "The total number of {{units}} received that were longer than 1518 bytes (excluding framing bits, but including FCS bytes) and were otherwise well formed. This parameter is based on ''etherStatsOversizePkts'' from {{bibref|RFC2819}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Packets64Bytes",
+        "access": "readOnly",
+        "description": "The total number of {{units}} (including bad packets) received that were 64 bytes in length (excluding framing bits but including FCS bytes). This parameter is based on ''etherStatsPkts64Octets'' from {{bibref|RFC2819}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedLong",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Packets65to127Bytes",
+        "access": "readOnly",
+        "description": "The total number of {{units}} (including bad packets) received that were between 65 and 127 bytes in length inclusive (excluding framing bits but including FCS bytes). This parameter is based on ''etherStatsPkts65to127Octets'' from {{bibref|RFC2819}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedLong",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Packets128to255Bytes",
+        "access": "readOnly",
+        "description": "The total number of {{units}} (including bad packets) received that were between 128 and 255 bytes in length inclusive (excluding framing bits but including FCS bytes). This parameter is based on ''etherStatsPkts6128to255Octets'' from {{bibref|RFC2819}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedLong",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Packets256to511Bytes",
+        "access": "readOnly",
+        "description": "The total number of {{units}} (including bad packets) received that were between 256 and 511 bytes in length inclusive (excluding framing bits but including FCS bytes). This parameter is based on ''etherStatsPkts256to511Octets'' from {{bibref|RFC2819}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedLong",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Packets512to1023Bytes",
+        "access": "readOnly",
+        "description": "The total number of {{units}} (including bad packets) received that were between 512 and 1023 bytes in length inclusive (excluding framing bits but including FCS bytes). This parameter is based on ''etherStatsPkts512to1023Octets'' from {{bibref|RFC2819}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedLong",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "Packets1024to1518Bytes",
+        "access": "readOnly",
+        "description": "The total number of {{units}} (including bad packets) received that were between 1024 and 1518 bytes in length inclusive (excluding framing bits but including FCS bytes). This parameter is based on ''etherStatsPkts1024to1518Octets'' from {{bibref|RFC2819}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedLong",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "Ethernet statistics based on the {{bibref|RFC2819}} ''RMON-MIB'' ''etherStatsTable'', with some extensions inspired by {{bibref|G.988|Section 9.3.32}}. Each instance is associated with an interface capable of transporting Ethernet-encapsulated packets, and contains a set of unidirectional Ethernet statistics. The statistics are sampled either on ingress or on egress. This is determined as follows: * If the instance is associated with an egress queue (or queues) via the {{param|Queue}} parameter or by setting {{param|AllQueues}} to {{true}} then data is sampled on egress. In this case {{param|Bytes}} etc measure the data that has been sent on the interface, possibly filtered by {{param|Queue}} or {{param|VLANID}}. * Otherwise data is sampled on ingress. In this case {{param|Bytes}} etc measure the data that has been received on the interface, possibly filtered by {{param|VLANID}}. When sampling on egress, the term ''received'' means ''received by the queuing sub-system''. Multiple instances can be associated with a single interface: individual instances can be configured to collect data associated with the entire interface, or with a particular VLAN and/or queue. The CPE MUST reset each instances's Stats parameters whenever the instance is disabled and re-enabled. Whether this reset occurs when the instance becomes operationally disabled ({{param|Status}} = {{enum|Disabled|Status}}) or administratively enabled ({{param|Enable}} = {{true}}) is a local matter to the CPE. This is similar to the behavior of interface statistics, e.g. as specified for {{object|#.Interface.{i}.Stats}}. Furthermore, this instance's Stats parameters MUST be reset whenever the referenced interface's Stats parameters are reset, or when the referenced queue or VLAN is disabled and re-enabled. For enabled table entries, if {{param|Interface}} references an interface that is not capable of transporting Ethernet-encapsulated packets, or if {{param|Queue}} references a queue that is not instantiated on {{param|Interface}}, or if {{param|Queue}} is not a valid reference and {{param|AllQueues}} is {{false}}, the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}. Note: The {{object}} table includes unique key parameters that are strong references. If a strongly referenced object is deleted, the CPE will set the referencing parameter to {{empty}}. However, doing so under these circumstances might cause the updated {{object}} row to then violate the table's unique key constraint; if this occurs, the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and disable the offending {{object}} row.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

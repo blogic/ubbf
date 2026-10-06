@@ -1,0 +1,226 @@
+#!/usr/bin/env ucode
+'use strict';
+
+import * as socket from 'socket';
+import * as fs from 'fs';
+import { cmd_build } from 'ubbf.utils.process';
+
+let config = {
+	hosts: null,
+	protocol: 'ICMP',
+	port: 7,
+	count: 3,
+	timeout: 1000,
+	proto_version: 'Any',
+	iface: null
+};
+
+function args_parse() {
+	for (let i = 0; i < length(ARGV); i++) {
+		let arg = ARGV[i];
+		if (arg == '-H' && i + 1 < length(ARGV))
+			config.hosts = ARGV[++i];
+		else if (arg == '-p' && i + 1 < length(ARGV))
+			config.protocol = ARGV[++i];
+		else if (arg == '-P' && i + 1 < length(ARGV))
+			config.port = int(ARGV[++i]);
+		else if (arg == '-n' && i + 1 < length(ARGV))
+			config.count = int(ARGV[++i]);
+		else if (arg == '-t' && i + 1 < length(ARGV))
+			config.timeout = int(ARGV[++i]);
+		else if (arg == '-i' && i + 1 < length(ARGV))
+			config.iface = ARGV[++i];
+		else if (arg == '-4')
+			config.proto_version = 'IPv4';
+		else if (arg == '-6')
+			config.proto_version = 'IPv6';
+	}
+}
+
+function ping_test(host, count, timeout_ms) {
+	let timeout_sec = (timeout_ms + 999) / 1000;
+	let family_flag = (config.proto_version == 'IPv4') ? '-4'
+	                : (config.proto_version == 'IPv6') ? '-6'
+	                : null;
+
+	let cmd = cmd_build([
+		{raw: 'ping'},
+		family_flag,
+		config.iface ? '-I' : null, config.iface,
+		'-c', count,
+		'-W', timeout_sec,
+		host,
+		{raw: '2>&1'},
+	]);
+	let p = fs.popen(cmd, 'r');
+	if (!p)
+		return null;
+
+	let data = p.read('all');
+	p.close();
+
+	if (!data)
+		return null;
+
+	let result = {
+		success: false,
+		ip_used: '',
+		min: 0,
+		avg: 0,
+		max: 0
+	};
+
+	let ip_match = match(data, /\(([0-9a-fA-F:.]+)\)/);
+	if (ip_match)
+		result.ip_used = ip_match[1];
+
+	let stats_match = match(data, /(\d+) packets transmitted, (\d+) (packets )?received/);
+	if (stats_match) {
+		let received = int(stats_match[2]);
+		if (received > 0)
+			result.success = true;
+	}
+
+	let rtt_match = match(data, /(rtt|round-trip) min\/avg\/max(\/mdev)? = ([0-9.]+)\/([0-9.]+)\/([0-9.]+)/);
+	if (rtt_match) {
+		result.min = int(rtt_match[3] * 1000);
+		result.avg = int(rtt_match[4] * 1000);
+		result.max = int(rtt_match[5] * 1000);
+	}
+
+	return result;
+}
+
+function udp_test(host, port, count, timeout_ms) {
+	let family = null;
+	if (config.proto_version == 'IPv4')
+		family = socket.AF_INET;
+	else if (config.proto_version == 'IPv6')
+		family = socket.AF_INET6;
+
+	let hints = { socktype: socket.SOCK_DGRAM };
+	if (family)
+		hints.family = family;
+
+	let addrs = socket.addrinfo(host, port, hints);
+	if (!addrs || length(addrs) == 0)
+		return null;
+
+	let addr = addrs[0];
+	family = addr.family;
+
+	let sock = socket.create(family, socket.SOCK_DGRAM);
+	if (!sock)
+		return null;
+
+	if (config.iface)
+		sock.setopt(socket.SOL_SOCKET, socket.SO_BINDTODEVICE, config.iface);
+
+	sock.setopt(socket.SOL_SOCKET, socket.SO_RCVTIMEO, timeout_ms);
+
+	let payload = 'ServerSelectionTest';
+	let rtts = [];
+	let ip_used = addr.addr.address;
+
+	for (let i = 0; i < count; i++) {
+		let start = clock(true);
+		let sent = sock.send(payload, 0, addr.addr);
+
+		if (!sent || sent < 0)
+			continue;
+
+		let response = sock.recv(100, 0);
+		let end = clock(true);
+
+		if (!response)
+			continue;
+
+		let rtt_us = (end[0] - start[0]) * 1000000 + (end[1] - start[1]) / 1000;
+		push(rtts, rtt_us);
+	}
+
+	sock.close();
+
+	if (length(rtts) == 0)
+		return null;
+
+	let total = 0;
+	let min_rtt = rtts[0];
+	let max_rtt = rtts[0];
+
+	for (let rtt in rtts) {
+		total += rtt;
+		if (rtt < min_rtt)
+			min_rtt = rtt;
+		if (rtt > max_rtt)
+			max_rtt = rtt;
+	}
+
+	return {
+		success: true,
+		ip_used: ip_used,
+		min: min_rtt,
+		avg: total / length(rtts),
+		max: max_rtt
+	};
+}
+
+function test_host(host) {
+	if (config.protocol == 'ICMP')
+		return ping_test(host, config.count, config.timeout);
+	return udp_test(host, config.port, config.count, config.timeout);
+}
+
+function run_tests() {
+	let host_list = split(config.hosts, ',');
+	let fastest_host = null;
+	let fastest_avg = -1;
+	let fastest_result = null;
+	let dns_failed;
+
+	for (let host in host_list) {
+		host = trim(host);
+		if (host == '')
+			continue;
+
+		let result = test_host(host);
+		if (!result) {
+			dns_failed = host;
+			continue;
+		}
+
+		if (!result.success)
+			continue;
+
+		if (fastest_avg < 0 || result.avg < fastest_avg) {
+			fastest_host = host;
+			fastest_avg = result.avg;
+			fastest_result = result;
+		}
+	}
+
+	if (!fastest_result) {
+		if (dns_failed)
+			return { Status: 'Error_CannotResolveHostName' };
+		return { Status: 'Error_Other' };
+	}
+
+	return {
+		Status: 'Complete',
+		FastestHost: fastest_host,
+		IPAddressUsed: fastest_result.ip_used,
+		MinimumResponseTime: sprintf('%d', fastest_result.min),
+		AverageResponseTime: sprintf('%d', fastest_result.avg),
+		MaximumResponseTime: sprintf('%d', fastest_result.max)
+	};
+}
+
+args_parse();
+
+if (!config.hosts) {
+	print('{"Status": "Error_Other", "error": "HostList required"}\n');
+	exit(1);
+}
+
+let result = run_tests();
+print(sprintf('%J\n', result));

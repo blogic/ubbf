@@ -1,0 +1,48 @@
+#!/usr/bin/ucode
+'use strict';
+
+import * as ubus from 'ubus';
+import * as uloop from 'uloop';
+import { log_init, log_info } from 'ubbf.utils.logging';
+import * as lifecycle from 'ubbf.device.lifecycle';
+import * as thermal from 'ubbf.device.thermal';
+import * as process_faults from 'ubbf.device.process-faults';
+import * as kernel_faults from 'ubbf.device.kernel-faults';
+import * as reboots from 'ubbf.device.reboots';
+import * as link_state from 'ubbf.device.link-state';
+import * as wifi_events from 'ubbf.device.wifi-events';
+import * as sshguard from 'ubbf.device.sshguard';
+import * as cwmp_ops from 'ubbf.device.cwmp-ops';
+
+log_init('ubbf-device');
+uloop.init();
+log_info('started');
+
+link_state.init();
+thermal.init();
+sshguard.init();
+cwmp_ops.init();
+
+let boot_cause = reboots.boot_cause_read();
+let is_upgrade = reboots.upgrade_detected(boot_cause);
+kernel_faults.record(is_upgrade);
+process_faults.boot_promote(is_upgrade);
+reboots.record(boot_cause, is_upgrade);
+reboots.boot_cause_clear();
+
+ubus.publish('bbf-device', {
+	...lifecycle.ubus_methods(),
+	...thermal.ubus_methods(),
+	...process_faults.ubus_methods(),
+	...kernel_faults.ubus_methods(),
+	...reboots.ubus_methods(),
+	...link_state.ubus_methods(),
+	...wifi_events.ubus_methods(),
+	...sshguard.ubus_methods(),
+	...cwmp_ops.ubus_methods()
+});
+
+process_faults.subscribe();
+wifi_events.subscribe();
+
+uloop.run();

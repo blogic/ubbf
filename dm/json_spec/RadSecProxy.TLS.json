@@ -1,0 +1,77 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.RadSecProxy.TLS.{i}.",
+  "object": {
+    "path": "Device.RadSecProxy.TLS.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "TLSNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "Certificate",
+        "access": "readWrite",
+        "description": "Specifies the client certificate that must be presented to the remote server for mutual authentication. This certificate is used to authenticate the client by the remote server, ensuring that the remote server is communicating with a trusted client. The client certificate must be issued by a trusted Certificate Authority (CA) and should match the client's private key. This parameter is applicable only when a TLS session is being used.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.Certificate.",
+          "targetType": "row"
+        },
+        "version": "2.19"
+      },
+      {
+        "name": "CABundle",
+        "access": "readWrite",
+        "description": "Specifies the group of CA certificate(s) that the client must use to validate the certificate presented by the remote server. These CA certificates form a trust chain that the server certificate must match, ensuring that only servers with trusted certificates can establish a connection. This parameter supports multiple CA certificates to accommodate different server certificate issuers. This parameter is applicable only when a TLS session is being used.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.CABundle.",
+          "targetType": "row"
+        },
+        "version": "2.19"
+      },
+      {
+        "name": "TLSVersion",
+        "access": "readWrite",
+        "description": "Specifies the TLS/DTLS protocol version to be used by the RadSecProxy service.",
+        "type": "string",
+        "enumerations": [
+          "SSL3",
+          "TLS1_Only",
+          "TLS1_Or_Later",
+          "TLS1_1_Only",
+          "TLS1_1_Or_Later",
+          "TLS1_2_Only",
+          "TLS1_2_Or_Later",
+          "TLS1_3_Only",
+          "TLS1_3_Or_Later",
+          "DTLS1_Only",
+          "DTLS1_Or_Later",
+          "DTLS1_2_Only",
+          "DTLS1_2_Or_Later"
+        ]
+      }
+    ],
+    "description": "TLS block configuration of the RadSecProxy service.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

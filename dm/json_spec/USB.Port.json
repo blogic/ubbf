@@ -1,0 +1,91 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.USB.Port.{i}.",
+  "object": {
+    "path": "Device.USB.Port.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "PortNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the port.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Standard",
+        "access": "readOnly",
+        "description": "USB specification version supported by the Port. Example: \"1.1\"",
+        "type": "string",
+        "maxLength": 4
+      },
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "Type of the USB connection.",
+        "type": "string",
+        "enumerations": [
+          "Host",
+          "Hub",
+          "Device"
+        ]
+      },
+      {
+        "name": "Receptacle",
+        "access": "readOnly",
+        "description": "Receptacle of the port.",
+        "type": "string",
+        "enumerations": [
+          "Standard-A",
+          "Standard-B",
+          "Powered-B",
+          "Micro-AB",
+          "Micro-B"
+        ]
+      },
+      {
+        "name": "Rate",
+        "access": "readOnly",
+        "description": "Current speed of the USB connection. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Low",
+          "Full",
+          "High",
+          "Super"
+        ]
+      },
+      {
+        "name": "Power",
+        "access": "readOnly",
+        "description": "Power configuration of the USB connection. {{enum}} Only applies when {{param|Type}} is {{enum|Device|Type}}. In other cases value is {{enum|Unknown}}.",
+        "type": "string",
+        "enumerations": [
+          "Self",
+          "Bus",
+          "Unknown"
+        ]
+      }
+    ],
+    "description": "USB Port table. This table models master and slave USB physical ports on the device.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.ThroughputTestResult.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.ThroughputTestResult.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "TimeStamp",
+        "access": "readOnly",
+        "description": "Timestamp for the throughput test, indicating when the test completed.",
+        "type": "dateTime"
+      },
+      {
+        "name": "ClientMAC",
+        "access": "readOnly",
+        "description": "MAC address of the STA that the throughput test ran to.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "VID",
+        "access": "readOnly",
+        "description": "The VLAN ID (VID) that the throughput test ran on. A value of 0 indicates that no VLAN was specified.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 4095
+      },
+      {
+        "name": "WMMUP",
+        "access": "readOnly",
+        "description": "Wireless MultiMedia (WMM) User Priority (UP) {{bibref|WMM}} that the throughput test was requested to run on. A value of 8 indicates that no UP was specified.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 8
+      },
+      {
+        "name": "TestDuration",
+        "access": "readOnly",
+        "description": "Duration of the throughput test in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TestLayer",
+        "access": "readOnly",
+        "description": "The OSI layer that the throughput test ran on.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TestAlgorithm",
+        "access": "readOnly",
+        "description": "The test algorithm that the throughput test used.",
+        "type": "string"
+      },
+      {
+        "name": "DownlinkSpeed",
+        "access": "readOnly",
+        "description": "Downlink speed found by the throughput test in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UplinkSpeed",
+        "access": "readOnly",
+        "description": "Uplink speed found by the throughput test in {{units}}.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Object containing the results of the most recent throughput (speed) test from the BSS to a station (STA).",
+    "children": []
+  }
+}

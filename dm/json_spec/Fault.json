@@ -1,0 +1,30 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Fault.",
+  "object": {
+    "path": "Fault.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "",
+    "parameters": [
+      {
+        "name": "FaultCode",
+        "access": "readOnly",
+        "description": "The numerical fault code. Valid values are: *If the operation was successful, the fault code is 0. *If the device cannot complete the operation for some unknown reason, it SHOULD reject the operation with a 7002 (Request Denied) fault code. *If the device detects the presence of the \"userinfo\" component in the file source URL, it SHOULD reject the operation with a 7004 (Invalid Arguments) fault code. *If the device cannot find the Execution Environment specified in the Install or Update command, it SHOULD reject the operation with a 7223 (Unknown Execution Environment) fault code. *If the device determines that the Deployment Unit being installed does not match either the Execution Environment specified or any Execution Environment on the device, it SHOULD reject the operation with a 7225 (Deployment Unit to Execution Environment Mismatch) fault code *If the device detects that the Deployment Unit being installed already has the same version as one already installed on the same Execution Environment, it SHOULD reject the operation with a 7226 (Duplicate Deployment Unit) fault code. *If the device detects that that there are no more system resources (disk space, memory, etc.) to perform the Install or Update of a Deployment Unit, it SHOULD reject the operation with a 7227 (System Resources Exceeded) fault code. *If a requested operation attempts to alter the State of a Deployment Unit in a manner that conflicts with the Deployment Unit State Machine Diagram {{bibref|TR-369|Appendix I \"Software Module Management\"}}, it SHOULD reject the operation with a 7229 (Invalid Deployment Unit State) fault code. *If a requested operation attempts to Uninstall a DU that caused an EE to come into existence, where that EE has at least 1 installed DU or at least 1 child EE, then the device SHOULD reject the operation with a 7229 (Invalid Deployment Unit State) fault code. *If a requested operation attempts to Uninstall a DU that caused an ExecEnvClass to come into existence, where at least one EE exists which instantiates that ExecEnvClass, then the device SHOULD reject the operation with a 7229 (Invalid Deployment Unit State) fault code. *If a requested operation attempts to Install or Update a DU and the server specified in the URL is not currently reachable or the request times out, then the device SHOULD reject the operation with a 7033 (Server Unreachable) fault code. *If a requested operation attempts to Install or Update a DU and the server specified in the URL fails security checks (e.g. by not presenting a valid certificate), then the device SHOULD reject the operation with a 7034 (Server Insecure) fault code. *If a requested operation attempts to Install or Update a DU and the file returned by the server appears to be corrupt, then the device SHOULD reject the operation with a 7035 (Corrupt Data) fault code. *If a requested operation attempts to Install or Update a DU and the file returned by the server does not match the signature provided, or a required signature is absent, then the device SHOULD reject the operation with a 7036 (Bad Signature) fault code. *If a requested operation attempts to Install or Update a DU and includes a RequestedRole argument which contains at least one Role which is not in the EE's AvailableRoles list, then the device SHOULD reject the operation with a 7032 (Unavailable Role) fault code. *If a requested operation attempts to Install or Update a DU and includes a RequestedUserRole argument which contains at least one User Role which is not in the EE's AvailableUserRoles list, then the device SHOULD reject the operation with a 7037 (Unavailable User Role) fault code.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "FaultString",
+        "access": "readOnly",
+        "description": "A human-readable text description of the fault. This field SHOULD be empty if the FaultCode equals 0 (zero).",
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "Fault Structure. If the operation was successful, the {{param|FaultCode}} MUST be zero. Otherwise a non-zero {{param|FaultCode}} is specified along with a {{param|FaultString}} indicating the failure reason.",
+    "children": []
+  }
+}

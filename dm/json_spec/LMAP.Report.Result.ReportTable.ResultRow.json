@@ -1,0 +1,24 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.Report.{i}.Result.{i}.ReportTable.{i}.ResultRow.{i}.",
+  "object": {
+    "path": "Device.LMAP.Report.{i}.Result.{i}.ReportTable.{i}.ResultRow.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ResultReportRowNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Values",
+        "access": "readOnly",
+        "description": "{{list}} This parameter contains an ordered set of values that align to the columns defined in the {{param|#.ColumnLabels}} parameter.",
+        "list": true,
+        "type": "string"
+      }
+    ],
+    "description": "This {{object}} object instances represents a row of results for the report.",
+    "children": []
+  }
+}

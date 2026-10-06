@@ -1,0 +1,139 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.STAMLD.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.APMLD.{i}.STAMLD.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "STAMLDNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "MLDMACAddress",
+        "access": "readOnly",
+        "description": "The Multi-Link Device (MLD) MAC Address of the client MLD STA. {{bibref|EasyMesh}} source: Associated STA MLD Configuration Report TLV.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "Hostname",
+        "access": "readOnly",
+        "description": "The Hostname for the client MLD STA.",
+        "type": "string"
+      },
+      {
+        "name": "IPv4Address",
+        "access": "readOnly",
+        "description": "The IPv4 address allocated to the MLD MAC Address of this device.",
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "IPv6Address",
+        "access": "readOnly",
+        "description": "The IPv6 address allocated to the MLD MAC Address of this device.",
+        "type": "dataType:IPv6Address"
+      },
+      {
+        "name": "IsbSTA",
+        "access": "readOnly",
+        "description": "Indicates if the client MLD STA is a backhaul MLD STA (bSTAMLD). This is useful when the same AP MLD has both client MLD and bSTAMLDs associated. {{bibref|EasyMesh}} source: Backhaul STA MLD Configuration TLV.",
+        "type": "boolean"
+      },
+      {
+        "name": "LastConnectTime",
+        "access": "readOnly",
+        "description": "The time in {{units}} since this client MLD STA was associated.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "BytesSent",
+        "access": "readOnly",
+        "description": "The total number of bytes transmitted to the client MLD STA. {{bibref|EasyMesh}} source: Associated STA Traffic Stats TLV.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "BytesReceived",
+        "access": "readOnly",
+        "description": "The total number of bytes received from the client MLD STA. {{bibref|EasyMesh}} source: Associated STA Traffic Stats TLV.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "PacketsSent",
+        "access": "readOnly",
+        "description": "The total number of packets transmitted to the client MLD STA. {{bibref|EasyMesh}} source: Associated STA Traffic Stats TLV.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "PacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of packets received from the client MLD STA. {{bibref|EasyMesh}} source: Associated STA Traffic Stats TLV.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ErrorsSent",
+        "access": "readOnly",
+        "description": "The number of packets which could not be transmitted to the client MLD STA due to errors. {{bibref|EasyMesh}} source: Associated STA Traffic Stats TLV.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "ErrorsReceived",
+        "access": "readOnly",
+        "description": "The number of packets which were received with error from the client MLD STA. {{bibref|EasyMesh}} source: Associated STA Traffic Stats TLV.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "RetransCount",
+        "access": "readOnly",
+        "description": "The number of packets transmitted with the retry flag sent to the client MLD STA. {{bibref|EasyMesh}} source: Associated STA Traffic Stats TLV.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "PairwiseAKM",
+        "access": "readOnly",
+        "description": "Pairwise AKM suite selector selected by the STAMLD. The Pairwise AKM suite selector (OUI and type) is encoded as a 4-octet hex-encoded value without internal delimiters, e.g. 506F9A02 {{bibref|802.11-2020|Table 9-151}}.",
+        "type": "hexBinary",
+        "minLength": 4,
+        "maxLength": 4,
+        "version": "2.19"
+      },
+      {
+        "name": "PairwiseCipher",
+        "access": "readOnly",
+        "description": "Pairwise AKM cipher selector selected by the STAMLD. The Pairwise AKM cipher selector (OUI and type) is encoded as a 4-octet hex-encoded value without internal delimiters, e.g. 506F9A02 {{bibref|802.11-2020|Table 9-149}}.",
+        "type": "hexBinary",
+        "minLength": 4,
+        "maxLength": 4,
+        "version": "2.19"
+      },
+      {
+        "name": "RSNCapabilities",
+        "access": "readOnly",
+        "description": "The RSN Capabilities selected by the STAMLD during association {{bibref|802.11-2020|Section 9.4.2.24.4}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535,
+        "version": "2.19"
+      },
+      {
+        "name": "STATIDLinkMapNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AffiliatedSTANumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object describes Multi-Link Operation (MLO) capable stations (STAs), also known as client Multilink Devices (MLDs), associated to this MLO capable Access Point. {{bibref|EasyMesh}} source: Associated Clients TLV.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "MLDMACAddress"
+      ]
+    }
+  }
+}

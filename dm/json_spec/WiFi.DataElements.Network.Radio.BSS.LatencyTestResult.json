@@ -1,0 +1,93 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.LatencyTestResult.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.LatencyTestResult.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "TimeStamp",
+        "access": "readOnly",
+        "description": "Timestamp for the latency test, indicating when the last echo in the latency test set was received or timed-out.",
+        "type": "dateTime"
+      },
+      {
+        "name": "ClientMAC",
+        "access": "readOnly",
+        "description": "MAC address of the station (STA) or EasyMesh Agent that the latency test ran to.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "VID",
+        "access": "readOnly",
+        "description": "The VLAN ID (VID) that the latency test ran on. A value of 0 indicates that no VLAN was specified.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 4095
+      },
+      {
+        "name": "WMMUP",
+        "access": "readOnly",
+        "description": "Wireless MultiMedia (WMM) User Priority (UP) {{bibref|WMM}} that the latency test was requested to run on. A value of 8 indicates that no UP was specified.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 8
+      },
+      {
+        "name": "DataBlockSize",
+        "access": "readOnly",
+        "description": "The size of each data block, in {{units}}, that was transmitted in each echo test. The data block excludes the packet or frame header. A value of 0 indicates that no DataBlockSize was specified.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TestLayer",
+        "access": "readOnly",
+        "description": "The OSI layer that the latency test ran on.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TestAlgorithm",
+        "access": "readOnly",
+        "description": "The test algorithm that the latency test used.",
+        "type": "string"
+      },
+      {
+        "name": "SuccessCount",
+        "access": "readOnly",
+        "description": "The number of successfully received echo responses. This parameter is an output of the latency test.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LostCount",
+        "access": "readOnly",
+        "description": "The number of lost echoes in the latency test set. This parameter is an output of the latency test.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AverageResponseTime",
+        "access": "readOnly",
+        "description": "The average round-trip time of the results of the latency test set in {{units}}. This average is across successfully received echoes only. This parameter is an output of the latency test.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MinimumResponseTime",
+        "access": "readOnly",
+        "description": "The minimum round-trip time of the results of the latency test set in {{units}}. This minimum is across successfully received echoes only. This parameter is an output of the latency test.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaximumResponseTime",
+        "access": "readOnly",
+        "description": "The maximum round-trip time of the results of the latency test set in {{units}}. This maximum is across successfully received echoes only. This parameter is an output of the latency test.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Object containing the results of the most recent latency test set from the BSS to a station (STA). Each latency test set includes a number of individual echo tests. Each echo test result provides a sample of round-trip times and statistics on all the echo tests in this latency test are reported in this object.",
+    "children": []
+  }
+}

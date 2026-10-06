@@ -1,0 +1,46 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Time.Server.{i}.Authentication.",
+  "object": {
+    "path": "Device.Time.Server.{i}.Authentication.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables authentication of the NTP server.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Certificate",
+        "access": "readWrite",
+        "description": "Points to the certificate that must be used by the NTS-KE client.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Security.Certificate.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "NTSNTPServer",
+        "access": "readWrite",
+        "description": "Points to a CSV list of NTP servers. A NTP server can either be specified as an IP address or a host name. When used the NTS-KE server will tell the remote NTS-KE client the NTP hostname or address of the NTP server(s) that should be used. This allows to separate the NTP server and NTS-KE server implementation.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string"
+      }
+    ],
+    "description": "This object contains parameters relating to enabling security for the NTP Server.",
+    "children": []
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.AssociationEvent.AssociationEventData.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.AssociationEvent.AssociationEventData.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "AssociationEventDataNumberOfEntries",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "TimeStamp",
+        "access": "readOnly",
+        "description": "The time this event happened. Formatted with the date-and-time string format as defined in {{bibref|RFC3339|Section 3}}.",
+        "type": "dateTime"
+      },
+      {
+        "name": "BSSID",
+        "access": "readOnly",
+        "description": "If a MLD, the MAC Address of the AP MLD, otherwise the MAC Address of the logical BSS (BSSID) which is reporting the Association Event.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "If a MLD, the MAC Address of the Client MLD, otherwise the MAC Address of the Associated Device (STA).",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "StatusCode",
+        "access": "readOnly",
+        "description": "The status code sent to the Associated Device (STA) in the Association Response frame as defined by {{bibref|802.11-2020|Table 9-50}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "HTCapabilities",
+        "access": "readOnly",
+        "description": "Describes the HT capabilities of the Associated Device (STA).",
+        "type": "base64",
+        "minLength": 1,
+        "maxLength": 1
+      },
+      {
+        "name": "VHTCapabilities",
+        "access": "readOnly",
+        "description": "Describes the VHT capabilities of the Associated Device (STA).",
+        "type": "base64",
+        "minLength": 2,
+        "maxLength": 6
+      },
+      {
+        "name": "HECapabilities",
+        "access": "readOnly",
+        "description": "Describes the HE capabilities of the Associated Device (STA). {{deprecated|2.16|because it is superseded by {{object|WiFi6Capabilities}}.}} {{obsoleted|2.18}} {{deleted|2.19}}",
+        "type": "base64",
+        "minLength": 4,
+        "maxLength": 14
+      },
+      {
+        "name": "ClientCapabilities",
+        "access": "readOnly",
+        "description": "The frame body of the (Re)Association Request frame received from this client (STA), as defined in Table 9-34 and Table 9-36 of {{bibref|802.11-2020}} in the order of the underlying referenced standard.",
+        "type": "base64",
+        "version": "2.16"
+      },
+      {
+        "name": "OpClass",
+        "access": "readOnly",
+        "description": "Operating class in use at the time of this event, from {{bibref|802.11ax|Table E-4}}. May be determined from {{bibref|EasyMesh|Table 17.2.17, Operating Channel Report TLV}} and the Supported Operating Classes element in {{bibref|EasyMesh|Table 17.2.19, Client Capability Report TLV}}. For Multi-Link Operation (MLO) this is the operating class over which association messaging had occurred.",
+        "type": "unsignedInt",
+        "maxInclusive": 255,
+        "version": "2.19"
+      },
+      {
+        "name": "Channel",
+        "access": "readOnly",
+        "description": "The single channel number of the channel in use at the time of this event. May be determined from {{bibref|EasyMesh|Table 17.2.17, Operating Channel Report TLV}} and the Supported Operating Classes element in {{bibref|EasyMesh|Table 17.2.19, Client Capability Report TLV}}. For Multi-Link Operation (MLO) this is the channel over which association messaging had occurred.",
+        "type": "unsignedInt",
+        "maxInclusive": 255,
+        "version": "2.19"
+      }
+    ],
+    "description": "The events generated when an Associated Device (STA) associates to a BSS. {{deprecated|2.17|because a corresponding USP event is defined instead}} {{obsoleted|2.19}}",
+    "children": []
+  }
+}

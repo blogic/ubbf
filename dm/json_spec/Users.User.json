@@ -1,0 +1,127 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Users.User.{i}.",
+  "object": {
+    "path": "Device.Users.User.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "UserNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables/disables this user object instance. If the User being configured is currently accessing the device then a disable MUST apply to the next user session and the current user session MUST NOT be abruptly terminated.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "UserID",
+        "access": "readWrite",
+        "description": "Unique Identifier of the user. Depending on the implementation this can be the unique identifier assigned by the underlying system.",
+        "type": "unsignedInt",
+        "version": "2.15"
+      },
+      {
+        "name": "RemoteAccessCapable",
+        "access": "readWrite",
+        "description": "Allows this user to remotely access the UserInterface via the mechanism defined in {{object|##.UserInterface.HTTPAccess}} {{deprecated|2.16|due to the introduction of {{object|.UserInterface.HTTPAccess.{i}.}} and {{param|RoleParticipation}}}} {{obsoleted|2.18}} {{deleted|2.19}}",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Username",
+        "access": "readWrite",
+        "description": "Name of the current user. MUST NOT be {{empty}} for an enabled entry.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Password",
+        "access": "readWrite",
+        "description": "The user's password.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "GroupParticipation",
+        "access": "readWrite",
+        "description": "The Groups of which this User is a member.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Group.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "RoleParticipation",
+        "access": "readWrite",
+        "description": "The Roles which are assigned to this User.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Role.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "StaticUser",
+        "access": "readOnly",
+        "description": "A static user is a fixed user that is always available in the system. When set to {{true}}, the user cannot be removed.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Language",
+        "access": "readWrite",
+        "description": "String describing the default language for the local configuration interface, specified according to {{bibref|RFC3066}}. If {{empty}}, {{param|##.UserInterface.CurrentLanguage}} is used.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 16
+      },
+      {
+        "name": "Shell",
+        "access": "readWrite",
+        "description": "{{null}} means Shell access disabled.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.SupportedShell.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "This object contains parameters relating to the user characteristics.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Username"
+      ]
+    }
+  }
+}

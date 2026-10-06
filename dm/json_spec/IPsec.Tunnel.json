@@ -1,0 +1,61 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IPsec.Tunnel.{i}.",
+  "object": {
+    "path": "Device.IPsec.Tunnel.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "TunnelNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "TunnelInterface",
+        "access": "readOnly",
+        "description": "The corresponding auto-created {{enum|Tunnel|##.IP.Interface.{i}.Type}} {{object|##.IP.Interface}} instance. {{reference||delete}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "TunneledInterface",
+        "access": "readOnly",
+        "description": "The corresponding auto-created {{enum|Tunneled|##.IP.Interface.{i}.Type}} {{object|##.IP.Interface}} instance. {{reference||delete}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Filters",
+        "access": "readOnly",
+        "description": "The {{object|#.Filter}} instances that require this {{object}} instance to exist. {{reference}}",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Filter.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "Represents an IPsec tunnel, i.e. a virtual IP interface that models an IPsec tunnel entry point and exit point. A {{object}} instance always references (and has the same lifetime as) a ({{enum|Tunnel|##.IP.Interface.{i}.Type}},{{enum|Tunneled|##.IP.Interface.{i}.Type}}) {{object|##.IP.Interface}} pair. The {{object}} instance models the IPsec-specific concepts, the {{enum|Tunnel|##.IP.Interface.{i}.Type}} {{object|##.IP.Interface}} instance models the generic concepts, and the {{enum|Tunneled|##.IP.Interface.{i}.Type}} {{object|##.IP.Interface}} instance exists only so it can be referenced by forwarding or filter rules. {{object}} instances are automatically created (as needed) when {{object|#.Filter}} instances are enabled and disabled. Each instance's {{param|Filters}} parameter references the {{object|#.Filter}} instances that require the {{object}} instance to exist. If this list ever becomes {{empty}}, e.g. because all the referenced {{object|#.Filter}} instances have been disabled or deleted, the CPE MAY choose not to delete the {{object}} instance (and its associated ({{enum|Tunnel|##.IP.Interface.{i}.Type}},{{enum|Tunneled|##.IP.Interface.{i}.Type}}) {{object|##.IP.Interface}} pair). This can be desirable, because {{object|##.QoS.Classification}}, {{object|##.Routing.Router.{i}.IPv4Forwarding}}, {{object|##.Routing.Router.{i}.IPv6Forwarding}} etc instances might be referencing the {{object|##.IP.Interface}} instances.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

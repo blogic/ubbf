@@ -1,0 +1,51 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SoftwareModules.ExecEnvClass.{i}.Capability.{i}.",
+  "object": {
+    "path": "Device.SoftwareModules.ExecEnvClass.{i}.Capability.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "CapabilityNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Specification",
+        "access": "readOnly",
+        "description": "The specification which describes the format of the {{object|##.DeploymentUnit}}.",
+        "type": "string",
+        "enumerations": [
+          "OCIImage",
+          "VMRawImage",
+          "OSGiBundle",
+          "JAR",
+          "WAR"
+        ]
+      },
+      {
+        "name": "SpecificationVersion",
+        "access": "readOnly",
+        "description": "The Version of the Specification which is supported by this {{object|#}}. If this parameter begins with the character \"(\" or \"[\" then it MUST end with the character \")\" or \"]\" and it indicates a version range which may be interpreted following Semantic Versioning rules. Otherwise it indicates the latest version of the specification which is known to be supported by this {{object|#}}.",
+        "type": "string",
+        "maxLength": 32
+      },
+      {
+        "name": "SpecificationURI",
+        "access": "readOnly",
+        "description": "The URI where of the definition of the Specification may be found.",
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "The standard(s) describing the kinds of {{object|##.DeploymentUnit}} which can be installed into instances of this {{object|#}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Specification",
+        "SpecificationVersion"
+      ]
+    }
+  }
+}

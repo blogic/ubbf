@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.AL.ForwardingTable.",
+  "object": {
+    "path": "Device.IEEE1905.AL.ForwardingTable.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "SetForwardingEnabled",
+        "access": "readWrite",
+        "description": "Abstraction Layer ability to set, modify, and remove {{object|ForwardingRule}} entries for interfaces. Boolean can be {{true}} for \"enabled\" and {{false}} for \"disabled\".",
+        "type": "boolean"
+      },
+      {
+        "name": "ForwardingRuleNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object represents the rules to forward PDUs between interfaces within the 1905 Abstraction Layer.",
+    "children": []
+  }
+}

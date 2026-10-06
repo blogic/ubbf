@@ -1,0 +1,93 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.MeasurementAgent.{i}.Instruction.{i}.MeasurementSuppression.{i}.",
+  "object": {
+    "path": "Device.LMAP.MeasurementAgent.{i}.Instruction.{i}.MeasurementSuppression.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "MeasurementSuppressionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} instance. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "Name of the suppression object.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "State",
+        "access": "readOnly",
+        "description": "The current operational state of the {{object}}. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Enabled",
+          "Active",
+          "Disabled"
+        ]
+      },
+      {
+        "name": "StopRunning",
+        "access": "readWrite",
+        "description": "When {{true}}, the measurement agent is instructed to stop running schedules or actions that have been matched by this object.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Start",
+        "access": "readWrite",
+        "description": "{{reference|a {{object|###.Event}} object that is used define the event that to start an occurrence of this {{object}}}} When {{empty}} the default behavior is to perform the suspension event immediately.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "###.Event.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "End",
+        "access": "readWrite",
+        "description": "{{reference|a {{object|###.Event}} object that is used define the event to gracefully suspend all actions associated with an occurrence of this {{object}}}} When {{empty}} the default behavior is for the suspension period to be indefinite.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "###.Event.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "SuppressionMatch",
+        "access": "readWrite",
+        "description": "{{list|representing the match patterns to be used for applying suppression to {{object|##.Schedule.{i}}} (and their actions) and all {{object|##.Schedule.{i}.Action.{i}}} object instances that have a matched using their SuppressionTags parameters}} The match pattern syntax is defined in {{bibref|LMAPIFM}}.",
+        "list": true,
+        "type": "string"
+      }
+    ],
+    "description": "This object defines the schedules and actions that are suppressed based on criteria defined in the {{param|SuppressionMatch}} parameter.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

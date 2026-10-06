@@ -1,0 +1,71 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.EndPoint.{i}.Profile.{i}.Security.",
+  "object": {
+    "path": "Device.WiFi.EndPoint.{i}.Profile.{i}.Security.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ModeEnabled",
+        "access": "readWrite",
+        "description": "Indicates which security mode is enabled.",
+        "type": "string"
+      },
+      {
+        "name": "WEPKey",
+        "access": "readWrite",
+        "description": "A WEP key expressed as a hexadecimal string. {{param}} is used only if {{param|ModeEnabled}} is set to {{enum|WEP-64|ModeEnabled}} or {{enum|WEP-128|ModeEnabled}}. A 5 byte {{param}} corresponds to security mode {{enum|WEP-64|ModeEnabled}} and a 13 byte {{param}} corresponds to security mode {{enum|WEP-128|ModeEnabled}}.",
+        "secured": true,
+        "type": "hexBinary",
+        "minLength": 5,
+        "maxLength": 5
+      },
+      {
+        "name": "PreSharedKey",
+        "access": "readWrite",
+        "description": "A literal PreSharedKey (PSK) expressed as a hexadecimal string. {{param}} is only used if {{param|ModeEnabled}} is set to {{enum|WPA-Personal|ModeEnabled}} or {{enum|WPA2-Personal|ModeEnabled}} or {{enum|WPA-WPA2-Personal|ModeEnabled}}. If {{param|KeyPassphrase}} is written, then {{param}} is immediately generated. The Controller SHOULD NOT set both the {{param|KeyPassphrase}} and the {{param}} directly (the result of doing this is undefined).",
+        "secured": true,
+        "type": "hexBinary",
+        "maxLength": 32
+      },
+      {
+        "name": "KeyPassphrase",
+        "access": "readWrite",
+        "description": "A passphrase from which the {{param|PreSharedKey}} is to be generated, for {{enum|WPA-Personal|ModeEnabled}} or {{enum|WPA2-Personal|ModeEnabled}} or {{enum|WPA-WPA2-Personal|ModeEnabled}} security modes. If {{param}} is written, then {{param|PreSharedKey}} is immediately generated. The Controller SHOULD NOT set both the {{param}} and the {{param|PreSharedKey}} directly (the result of doing this is undefined). The key is generated as specified by WPA, which uses PBKDF2 from PKCS #5: Password-based Cryptography Specification Version 2.0 {{bibref|RFC2898}}.",
+        "secured": true,
+        "type": "string",
+        "minLength": 8,
+        "maxLength": 63
+      },
+      {
+        "name": "SAEPassphrase",
+        "access": "readWrite",
+        "description": "A passphrase for {{enum|WPA3-Personal|ModeEnabled}} or {{enum|WPA3-Personal-Transition|ModeEnabled}} security modes. NOTE: this parameter is for WPA3. WPA2 {{param|PreSharedKey}} is generated from {{param|KeyPassphrase}}.",
+        "secured": true,
+        "type": "string",
+        "version": "2.13"
+      },
+      {
+        "name": "MFPConfig",
+        "access": "readWrite",
+        "description": "Management Frame Protection configuration applicable when {{param|ModeEnabled}} is set to {{enum|WPA2-Personal|ModeEnabled}}, {{enum|WPA2-Enterprise|ModeEnabled}}, {{enum|WPA3-Personal|ModeEnabled}}, or {{enum|WPA3-Enterprise|ModeEnabled}}. When in WPA3 modes, {{param}} MUST be set to {{enum|Required}}.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Optional",
+          "Required"
+        ],
+        "version": "2.12"
+      }
+    ],
+    "description": "This object contains security related parameters that apply to a WiFi End Point profile {{bibref|802.11-2007}}.",
+    "children": []
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "source_file": "tr-181-2-19-1-usp.xml",
+  "path": "ChangeSet.{i}.",
+  "object": {
+    "path": "ChangeSet.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "",
+    "parameters": [
+      {
+        "name": "ObjectPath",
+        "access": "readOnly",
+        "description": "Object path of the changed parameters.",
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "Each ChangeSet entry contains the changes for a monitored object. If multiple monitored objects change within the {{param|##.Interval}}, there will be multiple ChangeSet entries. When a parameter of an already included object changes multiple times within in the configured {{param|##.Interval}}. The parameter must be included in the {{object}} instance, where the {{param|ObjectPath}} was previously used, and a new {{object|Parameter.{i}}} instance MUST be created.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "ObjectPath"
+      ]
+    }
+  }
+}

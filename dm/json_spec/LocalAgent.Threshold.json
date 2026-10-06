@@ -1,0 +1,80 @@
+{
+  "source_file": "tr-181-2-19-1-usp.xml",
+  "path": "Device.LocalAgent.Threshold.{i}.",
+  "object": {
+    "path": "Device.LocalAgent.Threshold.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ThresholdNumberOfEntries",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enable/Disable this {{object}} instance. If the {{object}} instance is disabled, the {{event|Triggered!}} Event will not be invoked, even if there is a {{object|#.Subscription}} instance that references it.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "OperatingMode",
+        "access": "readWrite",
+        "description": "Determines whether to disable this {{object}} instance after the {{event|Triggered!}} Event has been invoked.",
+        "default": "Normal",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Normal",
+          "Single"
+        ]
+      },
+      {
+        "name": "ReferencePath",
+        "access": "readWrite",
+        "description": "The concatenation of {{param}} and {{param|ThresholdParam}} refers to the parameter being checked for the threshold test. {{param}} can be either an Object Path, Object Instance Path, or and Object Instance Path with a Search Expression instead of an Instance Identifier, as defined in the introduction section of {{bibref|TR-369}}.",
+        "type": "string"
+      },
+      {
+        "name": "ThresholdParam",
+        "access": "readWrite",
+        "description": "The concatenation of {{param|ReferencePath}} and {{param}} refers to the parameter being checked for the threshold test. {{param}} is the name of the Parameter in the context of {{param|ReferencePath}}.",
+        "type": "string"
+      },
+      {
+        "name": "ThresholdOperator",
+        "access": "readWrite",
+        "description": "The operator used for the threshold test.",
+        "default": "Rise",
+        "defaultType": "object",
+        "type": "string"
+      },
+      {
+        "name": "ThresholdValue",
+        "access": "readWrite",
+        "description": "The Value used for the threshold test.",
+        "type": "string"
+      },
+      {
+        "name": "Controller",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|#.Controller}} instance that created {{object}}|delete}} The value of this parameter is automatically populated by the USP Agent upon {{object}} creation using the reference to the USP Controller that created the instance. The USP Controller referenced by this parameter also defines the set of permissions to use when evaluating the threshold. Furthermore, only the USP Controller referenced by this parameter will receive a {{event|Triggered!}} Event (assuming it has an associated Subscription), even if another USP Controller has an associated Subscription.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Controller.",
+          "targetType": "row"
+        },
+        "version": "2.15"
+      }
+    ],
+    "description": "Each {{object}} instance of this table represents a Threshold Event. {{param|ThresholdParam}} is monitored to determine if it has met the {{param|ThresholdOperator}} condition against {{param|ThresholdValue}}, when it meets the condition a {{event|Triggered!}} Event is sent. {{param|ThresholdParam}} may only reference integer parameters and {{param|ThresholdValue}} only uses integer values. For example: {{param|ReferencePath}}: Device.Ethernet.Interface.[Enable==\"1\"].Stats. {{param|ThresholdParam}}: BytesSent {{param|ThresholdOperator}}: Rise {{param|ThresholdValue}}: 100000 This would trigger a {{event|Triggered!}} Event whenever a value of a parameter matching Device.Ethernet.Interface.[Enable==1].Stats.BytesSent rises from below to above 100000. When creating a {{object}}, if the {{param|ReferencePath}}, {{param|ThresholdParam}} or {{param|ThresholdValue}} are invalid (not in the supported Data Model), the object will not be created. If the concatenation of {{param|ReferencePath}} and {{param|ThresholdParam}} reference a parameter that isn't in the instantiated data model, then there will be no {{event|Triggered!}} Event.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

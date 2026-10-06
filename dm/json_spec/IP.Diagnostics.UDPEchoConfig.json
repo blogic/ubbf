@@ -1,0 +1,100 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IP.Diagnostics.UDPEchoConfig.",
+  "object": {
+    "path": "Device.IP.Diagnostics.UDPEchoConfig.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "MUST be enabled to receive UDP echo. When enabled from a disabled state all related timestamps, statistics and UDP Echo Plus counters are cleared.",
+        "type": "boolean"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "{{reference|IP-layer interface over which the CPE MUST listen and receive UDP echo requests on}} The value of this parameter MUST be either a valid interface or {{empty}}. An attempt to set this parameter to a different value MUST be rejected as an invalid parameter value. If {{empty}} is specified, the CPE MUST listen and receive UDP echo requests on all interfaces. Note: Interfaces behind a NAT MAY require port forwarding rules configured in the Gateway to enable receiving the UDP packets.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "SourceIPAddress",
+        "access": "readWrite",
+        "description": "The Source IP address of the UDP echo packet. The CPE MUST only respond to a UDP echo from this source IP address.",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "UDPPort",
+        "access": "readWrite",
+        "description": "The UDP port on which the UDP server MUST listen and respond to UDP echo requests.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "EchoPlusEnabled",
+        "access": "readWrite",
+        "description": "If {{true}} the CPE will perform necessary packet processing for UDP Echo Plus packets.",
+        "type": "boolean"
+      },
+      {
+        "name": "EchoPlusSupported",
+        "access": "readOnly",
+        "description": "{{true}} if UDP Echo Plus is supported.",
+        "type": "boolean"
+      },
+      {
+        "name": "PacketsReceived",
+        "access": "readOnly",
+        "description": "Incremented upon each valid UDP echo packet received.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "PacketsResponded",
+        "access": "readOnly",
+        "description": "Incremented for each UDP echo response sent.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "BytesReceived",
+        "access": "readOnly",
+        "description": "The number of UDP received bytes including payload and UDP header after the UDPEchoConfig is enabled.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "BytesResponded",
+        "access": "readOnly",
+        "description": "The number of UDP responded bytes, including payload and UDP header sent after the UDPEchoConfig is enabled.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "TimeFirstPacketReceived",
+        "access": "readOnly",
+        "description": "Time in UTC, which MUST be specified to microsecond precision. For example: 2008-04-09T15:01:05.123456, The time that the server receives the first UDP echo packet after the UDPEchoConfig is enabled.",
+        "type": "dateTime",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "TimeLastPacketReceived",
+        "access": "readOnly",
+        "description": "Time in UTC, which MUST be specified to microsecond precision. For example: 2008-04-09T15:01:05.123456 The time that the server receives the most recent UDP echo packet.",
+        "type": "dateTime",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "This object allows the CPE to be configured to perform the UDP Echo Service defined in {{bibref|RFC862}} and UDP Echo Plus Service defined in {{bibref|TR-143|Appendix A.1}}.",
+    "children": []
+  }
+}

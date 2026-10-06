@@ -1,0 +1,90 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DSL.BondingGroup.{i}.Stats.QuarterHour.",
+  "object": {
+    "path": "Device.DSL.BondingGroup.{i}.Stats.QuarterHour.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "FailureReasons",
+        "access": "readOnly",
+        "description": "{{list}} Indicates the failure conditions that have occurred during the accumulation period. {{enum}} Corresponds to {{bibref|G.998.1|section 11.4.3}} ''Current Group Failure Reason''.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "LowRate",
+          "ExcessiveDelay",
+          "InsufficientBuffers",
+          "Other"
+        ]
+      },
+      {
+        "name": "UpstreamRate",
+        "access": "readOnly",
+        "description": "The achieved upstream data rate in {{units}} (which might change subject to dynamic link usage conditions). Corresponds to {{bibref|G.998.1|section 11.4.2}} ''Achieved Aggregate Data Rate''.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DownstreamRate",
+        "access": "readOnly",
+        "description": "The achieved downstream data rate in {{units}} (which might change subject to dynamic link usage conditions). Corresponds to {{bibref|G.998.1|section 11.4.2}} ''Achieved Aggregate Data Rate''.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UpstreamPacketLoss",
+        "access": "readOnly",
+        "description": "The total number of upstream packets that were lost at aggregation output from a bonding group during the accumulation period. Corresponds to {{bibref|G.998.1|section 11.4.2}} ''Group Rx Cell Loss Count''.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DownstreamPacketLoss",
+        "access": "readOnly",
+        "description": "The total number of downstream packets that were lost at aggregation output from a bonding group during the accumulation period. Corresponds to {{bibref|G.998.1|section 11.4.2}} ''Group Rx Cell Loss Count''.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UpstreamDifferentialDelay",
+        "access": "readOnly",
+        "description": "The achieved upstream differential delay in {{units}} (which might change subject to dynamic link usage conditions).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DownstreamDifferentialDelay",
+        "access": "readOnly",
+        "description": "The achieved downstream differential delay in {{units}} (which might change subject to dynamic link usage conditions).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "FailureCount",
+        "access": "readOnly",
+        "description": "The number of times that the group was declared ''Unavailable'' during the accumulation period. Corresponds to {{bibref|G.998.1|Section 11.4.3}} ''Group Failure Count''.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ErroredSeconds",
+        "access": "readOnly",
+        "description": "The time in {{units}} during which the group was declared ''Errored'' during the accumulation period. Corresponds to {{bibref|TR-159}} ''oBondingGroup.aGroupPerf**ES''.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SeverelyErroredSeconds",
+        "access": "readOnly",
+        "description": "The time in {{units}} during which the group was declared ''SeverelyErrored'' during the accumulation period. Corresponds to {{bibref|TR-159}} ''oBondingGroup.aGroupPerf**SES''.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UnavailableSeconds",
+        "access": "readOnly",
+        "description": "The time in {{units}} during which the group was declared ''Unavailable'' during the accumulation period. Corresponds to {{bibref|TR-159}} ''oBondingGroup.aGroupPerf**UAS''.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Current quarter hour statistics for this bonding group. Note: The {{object}} parameters SHOULD NOT be reset when the interface statistics are reset via an interface disable / enable cycle.",
+    "children": []
+  }
+}

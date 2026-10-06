@@ -1,0 +1,35 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.PreferredBackhauls.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.PreferredBackhauls.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "PreferredBackhaulsNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "BackhaulMACAddress",
+        "access": "readOnly",
+        "description": "The MAC address of the BSS, or APMLD, or similar Ethernet interface, on this preferred backhaul link.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "bSTAMACAddress",
+        "access": "readOnly",
+        "description": "The MAC address of the backhaul Station STA (bSTA), or bSTAMLD, or similar Ethernet interface, on this preferred backhaul link.",
+        "type": "dataType:MACAddress"
+      }
+    ],
+    "description": "This object specifies the preferred backhaul links as populated by {{command|#.SetPreferredBackhauls()}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "bSTAMACAddress"
+      ]
+    }
+  }
+}

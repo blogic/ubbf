@@ -1,0 +1,129 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Routing.Babel.",
+  "object": {
+    "path": "Device.Routing.Babel.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables Babel on the device.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this entry. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the device to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "ImplementationVersion",
+        "access": "readOnly",
+        "description": "The name and version of this implementation of the Babel protocol. This is not the same as the version of the Babel protocol that has been implemented. The method of naming and identifying implementation versions will be specific to the implementation.",
+        "type": "string",
+        "maxLength": 32
+      },
+      {
+        "name": "SelfRouterID",
+        "access": "readOnly",
+        "description": "The router-id used by this instance of the Babel protocol to identify itself. {{bibref|RFC8966}} describes this as an arbitrary string of 8 octets.",
+        "type": "hexBinary"
+      },
+      {
+        "name": "SelfSeqno",
+        "access": "readOnly",
+        "description": "The current sequence number included in route updates for routes originated by this node.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "SupportedMetricCompAlgorithms",
+        "access": "readOnly",
+        "description": "Supported cost computation algorithms.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "2-out-of-3",
+          "ETX"
+        ]
+      },
+      {
+        "name": "SupportedSecurityMechanisms",
+        "access": "readOnly",
+        "description": "Supported security mechanisms.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "MAC",
+          "DTLS"
+        ]
+      },
+      {
+        "name": "SupportedMACAlgorithms",
+        "access": "readOnly",
+        "description": "Supported MAC computation algorithms.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "HMAC-SHA256",
+          "BLAKE2s-128"
+        ]
+      },
+      {
+        "name": "SupportedDTLSCertTypes",
+        "access": "readOnly",
+        "description": "Supported DTLS certificate types.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "X.509",
+          "RawPublicKey"
+        ]
+      },
+      {
+        "name": "StatsEnable",
+        "access": "readWrite",
+        "description": "Enables or disables collection of statistics on all {{object|InterfaceSetting.}} instances. Statistics are provided in {{object|InterfaceSetting.{i}.Stats.}}. When enabled, existing statistics values are not cleared and will be incremented as new packets are counted.",
+        "type": "boolean"
+      },
+      {
+        "name": "InterfaceSettingNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RouteNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MACKeySetNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DTLSCertSetNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object provides parameters for configuration, troubleshooting, and monitoring of the Babel routing protocol {{bibref|RFC8966}}. This data model is based on the Babel information model defined in {{bibref|RFC9046}}.",
+    "children": []
+  }
+}

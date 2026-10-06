@@ -1,0 +1,23 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XPON.",
+  "object": {
+    "path": "Device.XPON.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "ONUNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object models one or more xPON interfaces or ONUs as specified by the ITU based PON standards. It does not address IEEE based PON standards (like EPON). An ONU performs tasks such as traffic classification, VLAN manipulation, GEM port mapping, aggregation and/or forwarding between one or more UNIs and one or more ANIs.",
+    "children": []
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.STABlock.{i}.Schedule.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.STABlock.{i}.Schedule.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ScheduleNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.17"
+      },
+      {
+        "name": "Day",
+        "access": "readWrite",
+        "description": "{{list|the days for which the STA is blocked}} {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ]
+      },
+      {
+        "name": "StartTime",
+        "access": "readWrite",
+        "description": "Start time of the STA block in hh:mm format. [hh] refers to a zero-padded hour between 00 and 23. [mm] refers to a zero-padded minute between 00 and 59. Start time is in local time zone.",
+        "type": "string",
+        "maxLength": 5,
+        "pattern": ""
+      },
+      {
+        "name": "Duration",
+        "access": "readWrite",
+        "description": "The duration, in {{units}}, which the STA is blocked. If {{param|StartTime}} is defined, the STA is blocked for the {{param}} period starting from {{param|StartTime}}.",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      }
+    ],
+    "description": "Each instance of this object provides a schedule where client association is blocked for {{param|#.BlockedSTA}} {{bibref|EasyMesh|Section 11.6}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

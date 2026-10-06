@@ -1,0 +1,16 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Firewall.ConnectionTracking.",
+  "object": {
+    "path": "Device.Firewall.ConnectionTracking.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [],
+    "description": "This Object contains the IP connection tracking related parameters. Application Layer Gateway (ALG) are used to provide Network Address Translation (NAT) support for various application-layer protocols.",
+    "children": []
+  }
+}

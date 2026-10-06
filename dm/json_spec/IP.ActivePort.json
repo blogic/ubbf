@@ -1,0 +1,64 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IP.ActivePort.{i}.",
+  "object": {
+    "path": "Device.IP.ActivePort.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ActivePortNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "LocalIPAddress",
+        "access": "readOnly",
+        "description": "Connection local IP address.",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "LocalPort",
+        "access": "readOnly",
+        "description": "Connection local port.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "RemoteIPAddress",
+        "access": "readOnly",
+        "description": "The remote IP address of the source of inbound packets. This will be {{null}} for listening connections (only connections in {{enum|ESTABLISHED|Status}} state have remote addresses).",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "RemotePort",
+        "access": "readOnly",
+        "description": "The remote port of the source of inbound packets. This will be {{null}} for listening connections (only connections in {{enum|ESTABLISHED|Status}} state have remote addresses).",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Current operational status of the connection. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "LISTEN",
+          "ESTABLISHED"
+        ]
+      }
+    ],
+    "description": "This table lists the ports on which TCP connections are listening or established.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "LocalIPAddress",
+        "LocalPort",
+        "RemoteIPAddress",
+        "RemotePort"
+      ]
+    }
+  }
+}

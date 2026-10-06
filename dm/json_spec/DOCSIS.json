@@ -1,0 +1,59 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DOCSIS.",
+  "object": {
+    "path": "Device.DOCSIS.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "CapabilitiesReq",
+        "access": "readOnly",
+        "description": "This attribute contains the TLV encoding for TLV-5 sent in a REG-REQ. The first byte of this encoding is expected to be 0x05. See {{bibref|CM-SP-MULPIv3.0}}, Modem Capabilities Encoding in the Common Radio Frequency Interface Encodings Annex.",
+        "type": "dataType:TLV8"
+      },
+      {
+        "name": "CapabilitiesRsp",
+        "access": "readOnly",
+        "description": "This attribute contains the TLV encoding for TLV-5 received in a REG-RSP. The first byte of this encoding is expected to be 0x05. See {{bibref|CM-SP-MULPIv3.0}}, Modem Capabilities Encoding in the Common Radio Frequency Interface Encodings Annex.",
+        "type": "dataType:TLV8"
+      },
+      {
+        "name": "DownstreamChannelNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UpstreamChannelNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "DownstreamNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UpstreamNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "InterfaceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "DOCSIS object. This object models the DOCSIS 3.x cable interface objects.",
+    "children": []
+  }
+}

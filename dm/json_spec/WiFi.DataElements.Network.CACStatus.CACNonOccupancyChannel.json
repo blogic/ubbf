@@ -1,0 +1,45 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.CACStatus.{i}.CACNonOccupancyChannel.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.CACStatus.{i}.CACNonOccupancyChannel.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "CACNonOccupancyChannelNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "OpClass",
+        "access": "readOnly",
+        "description": "Operating class of a channel that is in the non-occupancy list, from {{bibref|802.11ax|Table E-4}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "Channel",
+        "access": "readOnly",
+        "description": "Single channel number in the operating class on which the radar was detected.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "Seconds",
+        "access": "readOnly",
+        "description": "{{units}} remaining in the non-occupancy duration for the channel specified by the operating class and channel pair.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      }
+    ],
+    "description": "This object describes channels identified by Channel Availability Check (CAC) that may not be occupied.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "OpClass",
+        "Channel"
+      ]
+    }
+  }
+}

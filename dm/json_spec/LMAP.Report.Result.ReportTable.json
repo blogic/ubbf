@@ -1,0 +1,36 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.Report.{i}.Result.{i}.ReportTable.{i}.",
+  "object": {
+    "path": "Device.LMAP.Report.{i}.Result.{i}.ReportTable.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ResultReportTableNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ColumnLabels",
+        "access": "readOnly",
+        "description": "{{list}} This parameter contains the column labels used for the result. The column labels are ordered with the corresponding entries in the {{object|ResultRow}} table.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "ResultReportRowNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RegistryNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This {{object}} object instances represents a row of results.",
+    "children": []
+  }
+}

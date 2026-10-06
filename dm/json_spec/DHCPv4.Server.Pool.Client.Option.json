@@ -1,0 +1,33 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv4.Server.Pool.{i}.Client.{i}.Option.{i}.",
+  "object": {
+    "path": "Device.DHCPv4.Server.Pool.{i}.Client.{i}.Option.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "OptionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Tag",
+        "access": "readOnly",
+        "description": "Option tag as defined in {{bibref|RFC2132}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "Value",
+        "access": "readOnly",
+        "description": "A hexbinary encoded option value.",
+        "type": "hexBinary",
+        "minLength": 0,
+        "maxLength": 255
+      }
+    ],
+    "description": "DHCPv4 options supplied by this client, e.g. ''VendorClassID'' (Option 60), ''ClientID'' (option 61) or ''UserClassID'' (Option 77).",
+    "children": []
+  }
+}

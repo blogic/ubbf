@@ -1,0 +1,163 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.USB.USBHosts.Host.{i}.Device.{i}.",
+  "object": {
+    "path": "Device.USB.USBHosts.Host.{i}.Device.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "DeviceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "DeviceNumber",
+        "access": "readOnly",
+        "description": "Device number on USB bus.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "USBVersion",
+        "access": "readOnly",
+        "description": "USB specification version with which the device complies. Example: \"1.1\"",
+        "type": "string",
+        "maxLength": 4
+      },
+      {
+        "name": "DeviceClass",
+        "access": "readOnly",
+        "description": "Class Code as assigned by USB-IF. When 0x00, each device specifies its own class code. When 0xFF, the class code is vendor specified.",
+        "type": "hexBinary",
+        "maxLength": 1
+      },
+      {
+        "name": "DeviceSubClass",
+        "access": "readOnly",
+        "description": "Subclass code (assigned by USB-IF).",
+        "type": "hexBinary",
+        "maxLength": 1
+      },
+      {
+        "name": "DeviceVersion",
+        "access": "readOnly",
+        "description": "Device release number.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "DeviceProtocol",
+        "access": "readOnly",
+        "description": "Protocol code (assigned by USB-IF).",
+        "type": "hexBinary",
+        "maxLength": 1
+      },
+      {
+        "name": "ProductID",
+        "access": "readOnly",
+        "description": "Product ID (assigned by manufacturer).",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "VendorID",
+        "access": "readOnly",
+        "description": "Vendor ID (assigned by USB-IF).",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Manufacturer",
+        "access": "readOnly",
+        "description": "Device Manufacturer string descriptor.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "ProductClass",
+        "access": "readOnly",
+        "description": "Device Product Class string descriptor.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "SerialNumber",
+        "access": "readOnly",
+        "description": "Device SerialNumber string descriptor.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Port",
+        "access": "readOnly",
+        "description": "Hub port on parent device. 0 when no parent.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "USBPort",
+        "access": "readOnly",
+        "description": "{{reference}} This is a reference to the USB host device to which this (external) USB device is connected.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "###.Port.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Rate",
+        "access": "readOnly",
+        "description": "Speed of the USB device. {{enum}} Internal signaling between the connected USB device and the USB Host Controller provide the information needed to determine the negotiated rate.",
+        "type": "string",
+        "enumerations": [
+          "Unknown",
+          "Low",
+          "Full",
+          "High",
+          "Super"
+        ]
+      },
+      {
+        "name": "Parent",
+        "access": "readOnly",
+        "description": "{{reference}} This is a reference to the parent USB device (e.g. hub device). This is {{empty}} for a device connected to the Host controller (root hub).",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Device.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "MaxChildren",
+        "access": "readOnly",
+        "description": "Number of ports. Only applies for hub device, equal to 0 for other devices.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IsSuspended",
+        "access": "readOnly",
+        "description": "When {{true}} the associated Device is in a suspended (i.e. low-power) state (see {{bibref|USB2.0|Chapter 11.9}}). When {{false}} the associated Device is in any of the other states specified by the USB 2.0 Device State Machine (see {{bibref|USB2.0|Chapter 9.1.1}}).",
+        "type": "boolean"
+      },
+      {
+        "name": "IsSelfPowered",
+        "access": "readOnly",
+        "description": "When {{true}} the associated device is at least partly powered by a local source (see {{bibref|USB2.0|Chapter 9.4.5}}). When {{false}} the associated device draws all the current it needs from the USB bus.",
+        "type": "boolean"
+      },
+      {
+        "name": "ConfigurationNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Table of connected USB devices.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "DeviceNumber"
+      ]
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Ghn.Interface.{i}.SCInfo.",
+  "object": {
+    "path": "Device.Ghn.Interface.{i}.SCInfo.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "ModesSupported",
+        "access": "readOnly",
+        "description": "The security modes that the Security Controller can support. Refer to {{bibref|G.9961|Clause 9.2}}.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "NN",
+          "NMK"
+        ]
+      },
+      {
+        "name": "ModeEnabled",
+        "access": "readWrite",
+        "description": "The security mode in which the Security Controller is operating.",
+        "type": "string"
+      },
+      {
+        "name": "MICSize",
+        "access": "readWrite",
+        "description": "The selected MIC size used in the domain.",
+        "type": "string",
+        "enumerations": [
+          "4-byte MIC",
+          "8-byte MIC",
+          "16-byte MIC"
+        ]
+      },
+      {
+        "name": "Location",
+        "access": "readOnly",
+        "description": "Indicates whether the Security Controller is above the L1 reference point. It is set to {{true}} if the Security Controller is above the L1 reference point, and set to {{false}} otherwise.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object specifies management parameters pertaining to the Security Controller functionality (Security Controller function; see {{bibref|G.9961|Clause 9.2}}). The object exists only on G.hn interfaces that are currently the Security Controller, i.e. for which parameter {{param|#.IsSC}} is {{true}}.",
+    "children": []
+  }
+}

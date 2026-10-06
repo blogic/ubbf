@@ -1,0 +1,1321 @@
+#!/usr/bin/env ucode
+
+'use strict';
+
+import * as fs from 'fs';
+import { cursor } from 'uci';
+
+// Host use: `default_config --dry-run [--initial FILE] [--capabilities FILE]
+// [--board NAME] [--mode NAME]` prints the four mode presets and the test
+// profiles of the given mode as JSON and writes nothing.
+let opts = {
+	dry_run: false,
+	initial: '/usr/share/ucode/ubbf/initial.json',
+	capabilities: '/tmp/ubbf/capabilities.json',
+	board: null,
+	mode: null
+};
+
+for (let i = 0; i < length(ARGV); i++) {
+	switch (ARGV[i]) {
+	case '--dry-run':
+		opts.dry_run = true;
+		break;
+	case '--initial':
+		opts.initial = ARGV[++i];
+		break;
+	case '--capabilities':
+		opts.capabilities = ARGV[++i];
+		break;
+	case '--board':
+		opts.board = ARGV[++i];
+		break;
+	case '--mode':
+		opts.mode = ARGV[++i];
+		break;
+	}
+}
+
+if (!opts.dry_run && fs.stat('/etc/ubbf/config.json')?.size)
+	exit(0);
+
+const BBF_ENTERPRISE_ID = 3561;
+
+// The cellular mode's WAN. The SIM is the bench card; the modem's sysfs
+// path is what ModemManager reports as modem.generic.device and what the
+// netifd proto binds the interface to, and it is a property of where the
+// modem sits on each board's USB tree, like the RS485 tty names are.
+const CELLULAR = {
+	sim: {
+		APN: 'internet.telekom',
+		Username: 'telekom',
+		Password: 'tm',
+		PIN: '9360',
+		IPVersion: '4'
+	},
+	modem_path_by_board: {
+		'openwrt,one': '/sys/devices/platform/soc/11200000.usb/usb1/1-1/1-1.2'
+	}
+};
+
+/**
+ * Board name as preinit records it, or the --board override.
+ *
+ * @returns {string} board name, empty when unknown
+ */
+function board_name_read() {
+	if (opts.board)
+		return opts.board;
+	return trim(fs.readfile('/tmp/sysinfo/board_name') ?? '');
+}
+
+/**
+ * Queries usfpd for the netdev -> Device.Optical.Interface.{i} mapping.
+ *
+ * Invokes `usfpd --probe-json`, a one-shot CLI mode that runs the same
+ * sysfs/ethtool discovery + EEPROM classification as the daemon but
+ * synchronously, so default_config can call it from uci-defaults time
+ * (before procd has started usfpd as a daemon). The CLI prints a JSON
+ * array sorted by cage name; this function filters to optical cages and
+ * assigns 1-based instance numbers in that order, matching the live
+ * Device.Optical.Interface.{i} numbering.
+ *
+ * @returns {object} Map of netdev name to optical instance number; empty
+ *                   when usfpd is absent or no optical cages exist
+ */
+function optical_cages_query() {
+	let result = {};
+	let p = fs.popen('/usr/sbin/usfpd --probe-json 2>/dev/null', 'r');
+	if (!p)
+		return result;
+
+	let output = p.read('all');
+	p.close();
+	if (!output)
+		return result;
+
+	let probe = json(output);
+	if (type(probe) != 'array')
+		return result;
+
+	let idx = 0;
+	for (let entry in probe) {
+		if (!entry.optical)
+			continue;
+		idx++;
+		result[entry.netdev] = idx;
+	}
+	return result;
+}
+
+function ethernet_generate(network, optical_map) {
+	let interfaces = {};
+	let links = {};
+	let eth_instance = 1;
+	let link_instance = 1;
+	let wan_index = 1;
+	let lan_index = 1;
+
+	for (let device in network.wan) {
+		let optical_idx = optical_map?.[device];
+		let lower_path;
+
+		if (optical_idx) {
+			lower_path = sprintf('Device.Optical.Interface.%d', optical_idx);
+		} else {
+			interfaces[eth_instance] = {
+				Enable: 'true',
+				Alias: device,
+				Name: device,
+				Upstream: 'true',
+				MaxBitRate: '-1',
+				DuplexMode: 'Auto'
+			};
+			lower_path = sprintf('Device.Ethernet.Interface.%d', eth_instance);
+			eth_instance++;
+		}
+
+		links[link_instance] = {
+			Enable: 'true',
+			Alias: length(network.wan) > 1 ? sprintf('eth-WAN%d', wan_index) : 'eth-WAN',
+			Name: device,
+			LowerLayers: lower_path,
+			MACAddress: ''
+		};
+
+		wan_index++;
+		link_instance++;
+	}
+
+	for (let device in network.lan) {
+		let optical_idx = optical_map?.[device];
+		let lower_path;
+
+		if (optical_idx) {
+			lower_path = sprintf('Device.Optical.Interface.%d', optical_idx);
+		} else {
+			interfaces[eth_instance] = {
+				Enable: 'true',
+				Alias: device,
+				Name: device,
+				Upstream: 'false',
+				MaxBitRate: '-1',
+				DuplexMode: 'Auto'
+			};
+			lower_path = sprintf('Device.Ethernet.Interface.%d', eth_instance);
+			eth_instance++;
+		}
+
+		links[link_instance] = {
+			Enable: 'true',
+			Alias: length(network.lan) > 1 ? sprintf('eth-LAN%d', lan_index) : 'eth-LAN',
+			Name: device,
+			LowerLayers: lower_path,
+			MACAddress: ''
+		};
+
+		lan_index++;
+		link_instance++;
+	}
+
+	return {
+		Interface: interfaces,
+		Link: links
+	};
+}
+
+function bridging_generate(network, wifi) {
+	let bridge_ports = {};
+	let port_instance = 1;
+
+	bridge_ports[port_instance] = {
+		Enable: 'true',
+		Alias: 'br-lan',
+		Name: 'br-lan',
+		ManagementPort: 'true',
+		LowerLayers: ''
+	};
+	port_instance++;
+
+	let link_instance = length(network.wan) + 1;
+	let lan_index = 1;
+
+	for (let device in network.lan) {
+		bridge_ports[port_instance] = {
+			Enable: 'true',
+			Alias: sprintf('LanPort%d', lan_index),
+			Name: sprintf('lanport%d', lan_index),
+			ManagementPort: 'false',
+			LowerLayers: sprintf('Device.Ethernet.Link.%d', link_instance)
+		};
+		port_instance++;
+		lan_index++;
+		link_instance++;
+	}
+
+	if (wifi) {
+		let num_radios = wifi._num_radios;
+		let ssid_refs = [];
+		for (let i = 1; i <= num_radios; i++)
+			push(ssid_refs, sprintf('Device.WiFi.SSID.%d', i));
+
+		bridge_ports[port_instance] = {
+			Enable: 'true',
+			Alias: 'WiFiPort',
+			Name: 'wifiport',
+			ManagementPort: 'false',
+			LowerLayers: join(',', ssid_refs)
+		};
+	}
+
+	return {
+		Enable: 'true',
+		Alias: 'LAN',
+		Name: 'br-lan',
+		Standard: '802.1Q-2011',
+		Port: bridge_ports
+	};
+}
+
+const band_config = {
+	'2g': {
+		freq: '2.4GHz',
+		standards: 'g,n,ax',
+		bandwidth: '20MHz',
+		channel: '1',
+		alias_suffix: '2G',
+		wlan_prefix: 'wlan0'
+	},
+	'5g': {
+		freq: '5GHz',
+		standards: 'a,n,ac,ax',
+		bandwidth: '80MHz',
+		channel: '36',
+		alias_suffix: '5G',
+		wlan_prefix: 'wlan1'
+	},
+	'6g': {
+		freq: '6GHz',
+		standards: 'ax',
+		bandwidth: '160MHz',
+		channel: '37',
+		alias_suffix: '6G',
+		wlan_prefix: 'wlan2'
+	}
+};
+
+/**
+ * @param {object} radio_info - Radio info from capabilities with modes array
+ * @returns {boolean} True if radio supports EHT (802.11be)
+ */
+function band_has_eht(radio_info) {
+	if (!radio_info?.modes)
+		return false;
+
+	for (let mode in radio_info.modes) {
+		if (index(mode, 'EHT') == 0)
+			return true;
+	}
+
+	return false;
+}
+
+/**
+ * Reads the wireless country code from the provisioning partition.
+ *
+ * The partition survives a factory reset, so a country stored there keeps
+ * the regulatory domain across one. The provision package is optional, so
+ * the module is loaded at runtime.
+ *
+ * @returns {string|null} Country code, or null when there is none
+ */
+function provision_country_get() {
+	let provision;
+
+	try {
+		provision = import('provision');
+	} catch (e) {
+		return;
+	}
+
+	let ctx = provision.open();
+	if (!ctx)
+		return;
+
+	ctx.init();
+
+	let country = ctx.get('wireless.country');
+	if (type(country) != 'string' || !length(country))
+		return;
+
+	return uc(country);
+}
+
+function wifi_generate(radios) {
+	let band_order = ['2g', '5g', '6g'];
+	let sorted_bands = filter(band_order, band => band in radios);
+	let num_radios = length(sorted_bands);
+
+	if (num_radios == 0)
+		return null;
+
+	let home_psk = 'aaaaaaaa';
+	let guest_psk = 'aaaaaaaa';
+
+	let country = provision_country_get() ?? 'DE';
+
+	let radio_entries = {};
+	let ssid_entries = {};
+	let ap_entries = {};
+
+	let radio_instance = 1;
+	let ssid_home_instance = 1;
+	let ssid_guest_instance = num_radios + 1;
+	let ap_home_instance = 1;
+	let ap_guest_instance = num_radios + 1;
+
+	for (let band in sorted_bands) {
+		let cfg = band_config[band];
+		let radio_info = radios[band];
+
+		let standards = cfg.standards;
+		if (band_has_eht(radio_info))
+			standards += ',be';
+
+		radio_entries[radio_instance] = {
+			Enable: 'true',
+			Alias: sprintf('Radio%s', cfg.alias_suffix),
+			Name: radio_info.name ?? sprintf('radio%d', radio_instance - 1),
+			OperatingFrequencyBand: cfg.freq,
+			OperatingStandards: standards,
+			Channel: cfg.channel,
+			AutoChannelEnable: 'false',
+			OperatingChannelBandwidth: cfg.bandwidth,
+			TransmitPower: '100',
+			RegulatoryDomain: country
+		};
+
+		ssid_entries[ssid_home_instance] = {
+			Enable: 'true',
+			Alias: sprintf('SSID%s', cfg.alias_suffix),
+			Name: cfg.wlan_prefix,
+			LowerLayers: sprintf('Device.WiFi.Radio.%d', radio_instance),
+			SSID: 'Home',
+			MACAddress: ''
+		};
+
+		ssid_entries[ssid_guest_instance] = {
+			Enable: 'true',
+			Alias: sprintf('GuestSSID%s', cfg.alias_suffix),
+			Name: sprintf('%s-guest', cfg.wlan_prefix),
+			LowerLayers: sprintf('Device.WiFi.Radio.%d', radio_instance),
+			SSID: 'Guest',
+			MACAddress: ''
+		};
+
+		ap_entries[ap_home_instance] = {
+			Enable: 'true',
+			Alias: sprintf('AP%s', cfg.alias_suffix),
+			SSIDReference: sprintf('Device.WiFi.SSID.%d', ssid_home_instance),
+			SSIDAdvertisementEnabled: 'true',
+			WMMEnable: 'true',
+			X_UBBF_Role: 'Primary',
+			Security: {
+				ModeEnabled: 'WPA2-Personal',
+				PreSharedKey: home_psk
+			}
+		};
+
+		ap_entries[ap_guest_instance] = {
+			Enable: 'true',
+			Alias: sprintf('GuestAP%s', cfg.alias_suffix),
+			SSIDReference: sprintf('Device.WiFi.SSID.%d', ssid_guest_instance),
+			SSIDAdvertisementEnabled: 'true',
+			WMMEnable: 'true',
+			IsolationEnable: 'true',
+			X_UBBF_Role: 'Guest',
+			Security: {
+				ModeEnabled: 'WPA2-Personal',
+				PreSharedKey: guest_psk
+			}
+		};
+
+		radio_instance++;
+		ssid_home_instance++;
+		ssid_guest_instance++;
+		ap_home_instance++;
+		ap_guest_instance++;
+	}
+
+	let templates;
+	let eht_bands = [];
+
+	for (let i = 0; i < num_radios; i++) {
+		if (band_has_eht(radios[sorted_bands[i]]))
+			push(eht_bands, i);
+	}
+
+	if (length(eht_bands) >= 2) {
+		templates = {
+			APMLDTemplate: {
+				'1': {
+					Alias: 'HomeMLO',
+					APMLDTemplateID: '1',
+					MLOEnable: 'true',
+					STREnable: 'true'
+				},
+				'2': {
+					Alias: 'GuestMLO',
+					APMLDTemplateID: '2',
+					MLOEnable: 'true',
+					STREnable: 'true'
+				}
+			}
+		};
+
+		for (let i in eht_bands) {
+			let home_ap = i + 1;
+			let guest_ap = num_radios + 1 + i;
+
+			ap_entries[home_ap].APMLDTemplateRef = 'Device.WiFi.Templates.APMLDTemplate.1';
+			ap_entries[guest_ap].APMLDTemplateRef = 'Device.WiFi.Templates.APMLDTemplate.2';
+
+			if (sorted_bands[i] == '6g') {
+				ap_entries[home_ap].Security = {
+					ModeEnabled: 'WPA3-Personal',
+					SAEPassphrase: home_psk
+				};
+				ap_entries[guest_ap].Security = {
+					ModeEnabled: 'WPA3-Personal',
+					SAEPassphrase: guest_psk
+				};
+			}
+		}
+	}
+
+	return {
+		Radio: radio_entries,
+		SSID: ssid_entries,
+		AccessPoint: ap_entries,
+		Templates: templates,
+		_num_radios: num_radios,
+		_sorted_bands: sorted_bands
+	};
+}
+
+function guest_bridge_generate(wifi) {
+	let bridge_ports = {};
+	let port_instance = 1;
+
+	bridge_ports[port_instance] = {
+		Enable: 'true',
+		Alias: 'GuestMgmt',
+		Name: 'br-guest',
+		ManagementPort: 'true'
+	};
+	port_instance++;
+
+	let num_radios = wifi._num_radios;
+	let sorted_bands = wifi._sorted_bands;
+
+	for (let i = 0; i < num_radios; i++) {
+		let band = sorted_bands[i];
+		let cfg = band_config[band];
+		let guest_ssid_instance = num_radios + 1 + i;
+
+		bridge_ports[port_instance] = {
+			Enable: 'true',
+			Alias: sprintf('GuestWiFi%s', cfg.alias_suffix),
+			Name: sprintf('%s-guest', cfg.wlan_prefix),
+			LowerLayers: sprintf('Device.WiFi.SSID.%d', guest_ssid_instance),
+			ManagementPort: 'false'
+		};
+		port_instance++;
+	}
+
+	return {
+		Enable: 'true',
+		Alias: 'Guest',
+		Name: 'br-guest',
+		Port: bridge_ports
+	};
+}
+
+function qos_shaper_generate(wifi) {
+	let shapers = {};
+	let num_radios = wifi._num_radios;
+	let sorted_bands = wifi._sorted_bands;
+
+	for (let i = 0; i < num_radios; i++) {
+		let band = sorted_bands[i];
+		let cfg = band_config[band];
+		let guest_ssid_instance = num_radios + 1 + i;
+		let shaper_instance = i + 1;
+
+		shapers[shaper_instance] = {
+			Enable: 'true',
+			Alias: sprintf('GuestShaper%s', cfg.alias_suffix),
+			Interface: sprintf('Device.WiFi.SSID.%d', guest_ssid_instance),
+			ShapingRate: '10000'
+		};
+	}
+
+	return { Shaper: shapers };
+}
+
+/**
+ * @param {string} str - ASCII string
+ * @returns {string} Hex-encoded string
+ */
+function hex_encode(str) {
+	let result = '';
+	for (let i = 0; i < length(str); i++)
+		result += sprintf('%02x', ord(str, i));
+	return result;
+}
+
+/**
+ * @param {number} val - Integer value
+ * @param {number} bytes - Number of bytes
+ * @returns {string} Big-endian hex encoding
+ */
+function hex_uint(val, bytes) {
+	return sprintf(`%0${bytes * 2}x`, val);
+}
+
+/**
+ * @param {string} device - Network interface name
+ * @returns {string|null} MAC address as uppercase hex without colons
+ */
+function mac_read(device) {
+	if (!device)
+		return null;
+
+	let mac = fs.readfile(`/sys/class/net/${device}/address`);
+	if (!mac)
+		return null;
+
+	return join('', split(trim(uc(mac)), ':'));
+}
+
+/**
+ * Reads USP device identification from the WAN MAC address.
+ *
+ * @param {object} network - Network capabilities with wan array
+ * @returns {object|null} Object with oui, serial, product, or null
+ */
+function usp_device_info_get(network) {
+	let wan_device = network?.wan?.[0];
+	let mac = mac_read(wan_device);
+	if (!mac || length(mac) < 12)
+		return null;
+
+	return {
+		oui: substr(mac, 0, 6),
+		serial: substr(mac, 6, 6),
+		product: 'Router'
+	};
+}
+
+/**
+ * Adds USP discovery SentOption/ReqOption entries to the DHCPv4 and DHCPv6 clients.
+ *
+ * @param {object} config - Config data model to modify
+ * @param {object} devinfo - Device info with oui, serial, product
+ */
+function usp_discovery_opts_add(config, devinfo) {
+	let dhcpv4_client = config.Device?.DHCPv4?.Client?.['1'];
+	if (dhcpv4_client) {
+		let opt124_hex = hex_uint(BBF_ENTERPRISE_ID, 4)
+			+ hex_uint(3, 1) + hex_encode('usp');
+
+		let sub1 = hex_uint(1, 1) + hex_uint(length(devinfo.oui), 1) + hex_encode(devinfo.oui);
+		let sub2 = hex_uint(2, 1) + hex_uint(length(devinfo.serial), 1) + hex_encode(devinfo.serial);
+		let sub3 = hex_uint(3, 1) + hex_uint(length(devinfo.product), 1) + hex_encode(devinfo.product);
+		let subopts = sub1 + sub2 + sub3;
+		let opt125_hex = hex_uint(BBF_ENTERPRISE_ID, 4)
+			+ hex_uint(length(subopts) / 2, 1) + subopts;
+
+		dhcpv4_client.SentOption = {
+			'1': {
+				Enable: 'true',
+				Alias: 'USPVendorClass',
+				Tag: '124',
+				Value: opt124_hex
+			},
+			'2': {
+				Enable: 'true',
+				Alias: 'USPVendorSpecific',
+				Tag: '125',
+				Value: opt125_hex
+			}
+		};
+
+		dhcpv4_client.ReqOption = {
+			'1': {
+				Enable: 'true',
+				Alias: 'USPVendorSpecificReq',
+				Tag: '125'
+			}
+		};
+	}
+
+	let dhcpv6_client = config.Device?.DHCPv6?.Client?.['1'];
+	if (dhcpv6_client) {
+		let opt16_hex = hex_uint(BBF_ENTERPRISE_ID, 4)
+			+ hex_uint(3, 2) + hex_encode('usp');
+
+		let sub11 = hex_uint(11, 2) + hex_uint(length(devinfo.oui), 2) + hex_encode(devinfo.oui);
+		let sub12 = hex_uint(12, 2) + hex_uint(length(devinfo.serial), 2) + hex_encode(devinfo.serial);
+		let sub13 = hex_uint(13, 2) + hex_uint(length(devinfo.product), 2) + hex_encode(devinfo.product);
+		let opt17_hex = hex_uint(BBF_ENTERPRISE_ID, 4) + sub11 + sub12 + sub13;
+
+		dhcpv6_client.SentOption = {
+			'1': {
+				Enable: 'true',
+				Alias: 'USPVendorClass',
+				Tag: '16',
+				Value: opt16_hex
+			},
+			'2': {
+				Enable: 'true',
+				Alias: 'USPVendorSpecific',
+				Tag: '17',
+				Value: opt17_hex
+			}
+		};
+	}
+}
+
+const capability_defs = {
+	'OCI Runtime': {
+		Specification: 'OCIImage',
+		SpecificationVersion: '1.0.2',
+		SpecificationURI: 'https://github.com/opencontainers/runtime-spec'
+	},
+	'LXC': {
+		Specification: 'LXC',
+		SpecificationVersion: '1.0',
+		SpecificationURI: 'https://linuxcontainers.org/lxc'
+	}
+};
+
+/**
+ * @param {array} runtimes - Detected container runtimes from capabilities.json
+ * @returns {object} SoftwareModules config section with ExecEnvClass and ExecEnv
+ */
+function softwaremodules_generate(runtimes) {
+	let execenv_classes = {};
+	let execenvs = {};
+
+	for (let i = 0; i < length(runtimes); i++) {
+		let rt = runtimes[i];
+		let inst = sprintf('%d', i + 1);
+		let alias = sprintf('cpe-%s', rt.name);
+
+		execenv_classes[inst] = {
+			Alias: alias,
+			Name: rt.name,
+			Vendor: rt.vendor,
+			Version: rt.version,
+			Capability: {}
+		};
+
+		let cap = capability_defs[rt.type];
+		if (cap)
+			execenv_classes[inst].Capability['1'] = cap;
+
+		execenvs[inst] = {
+			Enable: 'true',
+			Alias: alias,
+			Name: rt.name,
+			Vendor: rt.vendor,
+			Version: rt.version,
+			Type: rt.type
+		};
+	}
+
+	return { ExecEnvClass: execenv_classes, ExecEnv: execenvs };
+}
+
+/**
+ * Deletes every instance under a container whose Interface field matches.
+ *
+ * @param {object} container - Multi-instance object (e.g. HTTPAccess)
+ * @param {string} iface_path - TR-181 interface path to drop
+ */
+function instances_by_interface_drop(container, iface_path) {
+	if (type(container) != 'object')
+		return;
+	for (let key in keys(container))
+		if (container[key]?.Interface == iface_path)
+			delete container[key];
+}
+
+/**
+ * Moves the WAN links into the LAN bridge: one bridge port per WAN link,
+ * and the Ethernet interfaces below those links no longer face upstream.
+ *
+ * @param {object} config - Config to transform (mutated in place)
+ * @param {object} network - Network capabilities with wan/lan device arrays
+ */
+function wan_links_bridge(config, network) {
+	let dev = config.Device;
+
+	let ports = dev.Bridging.Bridge['1'].Port;
+	let next_port = length(keys(ports)) + 1;
+	for (let i = 1; i <= length(network.wan); i++) {
+		ports[next_port] = {
+			Enable: 'true',
+			Alias: length(network.wan) > 1 ? sprintf('WanPort%d', i) : 'WanPort',
+			Name: length(network.wan) > 1 ? sprintf('wanport%d', i) : 'wanport',
+			ManagementPort: 'false',
+			LowerLayers: sprintf('Device.Ethernet.Link.%d', i)
+		};
+		next_port++;
+
+		let m = match(dev.Ethernet?.Link?.[i]?.LowerLayers ?? '', /^Device\.Ethernet\.Interface\.(\d+)$/);
+		if (m && dev.Ethernet.Interface?.[m[1]])
+			dev.Ethernet.Interface[m[1]].Upstream = 'false';
+	}
+}
+
+/**
+ * Drops the management services bound to the wired WAN interface.
+ *
+ * @param {object} dev - The config's Device object (mutated in place)
+ */
+function wan_services_drop(dev) {
+	instances_by_interface_drop(dev.UserInterface?.HTTPAccess, 'Device.IP.Interface.1');
+	instances_by_interface_drop(dev.SSH?.Server, 'Device.IP.Interface.1');
+	instances_by_interface_drop(dev.X_UBBF?.QoSify?.InterfaceConfig, 'Device.IP.Interface.1');
+}
+
+/**
+ * Rewrites a fully-built router config into a dumb-AP (bridged) config: a
+ * single flat L2 bridge spanning every wired port plus WiFi, one management
+ * interface addressed by DHCP, and no routing/NAT/DHCP-server/firewall. The
+ * former LAN interface (instance 2) is kept as the management interface so
+ * management services already bound to it stay valid.
+ *
+ * @param {object} config - The router config to transform (mutated in place)
+ * @param {object} network - Network capabilities with wan/lan device arrays
+ * @param {number} num_radios - Number of WiFi radios (for guest SSID removal)
+ * @returns {object} The mutated config
+ */
+function router_to_dumb_ap(config, network, num_radios) {
+	let dev = config.Device;
+
+	wan_links_bridge(config, network);
+
+	let mgmt = dev.IP.Interface['2'];
+	mgmt.Alias = 'Management';
+	mgmt.IPv4Address['1'].AddressingType = 'DHCP';
+	mgmt.IPv4Address['1'].IPAddress = '';
+	mgmt.IPv4Address['1'].SubnetMask = '';
+	delete mgmt.IPv6Prefix;
+	delete dev.IP.Interface['1'];
+	delete dev.IP.Interface['3'];
+
+	dev.DHCPv4.Client['1'].Interface = 'Device.IP.Interface.2';
+	dev.DHCPv4.Client['1'].Alias = 'MgmtDHCPv4Client';
+	delete dev.DHCPv4.Server;
+	if (dev.DHCPv6?.Client?.['1']) {
+		dev.DHCPv6.Client['1'].Interface = 'Device.IP.Interface.2';
+		dev.DHCPv6.Client['1'].RequestPrefixes = 'false';
+	}
+	if (dev.DHCPv6)
+		delete dev.DHCPv6.Server;
+
+	delete dev.NAT;
+	delete dev.Routing;
+	delete dev.Firewall;
+	delete dev.RouterAdvertisement;
+	delete dev.NeighborDiscovery;
+	if (dev.DNS) {
+		delete dev.DNS.Relay;
+		delete dev.DNS.RebindProtection;
+	}
+
+	delete dev.Bridging.Bridge['2'];
+	delete dev.QoS;
+	for (let i = num_radios + 1; i <= 2 * num_radios; i++) {
+		if (dev.WiFi?.SSID)
+			delete dev.WiFi.SSID[i];
+		if (dev.WiFi?.AccessPoint)
+			delete dev.WiFi.AccessPoint[i];
+	}
+
+	wan_services_drop(dev);
+
+	return config;
+}
+
+/**
+ * Rewrites a fully-built router config into a cellular router: every wired
+ * port joins the LAN bridge and the WAN interface rides the LTE modem. The
+ * routed side, NAT, firewall, DHCP and DNS relay, stays as the router has it,
+ * and so does the LAN's ULA addressing; the DHCP clients, the WAN's own
+ * prefix and the services bound to the wired WAN go, since the modem's
+ * bearer addresses the link itself.
+ *
+ * The stored Cellular.Interface row carries the modem's netdev, its
+ * direction and its sysfs path because the boot render and the stacked
+ * IP.Interface read them from the stored tree, long before ModemManager has
+ * probed anything. Without a known path the ports are still bridged and the
+ * LTE waits for a controller to bind the row.
+ *
+ * @param {object} config - The router config to transform (mutated in place)
+ * @param {object} network - Network capabilities with wan/lan device arrays
+ * @param {string} modem_path - Modem sysfs path for this board, may be empty
+ * @returns {object} The mutated config
+ */
+function router_to_cellular(config, network, modem_path) {
+	let dev = config.Device;
+
+	wan_links_bridge(config, network);
+
+	let wan = dev.IP.Interface['1'];
+	wan.Name = 'wwan0';
+	wan.LowerLayers = 'Device.Cellular.Interface.1';
+	wan.Upstream = 'true';
+	wan.IPv4Enable = 'true';
+	wan.IPv6Enable = 'false';
+	wan.X_UBBF_CarrierLossDelay = '0';
+	delete wan.IPv4Address;
+	delete wan.IPv6Address;
+	delete wan.IPv6Prefix;
+
+	// The LAN keeps its child prefix row although the parent it names is
+	// gone: that row is what gives the LAN its ip6assign, and with it the
+	// ULA addressing, exactly as on a router with no upstream prefix.
+	delete dev.DHCPv4.Client;
+	if (dev.DHCPv6)
+		delete dev.DHCPv6.Client;
+
+	for (let key in keys(dev.Firewall?.Chain?.['1']?.Rule ?? {}))
+		if (dev.Firewall.Chain['1'].Rule[key].SourceInterface == 'Device.IP.Interface.1')
+			delete dev.Firewall.Chain['1'].Rule[key];
+
+	wan_services_drop(dev);
+
+	let modem = {
+		Enable: 'true',
+		Alias: 'lte',
+		Name: 'wwan0',
+		Upstream: 'true',
+		USIM: { PIN: CELLULAR.sim.PIN }
+	};
+	if (modem_path)
+		modem.X_UBBF_Device = modem_path;
+	else
+		warn('default_config: no modem path for this board, the cellular WAN waits for a controller\n');
+
+	dev.Cellular = {
+		RoamingEnabled: 'false',
+		Interface: { '1': modem },
+		AccessPoint: {
+			'1': {
+				Enable: 'true',
+				Alias: 'lte',
+				APN: CELLULAR.sim.APN,
+				Username: CELLULAR.sim.Username,
+				Password: CELLULAR.sim.Password,
+				Interface: 'Device.Cellular.Interface.1',
+				IPVersion: CELLULAR.sim.IPVersion,
+				Type: 'default'
+			}
+		}
+	};
+
+	return config;
+}
+
+let initial_json = fs.readfile(opts.initial);
+if (!initial_json)
+	exit(1);
+
+let config = json(initial_json);
+if (!config)
+	exit(1);
+
+let capabilities_json = fs.readfile(opts.capabilities);
+let capabilities = capabilities_json ? json(capabilities_json) : {};
+let network = capabilities.network ?? {};
+let radios = capabilities.radios ?? {};
+
+let wifi = length(keys(radios)) > 0 ? wifi_generate(radios) : null;
+let optical_map = optical_cages_query();
+
+if (length(network.wan) || length(network.lan)) {
+	config.Device.Ethernet = ethernet_generate(network, optical_map);
+	config.Device.Bridging ??= {};
+	config.Device.Bridging.Bridge ??= {};
+	config.Device.Bridging.Bridge['1'] = bridging_generate(network, wifi);
+
+	config.Device.WiFi ??= {};
+	config.Device.WiFi.DataElements ??= {};
+	config.Device.WiFi.DataElements.Network ??= {};
+	config.Device.WiFi.DataElements.Network.X_UBBF_EasyMesh ??= {};
+	config.Device.WiFi.DataElements.Network.X_UBBF_EasyMesh.Bridge = 'Device.Bridging.Bridge.1';
+
+	// RFC 8325 DSCP -> 802.1D UP mapping. UP2 deliberately absent
+	// (consolidated into UP1); unconfigured UPs render as 255,255.
+	config.Device.WiFi.X_UBBF_QoSMap = {
+		'1': { Enable: 'true', Alias: 'UP0', UserPriority: '0', DSCPList: 'MIN,CS2'   },
+		'2': { Enable: 'true', Alias: 'UP1', UserPriority: '1', DSCPList: 'CS1'       },
+		'3': { Enable: 'true', Alias: 'UP3', UserPriority: '3', DSCPList: 'AF21,AF23' },
+		'4': { Enable: 'true', Alias: 'UP4', UserPriority: '4', DSCPList: 'CS3,AF43'  },
+		'5': { Enable: 'true', Alias: 'UP5', UserPriority: '5', DSCPList: 'CS5'       },
+		'6': { Enable: 'true', Alias: 'UP6', UserPriority: '6', DSCPList: 'VA,EF'     },
+		'7': { Enable: 'true', Alias: 'UP7', UserPriority: '7', DSCPList: 'CS6,CS7'   }
+	};
+
+	if (wifi) {
+		config.Device.WiFi.Radio = wifi.Radio;
+		config.Device.WiFi.SSID = wifi.SSID;
+		config.Device.WiFi.AccessPoint = wifi.AccessPoint;
+		if (wifi.Templates)
+			config.Device.WiFi.Templates = wifi.Templates;
+		config.Device.Bridging.Bridge['2'] = guest_bridge_generate(wifi);
+		config.Device.QoS = qos_shaper_generate(wifi);
+	}
+}
+
+let is_developer = !!fs.stat('/etc/ubbf/developer');
+
+let wan_delay = is_developer ? '0' : '90';
+for (let idx, iface in config.Device.IP.Interface) {
+	if (iface.Upstream == 'true')
+		iface.X_UBBF_CarrierLossDelay = wan_delay;
+}
+
+if (is_developer) {
+	config.Device.SSH = {
+		Enable: 'true',
+		Server: {
+			'1': {
+				Enable: 'true',
+				Alias: 'DevSSH',
+				Interface: '',
+				Port: '22',
+				IdleTimeout: '300',
+				KeepAlive: '300',
+				AllowRootLogin: 'true',
+				AllowPasswordLogin: 'true',
+				AllowRootPasswordLogin: 'true',
+				MaxAuthTries: '3'
+			}
+		}
+	};
+	config.Device.Firewall ??= {};
+	config.Device.Firewall.Chain ??= {};
+	config.Device.Firewall.Chain['1'] ??= {
+		Enable: 'true',
+		Alias: 'InputChain',
+		Name: 'INPUT'
+	};
+	config.Device.Firewall.Chain['1'].Rule ??= {};
+	config.Device.Firewall.Chain['1'].Rule['1'] = {
+		Enable: 'true',
+		Alias: 'WANDevSSH',
+		Target: 'Accept',
+		Protocol: '6',
+		DestPort: '22',
+		SourceInterface: 'Device.IP.Interface.1'
+	};
+	config.Device.Firewall.Chain['1'].Rule['2'] = {
+		Enable: 'true',
+		Alias: 'LANDevSSH',
+		Target: 'Accept',
+		Protocol: '6',
+		DestPort: '22',
+		SourceInterface: 'Device.IP.Interface.2'
+	};
+	config.Device.UserInterface = {
+		Enable: 'true',
+		HTTPAccess: {
+			'1': {
+				Enable: 'true',
+				Alias: 'LanWebUI',
+				Interface: 'Device.IP.Interface.2',
+				Port: '80',
+				Protocol: 'HTTP'
+			},
+			'2': {
+				Enable: 'true',
+				Alias: 'LanHTTPS',
+				Interface: 'Device.IP.Interface.2',
+				Port: '443',
+				Protocol: 'HTTPS',
+				Certificate: '/etc/ubbf/cert.pem',
+				PrivateKey: '/etc/ubbf/cert.key'
+			}
+		}
+	};
+} else {
+	config.Device.SSH = {
+		Enable: 'true',
+		Server: {
+			'1': {
+				Enable: 'false',
+				Alias: 'LANSSHDisabled',
+				Interface: 'Device.IP.Interface.2',
+				Port: '22',
+				IdleTimeout: '300',
+				KeepAlive: '300',
+				AllowRootLogin: 'false',
+				AllowPasswordLogin: 'true',
+				AllowRootPasswordLogin: 'false',
+				MaxAuthTries: '3'
+			},
+			'2': {
+				Enable: 'false',
+				Alias: 'WANSSHDisabled',
+				Interface: 'Device.IP.Interface.1',
+				Port: '22',
+				IdleTimeout: '300',
+				KeepAlive: '300',
+				AllowRootLogin: 'true',
+				AllowPasswordLogin: 'true',
+				AllowRootPasswordLogin: 'true',
+				MaxAuthTries: '3'
+			}
+		}
+	};
+	config.Device.UserInterface = {
+		Enable: 'true',
+		HTTPAccess: {
+			'1': {
+				Enable: 'true',
+				Alias: 'LanWebUI',
+				Interface: 'Device.IP.Interface.2',
+				Port: '80',
+				Protocol: 'HTTP'
+			},
+			'2': {
+				Enable: 'true',
+				Alias: 'LanHTTPS',
+				Interface: 'Device.IP.Interface.2',
+				Port: '443',
+				Protocol: 'HTTPS',
+				Certificate: '/etc/ubbf/cert.pem',
+				PrivateKey: '/etc/ubbf/cert.key'
+			},
+			'3': {
+				Enable: 'true',
+				Alias: 'WanHTTPS',
+				Interface: 'Device.IP.Interface.1',
+				Port: '443',
+				Protocol: 'HTTPS',
+				Certificate: '/etc/ubbf/cert.pem',
+				PrivateKey: '/etc/ubbf/cert.key'
+			}
+		}
+	};
+}
+
+let discovery;
+try {
+	discovery = cursor().get('obuspa', 'acs', 'discovery');
+} catch (e) {
+	discovery = null;
+}
+
+if (discovery == 'dhcp') {
+	let devinfo = usp_device_info_get(network);
+	if (devinfo)
+		usp_discovery_opts_add(config, devinfo);
+}
+
+let runtimes = capabilities.runtimes ?? [];
+if (length(runtimes)) {
+	config.Device.SoftwareModules = softwaremodules_generate(runtimes);
+}
+
+// Device operating mode presets: router, dumb-ap, agent and cellular. All
+// four are emitted at first boot so the testbed can switch modes at runtime
+// (bbf-dm apply <file>); config.json is the one the /etc/ubbf/mode marker
+// selects. Absent marker means router.
+let has_network = length(network.wan) || length(network.lan);
+
+let router_preset = config;
+
+let agent_preset = json(sprintf('%.J', router_preset));
+agent_preset.Device.WiFi ??= {};
+agent_preset.Device.WiFi.DataElements ??= {};
+agent_preset.Device.WiFi.DataElements.Network ??= {};
+agent_preset.Device.WiFi.DataElements.Network.X_UBBF_EasyMesh ??= {};
+agent_preset.Device.WiFi.DataElements.Network.X_UBBF_EasyMesh.Agent = { Enable: 'true' };
+
+let dumbap_preset = has_network
+	? router_to_dumb_ap(json(sprintf('%.J', router_preset)), network, wifi ? wifi._num_radios : 0)
+	: json(sprintf('%.J', router_preset));
+
+let modem_path = CELLULAR.modem_path_by_board[board_name_read()] ?? '';
+
+let cellular_preset = has_network
+	? router_to_cellular(json(sprintf('%.J', router_preset)), network, modem_path)
+	: json(sprintf('%.J', router_preset));
+
+let mode = opts.mode ?? trim(fs.readfile('/etc/ubbf/mode') ?? '');
+if (!mode)
+	mode = 'router';
+
+// The test profiles the testbed resets the device to between suites. They
+// start from the router shape and take the mode's WAN, since a reset that
+// restored a wired WAN on a cellular device would drop its only uplink.
+let test_config = json(initial_json);
+delete test_config.Device.LLDP;
+
+if (has_network) {
+	test_config.Device.SSH = {
+		Enable: 'true',
+		Server: {
+			'1': {
+				Enable: 'true',
+				Alias: 'LANDevSSH',
+				Interface: '',
+				Port: '22',
+				IdleTimeout: '300',
+				KeepAlive: '300',
+				AllowRootLogin: 'true',
+				AllowPasswordLogin: 'true',
+				AllowRootPasswordLogin: 'true',
+				MaxAuthTries: '3'
+			}
+		}
+	};
+	test_config.Device.Firewall ??= {};
+	test_config.Device.Firewall.Chain ??= {};
+	test_config.Device.Firewall.Chain['1'] ??= {
+		Enable: 'true',
+		Alias: 'InputChain',
+		Name: 'INPUT'
+	};
+	test_config.Device.Firewall.Chain['1'].Rule ??= {};
+	test_config.Device.Firewall.Chain['1'].Rule['1'] = {
+		Enable: 'true',
+		Alias: 'WANDevSSH',
+		Target: 'Accept',
+		Protocol: '6',
+		DestPort: '22',
+		SourceInterface: 'Device.IP.Interface.1'
+	};
+	test_config.Device.Firewall.Chain['1'].Rule['2'] = {
+		Enable: 'true',
+		Alias: 'LANDevSSH',
+		Target: 'Accept',
+		Protocol: '6',
+		DestPort: '22',
+		SourceInterface: 'Device.IP.Interface.2'
+	};
+	test_config.Device.UserInterface = {
+		Enable: 'true',
+		HTTPAccess: {
+			'1': {
+				Enable: 'true',
+				Alias: 'LanWebUI',
+				Interface: 'Device.IP.Interface.2',
+				Port: '80',
+				Protocol: 'HTTP'
+			},
+			'2': {
+				Enable: 'true',
+				Alias: 'LanHTTPS',
+				Interface: 'Device.IP.Interface.2',
+				Port: '443',
+				Protocol: 'HTTPS',
+				Certificate: '/etc/ubbf/cert.pem',
+				PrivateKey: '/etc/ubbf/cert.key'
+			}
+		}
+	};
+	test_config.Device.Ethernet = ethernet_generate(network, optical_map);
+	test_config.Device.Bridging ??= {};
+	test_config.Device.Bridging.Bridge ??= {};
+	test_config.Device.Bridging.Bridge['1'] = bridging_generate(network, null);
+
+	test_config.Device.WiFi ??= {};
+	test_config.Device.WiFi.DataElements ??= {};
+	test_config.Device.WiFi.DataElements.Network ??= {};
+	test_config.Device.WiFi.DataElements.Network.X_UBBF_EasyMesh ??= {};
+	test_config.Device.WiFi.DataElements.Network.X_UBBF_EasyMesh.Bridge = 'Device.Bridging.Bridge.1';
+	test_config.Device.WiFi.X_UBBF_QoSMap = config.Device.WiFi.X_UBBF_QoSMap;
+
+	if (wifi)
+		test_config.Device.WiFi.Radio = wifi.Radio;
+}
+
+if (length(runtimes))
+	test_config.Device.SoftwareModules = softwaremodules_generate(runtimes);
+
+if (mode == 'cellular' && has_network)
+	router_to_cellular(test_config, network, modem_path);
+
+// prpl_config.json: test_config with the Firewall hierarchy fully
+// replaced by the prpl-spec Policy-mode shape. Level, Policy and
+// Chain rows use numeric instance keys so the bbf-test harness's
+// dut_query (numeric-only instance filter) can discover them.
+// Named addressing (Chain.Medium, Policy.WAN2LAN_medium, Level.Medium)
+// continues to work via the ubbf module's alias resolver matching
+// Alias or Name fields. InterfaceSetting is not seeded here; the
+// apply path's firewall_reconcile synthesises it from NAT and IP.
+let prpl_config = json(sprintf('%.J', test_config));
+
+prpl_config.Device.Firewall = {
+	Enable: 'true',
+	Config: 'Policy',
+	PolicyLevel: 'Device.Firewall.Level.1.',
+	Level: {
+		'1': {
+			Alias: 'Medium',
+			Name: 'Medium',
+			Description: 'prpl certification firewall level',
+			DefaultPolicy: 'Drop',
+			Policies: 'Device.Firewall.Policy.1,Device.Firewall.Policy.2'
+		}
+	},
+	Policy: {
+		'1': {
+			Enable: 'true',
+			Alias: 'WAN2LAN_medium',
+			SourceInterface: 'Device.IP.Interface.1',
+			DestinationInterface: 'Device.IP.Interface.2',
+			IPVersion: '4',
+			Chain: 'Device.Firewall.Chain.1.',
+			TargetChain: 'Chain'
+		},
+		'2': {
+			Enable: 'true',
+			Alias: 'IPV6_WAN2LAN_medium',
+			SourceInterface: 'Device.IP.Interface.1',
+			DestinationInterface: 'Device.IP.Interface.2',
+			IPVersion: '6',
+			Chain: 'Device.Firewall.Chain.2.',
+			TargetChain: 'Chain'
+		}
+	},
+	Chain: {
+		'1': {
+			Enable: 'true',
+			Alias: 'Medium',
+			Name: 'Medium'
+		},
+		'2': {
+			Enable: 'true',
+			Alias: 'IPV6_Medium',
+			Name: 'IPV6_Medium'
+		}
+	}
+};
+
+if (opts.dry_run) {
+	print(sprintf('%.J\n', {
+		router: router_preset,
+		'dumb-ap': dumbap_preset,
+		agent: agent_preset,
+		cellular: cellular_preset,
+		test: test_config,
+		prpl: prpl_config
+	}));
+	exit(0);
+}
+
+let active = router_preset;
+if (mode == 'agent')
+	active = agent_preset;
+else if (mode == 'dumb-ap')
+	active = dumbap_preset;
+else if (mode == 'cellular')
+	active = cellular_preset;
+
+if (fs.mkdir('/etc/ubbf', 0755) == null && !fs.stat('/etc/ubbf')) {
+	warn('default_config: failed to create /etc/ubbf\n');
+	exit(1);
+}
+
+if (fs.writefile('/etc/ubbf/config.json', sprintf('%.J', active)) == null) {
+	warn('default_config: failed to write /etc/ubbf/config.json\n');
+	exit(1);
+}
+
+let mode_presets = [
+	[ '/etc/ubbf/config-router.json', router_preset ],
+	[ '/etc/ubbf/config-dumb-ap.json', dumbap_preset ],
+	[ '/etc/ubbf/config-agent.json', agent_preset ],
+	[ '/etc/ubbf/config-cellular.json', cellular_preset ]
+];
+for (let preset in mode_presets)
+	if (fs.writefile(preset[0], sprintf('%.J', preset[1])) == null)
+		warn('default_config: failed to write %s\n', preset[0]);
+
+fs.writefile('/etc/ubbf/active-preset', mode);
+
+if (fs.writefile('/etc/ubbf/test_config.json', sprintf('%.J', test_config)) == null)
+	warn('default_config: failed to write /etc/ubbf/test_config.json\n');
+
+if (fs.writefile('/etc/ubbf/prpl_config.json', sprintf('%.J', prpl_config)) == null)
+	warn('default_config: failed to write /etc/ubbf/prpl_config.json\n');
+
+exit(0);

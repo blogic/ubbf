@@ -1,0 +1,85 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.MeasurementAgent.{i}.CommunicationChannel.{i}.",
+  "object": {
+    "path": "Device.LMAP.MeasurementAgent.{i}.CommunicationChannel.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "CommunicationChannelNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} instance. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "Name of the channel.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "UseBulkDataProfile",
+        "access": "readWrite",
+        "description": "Enables or disables the ability to use a bulk data profile for this communication channel",
+        "type": "boolean"
+      },
+      {
+        "name": "BulkDataProfile",
+        "access": "readWrite",
+        "description": "{{reference|a {{object|###.BulkData.Profile}} object that is used to represent communication channel}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "###.BulkData.Profile.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Target",
+        "access": "readWrite",
+        "description": "The {{datatype}} of the LMAP component that is the target of this communication channel.",
+        "type": "dataType:URL"
+      },
+      {
+        "name": "TargetPublicCredential",
+        "access": "readWrite",
+        "description": "{{reference|a {{object|###.Security.Certificate}} object that is used to identify the target of this channel}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "###.Security.Certificate.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "{{reference|an interface object used to restrict the data transmitted or received using this channel to a specific interface}} If the value of this parameter is {{empty}} the data that is transmitted or received using this channel is able to use any available interface.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "This object represents the properties communication channel used to establish communication between a measurement agent and other elements of the LMAP framework (e.g., measurement controller, measurement collector). The value of the {{param|Name}} parameter used for conveying information is defined as an option in the Task's or scheduled Task's option parameter. When this object uses the BulkData capability, a {{object|###.BulkData.Profile.{i}}} object instance referred to by this object.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

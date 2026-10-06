@@ -1,0 +1,153 @@
+function render_config() {
+
+	/**
+	 * Populates device render state with Ethernet interface settings.
+	 *
+	 * @param {array} instances - Ethernet interface instances
+	 */
+	function populate_interface_settings(instances) {
+		for (let iface in instances) {
+			let name = iface.Name;
+			if (!name)
+				continue;
+
+			let enabled = ubbf_to_bool(iface.Enable);
+			let max_bitrate = ubbf_to_int(iface.MaxBitRate);
+			let duplex_mode = iface.DuplexMode || 'Auto';
+			let eee_enable = ubbf_to_bool(iface.EEEEnable);
+
+			let autoneg = (max_bitrate == -1 || max_bitrate == null || lc(duplex_mode) == 'auto');
+
+			device_state_set(render_state, name, 'enabled', enabled ? '1' : '0');
+			device_state_set(render_state, name, 'autoneg', autoneg ? '1' : '0');
+
+			if (!autoneg) {
+				if (max_bitrate && max_bitrate > 0)
+					device_state_set(render_state, name, 'speed', sprintf('%d', max_bitrate));
+				if (duplex_mode && lc(duplex_mode) != 'auto')
+					device_state_set(render_state, name, 'duplex', lc(duplex_mode));
+			}
+
+			device_state_set(render_state, name, 'eee', eee_enable ? '1' : '0');
+		}
+	}
+
+	/**
+	 * Converts a TPID value to UCI VLAN type string.
+	 *
+	 * @param {number|string} tpid - Tag Protocol Identifier
+	 * @returns {string} '8021ad' for S-VLAN, '8021q' for C-VLAN
+	 */
+	function tpid_to_type(tpid) {
+		if (ubbf_to_int(tpid) == 0x88a8)
+			return '8021ad';
+		return '8021q';
+	}
+
+	/**
+	 * Maps every egress frame of a VLAN device to one 802.1p priority.
+	 * The kernel maps by exact skb priority, and the stack derives the
+	 * skb priority of IP traffic from the TOS, which gives 0 to 7.
+	 * A VLANPriority of -1 leaves the priority unchanged.
+	 *
+	 * @param {string} name - VLAN device name
+	 * @param {string} priority - VLANPriority value
+	 */
+	function vlan_priority_set(name, priority) {
+		let pcp = ubbf_to_int(priority);
+		if (pcp == null || pcp < 0)
+			return;
+
+		for (let skb_priority = 0; skb_priority <= 7; skb_priority++)
+			device_state_list_add(render_state, name, 'egress_qos_mapping', `${skb_priority}:${pcp}`);
+	}
+
+	/**
+	 * Populates device render state with VLAN termination devices.
+	 *
+	 * When the lower layer is a member of a VLAN-filtered bridge,
+	 * the VLAN device is created on the bridge and a bridge-vlan
+	 * section is generated for the VID.
+	 *
+	 * @param {array} instances - VLANTermination instances
+	 */
+	function populate_vlan_terminations(instances) {
+		for (let vt in instances) {
+			let enabled = ubbf_to_bool(vt.Enable);
+			let name = vt.Name;
+			let vid = ubbf_to_int(vt.VLANID);
+			let tpid = vt.TPID;
+
+			if (!name || !vid)
+				continue;
+
+			let bridge_info = vlan_termination_bridge_resolve(config, vt.LowerLayers);
+			if (bridge_info) {
+				let suffix = sprintf('v%d', vid);
+				device_state_set(render_state, name, 'type', '8021q');
+				device_state_set(render_state, name, 'ifname', bridge_info.bridge_name);
+				device_state_set(render_state, name, 'vid', suffix);
+				device_state_set(render_state, name, 'enabled', enabled ? '1' : '0');
+				vlan_priority_set(name, vt.VLANPriority);
+
+				let key = `${bridge_info.bridge_name}_${vid}`;
+				render_state.vt_bridge_vlans ??= {};
+				render_state.vt_bridge_vlans[key] ??= {
+					bridge_name: bridge_info.bridge_name,
+					vid,
+					suffix,
+					ports: []
+				};
+				push(render_state.vt_bridge_vlans[key].ports, bridge_info.port_name);
+				continue;
+			}
+
+			let ifname = lower_layer_resolve(config, vt.LowerLayers);
+			if (!ifname)
+				continue;
+
+			let vlan_type = tpid_to_type(tpid);
+
+			device_state_set(render_state, name, 'type', vlan_type);
+			device_state_set(render_state, name, 'ifname', ifname);
+			device_state_set(render_state, name, 'vid', sprintf('%d', vid));
+			device_state_set(render_state, name, 'enabled', enabled ? '1' : '0');
+			vlan_priority_set(name, vt.VLANPriority);
+		}
+	}
+
+	/**
+	 * Generates bridge-vlan sections for VLANTerminations on bridged ports.
+	 *
+	 * @returns {string} UCI batch output
+	 */
+	function generate_vt_bridge_vlans() {
+		let entries = render_state.vt_bridge_vlans;
+		if (!entries)
+			return;
+
+		for (let key, entry in entries) {
+			let section = 'vlan_' + replace(entry.bridge_name, '-', '_') + entry.suffix;
+			uci_named_section(output, `network.${section}`, 'bridge-vlan');
+			uci_set_string(output, `network.${section}.device`, entry.bridge_name);
+			uci_set_number(output, `network.${section}.vlan`, entry.vid);
+			for (let port in entry.ports)
+				uci_list_string(output, `network.${section}.ports`, port + ':t');
+			uci_set_string(output, `network.${section}.alias`, entry.suffix);
+		}
+	}
+
+	let ethernet = ubbf_get(config, 'Device.Ethernet');
+	if (!ethernet)
+		return;
+
+	let interfaces = ubbf_instances(config, 'Device.Ethernet.Interface');
+	let vlan_terminations = ubbf_instances(config, 'Device.Ethernet.VLANTermination');
+
+	populate_interface_settings(interfaces);
+	populate_vlan_terminations(vlan_terminations);
+
+	generate_vt_bridge_vlans();
+}
+uci_comment(output, '# generated by ethernet.uc');
+render_config();

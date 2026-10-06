@@ -1,0 +1,23 @@
+#!/bin/sh /etc/rc.common
+
+START=21
+STOP=89
+
+# One-shot reconciler for Device.Firewall.ConnectionTracking.  Reads
+# /tmp/ubbf/firewall-alg.json (written by render/templates/firewall-conntrack.uc)
+# and brings nf_conntrack_<alg> / nf_nat_<alg> module presence plus runtime
+# /sys/module and /proc/sys/net/netfilter parameters in line with the
+# rendered state, then triggers fw4 reload when module availability changes.
+
+start() {
+	/usr/libexec/ubbf/fw-alg-apply
+}
+
+stop() {
+	# No persistent process; module state is reconciled on next apply.
+	:
+}
+
+reload() {
+	/usr/libexec/ubbf/fw-alg-apply
+}

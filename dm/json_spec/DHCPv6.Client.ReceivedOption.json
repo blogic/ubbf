@@ -1,0 +1,43 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DHCPv6.Client.{i}.ReceivedOption.{i}.",
+  "object": {
+    "path": "Device.DHCPv6.Client.{i}.ReceivedOption.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ReceivedOptionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Tag",
+        "access": "readOnly",
+        "description": "Option tag (code) {{bibref|RFC8415|Section 21.1}}.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Value",
+        "access": "readOnly",
+        "description": "A hexbinary encoded option data {{bibref|RFC8415|Section 21.1}}.",
+        "type": "hexBinary",
+        "minLength": 0,
+        "maxLength": 65535
+      },
+      {
+        "name": "Server",
+        "access": "readOnly",
+        "description": "{{reference}} This is the server that sent the option to the client. Each {{object}} entry MUST have an associated server.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.Server.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "This is a transitory table that lists all the options received from all servers. Table entries are automatically created to correspond with received options. However, it is a local matter to the CPE when to delete old table entries. If the same option is received multiple times, whether from one or more servers, it is up to the CPE to decide which entries to include (i.e. whether the same option will be present multiple times). In order to allow for the same option to be present multiple times within the table, this table has no unique key defined.",
+    "children": []
+  }
+}

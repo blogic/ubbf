@@ -1,0 +1,60 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.NAT.PortTrigger.{i}.Rule.{i}.",
+  "object": {
+    "path": "Device.NAT.PortTrigger.{i}.Rule.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "RuleNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.16"
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "Port (or the first port of a range of ports) which needs to be opened when the Trigger conditions are met.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "PortEndRange",
+        "access": "readWrite",
+        "description": "Indicates the last port of the port range that starts with {{param|Port}} which needs to be opened when the Trigger conditions are met. A value of zero (0) indicates that no port range is specified, i.e. that the range consists only of {{param|Port}}. If {{param|Port}} is zero, the value of this parameter MUST be ignored. If specified, the value of this parameter MUST be greater than or equal to the value of {{param|Port}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "The protocol of the to be forwarded port.",
+        "type": "string",
+        "enumerations": [
+          "TCP",
+          "UDP"
+        ]
+      }
+    ],
+    "description": "Firewall PortTrigger Rule table.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

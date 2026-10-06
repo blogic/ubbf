@@ -1,0 +1,138 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.",
+  "object": {
+    "path": "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "IEEE1905DeviceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "IEEE1905Id",
+        "access": "readOnly",
+        "description": "1905 AL MAC Address.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "Version",
+        "access": "readOnly",
+        "description": "1905 profile version number in Higher Layer Response message as defined in {{bibref|IEEE1905.1a|Table 6-37: 1905 profile version TLV}}.",
+        "type": "string",
+        "enumerations": [
+          "1905.1",
+          "1905.1a"
+        ]
+      },
+      {
+        "name": "RegistrarFreqBand",
+        "access": "readOnly",
+        "description": "{{list}} of frequency bands identified as supported for a registrar role in an AP-autoconfiguration response message as defined in {{bibref|IEEE1905.1a|Table 6-25: SupportedFreqBand TLV}} {{enum}}.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "enumerations": [
+          "802.11 2.4 GHz",
+          "802.11 5 GHz",
+          "802.11 60 GHz"
+        ]
+      },
+      {
+        "name": "FriendlyName",
+        "access": "readOnly",
+        "description": "Friendly Name String received in Higher Layer response message as defined in {{bibref|IEEE1905.1a|Table 6-30: Device Identification Type TLV}}.",
+        "type": "string",
+        "maxLength": 128
+      },
+      {
+        "name": "ManufacturerName",
+        "access": "readOnly",
+        "description": "Manufacturer Name String received in Higher Layer response message as defined in {{bibref|IEEE1905.1a|Table 6-30: Device Identification Type TLV}}.",
+        "type": "string",
+        "maxLength": 128
+      },
+      {
+        "name": "ManufacturerModel",
+        "access": "readOnly",
+        "description": "Manufacturer Model String received in Higher Layer response message as defined in {{bibref|IEEE1905.1a|Table 6-30: Device Identification Type TLV}}.",
+        "type": "string",
+        "maxLength": 128
+      },
+      {
+        "name": "ControlURL",
+        "access": "readOnly",
+        "description": "Control {{datatype}} received in Higher Layer response message as defined in defined in {{bibref|IEEE1905.1a|Table 6-31: Control URL Type TLV}}.",
+        "type": "dataType:URL"
+      },
+      {
+        "name": "AssocWiFiNetworkDeviceRef",
+        "access": "readOnly",
+        "description": "{{param}} is a reference to a Wi-Fi Network Data Elements Device. Since IEEE 1905.1 is the protocol used by the Wi-Fi Alliance's EasyMesh specification for communications, this parameter allows the IEEE 1905.1 portion of the data model to reference the associated EasyMesh portion of the data model.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "####.WiFi.DataElements.Network.Device.",
+          "targetType": "row"
+        },
+        "version": "2.13"
+      },
+      {
+        "name": "VendorPropertiesNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IPv4AddressNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IPv6AddressNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "InterfaceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "NonIEEE1905NeighborNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IEEE1905NeighborNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "L2NeighborNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "BridgingTupleNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object represents an instance of discovered 1905 Devices in the network (received Topology discovery message as defined in {{bibref|IEEE1905.1a|Clause 6.3.1}}).",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "IEEE1905Id"
+      ]
+    }
+  }
+}

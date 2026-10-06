@@ -1,0 +1,65 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Firewall.Set.{i}.Rule.{i}.",
+  "object": {
+    "path": "Device.Firewall.Set.{i}.Rule.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "RuleNumberOfEntries",
+    "version": "2.18",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.18"
+      },
+      {
+        "name": "Exclude",
+        "access": "readWrite",
+        "description": "Specifies if this rule entry should match or not match the configured criteria.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "IPAddressList",
+        "access": "readWrite",
+        "description": "Each element of the list can specify the source IPv4 or IPv6 address or subnet mask. Note: The IP version of the IP address MUST correspond to the IP version set in {{param|#.IPVersion}}. Can not be used in combination with {{param|MACAddressList}} or {{param|PortList}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "MACAddressList",
+        "access": "readWrite",
+        "description": "Each element of the list can specify the MAC addresses that can be used by the {{object}} entry. Note: Can not be used in combination with {{param|IPAddressList}} or {{param|PortList}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "PortList",
+        "access": "readWrite",
+        "description": "Each element of the list can specify the port number or a port range that can be used by the {{object}} entry. Syntax: A single port can be configured as e.g. '80'. A port range can be configured as '8000-8010'. Note: Can not be used in combination with {{param|MACAddressList}} or {{param|IPAddressList}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string"
+      }
+    ],
+    "description": "Firewall Rule object that is used for configuring the set lists.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Routing.RIP.",
+  "object": {
+    "path": "Device.Routing.RIP.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables RIP on the device.",
+        "type": "boolean"
+      },
+      {
+        "name": "SupportedModes",
+        "access": "readOnly",
+        "description": "The supported RIP protocol modes. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Send",
+          "Receive",
+          "Both"
+        ]
+      },
+      {
+        "name": "InterfaceSettingNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Routing Information Protocol (RIP) object.",
+    "children": []
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.ZigBee.ZDO.{i}.",
+  "object": {
+    "path": "Device.ZigBee.ZDO.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ZDONumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "IEEEAddress",
+        "access": "readOnly",
+        "description": "The IEEE address assigned to this device. A value of \"FF:FF:FF:FF:FF:FF:FF:FF\" indicates that this address is unknown.",
+        "type": "dataType:IEEE_EUI64"
+      },
+      {
+        "name": "NetworkAddress",
+        "access": "readOnly",
+        "description": "The ZigBee network address assigned to this device.",
+        "type": "dataType:ZigBeeNetworkAddress"
+      },
+      {
+        "name": "BindingTableNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "GroupNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ApplicationEndpointNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "ZigBee Device Object (ZDO) provides management capabilities of the ZigBee Application Support (APS) and Network (NWK) layers of a ZigBee Device as defined in {{bibref|ZigBee2007|section 2.5}}. {{keys}} It is possible that instances of this object have the same key value when the value of {{param|IEEEAddress}} parameter is \"FF:FF:FF:FF:FF:FF:FF:FF\" and the ZigBee Coordinators on two or more separate area networks assign the same value for the {{param|NetworkAddress}}. This is because the ZigBee specification describes only intra-area network topologies {{bibref|ZigBee2007|Section 1.1.4 Network Topology}}. As such if two or more {{object}} instances have the same key value the implementation is undefined",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "IEEEAddress",
+        "NetworkAddress"
+      ]
+    }
+  }
+}

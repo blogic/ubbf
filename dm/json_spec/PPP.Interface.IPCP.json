@@ -1,0 +1,63 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PPP.Interface.{i}.IPCP.",
+  "object": {
+    "path": "Device.PPP.Interface.{i}.IPCP.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "LocalIPAddress",
+        "access": "readOnly",
+        "description": "The local IPv4 address for this connection received via IPCP.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "RemoteIPAddress",
+        "access": "readOnly",
+        "description": "The remote IPv4 address for this connection received via IPCP.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "DNSServers",
+        "access": "readOnly",
+        "description": "{{list}} Items represent DNS Server IPv4 address(es) received via IPCP {{bibref|RFC1877}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "dataType:IPv4Address"
+      },
+      {
+        "name": "PassthroughEnable",
+        "access": "readWrite",
+        "description": "If {{false}}, the PPP Interface retrieved information is configured on the IP Interface stacked on top of this PPP Interface. If {{true}}, the PPP Interface retrieved information is propagated to the parameters in the referenced {{param|PassthroughDHCPPool}} object, replacing any existing configuration (including ''MinAddress'', ''MaxAddress'', ''SubnetMask'', ''IPRouters'', and ''DNSServers'').",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "PassthroughDHCPPool",
+        "access": "readWrite",
+        "description": "{{reference}}When {{param}} is set to {{empty}}, {{param|PassthroughEnable}} MUST be set to {{false}} (i.e. passthrough can not be enabled without a pool reference specified).",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "###.DHCPv4.Server.Pool.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "IP Control Protocol (IPCP) client object for this PPP interface {{bibref|RFC1332}}. {{object}} only applies to IPv4.",
+    "children": []
+  }
+}

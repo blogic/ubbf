@@ -1,0 +1,41 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "PacketCaptureResult.{i}.",
+  "object": {
+    "path": "PacketCaptureResult.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "FileLocation",
+        "access": "readOnly",
+        "description": "The {{datatype}} specifying the resulting file location of the packet capture record that triggered this result. This MAY be different than the location specified in FileTarget.",
+        "type": "dataType:URL"
+      },
+      {
+        "name": "StartTime",
+        "access": "readOnly",
+        "description": "The local system time at which the capture was started.",
+        "type": "dateTime"
+      },
+      {
+        "name": "EndTime",
+        "access": "readOnly",
+        "description": "The local system time at which the capture was completed.",
+        "type": "dateTime"
+      },
+      {
+        "name": "Count",
+        "access": "readOnly",
+        "description": "The number of packets recorded to the file target.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Results for individual packet capture diagnostics. Packet capture files whose FileLocation is local to the system SHOULD be deleted when the next diagnostic is run, or upon a system reboot.",
+    "children": []
+  }
+}

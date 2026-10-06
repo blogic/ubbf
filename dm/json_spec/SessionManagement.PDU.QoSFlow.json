@@ -1,0 +1,82 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SessionManagement.PDU.{i}.QoSFlow.{i}.",
+  "object": {
+    "path": "Device.SessionManagement.PDU.{i}.QoSFlow.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "QoSFlowNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "QFI",
+        "access": "readOnly",
+        "description": "QoS Flow Identifier.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 63
+      },
+      {
+        "name": "FiveQI",
+        "access": "readOnly",
+        "description": "5G QoS Identifier. See {{bibref|3GPP-TS.23.501|Clause 5.7.4}} for a table of standardised 5QI QoS characteristics.",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 255
+      },
+      {
+        "name": "GFBRUplink",
+        "access": "readOnly",
+        "description": "Guaranteed Flow Bitrate - Upstream (expressed in {{units}}).",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "GFBRDownlink",
+        "access": "readOnly",
+        "description": "Guaranteed Flow Bitrate - Downstream (expressed in {{units}}).",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "MFBRUplink",
+        "access": "readOnly",
+        "description": "Maximum Flow Bitrate - Upstream (expressed in {{units}}).",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "MFBRDownlink",
+        "access": "readOnly",
+        "description": "Maximum Flow Bitrate - Downstream (expressed in {{units}}).",
+        "type": "unsignedLong"
+      },
+      {
+        "name": "AveragingWindow",
+        "access": "readOnly",
+        "description": "Averaging window for both uplink and downlink in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "EPSBearer",
+        "access": "readOnly",
+        "description": "EPS Bearer Identity. See {{bibref|3GPP-TS.24.301|Clause 9.3.2}}.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Table of all QoS Flow Indicators (QFI) and their properties supported by the access network for this particular PDU. For example: * A QoS Flow with a QFI of 1 used for general traffic has the following parameters. * FiveQI=8 * A QoS Flow with a QFI of 32 used for voice traffic with a guaranteed bitrate of 150k has the following parameters. * FiveQI=1 * GFBRUplink=150 * GFBRDownlink=150",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

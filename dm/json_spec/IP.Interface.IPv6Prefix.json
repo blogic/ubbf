@@ -1,0 +1,156 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IP.Interface.{i}.IPv6Prefix.{i}.",
+  "object": {
+    "path": "Device.IP.Interface.{i}.IPv6Prefix.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "IPv6PrefixNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this {{object}} table entry. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "PrefixStatus",
+        "access": "readOnly",
+        "description": "The status of {{param|Prefix}}, indicating whether it can be used for communication. See also {{param|PreferredLifetime}} and {{param|ValidLifetime}}. {{enum}} This parameter is based on ''ipAddressStatus'' and ''ipAddressStatusTC'' from {{bibref|RFC4293}}.",
+        "default": "Invalid",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Preferred",
+          "Deprecated",
+          "Invalid",
+          "Inaccessible",
+          "Unknown"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}} This parameter can only be modified if {{param|Origin}} is {{enum|Static|Origin}}.",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Prefix",
+        "access": "readWrite",
+        "description": "IPv6 address prefix. This parameter can only be modified if the {{param|Origin}} is {{enum|Static|Origin}}. This parameter is based on ''ipAddressPrefixPrefix'' from {{bibref|RFC4293}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPv6Prefix"
+      },
+      {
+        "name": "Origin",
+        "access": "readOnly",
+        "description": "Mechanism via which the prefix was assigned or most recently updated. {{enum}} Note that: * {{enum|PrefixDelegation}} and {{enum|RouterAdvertisement}} prefixes can exist only on upstream interfaces (i.e. interfaces for which the physical layer interface object has ''Upstream'' = {{true}}), * {{enum|AutoConfigured}} and {{enum|WellKnown}} prefixes can exist on any interface, and * {{enum|Static}} and {{enum|Child}} prefixes can exist only on downstream interfaces (i.e. interfaces for which the physical layer interface object has ''Upstream'' = {{false}}). Also note that a {{enum|Child}} prefix's {{param|ParentPrefix}} will always be an {{enum|AutoConfigured}}, {{enum|PrefixDelegation}}, or {{enum|RouterAdvertisement}} prefix. This parameter is based on ''ipAddressOrigin'' from {{bibref|RFC4293}}.",
+        "default": "Static",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "AutoConfigured",
+          "PrefixDelegation",
+          "RouterAdvertisement",
+          "WellKnown",
+          "Static",
+          "Child"
+        ]
+      },
+      {
+        "name": "StaticType",
+        "access": "readWrite",
+        "description": "Static prefix sub-type. For a {{enum|Static|Origin}} prefix, this can be set to {{enum|PrefixDelegation}} or {{enum|Child}}, thereby creating an unconfigured prefix of the specified type that will be populated in preference to creating a new instance. This allows the Controller to pre-create \"prefix slots\" with known path names that can be referenced from elsewhere in the data model before they have been populated. {{enum}} This mechanism works as follows: * When this parameter is set to {{enum|PrefixDelegation}} or {{enum|Child}}, the instance becomes a \"prefix slot\" of the specified type. * Such an instance can be administratively enabled ({{param|Enable}} = {{true}}) but will remain operationally disabled ({{param|Status}} = {{enum|Disabled|Status}}) until it has been populated. * When a new prefix of of type T is needed, the CPE will look for a matching unpopulated instance, i.e. an instance with ({{param|Origin}},{{param}},{{param|Prefix}}) = ({{enum|Static|Origin}},T,\"\"). If the CPE finds at least one such instance it will choose one and populate it. If already administratively enabled it will immediately become operationally enabled. If the CPE finds no such instances, it will create and populate a new instance with ({{param|Origin}},{{param}}) = (T,T). If the CPE finds more than one such instance, the algorithm via which it chooses which instance to populate is implementation-specific. * When a prefix that was populated via this mechanism becomes invalid, the CPE will reset {{param|Prefix}} to {{empty}}. This does not affect the value of the {{param|Enable}} parameter. The prefix {{param}} can only be modified if {{param|Origin}} is {{enum|Static|Origin}}.",
+        "default": "Static",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Static",
+          "Inapplicable",
+          "PrefixDelegation",
+          "Child"
+        ]
+      },
+      {
+        "name": "ParentPrefix",
+        "access": "readWrite",
+        "description": "Indicates the parent prefix from which this prefix was derived. The parent prefix is relevant only for {{enum|Child|Origin}} prefixes and for {{enum|Static|Origin}} {{enum|Child|StaticType}} prefixes (both of which will always be on downstream interfaces), i.e. for {{param|Origin}}={{enum|Child|Origin}} and for ({{param|Origin}},{{param|StaticType}}) = ({{enum|Static|Origin}},{{enum|Child|StaticType}}) prefixes. This parameter can only be modified if {{param|Origin}} is {{enum|Static|Origin}} (which makes sense only for a prefix whose {{param|StaticType}} is already or will be changed to {{enum|Child|StaticType}}).",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ChildPrefixBits",
+        "access": "readWrite",
+        "description": "A prefix that specifies the length of {{enum|Static|Origin}} {{enum|Child|StaticType}} prefixes and how they are derived from their {{param|ParentPrefix}}. It will be used if and only if it is not {{empty}} and is longer than the parent prefix (if it is not used, derivation of such prefixes is implementation-specific). Any bits to the right of the parent prefix are set to the bits in this prefix. For example, for a parent prefix of fedc::/56, if this parameter had the value 123:4567:89ab:cdef::/64, the child /64 would be fedc:0:0:ef::/64. For a parent prefix of fedc::/60, the child /64 would be fedc:0:0:f::/64. This parameter can only be modified if {{param|Origin}} is {{enum|Static|Origin}}.",
+        "default": "",
+        "defaultType": "object",
+        "type": "dataType:IPv6Prefix"
+      },
+      {
+        "name": "OnLink",
+        "access": "readWrite",
+        "description": "On-link flag {{bibref|RFC4861|Section 4.6.2}} as received (in the RA) for RouterAdvertisement. Indicates whether this prefix can be used for on-link determination. This parameter can only be modified if {{param|Origin}} is {{enum|Static|Origin}}. This parameter is based on ''ipAddressPrefixOnLinkFlag'' from {{bibref|RFC4293}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Autonomous",
+        "access": "readWrite",
+        "description": "Autonomous address configuration flag {{bibref|RFC4861|Section 4.6.2}} as received (in the RA) for RouterAdvertisement. Indicates whether this prefix can be used for generating global addresses as specified by SLAAC {{bibref|RFC4862}}. This parameter can only be modified if {{param|Origin}} is {{enum|Static|Origin}}. This parameter is based on ''ipAddressPrefixAutonomousFlag'' from {{bibref|RFC4293}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "PreferredLifetime",
+        "access": "readWrite",
+        "description": "This parameter is based on ''ipAddressPrefixAdvPreferredLifetime'' from {{bibref|RFC4293}}. The time at which this prefix will cease to be preferred (i.e. will become deprecated), or {{null}} if not known. For an infinite lifetime, the parameter value MUST be 9999-12-31T23:59:59Z. This parameter can only be modified if {{param|Origin}} is {{enum|Static|Origin}}.",
+        "default": "9999-12-31T23:59:59Z",
+        "defaultType": "object",
+        "type": "dateTime"
+      },
+      {
+        "name": "ValidLifetime",
+        "access": "readWrite",
+        "description": "This parameter is based on ''ipAddressPrefixAdvValidLifetime'' from {{bibref|RFC4293}}. The time at which this prefix will cease to be valid (i.e. will become invalid), or {{null}} if not known. For an infinite lifetime, the parameter value MUST be 9999-12-31T23:59:59Z. This parameter can only be modified if {{param|Origin}} is {{enum|Static|Origin}}.",
+        "default": "9999-12-31T23:59:59Z",
+        "defaultType": "object",
+        "type": "dateTime"
+      }
+    ],
+    "description": "This table contains the interface's IPv6 prefixes. There MUST be an entry for each such prefix, not only for prefixes learned from router advertisements. There are several ways in which entries can be added to and deleted from this table, including: * Automatically via {{bibref|RFC4861}} Router Advertisements. See also {{object|###.RouterAdvertisement}}. * Automatically via DHCPv6 {{bibref|RFC8415}} prefix delegation {{bibref|RFC8415}}. See also {{object|###.DHCPv6.Client}}. * Automatically via internal CPE logic, e.g. creation of child prefixes derived from a parent prefix. * Manually via a GUI or some other local management interface. * Manually via factory default configuration. * By the Controller. The CPE MAY choose not to create {{object}} entries for {{enum|WellKnown|Origin}} prefixes or for the ULA /48 prefix {{bibref|RFC4193}}. If an {{object}} entry exists for the ULA /48 prefix, it MUST be on a downstream interface (i.e. an interface for which the physical layer interface object has ''Upstream'' = {{false}}). This object is based on ''ipAddressPrefixTable'' from {{bibref|RFC4293}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

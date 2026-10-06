@@ -1,0 +1,50 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.ATM.Link.{i}.QoS.",
+  "object": {
+    "path": "Device.ATM.Link.{i}.QoS.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "QoSClass",
+        "access": "readWrite",
+        "description": "Describes the ATM Quality Of Service (QoS) being used on the VC.",
+        "type": "string",
+        "enumerations": [
+          "UBR",
+          "CBR",
+          "GFR",
+          "VBR-nrt",
+          "VBR-rt",
+          "UBR+",
+          "ABR"
+        ]
+      },
+      {
+        "name": "PeakCellRate",
+        "access": "readWrite",
+        "description": "Specifies the upstream peak cell rate in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaximumBurstSize",
+        "access": "readWrite",
+        "description": "Specifies the upstream maximum burst size in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SustainableCellRate",
+        "access": "readWrite",
+        "description": "Specifies the upstream sustainable cell rate, in {{units}}.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The ATM Link QoS object.",
+    "children": []
+  }
+}

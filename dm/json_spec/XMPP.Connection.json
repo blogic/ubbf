@@ -1,0 +1,170 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XMPP.Connection.{i}.",
+  "object": {
+    "path": "Device.XMPP.Connection.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ConnectionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}}. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Username",
+        "access": "readWrite",
+        "description": "The proposed local-part of the Jabber ID of this {{object}}, and the value to be used to authenticate this {{object}} when making a connection to the Server using the procedure outlined in {{bibref|RFC6120|Section 6}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Password",
+        "access": "readWrite",
+        "description": "Password used to authenticate this {{object}} when making a connection to the {{object|Server}} using the procedure outlined in {{bibref|RFC6120|Section 6}}. Note that on a factory reset of the CPE, the value of this parameter might be reset to its factory value. If a Controller modifies the value of this parameter, it SHOULD be prepared to accommodate the situation that the original value is restored as the result of a factory reset.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Domain",
+        "access": "readWrite",
+        "description": "The proposed domain-part of the Jabber ID of this {{object}}.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Resource",
+        "access": "readWrite",
+        "description": "The proposed resource-part of the Jabber ID of this {{object}}.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "JabberID",
+        "access": "readOnly",
+        "description": "The complete Jabber ID as determined by the first-hop XMPP server at time of connection establishment. This Jabber ID will usually be the standard concatenation of the local-part (Username), domain-part (Domain), and resource-part (Resource) as defined in {{bibref|RFC6120|Section 2.1}} (local-part@domain-part/resource-part), but since the Jabber ID is owned by the first-hop XMPP Server there are cases where the value will be different.",
+        "type": "string"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of this {{object}} (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Disabled}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Enabled}} if and only if the interface is able to transmit and receive PDUs; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Enabled}} if still operable when the expected actions have completed); it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason.",
+        "type": "string",
+        "enumerations": [
+          "Enabled",
+          "Disabled",
+          "Unknown",
+          "Dormant",
+          "Connecting",
+          "ServerNotPresent",
+          "Error_Misconfigured",
+          "Error_AuthenticationFailure",
+          "Error"
+        ]
+      },
+      {
+        "name": "LastChangeDate",
+        "access": "readOnly",
+        "description": "The date and time at which this {{object}} entered into its current operational state.",
+        "type": "dateTime"
+      },
+      {
+        "name": "ServerConnectAlgorithm",
+        "access": "readWrite",
+        "description": "The algorithm the {{object}} uses when connecting with the associated lists of servers.",
+        "default": "DNS-SRV",
+        "defaultType": "object",
+        "type": "string"
+      },
+      {
+        "name": "KeepAliveInterval",
+        "access": "readWrite",
+        "description": "The number of {{units}} that keep alive events as specified in {{bibref|RFC6120|Section 4.6.1}} are sent by this {{object}}. A value of 0 disables the keep alive functionality. A value of -1 indicates that the keep alive interval is a vendor specific implementation. {{bibref|RFC6120|Section 4.6.4}} recommends not checking more frequently than every 5 minutes (or 300 {{units}}).",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "long",
+        "minInclusive": -1
+      },
+      {
+        "name": "ServerConnectAttempts",
+        "access": "readWrite",
+        "description": "The number of times that this {{object}} attempts to connect to a given IP address before moving on to the current server's next IP address, or to the next server if the current server has no more IP addresses. If {{param}}, {{param|ServerRetryInitialInterval}}, {{param|ServerRetryIntervalMultiplier}} and {{param|ServerRetryMaxInterval}} all have their default values, the maximum reconnection wait intervals, in ''minutes'', will be ''{1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 512, 512, 512, 512, 512}''. After the initial attempt there are 15 further attempts, making a total of 16. The maximum reconnection wait interval is reached on the 10th retry, i.e. the 11th attempt. NOTE: If this {{object}} fails to connect to any of the servers' IP addresses, fallback behavior SHOULD be as specified in {{bibref|RFC6120|Section 3.2}}. NOTE: If the value of this parameter is 0, server connection and reconnection behavior is implementation-dependent.",
+        "default": "16",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ServerRetryInitialInterval",
+        "access": "readWrite",
+        "description": "The maximum first reconnection wait interval, in {{units}}{{template|XMPP-REF}}. The Device MUST use a random value between ''0'' and {{param}} as the first reconnection wait interval. NOTE: If the value of the {{param|ServerConnectAttempts}} parameter is 0, the value of this parameter is ignored.",
+        "default": "60",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "ServerRetryIntervalMultiplier",
+        "access": "readWrite",
+        "description": "The reconnection interval multiplier{{template|XMPP-REF}}. This value is expressed in units of 0.001. Hence the values of the multiplier range between 1.000 and 65.535. For the ''n''th reconnection wait interval, the Device MUST use a random value, in ''seconds'', between ''0'' and {{param|ServerRetryInitialInterval}} * ({{param}} / 1000) ** (''n'' - ''1''). NOTE: If the value of the {{param|ServerConnectAttempts}} parameter is 0, the value of this parameter is ignored.",
+        "default": "2000",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1000,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "ServerRetryMaxInterval",
+        "access": "readWrite",
+        "description": "The maximum reconnection wait interval, in {{units}}. If the ''n''th reconnection wait interval calculated from {{param|ServerRetryInitialInterval}} and {{param|ServerRetryIntervalMultiplier}} exceeds the value of this parameter, then the Device MUST use the value of this parameter as the next reconnection wait interval. NOTE: If the value of the {{param|ServerConnectAttempts}} parameter is 0, the value of this parameter is ignored.",
+        "default": "30720",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "UseTLS",
+        "access": "readWrite",
+        "description": "This parameter allows a Controller to configure whether or not this XMPP Connection is required to use TLS independent of whether or not the XMPP Server that is being connected to is configured for TLS \"mandatory-to-negotiate\". If the value of {{param}} is {{true}} then the CPE will initiate TLS negotiation if not required to by the XMPP Server. If the value of {{param}} is {{false}} then the CPE will not initiate TLS negotiation if not required to by the XMPP Server.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "TLSEstablished",
+        "access": "readOnly",
+        "description": "This parameter represents the TLS state of this XMPP Connection. If this XMPP Connection is established and is secured by TLS then the value of this parameter is {{true}}. If this XMPP Connection is either not established or established but not secured by TLS then the value of this parameter is {{false}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "ServerNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The {{object}} represents a XMPP connection between the device and a server. The {{param|Username}}, {{param|Domain}} and {{param|Resource}} comprise the full identity (JabberID) of this {{object}} for this device.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

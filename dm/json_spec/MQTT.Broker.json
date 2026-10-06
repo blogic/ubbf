@@ -1,0 +1,97 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MQTT.Broker.{i}.",
+  "object": {
+    "path": "Device.MQTT.Broker.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "BrokerNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "The textual name of the MQTT broker.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Allows to enable or disable the MQTT broker.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the status of the MQTT broker. {{enum}} The \"{{enum|Error_Misconfigured}}\" value indicates that a necessary configuration value is undefined or invalid. The \"{{enum|Error}}\" value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "Port used by the MQTT Broker.",
+        "default": "1883",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "If {{empty}} is specified, the CPE MUST bind the MQTT broker to all available interfaces.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Username",
+        "access": "readWrite",
+        "description": "User name used to authenticate the MQTT clients, which connect to the MQTT broker. If this parameter is {{empty}} no authentication is used.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Password",
+        "access": "readWrite",
+        "description": "Password used used to authenticate the MQTT clients, which connect to the MQTT broker. This password is only used if {{param|Username}} is not {{empty}}.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "BridgeNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "MQTT broker table. Contains a list of configured MQTT brokers.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

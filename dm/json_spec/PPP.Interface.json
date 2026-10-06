@@ -1,0 +1,259 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.PPP.Interface.{i}.",
+  "object": {
+    "path": "Device.PPP.Interface.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "InterfaceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the interface. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The current operational state of the interface (see {{bibref|TR-181i2|Section 4.2.2}}). {{enum}} When {{param|Enable}} is {{false}} then {{param}} SHOULD normally be {{enum|Down}} (or {{enum|NotPresent}} or {{enum|Error}} if there is a fault condition on the interface). When {{param|Enable}} is changed to {{true}} then {{param}} SHOULD change to {{enum|Up}} if and only if the interface is able to transmit and receive network traffic; it SHOULD change to {{enum|Dormant}} if and only if the interface is operable but is waiting for external actions before it can transmit and receive network traffic (and subsequently change to {{enum|Up}} if still operable when the expected actions have completed); it SHOULD change to {{enum|LowerLayerDown}} if and only if the interface is prevented from entering the {{enum|Up}} state because one or more of the interfaces beneath it is down; it SHOULD remain in the {{enum|Error}} state if there is an error or other fault condition detected on the interface; it SHOULD remain in the {{enum|NotPresent}} state if the interface has missing (typically hardware) components; it SHOULD change to {{enum|Unknown}} if the state of the interface can not be determined for some reason. This parameter is based on ''ifOperStatus'' from {{bibref|RFC2863}}.",
+        "default": "Down",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Up",
+          "Down",
+          "Unknown",
+          "Dormant",
+          "NotPresent",
+          "LowerLayerDown",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The textual name of the interface as assigned by the CPE.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "The accumulated time in {{units}} since the interface entered its current operational state.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LowerLayers",
+        "access": "readWrite",
+        "description": "{{list}} {{reference|an interface object that is stacked immediately below this interface object}} See {{bibref|TR-181i2|Section 4.2.1}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ConnectionStatus",
+        "access": "readOnly",
+        "description": "Current status of the connection.",
+        "type": "string",
+        "enumerations": [
+          "Unconfigured",
+          "Connecting",
+          "Authenticating",
+          "Connected",
+          "PendingDisconnect",
+          "Disconnecting",
+          "Disconnected"
+        ]
+      },
+      {
+        "name": "LastConnectionError",
+        "access": "readOnly",
+        "description": "The cause of failure for the last connection setup attempt.",
+        "type": "string",
+        "enumerations": [
+          "ERROR_NONE",
+          "ERROR_ISP_TIME_OUT",
+          "ERROR_COMMAND_ABORTED",
+          "ERROR_NOT_ENABLED_FOR_INTERNET",
+          "ERROR_BAD_PHONE_NUMBER",
+          "ERROR_USER_DISCONNECT",
+          "ERROR_ISP_DISCONNECT",
+          "ERROR_IDLE_DISCONNECT",
+          "ERROR_FORCED_DISCONNECT",
+          "ERROR_SERVER_OUT_OF_RESOURCES",
+          "ERROR_RESTRICTED_LOGON_HOURS",
+          "ERROR_ACCOUNT_DISABLED",
+          "ERROR_ACCOUNT_EXPIRED",
+          "ERROR_PASSWORD_EXPIRED",
+          "ERROR_AUTHENTICATION_FAILURE",
+          "ERROR_NO_DIALTONE",
+          "ERROR_NO_CARRIER",
+          "ERROR_NO_ANSWER",
+          "ERROR_LINE_BUSY",
+          "ERROR_UNSUPPORTED_BITSPERSECOND",
+          "ERROR_TOO_MANY_LINE_ERRORS",
+          "ERROR_IP_CONFIGURATION",
+          "ERROR_UNKNOWN"
+        ]
+      },
+      {
+        "name": "AutoDisconnectTime",
+        "access": "readWrite",
+        "description": "The time in {{units}} since the establishment of the connection after which connection termination is automatically initiated by the CPE. This occurs irrespective of whether the connection is being used or not. A value of 0 (zero) indicates that the connection is not to be shut down automatically.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IdleDisconnectTime",
+        "access": "readWrite",
+        "description": "The time in {{units}} that if the connection remains idle, the CPE automatically terminates the connection. A value of 0 (zero) indicates that the connection is not to be shut down automatically.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "WarnDisconnectDelay",
+        "access": "readWrite",
+        "description": "Time in {{units}} the {{param|ConnectionStatus}} remains in the {{enum|PendingDisconnect|ConnectionStatus}} state before transitioning to disconnecting state to drop the connection.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Username",
+        "access": "readWrite",
+        "description": "Username to be used for authentication.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Password",
+        "access": "readWrite",
+        "description": "Password to be used for authentication.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "EncryptionProtocol",
+        "access": "readOnly",
+        "description": "Describes the PPP encryption protocol.",
+        "type": "string",
+        "enumerations": [
+          "None",
+          "MPPE"
+        ]
+      },
+      {
+        "name": "CompressionProtocol",
+        "access": "readOnly",
+        "description": "Describes the PPP compression protocol.",
+        "type": "string",
+        "enumerations": [
+          "None",
+          "Van Jacobson",
+          "STAC LZS"
+        ]
+      },
+      {
+        "name": "AuthenticationProtocol",
+        "access": "readOnly",
+        "description": "Describes the PPP authentication protocol.",
+        "type": "string",
+        "enumerations": [
+          "None",
+          "PAP",
+          "CHAP",
+          "MS-CHAP"
+        ]
+      },
+      {
+        "name": "MaxMRUSize",
+        "access": "readWrite",
+        "description": "The maximum allowed size of frames sent from the remote peer.",
+        "default": "1500",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 64,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "CurrentMRUSize",
+        "access": "readOnly",
+        "description": "The current MRU in use over this connection.",
+        "type": "unsignedInt",
+        "minInclusive": 64,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "ConnectionTrigger",
+        "access": "readWrite",
+        "description": "Trigger used to establish the PPP connection. {{enum}} Note that the reason for a PPP connection becoming disconnected to begin with might be either external to the CPE, such as termination by the BRAS or momentary disconnection of the physical interface, or internal to the CPE, such as use of the {{param|IdleDisconnectTime}} and/or {{param|AutoDisconnectTime}} parameters in this object.",
+        "type": "string",
+        "enumerations": [
+          "OnDemand",
+          "AlwaysOn",
+          "Manual"
+        ]
+      },
+      {
+        "name": "LCPEcho",
+        "access": "readWrite",
+        "description": "A PPP LCP Echo Request is sent every {{param}} {{units}}. A value 0 means that no LCP Echo Requests are sent. {{bibref|RFC1661|5.8 Echo-Request and Echo-Reply}} describes the relevant LCP Echo frames.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LCPEchoRetry",
+        "access": "readWrite",
+        "description": "Applicable only when {{param|LCPEcho}} is greater than 0. When number of consecutive {{param}} LCP Echo Replies have been missed. The remote peer will be assumed dead and the connection will be terminated.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LCPEchoAdaptive",
+        "access": "readWrite",
+        "description": "When traffic is received during the {{param|LCPEcho}} interval, no LCP Echo-Request is sent until the next {{param|LCPEcho}} interval.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.16"
+      },
+      {
+        "name": "IPCPEnable",
+        "access": "readWrite",
+        "description": "Enables or disables IPCP ({{bibref|RFC1332}}) on this interface. If this parameter is present, {{enum|IPCP|#.SupportedNCPs}} MUST be included in {{param|#.SupportedNCPs}}.",
+        "type": "boolean",
+        "version": "2.12"
+      },
+      {
+        "name": "IPv6CPEnable",
+        "access": "readWrite",
+        "description": "Enables or disables IPv6CP ({{bibref|RFC5072}}) on this interface. If this parameter is present, {{enum|IPv6CP|#.SupportedNCPs}} MUST be included in {{param|#.SupportedNCPs}}.",
+        "type": "boolean",
+        "version": "2.12"
+      }
+    ],
+    "description": "PPP interface table (a stackable interface object as described in {{bibref|TR-181i2|Section 4.2}}).",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

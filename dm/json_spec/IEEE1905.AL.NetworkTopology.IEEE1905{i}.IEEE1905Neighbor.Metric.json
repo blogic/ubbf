@@ -1,0 +1,87 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IEEE1905Neighbor.{i}.Metric.{i}.",
+  "object": {
+    "path": "Device.IEEE1905.AL.NetworkTopology.IEEE1905Device.{i}.IEEE1905Neighbor.{i}.Metric.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "MetricNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "NeighborMACAddress",
+        "access": "readOnly",
+        "description": "The MAC address of an interface in a neighbor 1905 device as defined in {{bibref|IEEE1905.1a|Table 6-17: 1905 transmitter link metric TLV or Table 6-19: 1905 receiver link metric TLV}}.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "IEEE802dot1Bridge",
+        "access": "readOnly",
+        "description": "Indicates whether or not the 1905 link includes one or more IEEE 802.1 bridges. If {{false}}, the 1905 link does not include an IEEE 802.1 bridge. If {{true}}, the 1905 link does include one or more IEEE 802.1 bridges.",
+        "type": "boolean"
+      },
+      {
+        "name": "PacketErrors",
+        "access": "readOnly",
+        "description": "Estimated number of lost {{units}} on the transmit side of the link {{bibref|IEEE1905.1a|Table 6-18: 1905 transmitter link metrics}} during a measurement period.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "PacketErrorsReceived",
+        "access": "readOnly",
+        "description": "Estimated number of lost {{units}} on the receive side of the link {{bibref|IEEE1905.1a|Table 6-20: 1905 receiver link metrics}} during a measurement period.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "TransmittedPackets",
+        "access": "readOnly",
+        "description": "Estimated number of {{units}} sent to the Neighbor on this link, in the same measurement period used to estimate {{param|PacketErrors}}.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "PacketsReceived",
+        "access": "readOnly",
+        "description": "Estimated number of {{units}} received from this Neighbor {{bibref|IEEE1905.1a|Table 6-20: 1905 receiver link metrics}} on this link, in the same measurement period used to estimate {{param|PacketErrors}}.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "MACThroughputCapacity",
+        "access": "readOnly",
+        "description": "The maximum MAC throughput in {{units}} between this Interface and the Neighbor on this link that is estimated at this Interface.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "LinkAvailability",
+        "access": "readOnly",
+        "description": "The estimated average {{units}} of time that this link is idle.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 100
+      },
+      {
+        "name": "PHYRate",
+        "access": "readOnly",
+        "description": "The Physical Layer (PHY) rate in {{units}} between this Interface and the Neighbor on this link that is estimated at this Interface.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RSSI",
+        "access": "readOnly",
+        "description": "The estimated Received Signal Strength Indicator (RSSI) ratio in {{units}} between this Interface and the Neighbor on this link that is estimated at the receive side of this Interface. Note: This parameter is valid only for IEEE 802.11 Neighbors.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      }
+    ],
+    "description": "This object represents the metrics included in a Link metric response from the IEEE1905Device where {{param|#.LocalInterface}} is the MAC address of an interface in the receiving 1905 AL as defined in {{bibref|IEEE1905.1a|Table 6-17: 1905 transmitter link metric TLV}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "NeighborMACAddress"
+      ]
+    }
+  }
+}

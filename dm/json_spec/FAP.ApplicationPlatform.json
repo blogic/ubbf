@@ -1,0 +1,54 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FAP.ApplicationPlatform.",
+  "object": {
+    "path": "Device.FAP.ApplicationPlatform.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Version",
+        "access": "readOnly",
+        "description": "Version of Femto Application Platform running on this device",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enable or disable the Femto ApplicationPlatform",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Current state of the Femto Application Platform.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Reset",
+          "Initializing"
+        ]
+      },
+      {
+        "name": "MaxNumberOfApplications",
+        "access": "readOnly",
+        "description": "Determines how many Femtozone Applications can be supported by the Femto Application Platform simultaneously.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "CurrentNumberofApplications",
+        "access": "readOnly",
+        "description": "Specifies how many Femtozone Applications are currently communicating with the Femto Application Platform.",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object defines the data model for the following Femtozone APIs. * Femto Awareness * SMS * MMS * Terminal Location Femto Awareness, SMS, MMS, and Terminal Location APIs are defined in the Release 1 API Specifications of the Service SIG in the Femto Forum (non public document). {{bibref|TR-262|appendix I}} provides the \"Theory of Operation\" for the usage of this object.",
+    "children": []
+  }
+}

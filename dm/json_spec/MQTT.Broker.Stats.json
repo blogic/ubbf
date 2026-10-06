@@ -1,0 +1,83 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MQTT.Broker.{i}.Stats.",
+  "object": {
+    "path": "Device.MQTT.Broker.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "TotalNumberOfClients",
+        "access": "readOnly",
+        "description": "Total number of MQTT clients registered with the MQTT broker.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "NumberOfActiveClients",
+        "access": "readOnly",
+        "description": "Number of MQTT clients, which have a connection with the MQTT broker established.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "NumberOfInactiveClients",
+        "access": "readOnly",
+        "description": "Number of MQTT clients, which have no connection with the MQTT broker established.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Subscriptions",
+        "access": "readOnly",
+        "description": "Number of subscriptions held by the MQTT broker.",
+        "type": "unsignedInt",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "PublishSent",
+        "access": "readOnly",
+        "description": "Number of publish messages sent by the MQTT broker.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "PublishReceived",
+        "access": "readOnly",
+        "description": "Number of publish messages received by the MQTT broker.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "MQTTMessagesSent",
+        "access": "readOnly",
+        "description": "Total number of MQTT messages sent by the MQTT broker.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "MQTTMessagesReceived",
+        "access": "readOnly",
+        "description": "Total number of MQTT messages received by the MQTT broker.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ConnectionErrors",
+        "access": "readOnly",
+        "description": "Number of connection errors.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "PublishErrors",
+        "access": "readOnly",
+        "description": "Number of errors which prevented sending publish messages",
+        "type": "dataType:StatsCounter32"
+      }
+    ],
+    "description": "The MQTT broker statistics values. These will reset with each MQTT broker start, either after reboot or if the MQTT broker gets (re-)enabled.",
+    "children": []
+  }
+}

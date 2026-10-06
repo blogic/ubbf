@@ -1,0 +1,38 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.ProcessStatus.",
+  "object": {
+    "path": "Device.DeviceInfo.ProcessStatus.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "CPUUsage",
+        "access": "readOnly",
+        "description": "The total amount of the CPU, in {{units}}, rounded to the nearest whole {{units}}. In the case that multiple CPU are present, this value represents the average of all CPU.",
+        "type": "unsignedInt",
+        "maxInclusive": 100,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ProcessNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "CPUNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.18"
+      }
+    ],
+    "description": "Status of the processes on the device.",
+    "children": []
+  }
+}

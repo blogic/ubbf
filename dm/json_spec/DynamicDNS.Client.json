@@ -1,0 +1,109 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DynamicDNS.Client.{i}.",
+  "object": {
+    "path": "Device.DynamicDNS.Client.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ClientNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this Dynamic DNS Client.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Status of this Dynamic DNS Client.",
+        "type": "string",
+        "enumerations": [
+          "Connecting",
+          "Authenticating",
+          "Updated",
+          "Error_Misconfigured",
+          "Error",
+          "Disabled"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "LastError",
+        "access": "readOnly",
+        "description": "The last error this Dynamic DNS Client has encountered. The parameter MAY instead indicate a vendor-specific cause, which MUST use the format defined in {{bibref|TR-106}}.",
+        "type": "string",
+        "enumerations": [
+          "NO_ERROR",
+          "MISCONFIGURATION_ERROR",
+          "DNS_ERROR",
+          "CONNECTION_ERROR",
+          "AUTHENTICATION_ERROR",
+          "TIMEOUT_ERROR",
+          "PROTOCOL_ERROR"
+        ]
+      },
+      {
+        "name": "Server",
+        "access": "readWrite",
+        "description": "The DynamicDNS server associated with this Dynamic DNS Client. {{reference}}",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.Server.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "The IP interface over which update queries to the server are sent. {{template|INTERFACE-ROUTING}} {{reference}}",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Username",
+        "access": "readWrite",
+        "description": "Username used by this Dynamic DNS Client to authenticate with the Server.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Password",
+        "access": "readWrite",
+        "description": "Password used by this Dynamic DNS Client to authenticate with the Server.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "HostnameNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Client properties for Dynamic DNS. A dynamic DNS client is responsible for verifying IP address changes and updating information from a subscribed account on a Dynamic DNS Server. For enabled table entries, if {{param|Server}} is not a valid reference then the table entry is inoperable and the CPE MUST set the {{param|Status}} to {{enum|Error_Misconfigured|Status}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Server",
+        "Username"
+      ]
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.",
+  "object": {
+    "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [],
+    "description": "Performance monitoring (PM) counters.",
+    "children": []
+  }
+}

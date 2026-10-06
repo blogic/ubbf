@@ -1,0 +1,104 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.L2TPv3.Filter.{i}.",
+  "object": {
+    "path": "Device.L2TPv3.Filter.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "FilterNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this filter.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this filter. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Order",
+        "access": "readWrite",
+        "description": "{{datatype|expand}} For each packet, the highest ordered entry that matches the filter criteria is applied. All lower order entries are ignored.",
+        "type": "dataType:Order"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "Filter criterion. {{reference}}",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "                   #.Tunnel.                   #.Tunnel.{i}.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "AllInterfaces",
+        "access": "readWrite",
+        "description": "Filter criterion. This specifies that all ingress L2TPv3 tunnel interfaces are associated with the entry. If {{true}}, the value of {{param|Interface}} is ignored since all ingress L2TPv3 tunnel interfaces are indicated.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "VLANIDCheck",
+        "access": "readWrite",
+        "description": "Filter criterion. Current outer Ethernet VLAN ID as defined in 802.1Q. A value of -1 indicates this criterion is not used for filtering.",
+        "default": "-1",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1
+      },
+      {
+        "name": "VLANIDExclude",
+        "access": "readWrite",
+        "description": "If {{false}}, the filter includes only those packets that match the {{param|VLANIDCheck}} entry, if specified. If {{true}}, the filter includes all packets except those that match the {{param|VLANIDCheck}} entry, if specified.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "DSCPMarkPolicy",
+        "access": "readWrite",
+        "description": "DSCP with which to mark the outer IP header for traffic that is associated with the interface criterion. Automatic DSCP marking behavior is a local matter to the device, possibly influenced by other Broadband Forum standards that it supports. * A value of -1 indicates copy from the upstream packet. * A value of -2 indicates automatic marking of DSCP.",
+        "type": "int",
+        "minInclusive": -2,
+        "maxInclusive": 63
+      }
+    ],
+    "description": "L2TPv3 Filter table. Entries in this table are applied against the packets that are to be encapsulated within the L2TPv3 Tunnel based on the following conditions: * If the value of the {{param|AllInterfaces}} is {{true}}, then this entry will be applied to all {{object|#.Tunnel}} and {{object|#.Tunnel.{i}.Interface}} instances. * If the value of {{param|AllInterfaces}} is {{false}} and the value of {{param|Interface}} parameter is a reference to a row in the {{object|#.Tunnel}} table then this entry is applied to all {{object|#.Tunnel.{i}.Interface}} instances of the {{object|#.Tunnel}} reference. * If the value of {{param|AllInterfaces}} is {{false}} and the value of {{param|Interface}} parameter is a reference to a row in the {{object|#.Tunnel.{i}.Interface}} table then this entry is applied to the {{object|#.Tunnel.{i}.Interface}} reference. * If no entries are matched for the packet, then the default treatment (e.g., {{param|#.Tunnel.{i}.DefaultDSCPMark}}) is applied to the packet. For enabled table entries, if {{param|Interface}} is not a valid reference and {{param|AllInterfaces}} is {{false}}, then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

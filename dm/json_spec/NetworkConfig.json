@@ -1,0 +1,25 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "NetworkConfig.",
+  "object": {
+    "path": "NetworkConfig.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "AccessInterfaces",
+        "access": "readOnly",
+        "description": "The network interfaces which the application updated by this command will be allowed to send traffic through it. If any of these access interface are not present in the {{param|.SoftwareModules.ExecEnv.{i}.AvailableAccessInterfaces}} of the ExecEnv into which the DU is to be updated then the command will fail. Some Agents may apply further filtering for access interfaces which are considered security- or privacy-sensitive. Each entry in the list is the Name of a row within either {{object|.Logical.Interface.}} or {{object|.IP.Interface.}}. If Name is present in both {{object|.Logical.Interface.}} and {{object|.IP.Interface.}}, the Interface referenced in {{object|.Logical.Interface.}} must be selected. If there is no such row then the command will fail, as the update requires access to a network, through the interface, which is not available. When the argument {{object|NetworkConfig}} is absent or {{empty}} for the {{command|.SoftwareModules.DeploymentUnit.{i}.Update()}}, the {{param}} network configuration remains unaltered. When the argument {{object|NetworkConfig}} provided in {{command|.SoftwareModules.DeploymentUnit.{i}.Update()}}, {{param}} configuration supersedes any previous configuration. If {{param}} is absent or {{empty}}, it indicate that no outgoing network access is required for the resulting ExecutionUnit to function.",
+        "list": true,
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "Specifies the network configuration for any ExecutionUnit which is created by the update of the DeploymentUnit. The new network configuration supersedes any previous configuration. When this argument is not present in the {{command|.SoftwareModules.DeploymentUnit.{i}.Update()}}, the network configuration remains unaltered.",
+    "children": []
+  }
+}

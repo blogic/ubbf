@@ -1,0 +1,31 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DNS.SD.Advertise.{i}.TextRecord.{i}.",
+  "object": {
+    "path": "Device.DNS.SD.Advertise.{i}.TextRecord.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "TextRecordNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Key",
+        "access": "readWrite",
+        "description": "The key that identifies the text record",
+        "type": "string",
+        "maxLength": 255
+      },
+      {
+        "name": "Value",
+        "access": "readWrite",
+        "description": "The value of the text record.",
+        "type": "string",
+        "maxLength": 255
+      }
+    ],
+    "description": "This object maintains an instance of a (key/value pairs) of the service. The information is to be provided in the DNS TXT records {{bibref|RFC1035}} of the advertised service. When multiple instances of the {{object}} table have the same value for the {{param|Key}} parameter, the implementation is CPE specific. Note: This object was promoted to readWrite in the Device:2.18 version.",
+    "children": []
+  }
+}

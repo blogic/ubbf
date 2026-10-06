@@ -1,0 +1,67 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "ScanResult.{i}.OpClassScan.{i}.ChannelScan.{i}.",
+  "object": {
+    "path": "ScanResult.{i}.OpClassScan.{i}.ChannelScan.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Channel",
+        "access": "readOnly",
+        "description": "The channel number of the Channel scanned by the Radio given the Operating Class.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "TimeStamp",
+        "access": "readOnly",
+        "description": "The timestamp of the last scan of the channel. Formatted with the date-and-time string format as defined in {{bibref|RFC3339|Section 3}}.",
+        "type": "dateTime"
+      },
+      {
+        "name": "Utilization",
+        "access": "readOnly",
+        "description": "The current Channel Utilization measured by the Radio on the scanned 20MHz channel, as defined by {{bibref|802.11-2020|Section 9.4.2.27}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "Noise",
+        "access": "readOnly",
+        "description": "An indicator of the average radio noise plus interference power measured for the primary operating channel. Encoded as defined for ANPI in {{bibref|802.11-2020|Section 11.10.9.4}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "ScanStatus",
+        "access": "readOnly",
+        "description": "Status code to indicate whether a scan has been performed and if not the reason for failure {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7"
+        ],
+        "version": "2.17"
+      }
+    ],
+    "description": "The Channel associated with an Operating Class of neighboring Access Points discovered by a Radio during a channel scan.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Channel"
+      ]
+    }
+  }
+}

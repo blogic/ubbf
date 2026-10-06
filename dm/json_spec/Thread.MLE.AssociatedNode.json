@@ -1,0 +1,93 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Thread.MLE.{i}.AssociatedNode.{i}.",
+  "object": {
+    "path": "Device.Thread.MLE.{i}.AssociatedNode.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "AssociatedNodeNumberOfEntries",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.19"
+      },
+      {
+        "name": "LastContactTime",
+        "access": "readOnly",
+        "description": "The date and time in UTC when associated Thread node on the device has received data from remote node.",
+        "type": "dateTime"
+      },
+      {
+        "name": "ExtendedMAC",
+        "access": "readOnly",
+        "description": "Unique MacID of the node.",
+        "type": "hexBinary",
+        "minLength": 16,
+        "maxLength": 16
+      },
+      {
+        "name": "Rloc16",
+        "access": "readOnly",
+        "description": "Rloc of the node.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "RoutingRole",
+        "access": "readOnly",
+        "description": "The current state of the Thread node.",
+        "type": "string",
+        "enumerations": [
+          "Child",
+          "Router",
+          "Leader",
+          "Unassigned"
+        ]
+      },
+      {
+        "name": "Mode",
+        "access": "readOnly",
+        "description": "Thread Device mode value.",
+        "type": "string",
+        "enumerations": [
+          "rx-on-when-idle",
+          "Full Thread Device",
+          "Full Network Data"
+        ]
+      },
+      {
+        "name": "RouteNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "NeighborNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "IPv6AddressNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "A table of the nodes currently associated to the Thread network defined by this {{object|##.MLE.}} instance. This includes the host nodes.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

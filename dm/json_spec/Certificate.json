@@ -1,0 +1,44 @@
+{
+  "source_file": "tr-181-2-19-0-localagent.xml",
+  "path": "Certificate.{i}.",
+  "object": {
+    "path": "Certificate.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "CertificateNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enable/Disable this {{object}} instance.",
+        "type": "boolean"
+      },
+      {
+        "name": "SerialNumber",
+        "access": "readOnly",
+        "description": "The Serial Number field in an X.509 certificate, see {{bibref|RFC5280}}.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Issuer",
+        "access": "readOnly",
+        "description": "The Issuer field in an X.509 certificate, see {{bibref|RFC5280}}; i.e. the Distinguished Name (DN) of the entity who has signed the certificate.",
+        "type": "string",
+        "maxLength": 256
+      }
+    ],
+    "description": "Each instance of this table represents information related to a X.509 certificate (see {{bibref|RFC5280}}) of a Controller or Certificate Authority. Instances are referenced from {{param|#.Controller.{i}.Credential}} and {{param|#.ControllerTrust.Credential.{i}.Credential}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "SerialNumber",
+        "Issuer"
+      ]
+    }
+  }
+}

@@ -1,0 +1,9 @@
+case "$ACTION" in
+	step|stratum|periodic)
+		mkdir -p /tmp/ubbf
+		touch /tmp/ubbf/ntp-synced
+		;;
+	unsync)
+		rm -f /tmp/ubbf/ntp-synced
+		;;
+esac

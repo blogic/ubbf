@@ -1,0 +1,179 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.CollectionDevice.{i}.",
+  "object": {
+    "path": "Device.CollectionDevice.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "CollectionDeviceNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.16"
+      },
+      {
+        "name": "IsNativeDevice",
+        "access": "readOnly",
+        "description": "If {{true}} this {{object}} models the top level {{object|#}} only one instance can represent the top-level device. If {{false}} this {{object}} represents another device in the network.",
+        "type": "boolean"
+      },
+      {
+        "name": "DataElementsDeviceRef",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|#.WiFi.DataElements.Network.Device}} instance corresponding to this {{object}}, or {{empty}} if this {{object}} is not represented in the {{object|#.WiFi.DataElements.Network.Device}} table}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".WiFi.DataElements.Network.Device.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "IEEE1905DeviceRef",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|#.IEEE1905.AL.NetworkTopology.IEEE1905Device}} instance corresponding to this {{object}}, or {{empty}} if this {{object}} is not represented in the {{object|#.IEEE1905.AL.NetworkTopology.IEEE1905Device}} table}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".IEEE1905.AL.NetworkTopology.IEEE1905Device.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "LLDPDeviceRef",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|#.LLDP.Discovery.Device}} instance corresponding to this {{object}}, or {{empty}} if this {{object}} is not represented in the {{object|#.LLDP.Discovery.Device}} table}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".LLDP.Discovery.Device.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "UPnPDeviceRef",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|#.UPnP.Discovery.Device}} instance corresponding to this {{object}}, or {{empty}} if this {{object}} is not represented in the {{object|#.UPnP.Discovery.Device}} table}}",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".UPnP.Discovery.Device.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "HostDeviceRef",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|#.Hosts.Host}} instance corresponding to this {{object}}, or {{empty}} if this {{object}} is not represented in the {{object|#.Hosts.Host}} table}}",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Hosts.Host.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "GhnAssociatedDeviceRef",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|#.Ghn.Interface.{i}.AssociatedDevice}} instance corresponding to this {{object}}, or {{empty}} if this {{object}} is not represented in the {{object|#.Ghn.Interface.{i}.AssociatedDevice}} table}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Ghn.Interface.{i}.AssociatedDevice.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "MoCAAssociatedDeviceRef",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|#.MoCA.Interface.{i}.AssociatedDevice}} instance corresponding to this {{object}}, or {{empty}} if this {{object}} is not represented in the {{object|#.MoCA.Interface.{i}.AssociatedDevice}} table}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".MoCA.Interface.{i}.AssociatedDevice.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "HomePlugAssociatedDeviceRef",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|#.HomePlug.Interface.{i}.AssociatedDevice}} instance corresponding to this {{object}}, or {{empty}} if this {{object}} is not represented in the {{object|#.HomePlug.Interface.{i}.AssociatedDevice}} table}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".HomePlug.Interface.{i}.AssociatedDevice.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "HPNAAssociatedDeviceRef",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|#.HPNA.Interface.{i}.AssociatedDevice}} instance corresponding to this {{object}}, or {{empty}} if this {{object}} is not represented in the {{object|#.HPNA.Interface.{i}.AssociatedDevice}} table}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".HPNA.Interface.{i}.AssociatedDevice.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "UPAAssociatedDeviceRef",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|#.UPA.Interface.{i}.AssociatedDevice}} instance corresponding to this {{object}}, or {{empty}} if this {{object}} is not represented in the {{object|#.UPA.Interface.{i}.AssociatedDevice}} table}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".UPA.Interface.{i}.AssociatedDevice.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "WiFiAssociatedDeviceRef",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|#.WiFi.AccessPoint.{i}.AssociatedDevice}} instance corresponding to this {{object}}, or {{empty}} if this {{object}} is not represented in the {{object|#.WiFi.AccessPoint.{i}.AssociatedDevice}} table}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".WiFi.AccessPoint.{i}.AssociatedDevice.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ZigBeeAssociatedDeviceRef",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|#.ZigBee.Interface.{i}.AssociatedDevice}} instance corresponding to this {{object}}, or {{empty}} if this {{object}} is not represented in the {{object|#.ZigBee.Interface.{i}.AssociatedDevice}} table}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".ZigBee.Interface.{i}.AssociatedDevice.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ThreadAssociatedNodeRef",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|#.Thread.MLE.{i}.AssociatedNode}} instance corresponding to this {{object}}, or {{empty}} if this {{object}} is not represented in the {{object|#.Thread.MLE.{i}.AssociatedNode}} table}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Thread.MLE.{i}.AssociatedNode.",
+          "targetType": "row"
+        },
+        "version": "2.19"
+      },
+      {
+        "name": "ProxiedDeviceRef",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|#.ProxiedDevice}} instance corresponding to this {{object}}, or {{empty}} if this {{object}} is not represented in the {{object|#.ProxiedDevice}} table}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "Device.ProxiedDevice.",
+          "targetType": "row"
+        }
+      }
+    ],
+    "description": "A {{object}} is a device in the network that is represented in the {{object|#}} data model in multiple places. An instance of {{object}} represents a physical device that is modeled via a set of data model objects that are distributed throughout the data model, and brings them together into a single Data Model Object. For example an entry with a {{object|#.WiFi.DataElements.Network.Device}} and a {{object|#.IEEE1905.AL.NetworkTopology.IEEE1905Device}} is the same device represented in two places. When the entry with {{param|IsNativeDevice}} is {{true}}, that entry will represent the Native Device which is modeled by the Root Object {{object|#}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

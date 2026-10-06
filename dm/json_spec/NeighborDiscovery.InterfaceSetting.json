@@ -1,0 +1,111 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.NeighborDiscovery.InterfaceSetting.{i}.",
+  "object": {
+    "path": "Device.NeighborDiscovery.InterfaceSetting.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "InterfaceSettingNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} entry.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this entry. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "This is the IP interface associated with this {{object}} entry.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "DADTransmits",
+        "access": "readWrite",
+        "description": "The number of consecutive Neighbor Solicitation messages sent while performing Duplicate Address Detection on a tentative address (see{{bibref|RFC4862|5.1}}). A value of zero indicates that Duplicate Address Detection is not performed on tentative addresses. A value of one indicates a single transmission with no follow-up retransmissions. If the value is greater than 1, {{param|RetransTimer}} defines the delay between consecutive messages.",
+        "default": "1",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "version": "2.13"
+      },
+      {
+        "name": "RetransTimer",
+        "access": "readWrite",
+        "description": "Retransmission interval in {{units}}, as defined in {{bibref|RFC4861}}. For auto-configuration purposes, {{param}} specifies the delay between consecutive Neighbor Solicitation transmissions performed during Duplicate Address Detection (DAD) {{bibref|RFC4862|Section 5.4}}, as well as the time a node waits after sending the last Neighbor Solicitation before ending the DAD process.",
+        "default": "1000",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "RtrSolicitationInterval",
+        "access": "readWrite",
+        "description": "Retransmission interval in {{units}}, as defined in {{bibref|RFC4861|6.3.7}}. For auto-configuration purposes, {{param}} specifies the delay between consecutive Router Solicitation transmissions.",
+        "default": "4000",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 4000
+      },
+      {
+        "name": "MaxRtrSolicitations",
+        "access": "readWrite",
+        "description": "Maximum Number of Router Solicitation Transmission messages, as defined in {{bibref|RFC4861}}. For auto-configuration purposes {{param}} specifies the Maximum Number of Router Solicitation Transmission messages to help the host to conclude that there are no routers on the link.",
+        "default": "3",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "NUDEnable",
+        "access": "readWrite",
+        "description": "Enables or disables Neighbor Unreachability Detection (NUD) {{bibref|RFC4861|Section 7}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "RSEnable",
+        "access": "readWrite",
+        "description": "Enables or disables Router Solicitation (RS) on {{param|Interface}} {{bibref|RFC4861|Section 4.1}}.",
+        "type": "boolean"
+      }
+    ],
+    "description": "Per-interface Neighbor Discovery Protocol (NDP) configuration {{bibref|RFC4861}}. For enabled table entries, if {{param|Interface}} is not a valid reference to an IPv6-capable interface (that is attached to the IPv6 stack), then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}. Note: The {{object}} table includes a unique key parameter that is a strong reference. If a strongly referenced object is deleted, the CPE will set the referencing parameter to {{empty}}. However, doing so under these circumstances might cause the updated {{object}} row to then violate the table's unique key constraint; if this occurs, the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and disable the offending {{object}} row.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

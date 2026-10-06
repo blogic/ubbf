@@ -1,0 +1,29 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Nodes.",
+  "object": {
+    "path": "Nodes.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "CurrentStart",
+        "access": "readOnly",
+        "description": "Start time for the current interval. When automatic collection is enabled, i.e. SampleInterval is non-zero, the current interval started at the most recent automatic sample. When automatic collection is disabled, i.e. SampleInterval is zero, the current interval started two manual samples ago.",
+        "type": "dateTime"
+      },
+      {
+        "name": "CurrentEnd",
+        "access": "readOnly",
+        "description": "End time for the current interval. When automatic collection is enabled, i.e. SampleInterval is non-zero, the current interval ended at the most recent manual sample since the most recent automatic sample. If there has been no such manual sample, the current interval is empty. When automatic collection is disabled, i.e. SampleInterval is zero, the current interval ended at the most recent manual sample.",
+        "type": "dateTime"
+      }
+    ],
+    "description": "Per-node G.hn performance monitoring results. When automatic collection is enabled, i.e. {{param|#.SampleInterval}} is non-zero, the \"current\" interval is defined by the most recent automatic sample and the most recent subsequent manual sample, if any. When automatic collection is disabled, i.e. SampleInterval is zero, the \"current\" interval is defined by the three most recent manual samples. Note: Packets in statistics counters are Ethernet packets.",
+    "children": []
+  }
+}

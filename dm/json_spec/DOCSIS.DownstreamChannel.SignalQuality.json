@@ -1,0 +1,55 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DOCSIS.DownstreamChannel.{i}.SignalQuality.",
+  "object": {
+    "path": "Device.DOCSIS.DownstreamChannel.{i}.SignalQuality.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "SignalNoise",
+        "access": "readOnly",
+        "description": "Signal/Noise ratio as perceived for this channel. Describes the Signal/Noise of the downstream channel, measured in {{units}}. See {{bibref|CM-SP-RFIv2.0|Tables 4-1 and 4-2}}.",
+        "type": "unknown"
+      },
+      {
+        "name": "Microreflections",
+        "access": "readOnly",
+        "description": "Microreflections, including in-channel response as perceived on this interface, measured in {{units}} (i.e., dBc below the signal level). This object is not assumed to return an absolutely accurate value, but it gives a rough indication of microreflections received on this interface. It is up to the implementer to provide information as accurately as possible. See {{bibref|CM-SP-RFIv2.0|Tables 4-1 and 4-2}}.",
+        "type": "int",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "EqualizationData",
+        "access": "readOnly",
+        "description": "Returns the equalization data for the downstream channel. * An equalization value indicating an equalization average for the upstream channel. Those values have vendor-dependent interpretations. * Return a zero-length OCTET STRING to indicate that the value is unknown or if there is no equalization data available or defined. See {{bibref|CM-SP-RFIv2.0|Figure 6-23}}.",
+        "type": "dataType:DocsEqualizerData"
+      },
+      {
+        "name": "ExtUnerroreds",
+        "access": "readOnly",
+        "description": "Codewords received on this channel without error. This includes all codewords, whether or not they were part of frames destined for this device. Discontinuities in the value of this counter can occur at reinitialization of the managed system. See {{bibref|CM-SP-RFIv2.0|Sections 6.2.4, and 6.3.6}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "ExtCorrecteds",
+        "access": "readOnly",
+        "description": "Codewords received on this channel with correctable errors. This includes all codewords, whether or not they were part of frames destined for this device. Discontinuities in the value of this counter can occur at reinitialization of the managed system. See {{bibref|CM-SP-RFIv2.0|Sections 6.2.4, and 6.3.6}}.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "ExtUncorrectables",
+        "access": "readOnly",
+        "description": "Codewords received on this channel with uncorrectable errors. This includes all codewords, whether or not they were part of frames destined for this device. Discontinuities in the value of this counter can occur at reinitialization of the managed system. See {{bibref|CM-SP-RFIv2.0|Sections 6.2.4, 6.3.6}}.",
+        "type": "dataType:StatsCounter64"
+      }
+    ],
+    "description": "Describes the PHY signal quality of downstream channels.",
+    "children": []
+  }
+}

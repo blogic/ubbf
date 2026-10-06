@@ -1,0 +1,268 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.BSS.{i}.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "BSSNumberOfEntries",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "BSSID",
+        "access": "readOnly",
+        "description": "The MAC Address of the logical BSS (BSSID). If the instance of this {{object}} is the same as {{object|Device.WiFi.SSID.{i}.}}, then this parameter is the same as {{param|Device.WiFi.SSID.{i}.BSSID}}.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "SSID",
+        "access": "readOnly",
+        "description": "The SSID in use for this BSS. If the instance of this {{object}} is the same as {{object|Device.WiFi.SSID.{i}.}}, then this parameter is the same as {{param|Device.WiFi.SSID.{i}.SSID}}.",
+        "type": "string"
+      },
+      {
+        "name": "Enabled",
+        "access": "readOnly",
+        "description": "Whether the BSSID is currently enabled (beaconing frames are being sent) or disabled. If the instance of this {{object}} is the same as {{object|Device.WiFi.SSID.{i}.}}, then this parameter is the same as {{param|Device.WiFi.SSID.{i}.Enable}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "LastChange",
+        "access": "readOnly",
+        "description": "Time in {{units}} since the last change to the {{param|Enabled}} value. If the instance of this {{object}} is the same as {{object|Device.WiFi.SSID.{i}.}}, then this parameter is the same as {{param|Device.WiFi.SSID.{i}.LastChange}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TimeStamp",
+        "access": "readOnly",
+        "description": "The time this group was collected. Formatted with the date-and-time string format as defined in {{bibref|RFC3339|Section 3}}.",
+        "type": "dateTime"
+      },
+      {
+        "name": "UnicastBytesSent",
+        "access": "readOnly",
+        "description": "Access Point (BSS) wide statistics for total unicast bytes transmitted. This counter does not include Multi-Link Device (MLD) traffic through this BSS.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "UnicastBytesReceived",
+        "access": "readOnly",
+        "description": "Access Point (BSS) wide statistics for total unicast bytes received. This counter does not include MLD traffic through this BSS.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "MulticastBytesSent",
+        "access": "readOnly",
+        "description": "Access Point (BSS) wide statistics for total multicast bytes transmitted. This counter does not include MLD traffic through this BSS.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "MulticastBytesReceived",
+        "access": "readOnly",
+        "description": "Access Point (BSS) wide statistics for total multicast bytes received. This counter does not include MLD traffic through this BSS.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BroadcastBytesSent",
+        "access": "readOnly",
+        "description": "Access Point (BSS) wide statistics for total broadcast bytes transmitted. This counter does not include MLD traffic through this BSS.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BroadcastBytesReceived",
+        "access": "readOnly",
+        "description": "Access Point (BSS) wide statistics for total broadcast bytes received. This counter does not include MLD traffic through this BSS.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "ByteCounterUnits",
+        "access": "readOnly",
+        "description": "Byte Counter Units. : 1: kibibytes (KiB) : 2: mebibytes (MiB).",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 2,
+        "version": "2.15"
+      },
+      {
+        "name": "Profile1bSTAsDisallowed",
+        "access": "readOnly",
+        "description": "Profile-1 Backhaul STA association disallowed. : {{true}}: Backhaul STA association disallowed; : {{false}}: Backhaul STA association allowed.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "Profile2bSTAsDisallowed",
+        "access": "readOnly",
+        "description": "Profile-2 Backhaul STA association disallowed. : {{true}}: Profile 2 bSTA disallowed; : {{false}}: Profile 2 bSTA allowed.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "AssociationAllowanceStatus",
+        "access": "readOnly",
+        "description": "The status of allowance of new client device associations on this BSS. : 0: No more associations allowed, : 1: Associations allowed.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 1,
+        "version": "2.15"
+      },
+      {
+        "name": "EstServiceParametersBE",
+        "access": "readOnly",
+        "description": "Estimated Service Parameters information field for AC=BE, defined per {{bibref|802.11-2020|Figure 9-637}} and referenced in {{bibref|EasyMesh|Section 17.2.22}}.",
+        "type": "base64",
+        "minLength": 0,
+        "maxLength": 3
+      },
+      {
+        "name": "EstServiceParametersBK",
+        "access": "readOnly",
+        "description": "Estimated Service Parameters information field for AC=BK, defined per {{bibref|802.11-2020|Figure 9-637}} and referenced in {{bibref|EasyMesh|Section 17.2.22}}.",
+        "type": "base64",
+        "minLength": 0,
+        "maxLength": 3
+      },
+      {
+        "name": "EstServiceParametersVI",
+        "access": "readOnly",
+        "description": "Estimated Service Parameters information field for AC=VI, defined per {{bibref|802.11-2020|Figure 9-637}} and referenced in {{bibref|EasyMesh|Section 17.2.22}}.",
+        "type": "base64",
+        "minLength": 0,
+        "maxLength": 3
+      },
+      {
+        "name": "EstServiceParametersVO",
+        "access": "readOnly",
+        "description": "Estimated Service Parameters information field for AC=VO, defined per {{bibref|802.11-2020|Figure 9-637}} and referenced in {{bibref|EasyMesh|Section 17.2.22}}.",
+        "type": "base64",
+        "minLength": 0,
+        "maxLength": 3
+      },
+      {
+        "name": "BackhaulUse",
+        "access": "readOnly",
+        "description": "Indicates that this BSS is in use as a backhaul BSS; : {{true}}: backhaul BSS in use, : {{false}}: backhaul BSS not in use. In {{bibref|EasyMesh}} 0 is in use and 1 is not in use.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "FronthaulUse",
+        "access": "readOnly",
+        "description": "Indicates that this BSS is in use as a fronthaul BSS; : {{true}}: fronthaul BSS in use, : {{false}}: fronthaul BSS not in use. In {{bibref|EasyMesh}} 0 is in use and 1 is not in use.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "R1disallowed",
+        "access": "readOnly",
+        "description": "Multi-AP Profile-1 [3] (R1) disallowed status. : {{true}}: disallowed, : {{false}}: allowed. In {{bibref|EasyMesh}} 0 is allowed and 1 is disallowed.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "R2disallowed",
+        "access": "readOnly",
+        "description": "Multi-AP Profile-2 [3] (R2) disallowed status. : {{true}}: disallowed, : {{false}}: allowed. In {{bibref|EasyMesh}} 0 is allowed and 1 is disallowed.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "MultiBSSID",
+        "access": "readOnly",
+        "description": "Multiple BSSID Set; : {{true}}: configured, : {{false}}: not-configured. In {{bibref|EasyMesh}}, 1 is configured and 0 is not-configured.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "TransmittedBSSID",
+        "access": "readOnly",
+        "description": "Transmitted BSSID; : {{true}}: transmitted, : {{false}}: non-transmitted. In {{bibref|EasyMesh}}, 1 is transmitted and 0 is non-transmitted.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "FronthaulAKMsAllowed",
+        "access": "readWrite",
+        "description": "{{list}} List items indicate Authentication and Key Management (AKM) suites/security modes allowed at this BSS for fronthaul. {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "psk",
+          "dpp",
+          "sae",
+          "psk+sae",
+          "dpp+sae",
+          "dpp+psk+sae",
+          "SuiteSelector"
+        ],
+        "version": "2.15"
+      },
+      {
+        "name": "FronthaulSuiteSelector",
+        "access": "readWrite",
+        "description": "AKM suite selector, the AKM suite selector (OUI and type) is encoded as a 4-octet hex-encoded value without internal delimiters, e.g. 506F9A02 {{bibref|802.11-2020|Table 9-151}}. This parameter applies if {{param|FronthaulAKMsAllowed}} includes value \"SuiteSelector\".",
+        "type": "hexBinary",
+        "minLength": 4,
+        "maxLength": 4,
+        "version": "2.17"
+      },
+      {
+        "name": "BackhaulAKMsAllowed",
+        "access": "readWrite",
+        "description": "{{list}} List items indicate Authentication and Key Management (AKM) suites/security modes allowed at this BSS for backhaul. {{enum}}",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "psk",
+          "dpp",
+          "sae",
+          "psk+sae",
+          "dpp+sae",
+          "dpp+psk+sae",
+          "SuiteSelector"
+        ],
+        "version": "2.15"
+      },
+      {
+        "name": "BackhaulSuiteSelector",
+        "access": "readWrite",
+        "description": "AKM suite selector, the AKM suite selector (OUI and type) is encoded as a 4-octet hex-encoded value without internal delimiters, e.g. 506F9A02 {{bibref|802.11-2020|Table 9-151}}. This parameter applies if {{param|BackhaulAKMsAllowed}} includes value \"SuiteSelector\".",
+        "type": "hexBinary",
+        "minLength": 4,
+        "maxLength": 4,
+        "version": "2.17"
+      },
+      {
+        "name": "BasicDataTransmitRates",
+        "access": "readOnly",
+        "description": "{{list}} The current basic data rates; the set of data rates, in {{units}}, that have to be supported by all stations that desire to join this BSS. The stations have to be able to receive and transmit at each of the data rates listed in {{param}}. Most control packets use a data rate in {{param}}.",
+        "list": true,
+        "type": "unsignedInt",
+        "version": "2.17"
+      },
+      {
+        "name": "STANumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "QMDescriptorNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.15"
+      }
+    ],
+    "description": "A single logical BSS operating on this radio.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "BSSID"
+      ]
+    }
+  }
+}

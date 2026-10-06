@@ -1,0 +1,210 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "RadioNumberOfEntries",
+    "version": "2.13",
+    "parameters": [
+      {
+        "name": "ID",
+        "access": "readOnly",
+        "description": "A unique identifier for this particular Radio within the identified Access Point as defined in {{bibref|DataElements|Section 3.1}}.",
+        "type": "base64",
+        "minLength": 6,
+        "maxLength": 6
+      },
+      {
+        "name": "Enabled",
+        "access": "readOnly",
+        "description": "Indicates whether this radio is enabled or disabled. If the instance of this {{object}} is the same as {{object|Device.WiFi.Radio.{i}.}}, then this parameter is the same as {{param|Device.WiFi.Radio.{i}.Enable}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Noise",
+        "access": "readOnly",
+        "description": "An indicator of the average radio noise plus interference power measured for the primary operating channel. Encoded as defined for ANPI in {{bibref|802.11-2020|Section 11.10.9.4}}. If the instance of this {{object}} is the same as {{object|Device.WiFi.Radio.{i}.}}, then this parameter is the same as {{param|Device.WiFi.Radio.{i}.Stats.Noise}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "Utilization",
+        "access": "readOnly",
+        "description": "(Total Channel Utililzation) The percentage of time (linearly scaled with 255 representing 100%) that the Access Point device sensed the medium was busy, as indicated by either the physical or virtual carier sense (CS) mechanism. This is essentially the amount of time spent transmitting (both successful and failed transmissions), receiving (both local and non-local transmissions), and processing noise {{bibref|802.11-2020|Section 9.4.2.27}}. When more than one channel is in use for the BSS operating on the radio, the {{param}} value is calculated only for the primary channel.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "Transmit",
+        "access": "readOnly",
+        "description": "(Transmit Channel Utilization) The percentage of time (linearly scaled with 255 representing 100%) that the radio has spent on sending individually or group addressed transmissions (successful and failed). When more than one channel is in use for the BSS operating on the radio, the {{param}} value is calculated only for the primary channel.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "ReceiveSelf",
+        "access": "readOnly",
+        "description": "(Receive Local Channel Utilization) The percentage of time (linearly scaled with 255 representing 100%) that the radio has spent on receiving individually or group addressed local transmissions (i.e. transmissions from any STA associated with any BSS operating on this radio). When more than one channel is in use for the BSS operating on the radio, the {{param}} value is calculated only for the primary channel.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "ReceiveOther",
+        "access": "readOnly",
+        "description": "(Receive Non-Local Channel Utilization) The percentage of time (linearly scaled with 255 representing 100%) that the radio has spent on receiving individually or group addressed non-local transmissions (i.e. valid IEEE 802.11 PPDUs that are not associated with any BSS operating on this radio). When more than one channel is in use for the BSS operating on the radio, the {{param}} value is calculated only for the primary channel.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "TrafficSeparationCombinedFronthaul",
+        "access": "readOnly",
+        "description": "Indicates traffic separation on combined fronthaul and Profile-1 backhaul support {{bibref|EasyMesh}}.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "TrafficSeparationCombinedBackhaul",
+        "access": "readOnly",
+        "description": "Indicates traffic separation on combined Profile-1 backhaul and Profile-2 backhaul support {{bibref|EasyMesh}}.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "SteeringPolicy",
+        "access": "readWrite",
+        "description": "Steering Policy: : 0: Agent Initiated Steering Disallowed; : 1: Agent Initiated Receive Channel Power Indicator (RCPI)-based Steering Mandated; : 2: Agent Initiated RCPI-based Steering Allowed.",
+        "type": "unsignedInt",
+        "maxInclusive": 2,
+        "version": "2.15"
+      },
+      {
+        "name": "ChannelUtilizationThreshold",
+        "access": "readWrite",
+        "description": "Channel Utilization Threshold (defined per Basic Service Set (BSS) Load element {{bibref|802.11-2020|Section 9.4.2.27}}.).",
+        "type": "unsignedInt",
+        "maxInclusive": 255,
+        "version": "2.15"
+      },
+      {
+        "name": "RCPISteeringThreshold",
+        "access": "readWrite",
+        "description": "RCPI Steering Threshold (encoded per {{bibref|802.11-2020|Table 9-176}}).",
+        "type": "unsignedInt",
+        "maxInclusive": 220,
+        "version": "2.15"
+      },
+      {
+        "name": "STAReportingRCPIThreshold",
+        "access": "readWrite",
+        "description": "Station (STA) Metrics Reporting RCPI Threshold. : 0: Do not report STA Metrics based on RCPI threshold. : 1 - 220: RCPI threshold (encoded per {{bibref|802.11-2020|Table 9-176}}).",
+        "type": "unsignedInt",
+        "maxInclusive": 220,
+        "version": "2.15"
+      },
+      {
+        "name": "STAReportingRCPIHysteresisMarginOverride",
+        "access": "readWrite",
+        "description": "STA Metrics Reporting RCPI Hysteresis Margin Override. : 0: Use Agent's implementation-specific default RCPI Hysteresis margin; : >0: RCPI hysteresis margin value. This field is coded as an unsigned integer in units of {{units}}.",
+        "type": "unsignedInt",
+        "version": "2.15"
+      },
+      {
+        "name": "ChannelUtilizationReportingThreshold",
+        "access": "readWrite",
+        "description": "AP Metrics Channel Utilization Reporting Threshold. : 0: Do not report AP Metrics based on Channel utilization threshold; : >0: AP Metrics Channel Utilization Reporting Threshold (similar to channel utilization measurement in {{bibref|802.11-2020|Section 9.4.2.27}}).",
+        "type": "unsignedInt",
+        "version": "2.15"
+      },
+      {
+        "name": "AssociatedSTATrafficStatsInclusionPolicy",
+        "access": "readWrite",
+        "description": "Associated STA Traffic Stats Inclusion Policy. : {{true}}: Include Associated STA Traffic Stats TLV in AP Metrics Response. : {{false}}: Do not include Associated STA Traffic Stats Type-Length-Value (TLV) in AP Metrics Response;",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "AssociatedSTALinkMetricsInclusionPolicy",
+        "access": "readWrite",
+        "description": "Associated STA Link Metrics Inclusion Policy. : {{true}}: Include Associated STA Link Metrics TLV in AP Metrics Response. : {{false}}: Do not include Associated STA Link Metrics TLV in AP Metrics Response;",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "ChipsetVendor",
+        "access": "readOnly",
+        "description": "A string identifying the Wi-Fi chip vendor of this radio in the device.",
+        "type": "string",
+        "version": "2.15"
+      },
+      {
+        "name": "APMetricsWiFi6",
+        "access": "readWrite",
+        "description": "Associated Wi-Fi6 STA Status Inclusion Policy. : {{true}}: include Associated Wi-Fi6 STA Status TLV in AP Metrics Response. : {{false}}: do not include Associated Wi-Fi6 STA Status TLV [3] in AP Metrics Response.",
+        "type": "boolean",
+        "version": "2.15"
+      },
+      {
+        "name": "MaxBSS",
+        "access": "readOnly",
+        "description": "Maximum number of BSSs supported by this radio. {{bibref|EasyMesh|Section 17.2.7, AP Radio Basic Capabilities TLV}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 255,
+        "version": "2.19"
+      },
+      {
+        "name": "CurrentOperatingClassProfileNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UnassociatedSTANumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "BSSNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ScanResultNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.14"
+      },
+      {
+        "name": "DisAllowedOpClassChannelsNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.15"
+      },
+      {
+        "name": "OpClassPreferenceNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.19"
+      }
+    ],
+    "description": "This object represents all of the individual Radios contained within the identified Access Point device known to the controller.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "ID"
+      ]
+    }
+  }
+}

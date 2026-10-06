@@ -1,0 +1,93 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.MQTT.Client.{i}.Stats.",
+  "object": {
+    "path": "Device.MQTT.Client.{i}.Stats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "BrokerConnectionEstablished",
+        "access": "readOnly",
+        "description": "Time when the MQTT broker connection was established.",
+        "type": "dateTime",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LastPublishMessageSent",
+        "access": "readOnly",
+        "description": "Time when the last publish message was sent to the MQTT broker.",
+        "type": "dateTime",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LastPublishMessageReceived",
+        "access": "readOnly",
+        "description": "Time when the last publish message was received from the MQTT broker.",
+        "type": "dateTime",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "PublishSent",
+        "access": "readOnly",
+        "description": "Number of publish messages sent to the MQTT broker.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "PublishReceived",
+        "access": "readOnly",
+        "description": "Number of publish messages received from to the MQTT broker.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "SubscribeSent",
+        "access": "readOnly",
+        "description": "Number of subscribe messages sent to the MQTT broker.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "UnSubscribeSent",
+        "access": "readOnly",
+        "description": "Number of unsubscribe messages sent to the MQTT broker.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "MQTTMessagesSent",
+        "access": "readOnly",
+        "description": "Total number of MQTT messages sent to the MQTT broker.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "MQTTMessagesReceived",
+        "access": "readOnly",
+        "description": "Total number of MQTT messages received from the MQTT broker.",
+        "type": "dataType:StatsCounter64",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "ConnectionErrors",
+        "access": "readOnly",
+        "description": "Number of connection errors.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "PublishErrors",
+        "access": "readOnly",
+        "description": "Number of errors which prevented sending publish messages.",
+        "type": "dataType:StatsCounter32"
+      }
+    ],
+    "description": "Contains the MQTT client statistics and usage information. The CPE MUST reset the Stats parameters after the MQTT client gets (re-)enabled or if the MQTT client connects with a new MQTT broker (e.g. {{param|#.BrokerAddress}} has changed). The CPE MAY retain the values across a reboot if it reconnects with the same MQTT broker.",
+    "children": []
+  }
+}

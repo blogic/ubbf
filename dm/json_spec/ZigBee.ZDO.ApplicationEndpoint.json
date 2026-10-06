@@ -1,0 +1,43 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.ZigBee.ZDO.{i}.ApplicationEndpoint.{i}.",
+  "object": {
+    "path": "Device.ZigBee.ZDO.{i}.ApplicationEndpoint.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ApplicationEndpointNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the use of this application endpoint on the device.",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "EndpointId",
+        "access": "readWrite",
+        "description": "The Endpoint Identifier for this object as defined in {{bibref|ZigBee2007|section 2.1.2 Application Framework}}. An {{object}} with an {{param}} value of 0 is designated as the device application: This is a special application that is responsible for device operation and contains logic to manage the device's networking and general maintenance features.",
+        "type": "unsignedInt",
+        "maxInclusive": 240
+      }
+    ],
+    "description": "The {{object}} object describes the application endpoint as defined in {{bibref|ZigBee2007|section 2.1.2 Application Framework}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "EndpointId"
+      ]
+    }
+  }
+}

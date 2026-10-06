@@ -1,0 +1,79 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Syslog.Action.{i}.",
+  "object": {
+    "path": "Device.Syslog.Action.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ActionNumberOfEntries",
+    "version": "2.17",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.17"
+      },
+      {
+        "name": "SourceRef",
+        "access": "readWrite",
+        "description": "Mandatory parameter. Specifies one or multiple sources from where the log messages originate.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.Source.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "FilterRef",
+        "access": "readWrite",
+        "description": "The Filter associated with the {{object}} entry. When referencing multiple Filter rules, it is mandatory to execute them in the order listed within the parameter. Example: FilterRef=.Syslog.Filter.3,.Syslog.Filter.1 First filter rule 3 must be executed and then filter rule 1. When no Filter is specified the log message will not be filtered.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.Filter.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "TemplateRef",
+        "access": "readWrite",
+        "description": "The Template associated with the {{object}} entry. When no Template is specified the log message will not be altered by the template system.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "#.Template.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "StructuredData",
+        "access": "readWrite",
+        "description": "This feature represents the ability to log messages in structured-data format. Reference {{bibref|RFC5424|The Syslog Protocol}}.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object describes the log action parameters for syslog.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

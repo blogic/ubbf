@@ -1,0 +1,257 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.RouterAdvertisement.InterfaceSetting.{i}.",
+  "object": {
+    "path": "Device.RouterAdvertisement.InterfaceSetting.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "InterfaceSettingNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} entry. Defines the value of the ''IsRouter'' and ''AdvSendAdvertisements'' flags from {{bibref|RFC4861|Section 4.2}}",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this entry. {{enum}} The {{enum|Error_Misconfigured}} value indicates that a necessary configuration value is undefined or invalid. The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "default": "Disabled",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error_Misconfigured",
+          "Error"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "This is the IP interface associated with this {{object}} entry.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "RDNSSMode",
+        "access": "readWrite",
+        "description": "Describes which IPv6 address information MUST be specified in the RDNSS option field specified in {{bibref|RFC8106|5.1. Recursive DNS Server Option}}.",
+        "default": "Static",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "Static",
+          "LLA",
+          "GUA",
+          "LLA_GUA"
+        ],
+        "version": "2.17"
+      },
+      {
+        "name": "RDNSS",
+        "access": "readWrite",
+        "description": "The RDNSS parameter contains one or more IPv6 addresses of RDNSSes as described in {{bibref|RFC8106|5.1. Recursive DNS Server Option}}. When {{param|RDNSSMode}} is not {{enum|Static|RDNSSMode}}, this parameter will contain the list of IPv6 addresses, automatically filled in by the system, that needs to be advertised. {{empty}} means that no RDNSS information is being advertised.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "dataType:IPv6Address",
+        "version": "2.17"
+      },
+      {
+        "name": "DNSSL",
+        "access": "readWrite",
+        "description": "The DNSSL parameter contains one or more domain names of DNS suffixes as described in {{bibref|RFC8106|5.2. DNS Search List Option}}. {{empty}} means that no DNSSL information is being advertised.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "version": "2.17"
+      },
+      {
+        "name": "ManualPrefixes",
+        "access": "readWrite",
+        "description": "{{list}} {{reference}} Manually-configured prefixes that will be sent in Router Advertisement messages. Each referenced prefix MUST have a {{param|##.IP.Interface.{i}.IPv6Prefix.{i}.StaticType}} of {{enum|Static|##.IP.Interface.{i}.IPv6Prefix.{i}.StaticType}} or {{enum|Child|##.IP.Interface.{i}.IPv6Prefix.{i}.StaticType}}. Router Advertisement messages MUST include Prefix Information Options {{bibref|RFC4861}} for all ''Valid'' ({{param|##.IP.Interface.{i}.IPv6Prefix.{i}.ValidLifetime}} is infinite or in the future) prefixes in this list. Prefixes MUST be associated with the interface instance referenced by {{param|Interface}}.",
+        "default": "[]",
+        "defaultType": "object",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.IP.Interface.{i}.IPv6Prefix.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Prefixes",
+        "access": "readOnly",
+        "description": "{{list}} {{reference}} All prefixes that will be included in Router Advertisement (RA) messages sent out this interface. This list can include: * Prefixes from {{param|ManualPrefixes}} that are included in RA messages. * Prefixes with {{param|##.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} = {{enum|Child|##.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} or {{enum|AutoConfigured|##.IP.Interface.{i}.IPv6Prefix.{i}.Origin}} associated with the interface instance referenced by {{param|Interface}}.",
+        "list": true,
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.IP.Interface.{i}.IPv6Prefix.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "MaxRtrAdvInterval",
+        "access": "readWrite",
+        "description": "The maximum time allowed between sending unsolicited multicast Router Advertisements from the interface, in {{units}} (see {{bibref|RFC4861|Section 4.2}}).",
+        "default": "600",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 4,
+        "maxInclusive": 1800
+      },
+      {
+        "name": "MinRtrAdvInterval",
+        "access": "readWrite",
+        "description": "The minimum time allowed between sending unsolicited multicast Router Advertisements from the interface, in {{units}} (see {{bibref|RFC4861|Section 4.2}}). The value MUST be no greater than 3/4 * {{param|MaxRtrAdvInterval}}. Note: The ''1350'' maximum was derived from the RFC, based on 3/4 times the maximum value of {{param|MaxRtrAdvInterval}}. Similarly, the ''200'' default was derived from the RFC, based on 1/3 times the default value of {{param|MaxRtrAdvInterval}}.",
+        "default": "200",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 3,
+        "maxInclusive": 1350
+      },
+      {
+        "name": "AdvDefaultLifetime",
+        "access": "readWrite",
+        "description": "The value placed in the \"Router Lifetime\" field of Router Advertisement messages on this interface, in {{units}} (see {{bibref|RFC4861|Section 4.2}}). The value can be zero or between {{param|MaxRtrAdvInterval}} and 9000 {{units}}, but these limits can be overridden by specific documents that describe how IPv6 operates over different link layers. A value of zero indicates that the router is not to be used as a default router. Note: The ''1800'' default was derived from the RFC, based on 3 times the default value of {{param|MaxRtrAdvInterval}}.",
+        "default": "1800",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "AdvManagedFlag",
+        "access": "readWrite",
+        "description": "The value placed in the \"Managed address configuration\" (M) flag field of Router Advertisement messages on this interface (see {{bibref|RFC4861|Section 4.2}}, and {{bibref|RFC4862}}).",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "AdvOtherConfigFlag",
+        "access": "readWrite",
+        "description": "The value placed in the \"Other configuration\" (O) flag field of Router Advertisement messages on this interface (see {{bibref|RFC4861|Section 4.2}}, and {{bibref|RFC4862}}).",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "AdvMobileAgentFlag",
+        "access": "readWrite",
+        "description": "The value placed in the \"Home agent\" (H) flag field of Router Advertisement messages on this interface (see {{bibref|RFC3775|Section 7.1}}).",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "AdvPreferredRouterFlag",
+        "access": "readWrite",
+        "description": "The value placed in the \"Default Router Preference\" (Prf) field of Router Advertisement messages on this interface, as defined in {{bibref|RFC4191|Section 2.2}}. {{enum}} Also see {{bibref|RFC4191|Section 2.1}} which discusses how this flag is encoded on the wire.",
+        "default": "Medium",
+        "defaultType": "object",
+        "type": "string",
+        "enumerations": [
+          "High",
+          "Medium",
+          "Low"
+        ]
+      },
+      {
+        "name": "AdvNDProxyFlag",
+        "access": "readWrite",
+        "description": "The value placed in the \"Proxy\" (P) flag field of Router Advertisement messages on this interface (see {{bibref|RFC4389|Section 4.1.3.3}}).",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "AdvLinkMTU",
+        "access": "readWrite",
+        "description": "The value placed in MTU options of Router Advertisement messages on this interface. A value of zero indicates that no MTU options are included (see {{bibref|RFC4861|Section 4.6.4}}).",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AdvReachableTime",
+        "access": "readWrite",
+        "description": "The value placed in the \"Reachable Time\" field of Router Advertisement messages on this interface, in {{units}} (see {{bibref|RFC4861|Section 4.2}}). The value zero means unspecified (by the router).",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "maxInclusive": 3600000
+      },
+      {
+        "name": "AdvRetransTimer",
+        "access": "readWrite",
+        "description": "The value placed in the \"Retrans Timer\" field of Router Advertisement messages on this interface, in {{units}} (see {{bibref|RFC4861|Section 4.2}}). The value zero means unspecified (by the router).",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AdvCurHopLimit",
+        "access": "readWrite",
+        "description": "The value placed in the \"Cur Hop Limit\" field of Router Advertisement messages on this interface (see {{bibref|RFC4861|Section 4.2}}). The value zero means unspecified (by the router). Note: The default can be overridden with the value specified in {{bibref|RFC3232}} that was in effect at the time of implementation.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      },
+      {
+        "name": "AdvRDNSSLifetime",
+        "access": "readWrite",
+        "description": "The Lifetime field in RDNSS specifies the maximum duration, in {{units}}, during which the provided RDNSS addresses can be used for name resolution relative to the time the packet is received. By default, the value of Lifetime is recommended to be at least 3 times the MaxRtrAdvInterval. The MaxRtrAdvInterval is defined in {{bibref|RFC4861}} and refers to the maximum interval between Router Advertisement (RA) messages. When the Lifetime value is set to all one bits (0xffffffff), it indicates an infinite duration. The Lifetime value of zero signifies that the RDNSS addresses must not be used anymore, as specified in {{bibref|RFC8106|5.1. Recursive DNS Server Option}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "maxInclusive": 4294967295,
+        "version": "2.17"
+      },
+      {
+        "name": "AdvDNSSLLifetime",
+        "access": "readWrite",
+        "description": "The Lifetime field in DNSSL specifies the maximum duration, in {{units}}, during which the provided DNSSL domain names can be used for name resolution relative to the time the packet is received. By default, the value of Lifetime is recommended to be at least 3 times the MaxRtrAdvInterval. The MaxRtrAdvInterval is defined in {{bibref|RFC4861}} and refers to the maximum interval between Router Advertisement (RA) messages. When the Lifetime value is set to all one bits (0xffffffff), it indicates an infinite duration. The Lifetime value of zero signifies that the DNSSL domain names must not be used anymore, as specified in {{bibref|RFC8106|5.2. DNS Search List Option}}.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "maxInclusive": 4294967295,
+        "version": "2.17"
+      },
+      {
+        "name": "OptionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "Per-interface Router Advertisement (RA) configuration {{bibref|RFC4861}}. Table entries are created for use in sending Router Advertisements. For enabled table entries, if {{param|Interface}} is not a valid reference to an IPv6-capable interface (that is attached to the IPv6 stack), then the table entry is inoperable and the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}}. Note: The {{object}} table includes a unique key parameter that is a strong reference. If a strongly referenced object is deleted, the CPE will set the referencing parameter to {{empty}}. However, doing so under these circumstances might cause the updated {{object}} row to then violate the table's unique key constraint; if this occurs, the CPE MUST set {{param|Status}} to {{enum|Error_Misconfigured|Status}} and disable the offending {{object}} row.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DeviceInfo.TemperatureStatus.TemperatureSensor.{i}.",
+  "object": {
+    "path": "Device.DeviceInfo.TemperatureStatus.TemperatureSensor.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "TemperatureSensorNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Indicates whether or not the temperature sensor is enabled.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this temperature sensor.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error"
+        ]
+      },
+      {
+        "name": "ResetTime",
+        "access": "readOnly",
+        "description": "The time at which this temperature sensor was reset. Reset can be caused by: * {{param|Status}} transition from {{enum|Disabled|Status}} to {{enum|Enabled|Status}} * {{template|Reset}}. * An internal reset of the temperature sensor (including a reboot of the device). The Unknown Time value, as defined in {{bibref|TR-106}}, indicates that this temperature sensor has never been reset, which can only happen if it has never been enabled.",
+        "type": "dateTime"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "Name of this temperature sensor. This text MUST be sufficient to distinguish this temperature sensor from other temperature sensors.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Value",
+        "access": "readOnly",
+        "description": "This temperature sensor's last good reading in {{units}}. A value of -274 (which is below absolute zero) indicates a good reading has not been obtained since last reset.",
+        "type": "int",
+        "minInclusive": -274,
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LastUpdate",
+        "access": "readOnly",
+        "description": "The time at which this temperature sensor's last good reading was obtained. The Unknown Time value, as defined in {{bibref|TR-106}}, indicates a good reading has not been obtained since last reset.",
+        "type": "dateTime",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "MinValue",
+        "access": "readOnly",
+        "description": "This temperature sensor's lowest value reading in {{units}} since last reset. A value of -274 (which is below absolute zero) indicates a good reading has not been obtained since last reset.",
+        "type": "int",
+        "minInclusive": -274
+      },
+      {
+        "name": "MinTime",
+        "access": "readOnly",
+        "description": "The time at which this temperature sensor's lowest value was read. The Unknown Time value, as defined in {{bibref|TR-106}}, indicates a good reading has not been obtained since last reset.",
+        "type": "dateTime"
+      },
+      {
+        "name": "MaxValue",
+        "access": "readOnly",
+        "description": "This temperature sensor's highest value reading in {{units}} since last reset. A value of -274 (which is below absolute zero) indicates a good reading has not been obtained since last reset.",
+        "type": "int",
+        "minInclusive": -274
+      },
+      {
+        "name": "MaxTime",
+        "access": "readOnly",
+        "description": "The time at which this temperature sensor's highest value was read. The Unknown Time value, as defined in {{bibref|TR-106}}, indicates a good reading has not been obtained since last reset.",
+        "type": "dateTime"
+      },
+      {
+        "name": "LowAlarmValue",
+        "access": "readWrite",
+        "description": "This temperature sensor's low alarm value in {{units}}. A value of -274 (which is below absolute zero) indicates a non configured value. A change to this value will cause {{param|LowAlarmTime}} to be reset.",
+        "type": "int",
+        "minInclusive": -274
+      },
+      {
+        "name": "LowAlarmTime",
+        "access": "readOnly",
+        "description": "Initial time at which this temperature sensor's {{param|LowAlarmValue}} was encountered. This value is only set the first time the alarm is seen and not changed until the next reset. The Unknown Time value, as defined in {{bibref|TR-106}}, indicates that an alarm has not been encountered since the last reset.",
+        "type": "dateTime"
+      },
+      {
+        "name": "HighAlarmValue",
+        "access": "readWrite",
+        "description": "This temperature sensor's high alarm value in {{units}}. A value of -274 (which is below absolute zero) indicates a non configured value. A change to this value will cause {{param|HighAlarmTime}} to be reset.",
+        "type": "int",
+        "minInclusive": -274
+      },
+      {
+        "name": "PollingInterval",
+        "access": "readWrite",
+        "description": "The interval, measured in {{units}}, in which the device polls this {{object}}. If the value is 0 then the device selects its own polling interval. If the value is greater than 0 then the device MUST use this value as the polling interval.",
+        "type": "unsignedInt",
+        "version": "2.12"
+      },
+      {
+        "name": "HighAlarmTime",
+        "access": "readOnly",
+        "description": "Initial time at which this temperature sensor's {{param|HighAlarmValue}} was encountered. This value is only set the first time the alarm is seen and not changed until the next reset. The Unknown Time value, as defined in {{bibref|TR-106}}, indicates that an alarm has not been encountered since the last reset.",
+        "type": "dateTime"
+      }
+    ],
+    "description": "This object represents information that the device has obtained via sampling an internal temperature sensor.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Name"
+      ]
+    }
+  }
+}

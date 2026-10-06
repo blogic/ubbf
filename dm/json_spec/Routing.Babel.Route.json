@@ -1,0 +1,87 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Routing.Babel.Route.{i}.",
+  "object": {
+    "path": "Device.Routing.Babel.Route.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "RouteNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "RoutePrefix",
+        "access": "readOnly",
+        "description": "IP prefix for which this route is advertised.",
+        "type": "dataType:IPPrefix"
+      },
+      {
+        "name": "SourceRouterID",
+        "access": "readOnly",
+        "description": "Router-id of the router that originated this route.",
+        "type": "hexBinary"
+      },
+      {
+        "name": "Neighbor",
+        "access": "readOnly",
+        "description": "Reference to the {{object|#.InterfaceSetting.{i}.Neighbor}} entry for the neighbor that advertised this route.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "#.InterfaceSetting.{i}.Neighbor.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "ReceivedMetric",
+        "access": "readOnly",
+        "description": "The metric with which this route was advertised by the neighbor, or maximum value (as defined in {{bibref|RFC8966}}) to indicate the route was recently retracted and is temporarily unreachable (see {{bibref|RFC8966|Section 3.5.5}}). This metric will be -1 if the route was not received from a neighbor but was generated through other means. At least one of {{param}} and {{param|CalculatedMetric}} MUST have a value other than -1. Having both be other than -1 is expected for a route that is received and subsequently advertised.",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "CalculatedMetric",
+        "access": "readOnly",
+        "description": "A calculated metric for this route. How the metric is calculated is implementation-specific. Maximum value (as defined in {{bibref|RFC8966}}) indicates the route was recently retracted and is temporarily unreachable ({{bibref|RFC8966|Section 3.5.5}}). At least one of {{param|ReceivedMetric}} and {{param}} MUST have a value other than -1. Having both be other than -1 is expected for a route that is received and subsequently advertised.",
+        "type": "int",
+        "minInclusive": -1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "RouteSeqno",
+        "access": "readOnly",
+        "description": "The sequence number with which this route was advertised.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "NextHop",
+        "access": "readOnly",
+        "description": "The next-hop address of this route. This will be empty if this route has no next-hop address.",
+        "type": "dataType:IPAddress"
+      },
+      {
+        "name": "RouteFeasible",
+        "access": "readOnly",
+        "description": "A Boolean flag indicating whether this route is feasible, as defined in {{bibref|RFC8966|Section 3.5.1}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "RouteSelected",
+        "access": "readOnly",
+        "description": "A Boolean flag indicating whether this route is selected (i.e., whether it is currently being used for forwarding and is being advertised).",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object provides parameters for routes received from neighbors and internal routes.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "RoutePrefix",
+        "SourceRouterID"
+      ]
+    }
+  }
+}

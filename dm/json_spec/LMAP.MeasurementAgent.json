@@ -1,0 +1,159 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.MeasurementAgent.{i}.",
+  "object": {
+    "path": "Device.LMAP.MeasurementAgent.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "MeasurementAgentNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this {{object}} instance. This parameter is based on ''ifAdminStatus'' from {{bibref|RFC2863}}.",
+        "type": "boolean"
+      },
+      {
+        "name": "Version",
+        "access": "readOnly",
+        "description": "Version of the measurement agent.",
+        "type": "string"
+      },
+      {
+        "name": "LastStarted",
+        "access": "readOnly",
+        "description": "Date and time, based on {{bibref|RFC3339}}, in UTC that the measurement agent was successfully started.",
+        "type": "dateTime"
+      },
+      {
+        "name": "CapabilityTags",
+        "access": "readOnly",
+        "description": "Capabilities of the measurement agent that cannot be expressed elsewhere in the data model.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "Identifier",
+        "access": "readWrite",
+        "description": "Identifier of the {{object}} instance.",
+        "type": "dataType:UUID"
+      },
+      {
+        "name": "GroupIdentifier",
+        "access": "readWrite",
+        "description": "Identifier of the measurement group of interest to which the measurement agent belongs.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "MeasurementPoint",
+        "access": "readWrite",
+        "description": "Identifier of the measurement point indicating where the measurement agent is located on a path as defined in [bibref|RFC7398}}.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "UseAgentIdentifierInReports",
+        "access": "readWrite",
+        "description": "If the value of the {{param|Identifier}} parameter is not {{empty}} and the value of this parameter is {{false}} then the value of the {{param|Identifier}} parameter MUST not be included in measurement reports.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "UseGroupIdentifierInReports",
+        "access": "readWrite",
+        "description": "If the value of the {{param|GroupIdentifier}} parameter is not {{empty}} and the value of this parameter is {{false}} then the value of the {{param|GroupIdentifier}} parameter MUST not be included in measurement reports.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "UseMeasurementPointInReports",
+        "access": "readWrite",
+        "description": "If the value of the {{param|MeasurementPoint}} parameter is not {{empty}} and the value of this parameter is {{false}} then the value of the {{param|MeasurementPoint}} parameter MUST not be included in measurement reports.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "PublicCredential",
+        "access": "readWrite",
+        "description": "{{reference|a {{object|##.Security.Certificate}} object that is used to identify this measurement agent}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.Security.Certificate.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "PrivateCredential",
+        "access": "readWrite",
+        "description": "{{reference|a {{object|##.Security.Certificate}} object that is used to contain the private keys for this measurement agent}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.Security.Certificate.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "EventLog",
+        "access": "readOnly",
+        "description": "{{reference|a {{object|##.DeviceInfo.VendorLogFile}} object that is used to record events for this measurement agent}}",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.DeviceInfo.VendorLogFile.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "TaskCapabilityNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ScheduleNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TaskNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "CommunicationChannelNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "InstructionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "This object represents the measurement agent that performs measurement tasks and reporting functions defined in {{bibref|RFC7594}}.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

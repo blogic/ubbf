@@ -1,0 +1,95 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.SpatialReuse.",
+  "object": {
+    "path": "Device.WiFi.DataElements.Network.Device.{i}.Radio.{i}.SpatialReuse.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "PartialBSSColor",
+        "access": "readOnly",
+        "description": "The value of the Partial Basic Service Set (BSS) Color subfield of the HEOperations.BSSColorInformation field being transmitted by BSSs operating on this radio. (EasyMesh TLV Field: Partial BSS Color)",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "BSSColor",
+        "access": "readOnly",
+        "description": "The value of the BSS Color subfield of the HEOperations.BSSColorInformation field being transmitted by BSSs operating on this radio. (EasyMesh TLV Field: BSS Color)",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "HESIGASpatialReuseValue15Allowed",
+        "access": "readOnly",
+        "description": "Indicates if the Agent is allowed to set HESIGA.SpatialReuse field to value 15 (PSR_AND_NON_SRG_OBSS_PD_PROHIBITED) in HE PPDU transmissions of this radio. (EasyMesh TLV Field: HESIGA_Spatial_reuse_value15_allowed) : {{true}}: allowed; : {{false}}: disallowed.",
+        "type": "boolean"
+      },
+      {
+        "name": "SRGInformationValid",
+        "access": "readOnly",
+        "description": "This field indicates whether the SRG Information fields (SRG OBSS PD Min Offset, SRG OBSS PD Max Offset, SRG BSS Color Bitmap and SRG Partial BSSID Bitmap) in this command are valid. (EasyMesh TLV Field: SRG Information Valid) : {{true}}: SRG Information fields valid; : {{false}}: SRG Information fields not valid.",
+        "type": "boolean"
+      },
+      {
+        "name": "NonSRGOffsetValid",
+        "access": "readOnly",
+        "description": "This field indicates whether the Non-SRG OBSSPD Max Offset field in this command is valid. (EasyMesh TLV Field: Non-SRG Offset Valid) : {{true}}: Non-SRG Max Offset field valid; : {{false}}: Non-SRG Max Offset field not valid.",
+        "type": "boolean"
+      },
+      {
+        "name": "PSRDisallowed",
+        "access": "readOnly",
+        "description": "Indicates if the Agent is disallowed to use Parameterized Spatial Reuse (PSR)-based Spatial Reuse for transmissions by the specified radio. (EasyMesh TLV Field: PSR Disallowed) : {{true}}: PSR disallowed; : {{false}}: PSR allowed.",
+        "type": "boolean"
+      },
+      {
+        "name": "NonSRGOBSSPDMaxOffset",
+        "access": "readOnly",
+        "description": "The value of dot11NonSRGAPOBSSPDMaxOffset (i.e the Non-SRG OBSSPD Max Offset value being used to control the transmissions of the specified radio). (EasyMesh TLV Field: Non-SRG OBSSPD Max Offset) This field is valid only if {{param|NonSRGOffsetValid}} is {{true}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SRGOBSSPDMinOffset",
+        "access": "readOnly",
+        "description": "The value of dot11SRGAPOBSSPDMinOffset (i.e. the SRG OBSSPD Min Offset value being used to control the transmissions of the specified radio). (EasyMesh TLV Field: SRG OBSSPD Min Offset) This field is valid only if {{param|SRGInformationValid}} is {{true}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SRGOBSSPDMaxOffset",
+        "access": "readOnly",
+        "description": "The value of dot11SRGAPOBSSPDMaxOffset (i.e. the SRG OBSSPD Max Offset value being used to control the transmissions of the specified radio). (EasyMesh TLV Field: SRG OBSSPD Max Offset) This field is valid only if {{param|SRGInformationValid}} is {{true}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SRGBSSColorBitmap",
+        "access": "readOnly",
+        "description": "The value of dot11SRGAPBSSColorBitmap (i.e. the SRG BSS Color Bitmap being used to control the tranmissions of the specified radio). (EasyMesh TLV Field: SRG BSS Color Bitmap) This field is valid only if {{param|SRGInformationValid}} is {{true}}.",
+        "type": "hexBinary",
+        "minLength": 8,
+        "maxLength": 8
+      },
+      {
+        "name": "SRGPartialBSSIDBitmap",
+        "access": "readOnly",
+        "description": "The value of dot11SRGAPBSSIDBitmap (i.e. the SRG Partial BSSID Color Bitmap being used to control the transmissions of the specified radio). (EasyMesh TLV Field: SRG Partial BSSID Bitmap) This field is valid only if {{param|SRGInformationValid}} is {{true}}. Note: See rules in section 26.10.2.3 of [17] regarding the members of an SRG.",
+        "type": "hexBinary",
+        "minLength": 8,
+        "maxLength": 8
+      },
+      {
+        "name": "NeighborBSSColorInUseBitmap",
+        "access": "readOnly",
+        "description": "Bitmap of BSS colors of Overlapping BSSs (OBSSs) that the High-Efficiency (HE) AP has identified by itself or via the autonomous BSS Color collision reports received from associated non-AP HE STAs.",
+        "type": "hexBinary",
+        "minLength": 8,
+        "maxLength": 8
+      }
+    ],
+    "description": "The spatial reuse configuration of this radio. Applies only to Wi-Fi 6 {{bibref|802.11ax}} and possibly later generations of radios. Acronyms: Spatial Reuse Group (SRG), Overlapping Basic Service Set (OBSS), Preamble Detection (PD).",
+    "children": []
+  }
+}

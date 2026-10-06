@@ -1,0 +1,75 @@
+#!/bin/sh
+
+ONBOARDING_CONFIG="/etc/ubbf/onboarding.json"
+FACTORY_RESET_MARKER="/tmp/ubbf/factory_reset"
+UXC_CONFIG_DIR="/etc/uxc"
+
+[ -f "$ONBOARDING_CONFIG" ] || exit 0
+
+. /usr/share/libubox/jshn.sh
+
+json_load_file "$ONBOARDING_CONFIG" || exit 1
+json_get_type type containers
+[ "$type" = "array" ] || exit 0
+
+json_select containers
+idx=1
+
+while json_is_a "$idx" object; do
+	json_select "$idx"
+
+	json_get_var name name
+	json_get_var bundle bundle
+	json_get_var onboarding onboarding
+	json_get_var autostart autostart
+
+	skip=0
+
+	case "$onboarding" in
+		initial)
+			[ -f "${UXC_CONFIG_DIR}/${name}.json" ] && skip=1
+			;;
+		factory_reset)
+			[ -f "$FACTORY_RESET_MARKER" ] || skip=1
+			;;
+		every_boot)
+			;;
+		*)
+			skip=1
+			;;
+	esac
+
+	if [ "$skip" -eq 0 ] && [ -n "$name" ] && [ -n "$bundle" ]; then
+		case "$bundle" in
+			/*)
+				if echo "$bundle" | grep -q '\.apk$'; then
+					install_url="file://${bundle}"
+				else
+					install_url="file://${bundle}"
+				fi
+				;;
+			*)
+				install_url="apk://${bundle}"
+				;;
+		esac
+
+		logger -t ubbf-onboard "installing container: $name via $install_url"
+		ubus call bbf-dm operate "$(cat <<-EOF
+			{
+				"path": "Device.SoftwareModules.InstallDU()",
+				"input": {
+					"URL": "${install_url}",
+					"Vendor": "pre-embedded"
+				}
+			}
+		EOF
+		)" 2>/dev/null
+
+		if [ "$autostart" = "true" ] || [ "$autostart" = "1" ]; then
+			ubus call "container.${name}" start '{}' 2>/dev/null
+		fi
+	fi
+
+	json_select ..
+	idx=$((idx + 1))
+done

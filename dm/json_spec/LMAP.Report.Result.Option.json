@@ -1,0 +1,41 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.Report.{i}.Result.{i}.Option.{i}.",
+  "object": {
+    "path": "Device.LMAP.Report.{i}.Result.{i}.Option.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "OptionNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Order",
+        "access": "readOnly",
+        "description": "The order of the Option.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Name",
+        "access": "readOnly",
+        "description": "The name of the Option. When the value of this parameter is equal to \"channel\", the option value specifies the Communication Channel used for this task.",
+        "type": "int"
+      },
+      {
+        "name": "Value",
+        "access": "readOnly",
+        "description": "The value associated with the Option.",
+        "type": "string"
+      }
+    ],
+    "description": "This object represents an option associated with the task or action object that produced the result.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Name"
+      ]
+    }
+  }
+}

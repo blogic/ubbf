@@ -1,0 +1,35 @@
+{
+	"read": {
+		"Device.DeviceInfo": ["Manufacturer", "ManufacturerOUI", "ModelName", "ModelNumber", "Description", "ProductClass", "SerialNumber", "HardwareVersion", "SoftwareVersion", "UpTime", "FriendlyName"],
+		"Device.DeviceInfo.MemoryStatus": true,
+		"Device.DeviceInfo.Processor.*": true,
+		"Device.DeviceInfo.FirmwareImage.*": true,
+		"Device.WiFi": true,
+		"Device.IP.Interface.*": ["Alias", "Enable", "Status", "Name", "Type", "IPv4Enable", "IPv6Enable", "Upstream", "LowerLayers"],
+		"Device.IP.Interface.*.IPv4Address.*": ["Enable", "IPAddress", "SubnetMask", "AddressingType"],
+		"Device.IP.Interface.*.IPv6Address.*": ["Enable", "IPAddress", "Origin"],
+		"Device.DHCPv4.Client.*": ["Enable", "Interface", "Status", "DHCPStatus", "IPRouters", "DNSServers"],
+		"Device.DNS.Client.Server.*": ["Enable", "DNSServer", "Type", "Interface", "Status"],
+		"Device.Bridging": true,
+		"Device.Ethernet": true,
+		"Device.DHCPv4.Server": ["Enable"],
+		"Device.DHCPv4.Server.Pool.*": ["Alias", "Enable", "Interface", "MinAddress", "MaxAddress", "SubnetMask", "LeaseTime", "DNSServers"],
+		"Device.DHCPv4.Server.Pool.*.StaticAddress.*": true,
+		"Device.X_UBBF.QoSify": true
+	},
+	"write": {
+		"Device.LANConfigSecurity": ["ConfigPassword"],
+		"Device.WiFi.Radio.*": ["Enable", "Channel", "OperatingChannelBandwidth", "TransmitPower", "AutoChannelEnable"],
+		"Device.WiFi.SSID.*": ["Enable", "SSID"],
+		"Device.WiFi.AccessPoint.*": ["Enable", "SSIDAdvertisementEnabled"],
+		"Device.WiFi.AccessPoint.*.Security": ["ModeEnabled", "PreSharedKey", "SAEPassphrase"],
+		"Device.IP.Interface.*": {
+			"filter": { "Upstream": "false" },
+			"properties": ["Enable", "Name"]
+		},
+		"Device.IP.Interface.*.IPv4Address.*": ["Enable", "IPAddress", "SubnetMask"],
+		"Device.DHCPv4.Server.Pool.*": ["Enable", "MinAddress", "MaxAddress", "LeaseTime", "DNSServers"],
+		"Device.DHCPv4.Server.Pool.*.StaticAddress.*": true,
+		"Device.X_UBBF.QoSify": true
+	}
+}

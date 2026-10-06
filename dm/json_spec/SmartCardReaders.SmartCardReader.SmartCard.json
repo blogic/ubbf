@@ -1,0 +1,65 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SmartCardReaders.SmartCardReader.{i}.SmartCard.",
+  "object": {
+    "path": "Device.SmartCardReaders.SmartCardReader.{i}.SmartCard.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Status of the Smart Card.",
+        "type": "string",
+        "enumerations": [
+          "None",
+          "Running",
+          "Error"
+        ]
+      },
+      {
+        "name": "Type",
+        "access": "readOnly",
+        "description": "Smart Card Type. {{enum}} Vendors can extend the enumerated values with vendor specific extensions, in which case the rules outlined in {{bibref|TR-106|Section 3.3}} MUST be adhered to.",
+        "type": "string",
+        "enumerations": [
+          "CA",
+          "DRM",
+          "UICC"
+        ]
+      },
+      {
+        "name": "Application",
+        "access": "readOnly",
+        "description": "{{list}} Indicates Smart Card Application(s). {{param}} is only relevant when {{param|Type}} has a value of UICC, otherwise it is {{empty}}. {{enum}} Vendors can extend the enumerated values with vendor specific extensions, in which case the rules outlined in {{bibref|TR-106|Section 3.3}} MUST be adhered to.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "SIM",
+          "USIM",
+          "ISIM"
+        ]
+      },
+      {
+        "name": "SerialNumber",
+        "access": "readOnly",
+        "description": "The Smart Card Serial Number or {{empty}} if the Smart Card serial Number is not available, e.g. in the case of IPTV due to restrictions of the Service Delivery Platform.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ATR",
+        "access": "readOnly",
+        "description": "The Smart Card answer to a reset action. Issued by the Smart Card upon reset.",
+        "type": "string",
+        "maxLength": 1024
+      }
+    ],
+    "description": "Status of currently associated smart card.",
+    "children": []
+  }
+}

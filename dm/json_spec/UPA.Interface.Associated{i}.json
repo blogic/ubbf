@@ -1,0 +1,94 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.UPA.Interface.{i}.AssociatedDevice.{i}.",
+  "object": {
+    "path": "Device.UPA.Interface.{i}.AssociatedDevice.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "AssociatedDeviceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "MACAddress",
+        "access": "readOnly",
+        "description": "Remote UPA device MAC address.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "Port",
+        "access": "readOnly",
+        "description": "The PLC port number.",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "LogicalNetwork",
+        "access": "readOnly",
+        "description": "The name of the logical PLC network (human readable string). In the case where the associated device belongs to a different powerline network than the UPA interface, the actual network identifier of the neighboring network is not shown in {{param}}. Rather, only a generic string, e.g. \"Network 1\", \"Network 2\", etc is stored here due to security/privacy implications.",
+        "type": "string",
+        "maxLength": 20
+      },
+      {
+        "name": "PhyTxThroughput",
+        "access": "readOnly",
+        "description": "Physical transmission throughput (in {{units}}).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PhyRxThroughput",
+        "access": "readOnly",
+        "description": "Physical reception throughput (in {{units}}).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RealPhyRxThroughput",
+        "access": "readOnly",
+        "description": "Real Physical reception throughput (in {{units}}).",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "EstimatedPLR",
+        "access": "readOnly",
+        "description": "Estimated PDU Loss Rate measurement between two devices (i.e. estimated {{units}} of MPDUs that have been received with errors).",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 100
+      },
+      {
+        "name": "MeanEstimatedAtt",
+        "access": "readOnly",
+        "description": "Mean estimated attenuation (i.e. channel loss between the local interface and the remote device). It is measured in {{units}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "SmartRouteIntermediatePLCMAC",
+        "access": "readOnly",
+        "description": "Intermediate UPA adapter MAC address of the device that is acting as a relay to increase coverage in mesh scenarios. This is the MAC address of a third UPA device, with which the UPA interface is doing smart repeating in order to transmit data to the associated {{param|MACAddress}} UPA device. {{param}} will be empty when {{param|DirectRoute}} is {{true}}.",
+        "type": "dataType:MACAddress"
+      },
+      {
+        "name": "DirectRoute",
+        "access": "readOnly",
+        "description": "Route status, where {{true}} indicates ''direct'' and {{false}} indicates ''indirect''.",
+        "type": "boolean"
+      },
+      {
+        "name": "Active",
+        "access": "readOnly",
+        "description": "Whether or not this node is currently present in the UPA network. The ability to list inactive nodes is OPTIONAL. If the CPE includes inactive nodes in this table, {{param}} MUST be set to {{false}} for each inactive node. The length of time an inactive node remains listed in this table is a local matter to the CPE.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This table contains information about PLC connections running between this UPA interface and other UPA devices.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "MACAddress"
+      ]
+    }
+  }
+}

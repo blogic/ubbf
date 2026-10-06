@@ -1,0 +1,74 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.FAP.GPS.AGPSServerConfig.",
+  "object": {
+    "path": "Device.FAP.GPS.AGPSServerConfig.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the {{object}} entry.",
+        "type": "boolean"
+      },
+      {
+        "name": "ServerURL",
+        "access": "readWrite",
+        "description": "A-GPS server host name or IP address.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ServerPort",
+        "access": "readWrite",
+        "description": "The port to use when communicating to the A-GPS Server.",
+        "type": "unsignedInt",
+        "maxInclusive": 65535
+      },
+      {
+        "name": "Username",
+        "access": "readWrite",
+        "description": "Username to be used by the device to authenticate with the A-GPS server. This string is set to {{empty}} if no authentication is used.",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "Password",
+        "access": "readWrite",
+        "description": "Password to be used by the device to authenticate with the A-GPS server. This string is set to {{empty}} if no authentication is used.",
+        "secured": true,
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "ReferenceLatitude",
+        "access": "readWrite",
+        "description": "This parameter specifies the reference latitude for an A-GPS request position in degrees, multiplied by 1 million. The positive value signifies the direction, north of the equator. The negative value signifies the direction, south of the equator. Range is from: 90d00.00' South (-90,000,000) to 90d00.00' North (90,000,000). Example: A latitude of 13d19.43' N would be represented as 13,323,833, derived as (13*1,000,000)+((19.43*1,000,000)/60). Latitude of 50d00.00' S would be represented as value -50,000,000.",
+        "type": "int",
+        "minInclusive": -90000000,
+        "maxInclusive": 90000000
+      },
+      {
+        "name": "ReferenceLongitude",
+        "access": "readWrite",
+        "description": "This parameter specifies the reference longitude for an A-GPS request position in degrees, multiplied by 1 million. The positive value signifies the direction, east of the prime meridian. The negative value signifies the direction, west of the prime meridian. Range is from: 180d00.00' West (-180,000,000) to 180d00.00' East (180,000,000). Example: A longitude of 13d19.43' E would be represented as 13,323,833, derived as (13*1,000,000)+((19.43*1,000,000)/60). A longitude of 50d00'00'' W would be represented as value -50,000,000.",
+        "type": "int",
+        "minInclusive": -180000000,
+        "maxInclusive": 180000000
+      },
+      {
+        "name": "ServerInUse",
+        "access": "readOnly",
+        "description": "The value is {{true}} if the device has successfully contacted and received A-GPS info from the A-GPS server, otherwise the value is {{false}}. After a reboot the value is {{false}} until the server could be contacted again.",
+        "type": "boolean"
+      }
+    ],
+    "description": "This object contains parameters for the configuration of the Assisted Global Positioning System (A-GPS) server. See also {{bibref|3GPP-TS.25.171|Section 3.2}}",
+    "children": []
+  }
+}

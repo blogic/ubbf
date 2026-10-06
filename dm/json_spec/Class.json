@@ -1,0 +1,24 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Class.{i}.",
+  "object": {
+    "path": "Class.{i}.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.19",
+    "parameters": [
+      {
+        "name": "OpClass",
+        "access": "readOnly",
+        "description": "The Operating Class per {{bibref|802.11ax|Table E-4}}.",
+        "type": "unsignedInt",
+        "maxInclusive": 255
+      }
+    ],
+    "description": "This object contains a table of requested operating classes {{bibref|EasyMesh|17.2.13}}.",
+    "children": []
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.DOCSIS.UpstreamChannel.{i}.",
+  "object": {
+    "path": "Device.DOCSIS.UpstreamChannel.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "UpstreamChannelNumberOfEntries",
+    "version": "2.15",
+    "parameters": [
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.15"
+      },
+      {
+        "name": "ID",
+        "access": "readOnly",
+        "description": "The CMTS identification of the upstream channel.",
+        "type": "int",
+        "minInclusive": 0,
+        "maxInclusive": 255
+      },
+      {
+        "name": "Frequency",
+        "access": "readOnly",
+        "description": "The center of the frequency band associated with this upstream interface. This object returns 0 if the frequency is undefined or unknown. Minimum permitted upstream frequency is 5,000,000 {{units}} for current technology. See {{bibref|CM-SP-RFIv2.0|Table 4-2}}.",
+        "type": "int",
+        "minInclusive": 0,
+        "maxInclusive": 1000000000
+      },
+      {
+        "name": "Width",
+        "access": "readOnly",
+        "description": "The bandwidth in {{units}} of this upstream interface. This object returns 0 if the interface width is undefined or unknown. Minimum permitted interface width is currently 200,000 {{units}}. See {{bibref|CM-SP-RFIv2.0|Table 6-5}}.",
+        "type": "int",
+        "minInclusive": 0,
+        "maxInclusive": 64000000
+      },
+      {
+        "name": "SlotSize",
+        "access": "readOnly",
+        "description": "Applicable to TDMA and ATDMA channel types only. The number of {{units}} ticks in each upstream mini-slot. Returns zero if the value is undefined or unknown or in case of an SCDMA channel. See {{bibref|CM-SP-RFIv2.0|Section 8.1.2.4}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "TxTimingOffset",
+        "access": "readOnly",
+        "description": "A measure of the current round trip time obtained from the ranging offset (initial ranging offset + ranging offset adjustments). Used for timing of CM upstream transmissions to ensure synchronized arrivals at the CMTS. Units are one 64th fraction of 6.25 microseconds. See {{bibref|CM-SP-RFIv2.0|Section 6.2.19}}.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "RangingBackoffStart",
+        "access": "readOnly",
+        "description": "The initial random backoff window to use when retrying Ranging Requests. Expressed as a power of 2. A value of 16 at the CMTS indicates that a proprietary adaptive retry mechanism is to be used. See {{bibref|CM-SP-RFIv2.0|Sections 8.3.4, and 9.4}}.",
+        "type": "int",
+        "minInclusive": 0,
+        "maxInclusive": 16
+      },
+      {
+        "name": "RangingBackoffEnd",
+        "access": "readOnly",
+        "description": "The final random backoff window to use when retrying Ranging Requests. Expressed as a power of 2. A value of 16 at the CMTS indicates that a proprietary adaptive retry mechanism is to be used. See {{bibref|CM-SP-RFIv2.0|Section 8.3.4, and 9.4}}.",
+        "type": "int",
+        "minInclusive": 0,
+        "maxInclusive": 16
+      },
+      {
+        "name": "TxBackoffStart",
+        "access": "readOnly",
+        "description": "The initial random backoff window to use when retrying transmissions. Expressed as a power of 2. A value of 16 at the CMTS indicates that a proprietary adaptive retry mechanism is to be used. See {{bibref|CM-SP-RFIv2.0|Section 8.3.4, and 9.4}}.",
+        "type": "int",
+        "minInclusive": 0,
+        "maxInclusive": 16
+      },
+      {
+        "name": "TxBackoffEnd",
+        "access": "readOnly",
+        "description": "The final random backoff window to use when retrying transmissions. Expressed as a power of 2. A value of 16 at the CMTS indicates that a proprietary adaptive retry mechanism is to be used. See {{bibref|CM-SP-RFIv2.0|Section 8.3.4, and 9.4}}.",
+        "type": "int",
+        "minInclusive": 0,
+        "maxInclusive": 16
+      }
+    ],
+    "description": "This table describes the attributes of attached upstream channels.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

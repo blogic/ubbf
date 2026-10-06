@@ -1,0 +1,87 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.UPnP.Discovery.RootDevice.{i}.",
+  "object": {
+    "path": "Device.UPnP.Discovery.RootDevice.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "RootDeviceNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of the UPnP root device. {{enum}} The ability to list inactive UPnP root devices is OPTIONAL. The length of time an inactive device remains listed in this table is a local matter to the CPE.",
+        "type": "string",
+        "enumerations": [
+          "LeaseActive",
+          "LeaseExpired",
+          "ByebyeReceived"
+        ]
+      },
+      {
+        "name": "UUID",
+        "access": "readOnly",
+        "description": "This UPnP root device's UUID (Universally Unique IDentifier) {{bibref|RFC4122}}, extracted from any of its USN (Unique Service Name) headers. This is a 36-byte string that uniquely identifies the device, the following is an example: : ''02c29d2a-dbfd-2d91-99c9-306d537e9856'' {{pattern}}",
+        "type": "string",
+        "maxLength": 36,
+        "pattern": "[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}"
+      },
+      {
+        "name": "USN",
+        "access": "readOnly",
+        "description": "The value of the USN (Unique Service Name) header for this UPnP root device. Three discovery messages are sent for root devices, and this SHOULD be the value of the USN header of the following form: : ''uuid:device-UUID::urn:domain-name:device:deviceType:v'' SSDP is an unreliable protocol and it is possible that no discovery message containing the USN header of the above form was ever received. If so, one of the other two forms MAY be used: : ''uuid:device-UUID::upnp:rootdevice'' : ''uuid:device-UUID'' (for root device UUID)",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "LeaseTime",
+        "access": "readOnly",
+        "description": "The UPnP root device lease time in {{units}}, extracted from the CACHE-CONTROL header.",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "Location",
+        "access": "readOnly",
+        "description": "The value of the LOCATION header for this UPnP root device, which is the {{datatype}} of the root device's DDD (Device Description Document).",
+        "type": "dataType:URL"
+      },
+      {
+        "name": "Server",
+        "access": "readOnly",
+        "description": "The value of the SERVER header for this UPnP root device, which is a string of the following form: : ''OS/version UPnP/udaversion product/version'' where '''UPnP''' is a literal string, '''udaversion''' is the version of the UPnP Device Architecture.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "Host",
+        "access": "readOnly",
+        "description": "Indicates the full path names of all Host table entries, whether active or inactive, that correspond to this UPnP root device.",
+        "list": true,
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "###.Hosts.Host.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "LastUpdate",
+        "access": "readOnly",
+        "description": "The date and time at which the last advertisement from this {{object}} was received.",
+        "type": "dateTime",
+        "version": "2.12"
+      }
+    ],
+    "description": "UPnP root device table. This table contains an entry for each UPnP root device that has been discovered via SSDP.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "UUID"
+      ]
+    }
+  }
+}

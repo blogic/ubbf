@@ -1,0 +1,41 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.GEM.",
+  "object": {
+    "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.GEM.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "FramesSent",
+        "access": "readOnly",
+        "description": "Total number of (X)GEM frames transmitted. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "FramesReceived",
+        "access": "readOnly",
+        "description": "Total number of (X)GEM frames received. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "FrameHeaderHECErrors",
+        "access": "readOnly",
+        "description": "XGEM frame header HEC errors. Number of events involving loss of XGEM channel delineation. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "KeyErrors",
+        "access": "readOnly",
+        "description": "XGEM key errors. XGEM frames discarded because of unknown or invalid encryption key. Examples include: no unicast or broadcast key established for specified key index, key index indicating encrypted XGEM frame on a XGEM port that is not provisioned for encryption, key index indicating upstream encryption on a XGEM port that is provisioned for downstream encryption only, or invalid key index (11). This count is included in {{param|FramesReceived}}. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter32"
+      }
+    ],
+    "description": "(X)GEM PM.",
+    "children": []
+  }
+}

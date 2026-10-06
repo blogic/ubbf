@@ -1,0 +1,99 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Time.",
+  "object": {
+    "path": "Device.Time.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables all the time clients and servers.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Reflects the global time synchronisation status of the CPE. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Unsynchronized",
+          "Synchronized",
+          "Error_FailedToSynchronize",
+          "Error"
+        ]
+      },
+      {
+        "name": "NTPServer1",
+        "access": "readWrite",
+        "description": "First NTP timeserver. Either a host name or IP address. {{deprecated|2.16|due to the introduction of {{object|Client}}}} {{obsoleted|2.18}} {{deleted|2.19}}",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "NTPServer2",
+        "access": "readWrite",
+        "description": "Second NTP timeserver. Either a host name or IP address. {{deprecated|2.16|due to the introduction of {{object|Client}}}} {{obsoleted|2.18}} {{deleted|2.19}}",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "NTPServer3",
+        "access": "readWrite",
+        "description": "Third NTP timeserver. Either a host name or IP address. {{deprecated|2.16|due to the introduction of {{object|Client}}}} {{obsoleted|2.18}} {{deleted|2.19}}",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "NTPServer4",
+        "access": "readWrite",
+        "description": "Fourth NTP timeserver. Either a host name or IP address. {{deprecated|2.16|due to the introduction of {{object|Client}}}} {{obsoleted|2.18}} {{deleted|2.19}}",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "NTPServer5",
+        "access": "readWrite",
+        "description": "Fifth NTP timeserver. Either a host name or IP address. {{deprecated|2.16|due to the introduction of {{object|Client}}}} {{obsoleted|2.18}} {{deleted|2.19}}",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "CurrentLocalTime",
+        "access": "readOnly",
+        "description": "The current date and time in the CPE's local time zone.",
+        "type": "dateTime",
+        "activeNotify": "canDeny"
+      },
+      {
+        "name": "LocalTimeZone",
+        "access": "readWrite",
+        "description": "The local time zone definition, encoded according to IEEE 1003.1 (POSIX). The following is an example value: : EST+5 EDT,M4.1.0/2,M10.5.0/2",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ClientNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.16"
+      },
+      {
+        "name": "ServerNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.16"
+      }
+    ],
+    "description": "This object contains global parameters relating to the NTP time clients and or servers that are active in the device. This object can be used to model SNTP and NTP clients and servers. Both NTP and SNTP have identical packet formats and use the same mathematical operations to calculate client time, clock offset, and roundtrip delay. From the perspective of an NTP or SNTP server, there is no difference between NTP and SNTP clients, and from the perspective of an NTP or SNTP client, there is no difference between NTP and SNTP servers. SNTP servers are stateless like NTP servers in non-symmetric modes and can handle numerous clients, but SNTP clients usually operate with only one server at a time, unlike most NTP clients.",
+    "children": []
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.BulkData.Profile.{i}.",
+  "object": {
+    "path": "Device.BulkData.Profile.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "Enable",
+    "numEntriesParameter": "ProfileNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables this specific bulk data profile. If {{false}}, this profile will not be collected or reported.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.12"
+      },
+      {
+        "name": "Name",
+        "access": "readWrite",
+        "description": "The name of the profile.",
+        "type": "string",
+        "maxLength": 255,
+        "version": "2.12"
+      },
+      {
+        "name": "Controller",
+        "access": "readOnly",
+        "description": "{{reference|the {{object|##.LocalAgent.Controller}} instance that created {{object}}|delete}} The value of this parameter is automatically populated by the USP Agent upon {{object}} creation using the reference to the USP Controller that created the instance. The USP Controller referenced by this parameter also defines the set of permissions to use when generating the Bulk Data report. Furthermore, only the USP Controller referenced by this parameter will receive a {{event|Push!}} Event (assuming it has an associated Subscription) when the Profile has {{param|Protocol}} configured to {{enum|USPEventNotif|Protocol}}, even if another USP Controller has an associated Subscription.",
+        "type": "string",
+        "pathRef": {
+          "targetParent": "##.LocalAgent.Controller.",
+          "targetType": "row"
+        },
+        "version": "2.12"
+      },
+      {
+        "name": "NumberOfRetainedFailedReports",
+        "access": "readWrite",
+        "description": "The number of failed reports to be retained and transmitted (in addition to the current report) at the end of the current reporting interval. If the value of the {{param|EncodingType}} parameter is modified any outstanding failed reports are deleted. If the CPE cannot retain the number of failed reports from previous reporting intervals while transmitting the report of the current reporting interval, then the oldest failed reports are deleted until the CPE is able to transmit the report from the current reporting interval. A value of 0 indicates that failed reports are not to be retained for transmission in the next reporting interval. A value of -1 indicates that the CPE will retain as many failed reports as possible.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "int",
+        "minInclusive": -1,
+        "version": "2.12"
+      },
+      {
+        "name": "Protocol",
+        "access": "readWrite",
+        "description": "The Bulk Data Protocol being used for this collection profile.",
+        "type": "string"
+      },
+      {
+        "name": "EncodingType",
+        "access": "readWrite",
+        "description": "The Bulk Data encoding type being used for this collection profile.",
+        "type": "string"
+      },
+      {
+        "name": "ReportingInterval",
+        "access": "readWrite",
+        "description": "The reporting interval in {{units}}. Each report is generated based on this interval and {{param|TimeReference}}. The CPE MAY reject a request to set {{param}} to less than {{param|#.MinReportingInterval}}. Reporting intervals MUST begin every {{param}} {{units}}. If {{param}} is changed while collection is enabled, the first reporting interval begins immediately. For example, if {{param}} is 86400 (a day) and if {{param|TimeReference}} is set to UTC midnight on some day (in the past, present, or future) then the CPE will generate (and transmit) its report at midnight every 24 hours.",
+        "default": "86400",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1
+      },
+      {
+        "name": "TimeReference",
+        "access": "readWrite",
+        "description": "An absolute time reference in UTC to determine when will be transmitted. Each reporting interval MUST complete at this reference time plus or minus an integer multiple of {{param|ReportingInterval}}, unless unable to due to higher prioritized operations. {{param}} is used only to set the \"phase\" of the reporting intervals. The actual value of {{param}} can be arbitrarily far into the past or future. If {{param}} is changed while collection of bulk data is enabled, the first reporting interval begins immediately. The Unknown Time value as defined in {{bibref|TR-106}} indicates that no particular time reference is specified. That is, the CPE MAY locally choose the time reference, and is required only to adhere to the specified reporting intervals. If absolute time is not available to the CPE, its reporting interval behavior MUST be the same as if the {{param}} parameter was set to the Unknown Time value. For example, if {{param|ReportingInterval}} is 86400 (a day) and if {{param}} is set to UTC midnight on some day (in the past, present, or future) then the CPE will generate (and transmit, if in a \"ITPush\" mode) its report at midnight every 24 hours. Note that, if {{param}} is set to a time other than the Unknown Time, the first reporting interval (which has to begin immediately) will almost certainly be shorter than {{param|ReportingInterval}}). This is why {{param}} is defined in terms of when reporting intervals complete rather than start.",
+        "default": "0001-01-01T00:00:00Z",
+        "defaultType": "object",
+        "type": "dateTime"
+      },
+      {
+        "name": "ParameterNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "StreamingHost",
+        "access": "readWrite",
+        "description": "This is the host name or IP Address of the IPDR Collector to be used by the CPE to stream bulk data records if this collection profile is configured for the IPDR Streaming Protocol {{bibref|IPDR-SP}} (the {{param|Protocol}} parameter has a value of {{enum|Streaming|#.Protocols}}). {{deprecated|2.15|because IPDR Bulk Data Collection is not supported in USP}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "StreamingPort",
+        "access": "readWrite",
+        "description": "This is the port number of the IPDR Collector to be used by the CPE to stream bulk data records if this collection profile is configured for the IPDR Streaming Protocol {{bibref|IPDR-SP}} (the {{param|Protocol}} parameter has a value of {{enum|Streaming|#.Protocols}}). {{deprecated|2.15|because IPDR Bulk Data Collection is not supported in USP}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "default": "4737",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 0,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "StreamingSessionID",
+        "access": "readWrite",
+        "description": "This is the unique identification of an IPDR Session to be used when this collection profile is configured for the IPDR Streaming Protocol {{bibref|IPDR-SP}} (the {{param|Protocol}} parameter has a value of {{enum|Streaming|#.Protocols}}). A Controller MUST NOT configure multiple IPDR Streaming Protocol collection profiles with the same {{param}}. Doing so MUST cause the CPE to fail the SetParameterValues. Within the IPDR Streaming Protocol specification the Session ID has a type of a single 'char', but we are restricting the range even further (ASCII values of '0' - '9' and 'A' - 'Z'). {{deprecated|2.15|because IPDR Bulk Data Collection is not supported in USP}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "unsignedInt",
+        "ranges": [
+          [
+            48,
+            57
+          ],
+          [
+            65,
+            90
+          ]
+        ]
+      },
+      {
+        "name": "FileTransferURL",
+        "access": "readWrite",
+        "description": "This is the {{datatype}} within the CPE that is used by an IPDR Collector to retrieve the IPDRDocs when this collection profile is configured for the IPDR File Transfer Protocol {{bibref|IPDR-FTP}} (the {{param|Protocol}} parameter has a value of {{enum|File|#.Protocols}}). {{deprecated|2.15|because IPDR Bulk Data Collection is not supported in USP}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "dataType:URL"
+      },
+      {
+        "name": "FileTransferUsername",
+        "access": "readWrite",
+        "description": "Username used for authentication of the {{param|FileTransferURL}}. This is the {{param}} that the IPDR Collector uses to access the CPE when this collection profile is configured for the IPDR File Transfer Protocol {{bibref|IPDR-FTP}} (the {{param|Protocol}} parameter has a value of {{enum|File|#.Protocols}}). {{deprecated|2.15|because IPDR Bulk Data Collection is not supported in USP}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "FileTransferPassword",
+        "access": "readWrite",
+        "description": "Password used for authentication of the {{param|FileTransferURL}}. This is the {{param}} that the IPDR Collector uses to access the CPE when this collection profile is configured for the IPDR File Transfer Protocol {{bibref|IPDR-FTP}} (the {{param|Protocol}} parameter has a value of {{enum|File|#.Protocols}}). {{deprecated|2.15|because IPDR Bulk Data Collection is not supported in USP}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "secured": true,
+        "type": "string",
+        "maxLength": 64
+      },
+      {
+        "name": "ControlFileFormat",
+        "access": "readWrite",
+        "description": "If this collection profile is configured for the IPDR File Transfer Protocol {{bibref|IPDR-FTP}} (the {{param|Protocol}} parameter has a value of {{enum|File|#.Protocols}}) then the control file names will be of the following format: : <ControlFilePrefix>_<ControlFilePolicy>.<ControlFileSuffix> Where the following rules apply: * ControlFilePrefix MUST NOT contain an underscore '_' or any other character not suitable for a file name. * ControlFilePolicy MUST contain one or more 'N' characters, where the number of 'N' characters denotes the number of digits in the sequence number, including leading zeros as necessary to match the number of 'N' characters. * ControlFileSuffix is a file extension. For example, BulkData_NNNN.log where \"BulkData\" would be the prefix, \"NNNN\" would be the policy, and \"log\" would be the suffix. Files adhering to this file format would look like: BulkData_0000.log, BulkData_0001.log, etc. {{deprecated|2.15|because IPDR Bulk Data Collection is not supported in USP}} {{obsoleted|2.17}} {{deleted|2.18}}",
+        "type": "string",
+        "maxLength": 128
+      }
+    ],
+    "description": "A set of Bulk Data Collection profiles. Each profile represents a bulk data report, including its own timing configuration, communications configuration, and set of parameters. This allows the Controller to configure multiple reports to be generated at different times for different sets of data.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

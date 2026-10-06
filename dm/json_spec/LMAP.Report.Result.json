@@ -1,0 +1,102 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.LMAP.Report.{i}.Result.{i}.",
+  "object": {
+    "path": "Device.LMAP.Report.{i}.Result.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ResultNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "TaskName",
+        "access": "readOnly",
+        "description": "Name of the task that produced the result.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ScheduleName",
+        "access": "readOnly",
+        "description": "Name of the schedule that produced the result.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "ActionName",
+        "access": "readOnly",
+        "description": "Name of the action that produced the result.",
+        "type": "string",
+        "maxLength": 256
+      },
+      {
+        "name": "EventTime",
+        "access": "readOnly",
+        "description": "The date and time, based on {{bibref|RFC3339}}, that the event that triggered the schedule of the action that produced the reported result values in UTC.",
+        "type": "dateTime"
+      },
+      {
+        "name": "StartTime",
+        "access": "readOnly",
+        "description": "The date and time, based on {{bibref|RFC3339}}, that the action started in UTC.",
+        "type": "dateTime"
+      },
+      {
+        "name": "EndTime",
+        "access": "readOnly",
+        "description": "The date and time, based on {{bibref|RFC3339}}, that the action was completed in UTC.",
+        "type": "dateTime"
+      },
+      {
+        "name": "CycleNumber",
+        "access": "readOnly",
+        "description": "The cycle number derived from the {{param|EventTime}}. The cycle number is the time, in UTC, closest to the {{param|EventTime}} that is a multiple of the cycle interval of the event that triggered the execution of the schedule. The value is valid if the event that triggered the execution of the schedule has a defined cycle interval. {{empty}} represents an invalid CycleNumber. {{pattern}}",
+        "type": "string",
+        "pattern": "YYYYMMDD.HHMMSS"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status code returned by the execution of the action.",
+        "type": "int"
+      },
+      {
+        "name": "Tags",
+        "access": "readOnly",
+        "description": "{{list|each entry represents tags defined for the schedule, task and action objects that produced this result}}",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "OptionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ResultConflictNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "ResultReportTableNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      }
+    ],
+    "description": "The {{object}} object provides the meta-data of the result report of a single executed action that produced the result.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "ScheduleName",
+        "ActionName",
+        "StartTime"
+      ]
+    }
+  }
+}

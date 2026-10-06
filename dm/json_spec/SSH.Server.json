@@ -1,0 +1,211 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.SSH.Server.{i}.",
+  "object": {
+    "path": "Device.SSH.Server.{i}.",
+    "access": "readWrite",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "ServerNumberOfEntries",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables the SSH server instance. When {{param}} is set to {{false}}, any active sessions must be forcibly terminated and the {{param|ActivationDate}} is reset.",
+        "type": "boolean"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of the SSH server instance. {{enum}}",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Enabled",
+          "Error",
+          "Error_Misconfigured"
+        ]
+      },
+      {
+        "name": "Alias",
+        "access": "writeOnceReadOnly",
+        "description": "{{datatype|expand}}",
+        "type": "dataType:_AliasUSP",
+        "version": "2.16"
+      },
+      {
+        "name": "Interface",
+        "access": "readWrite",
+        "description": "The IP Interface associated with the {{object}} entry. If {{empty}} is specified, the service should listen on all interfaces.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": ".IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "Port",
+        "access": "readWrite",
+        "description": "Specify the port used by the SSH server.",
+        "default": "22",
+        "defaultType": "object",
+        "type": "unsignedInt",
+        "minInclusive": 1,
+        "maxInclusive": 65535
+      },
+      {
+        "name": "IdleTimeout",
+        "access": "readWrite",
+        "description": "When the session is inactive, it is automatically terminated after {{param}} amount of {{units}}. A value of ''0'' disables this feature.",
+        "default": "180",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "KeepAlive",
+        "access": "readWrite",
+        "description": "Every amount of {{param}} {{units}} a keep alive message is sent. A value of ''0'' disables this feature.",
+        "default": "300",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AllowRootLogin",
+        "access": "readWrite",
+        "description": "Permit SSH users to login as root.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "AllowPasswordLogin",
+        "access": "readWrite",
+        "description": "Permit SSH users to login using a password.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "AllowRootPasswordLogin",
+        "access": "readWrite",
+        "description": "Permit the root SSH user to login using a password.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "MaxAuthTries",
+        "access": "readWrite",
+        "description": "Maximum authentication tries allowed before disconnect",
+        "default": "3",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "AllowAllIPv4",
+        "access": "readWrite",
+        "description": "Allow access from any IPv4 address. The source prefixes defined in {{param|IPv4AllowedSourcePrefix}} will be ignored.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.16"
+      },
+      {
+        "name": "IPv4AllowedSourcePrefix",
+        "access": "readWrite",
+        "description": "Allow only access from the provided list of IPv4 prefixes. When {{param}} is set to {{empty}} and {{param|AllowAllIPv4}} is set to ''false'', no incoming connections are allowed. When {{param|AllowAllIPv4}} is set ''true'', {{param}} is ignored.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "version": "2.16"
+      },
+      {
+        "name": "AllowAllIPv6",
+        "access": "readWrite",
+        "description": "Allow access from any IPv6 address. The source prefixes defined in {{param|IPv6AllowedSourcePrefix}} will be ignored.",
+        "default": "false",
+        "defaultType": "object",
+        "type": "boolean",
+        "version": "2.16"
+      },
+      {
+        "name": "IPv6AllowedSourcePrefix",
+        "access": "readWrite",
+        "description": "Allow only access from the provided list of IPv6 prefixes. When {{param}} is set to {{empty}} and {{param|AllowAllIPv6}} is set to ''false'', no incoming connections are allowed. When {{param|AllowAllIPv6}} is set ''true'', {{param}} is ignored.",
+        "list": true,
+        "listMaxLength": 1024,
+        "type": "string",
+        "version": "2.16"
+      },
+      {
+        "name": "ActivationDate",
+        "access": "readOnly",
+        "description": "Activation date indicates when the server instance has been activated and the {{param|Enable}} is set to {{true}}.",
+        "type": "dateTime"
+      },
+      {
+        "name": "AutoDisableDuration",
+        "access": "readWrite",
+        "description": "The SSH server instance will be disabled when the the {{param}} elapses, and configuration must be done in {{units}}. At the end, the coressponding {{param|Enable}} parameter of the SSH server instance is automatically changed to false {{false}}. Any active sessions must be forcibly terminated. 0 means the the SSH server instance is always active.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "PID",
+        "access": "readOnly",
+        "description": "Current Process Identifier of the SSH server instance. Note: This parameter was demoted to readOnly in the Device:2.18 version.",
+        "default": "0",
+        "defaultType": "object",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "UserGroupAccess",
+        "access": "readWrite",
+        "description": "Restricts access to the SSH server instance to the given user group. When {{empty}}, everyone has access.",
+        "default": "",
+        "defaultType": "object",
+        "type": "string",
+        "pathRef": {
+          "targetParent": ".Users.Group.",
+          "targetType": "row"
+        },
+        "version": "2.19"
+      },
+      {
+        "name": "SessionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt"
+      },
+      {
+        "name": "MaxAccessLogEntries",
+        "access": "readWrite",
+        "description": "The maximum number of entries available in the {{object|AccessLog}} table. Defines the maximum number of {{object|AccessLog}} instances that can be stored on the device. When the maximum {{object|AccessLog}} entries as indicated by {{param}} are reached, the next boot entry overrides the object with the oldest {{param|AccessLog.{i}.TimeStamp}}. Set this parameter to 0 to completely disable the creation of {{object|AccessLog}} instances. Set this parameter to -1 to leave it open to the implementation to decide the maximum number of {{object|AccessLog}} instances that may be stored on the device. Reducing the {{param}} will cause for the implementation to delete the oldest {{object|AccessLog}} instances. This setting does not affect the counting of access logs.",
+        "type": "int",
+        "minInclusive": -1,
+        "version": "2.19"
+      },
+      {
+        "name": "AccessLogNumberOfEntries",
+        "access": "readOnly",
+        "description": "",
+        "type": "unsignedInt",
+        "version": "2.19"
+      }
+    ],
+    "description": "This object contains parameters relating to a SSH server instance.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "false",
+      "parameters": [
+        "Alias"
+      ]
+    }
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.WiFi.EndPoint.{i}.WPS.",
+  "object": {
+    "path": "Device.WiFi.EndPoint.{i}.WPS.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Enable",
+        "access": "readWrite",
+        "description": "Enables or disables WPS functionality for this end point.",
+        "default": "true",
+        "defaultType": "object",
+        "type": "boolean"
+      },
+      {
+        "name": "ConfigMethodsSupported",
+        "access": "readOnly",
+        "description": "WPS configuration methods supported by the device. {{enum}} This parameter corresponds directly to the \"Config Methods\" attribute of {{bibref|WPS 2.0}}. The {{enum|USBFlashDrive}} and {{enum|Ethernet}} are only applicable in WPS 1.0 and are deprecated in WPS 2.x. The {{enum|PhysicalPushButton}}, {{enum|VirtualPushButton}}, {{enum|PhysicalDisplay}} and {{enum|VirtualDisplay}} are applicable to WPS 2.x only.",
+        "list": true,
+        "type": "string",
+        "enumerations": [
+          "USBFlashDrive",
+          "Ethernet",
+          "Label",
+          "Display",
+          "ExternalNFCToken",
+          "IntegratedNFCToken",
+          "NFCInterface",
+          "PushButton",
+          "PIN",
+          "PhysicalPushButton",
+          "PhysicalDisplay",
+          "VirtualPushButton",
+          "VirtualDisplay"
+        ]
+      },
+      {
+        "name": "ConfigMethodsEnabled",
+        "access": "readWrite",
+        "description": "{{list}} Indicates the WPS configuration methods enabled on the device.",
+        "list": true,
+        "type": "string"
+      },
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "Indicates the current status of WPS in EndPoint.",
+        "type": "string",
+        "enumerations": [
+          "Disabled",
+          "Error",
+          "Unconfigured",
+          "Configured"
+        ],
+        "version": "2.12"
+      },
+      {
+        "name": "Version",
+        "access": "readOnly",
+        "description": "The Wi-Fi Simple Configuration version supported by the device, a string of the form ''m.n'' where ''m'' is the major version and ''n'' is the minor version. For example, a value of ''1.0'' denotes WSC 1.0 and a value of ''2.0'' denotes WSC 2.0.",
+        "type": "string",
+        "version": "2.12"
+      },
+      {
+        "name": "PIN",
+        "access": "readWrite",
+        "description": "Represents the Device PIN used for PIN based pairing between WPS peers. This PIN is either a four digit number or an eight digit number. Changed in 2.16: The data type was fixed (it was previously defined as an integer that had to have the value 4 or 8).",
+        "secured": true,
+        "type": "string",
+        "maxLength": 8,
+        "pattern": "\\d{4}|\\d{8}",
+        "version": "2.12"
+      }
+    ],
+    "description": "This object contains parameters related to Wi-Fi Protected Setup {{bibref|WPSv1.0}} for this end point.",
+    "children": []
+  }
+}

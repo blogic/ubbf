@@ -1,0 +1,59 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.PHY.",
+  "object": {
+    "path": "Device.XPON.ONU.{i}.ANI.{i}.TC.PM.PHY.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.16",
+    "parameters": [
+      {
+        "name": "CorrectedFECBytes",
+        "access": "readOnly",
+        "description": "The number of bytes that were corrected by the FEC function. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "CorrectedFECCodewords",
+        "access": "readOnly",
+        "description": "Count of FEC codewords that contained errors but were corrected by the FEC function. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "UncorrectableFECCodewords",
+        "access": "readOnly",
+        "description": "Count of FEC codewords that contained errors and could not be corrected by the FEC function. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "TotalFECCodewords",
+        "access": "readOnly",
+        "description": "Count of total received FEC codewords. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "PSBdHECErrorCount",
+        "access": "readOnly",
+        "description": "HEC error in any of the fields of PSBd. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "HeaderHECErrorCount",
+        "access": "readOnly",
+        "description": "HEC errors received in the DS XGTC or FS header. This counter is called: * \"FS HEC error count\" in {{bibref|G.9807.1|Table C.14.1}} and {{bibref|G.989.3|Table 14-1}}. * \"XGTC HEC error count\" in {{bibref|G.987.3|Table 14-1}}. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "UnknownProfile",
+        "access": "readOnly",
+        "description": "ONU could not transmit because the specified burst profile was not known. See: * {{bibref|G.9807.1|Table C.14.1}} * {{bibref|G.987.3|Table 14-1}} * {{bibref|G.989.3|Table 14-1}}",
+        "type": "dataType:StatsCounter32"
+      }
+    ],
+    "description": "PHY PM.",
+    "children": []
+  }
+}

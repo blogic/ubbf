@@ -1,0 +1,117 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Routing.RouteInformation.InterfaceSetting.{i}.",
+  "object": {
+    "path": "Device.Routing.RouteInformation.InterfaceSetting.{i}.",
+    "access": "readOnly",
+    "minEntries": "0",
+    "maxEntries": "unbounded",
+    "enableParameter": "",
+    "numEntriesParameter": "InterfaceSettingNumberOfEntries",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "Status",
+        "access": "readOnly",
+        "description": "The status of this entry. {{enum}} The {{enum|Error}} value MAY be used by the CPE to indicate a locally defined error condition.",
+        "type": "string",
+        "enumerations": [
+          "ForwardingEntryCreated",
+          "NoForwardingEntry",
+          "Error"
+        ]
+      },
+      {
+        "name": "Interface",
+        "access": "readOnly",
+        "description": "{{reference}} This is the IP interface associated with this {{object}} entry.",
+        "type": "string",
+        "maxLength": 256,
+        "pathRef": {
+          "targetParent": "###.IP.Interface.",
+          "targetType": "row"
+        }
+      },
+      {
+        "name": "SourceRouter",
+        "access": "readOnly",
+        "description": "IPv6 Address of the router that sent the RA that included this route info.",
+        "type": "dataType:IPv6Address"
+      },
+      {
+        "name": "PreferredRouteFlag",
+        "access": "readOnly",
+        "description": "Flag included in a specific Route Information Option within an RA message (Prf flag), as defined in {{bibref|RFC4191|Section 2.3}}. {{enum}} Note that this is not the Prf flag included in the base RA message. Also see {{bibref|RFC4191|Section 2.1}} which discusses how this flag is encoded on the wire.",
+        "type": "string",
+        "enumerations": [
+          "High",
+          "Medium",
+          "Low"
+        ]
+      },
+      {
+        "name": "Prefix",
+        "access": "readOnly",
+        "description": "IPv6 address prefix, as received in an instance of the Route Information Option of a RA message.",
+        "type": "dataType:IPv6Prefix"
+      },
+      {
+        "name": "ManagedAddressConfiguration",
+        "access": "readOnly",
+        "description": "When set, it indicates that addresses are available via Dynamic Host Configuration Protocol [DHCPv6]. If the {{param}} is set, the {{param|OtherConfiguration}} is redundant and can be ignored because DHCPv6 will return all available configuration information (see {{bibref|RFC4861|Section 4.2}}).",
+        "type": "boolean",
+        "version": "2.16"
+      },
+      {
+        "name": "OtherConfiguration",
+        "access": "readOnly",
+        "description": "When set, it indicates that other configuration information is available via DHCPv6. Examples of such information are DNS-related information or information on other servers within the network (see {{bibref|RFC4861|Section 4.2}}).",
+        "type": "boolean",
+        "version": "2.16"
+      },
+      {
+        "name": "RouteLifetime",
+        "access": "readOnly",
+        "description": "The time at which {{param|Prefix}} will cease to be usable for use as a forwarding entry, or {{null}} if not known. For an infinite lifetime, the parameter value MUST be 9999-12-31T23:59:59Z. {{param}} is received in an instance of the Route Information Option of a RA message.",
+        "type": "dateTime"
+      },
+      {
+        "name": "ReachableTime",
+        "access": "readOnly",
+        "description": "The time, in {{units}}, that a node assumes a neighbor is reachable after having received a reachability confirmation. Used by the Neighbor Unreachability Detection algorithm {{bibref|RFC4861|see Section 7.3}}. A value of zero means unspecified (by this router) (see {{bibref|RFC4861|Section 4.2}}).",
+        "type": "unsignedInt",
+        "maxInclusive": 3600000,
+        "version": "2.16"
+      },
+      {
+        "name": "RetransTimer",
+        "access": "readOnly",
+        "description": "The time, in {{units}}, between retransmitted Neighbor Solicitation messages. Used by address resolution and the Neighbor Unreachability Detection algorithm {{bibref|RFC4861|Sections 7.2 and 7.3}}. A value of zero means unspecified (by this router) (see {{bibref|RFC4861|Section 4.2}}).",
+        "type": "unsignedInt",
+        "version": "2.16"
+      },
+      {
+        "name": "HomeAgent",
+        "access": "readOnly",
+        "description": "The Home Agent (H) bit is set in a Router Advertisement to indicate that the router sending this Router Advertisement is also functioning as a Mobile IPv6 home agent on this link. (see {{bibref|RFC3775|Section 7.1}} and {{bibref|RFC4861|Section 4.2}})",
+        "type": "boolean",
+        "version": "2.16"
+      },
+      {
+        "name": "OptionNumberOfEntries",
+        "access": "readOnly",
+        "description": "{{numentries}}",
+        "type": "unsignedInt",
+        "version": "2.16"
+      }
+    ],
+    "description": "IP Interface RA route information table. Contains received RA route information {{bibref|RFC4191}}. As such, the data in this table cannot be modified.",
+    "children": [],
+    "uniqueKey": {
+      "functional": "true",
+      "parameters": [
+        "Interface"
+      ]
+    }
+  }
+}

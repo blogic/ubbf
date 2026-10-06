@@ -1,0 +1,60 @@
+{
+  "source_file": "tr-181-2-19-1-usp-full.xml",
+  "path": "Device.Hosts.Host.{i}.WANStats.",
+  "object": {
+    "path": "Device.Hosts.Host.{i}.WANStats.",
+    "access": "readOnly",
+    "minEntries": "1",
+    "maxEntries": "1",
+    "enableParameter": "",
+    "numEntriesParameter": "",
+    "version": "2.12",
+    "parameters": [
+      {
+        "name": "BytesSent",
+        "access": "readOnly",
+        "description": "The total number of bytes transmitted to the WAN from the Host device at the IP layer.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "BytesReceived",
+        "access": "readOnly",
+        "description": "The total number of bytes received from the WAN and sent to the Host device at the IP layer.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "PacketsSent",
+        "access": "readOnly",
+        "description": "The total number of IP packets transmitted to the WAN from the Host device.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "PacketsReceived",
+        "access": "readOnly",
+        "description": "The total number of IP packets received from the WAN and sent to the Host device.",
+        "type": "dataType:StatsCounter64"
+      },
+      {
+        "name": "ErrorsSent",
+        "access": "readOnly",
+        "description": "The total number of outbound IP packets to the WAN from the Host device that could not be transmitted because of errors. These may be due to the number of retransmissions exceeding the retry limit, or from other causes.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "RetransCount",
+        "access": "readOnly",
+        "description": "The total number of transmitted IP packets to the WAN from the Host device which were retransmissions. Two retransmissions of the same packet results in this counter incrementing by two.",
+        "type": "dataType:StatsCounter32"
+      },
+      {
+        "name": "DiscardPacketsSent",
+        "access": "readOnly",
+        "description": "The total number of outbound IP packets which were chosen to be discarded even though no errors had been detected to prevent their being transmitted. One possible reason for discarding such a packet could be to free up buffer space.",
+        "type": "dataType:StatsCounter32",
+        "activeNotify": "canDeny"
+      }
+    ],
+    "description": "These count bytes or packets at the IP layer sent to the WAN, or received from the WAN.",
+    "children": []
+  }
+}
