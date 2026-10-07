@@ -888,7 +888,7 @@ function bss_to_object_factory(api_data) {
 			QMDescriptor: ubbf.enumerate_instances(qm_descriptors, (qm) => ({
 				BSSID: qm.bssid ?? "",
 				ClientMAC: qm.client_mac ?? "",
-				DescriptorElement: qm.descriptor_element ? b64enc(qm.descriptor_element) : ""
+				DescriptorElement: qm.descriptor_element ?? ""
 			})),
 			MultiAPSteering: {
 				BlacklistAttempts: sprintf('%d', bss_steering.blacklist_attempts ?? 0),
