@@ -1402,6 +1402,23 @@ function client_steer_handler(input, instance, complete, instances, command_key,
 }
 
 /**
+ * Converts a SetSpatialReuse bitmap input, hexBinary of 8 octets in TR-181,
+ * to the integer that umapd's set_spatial_reuse takes. umapd declares the
+ * argument as a 32-bit ubus integer, so a larger value cannot reach it.
+ *
+ * @param {*} value - The input argument as received
+ * @returns {?number} The bitmap, or null for a value that is not 8 octets
+ *                    of hex or that lies above 2147483647
+ */
+function spatial_reuse_bitmap_parse(value) {
+	if (type(value) != 'string' || length(hexdec(value)) != 8)
+		return null;
+
+	let bitmap = hex(value);
+	return (bitmap >= 0 && bitmap <= 2147483647) ? bitmap : null;
+}
+
+/**
  * Async operation handler for SetSpatialReuse.
  * Configures spatial reuse parameters on a specific radio.
  *
@@ -1459,10 +1476,17 @@ function set_spatial_reuse_handler(input, instance, complete, instances, command
 		args.srg_obsspd_min_offset = int(input.SRGOBSSPDMinOffset);
 	if (input.SRGOBSSPDMaxOffset != null)
 		args.srg_obsspd_max_offset = int(input.SRGOBSSPDMaxOffset);
-	if (input.SRGBSSColorBitmap != null)
-		args.srg_bss_color_bitmap = input.SRGBSSColorBitmap;
-	if (input.SRGPartialBSSIDBitmap != null)
-		args.srg_partial_bssid_bitmap = input.SRGPartialBSSIDBitmap;
+	for (let name, arg in { SRGBSSColorBitmap: 'srg_bss_color_bitmap', SRGPartialBSSIDBitmap: 'srg_partial_bssid_bitmap' }) {
+		if (input[name] == null)
+			continue;
+
+		args[arg] = spatial_reuse_bitmap_parse(input[name]);
+		if (args[arg] == null) {
+			complete(instance, USP_ERR_INVALID_ARGUMENTS,
+				`${name} must be 8 octets of hexBinary, at most 000000007fffffff`, null);
+			return;
+		}
+	}
 
 	let umap_obj = controller_enabled ? 'umap' : 'umap-agent';
 	ubus.call(umap_obj, 'set_spatial_reuse', args);
