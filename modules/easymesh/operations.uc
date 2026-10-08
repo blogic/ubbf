@@ -1417,6 +1417,32 @@ function spatial_reuse_bitmap_parse(value) {
 }
 
 /**
+ * Parses an unsignedInt command input strictly: decimal digits only, at most
+ * `max`. int() would take '5abc' as 5 and give NaN for 'abc'. An integer from
+ * the bbf-dm ubus operate path is taken as it is, within the same range.
+ *
+ * @param {*} value - The input argument as received
+ * @param {number} max - The largest value the receiver can hold
+ * @returns {?number} The value, or null for anything else
+ */
+function input_uint_parse(value, max) {
+	if (type(value) == 'int')
+		return (value >= 0 && value <= max) ? value : null;
+
+	if (type(value) != 'string' || !length(value) || length(value) > 10)
+		return null;
+
+	for (let i = 0; i < length(value); i++) {
+		let c = ord(value, i);
+		if (c < 48 || c > 57)
+			return null;
+	}
+
+	let n = int(value);
+	return (n <= max) ? n : null;
+}
+
+/**
  * Async operation handler for SetSpatialReuse.
  * Configures spatial reuse parameters on a specific radio.
  *
@@ -1458,8 +1484,18 @@ function set_spatial_reuse_handler(input, instance, complete, instances, command
 
 	let args = { al_mac, ruid };
 
-	if (input.BSSColor != null)
-		args.bss_color = int(input.BSSColor);
+	for (let name, limit in { BSSColor: [ 'bss_color', 63 ], NonSRGOBSSPDMaxOffset: [ 'non_srg_obsspd_max_offset', 255 ],
+	                          SRGOBSSPDMinOffset: [ 'srg_obsspd_min_offset', 255 ], SRGOBSSPDMaxOffset: [ 'srg_obsspd_max_offset', 255 ] }) {
+		if (input[name] == null)
+			continue;
+
+		args[limit[0]] = input_uint_parse(input[name], limit[1]);
+		if (args[limit[0]] == null) {
+			complete(instance, USP_ERR_INVALID_ARGUMENTS,
+				`${name} must be a decimal number from 0 to ${limit[1]}`, null);
+			return;
+		}
+	}
 	if (input.HESIGASpatialReuseValue15Allowed != null)
 		args.hesiga_spatial_reuse_value15_allowed = ubbf.to_bool(input.HESIGASpatialReuseValue15Allowed);
 	if (input.SRGInformationValid != null)
@@ -1468,12 +1504,6 @@ function set_spatial_reuse_handler(input, instance, complete, instances, command
 		args.non_srg_offset_valid = ubbf.to_bool(input.NonSRGOffsetValid);
 	if (input.PSRDisallowed != null)
 		args.psr_disallowed = ubbf.to_bool(input.PSRDisallowed);
-	if (input.NonSRGOBSSPDMaxOffset != null)
-		args.non_srg_obsspd_max_offset = int(input.NonSRGOBSSPDMaxOffset);
-	if (input.SRGOBSSPDMinOffset != null)
-		args.srg_obsspd_min_offset = int(input.SRGOBSSPDMinOffset);
-	if (input.SRGOBSSPDMaxOffset != null)
-		args.srg_obsspd_max_offset = int(input.SRGOBSSPDMaxOffset);
 	for (let name, arg in { SRGBSSColorBitmap: 'srg_bss_color_bitmap', SRGPartialBSSIDBitmap: 'srg_partial_bssid_bitmap' }) {
 		if (input[name] == null)
 			continue;
