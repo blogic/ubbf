@@ -1792,7 +1792,7 @@ function device_to_object(device, api_data, is_controller, easymesh, device_cfg,
 			ReferenceBSSID: au.reference_bssid ?? "",
 			EntryNumberOfEntries: sprintf('%d', length(au.usage_entries ?? [])),
 			Entry: ubbf.enumerate_instances(au.usage_entries ?? [], (e) => ({
-				BurstStartTime: e.burst_start_time ?? "",
+				BurstStartTime: e.burst_start_time != null ? sprintf('%08x', e.burst_start_time) : "",
 				BurstLength: sprintf('%d', e.burst_length ?? 0),
 				Repetitions: sprintf('%d', e.repetitions_count ?? 0),
 				BurstInterval: sprintf('%d', e.burst_interval ?? 0),
