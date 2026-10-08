@@ -1689,9 +1689,8 @@ function device_to_object(device, api_data, is_controller, easymesh, device_cfg,
 	let has_cac_data = length(cac_available) > 0 || length(cac_non_occupancy) > 0 || length(cac_active) > 0;
 	let backhaul_radio = backhaul_operating_class_get(api_data, backhaul?.mac_address);
 
-	let acu_reports = api_data.anticipated_channel_usage?.reports ?? [];
-	let anticipated_channels = anticipated_channels_build(acu_reports);
-	let anticipated_usage = acu_reports;
+	let anticipated_usage = api_data.anticipated_channel_usage ?? [];
+	let anticipated_channels = anticipated_channels_build(anticipated_usage);
 	let ap_mld_list = values(api_data.ap_mld?.ap_mlds ?? {});
 
 	return {

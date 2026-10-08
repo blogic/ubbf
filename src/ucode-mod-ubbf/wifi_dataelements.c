@@ -985,7 +985,9 @@ uc_ubbf_device_api_data_build(uc_vm_t *vm, size_t nargs)
 
 	val = ucv_object_get(capability, "security_associations", NULL);
 	ucv_object_add(res, "security_1905", object_with(vm, "associations", val ? ucv_get(val) : ucv_array_new(vm)));
-	ucv_object_add(res, "anticipated_channel_usage", member_or_new(vm, capability, "anticipated_channel_usage"));
+
+	val = ucv_object_get(capability, "anticipated_channel_usage", NULL);
+	ucv_object_add(res, "anticipated_channel_usage", val ? ucv_get(val) : ucv_array_new(vm));
 	ucv_object_add(res, "ap_mld", member_or_new(vm, capability, "ap_mld"));
 
 	obj = object_with(vm, "bsta_mld", ucv_get(ucv_object_get(capability, "bsta_mld_configuration", NULL)));
