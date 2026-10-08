@@ -1798,7 +1798,9 @@ function device_to_object(device, api_data, is_controller, easymesh, device_cfg,
 				BurstInterval: sprintf('%d', e.burst_interval ?? 0),
 				RUBitmask: e.ru_bitmask ?? "",
 				TransmitterIdentifier: e.transmitter_identifier ?? "",
-				PowerLevel: sprintf('%d', e.power_level ?? 0),
+				// EasyMesh codes an unknown power as the octet 0xff, which the
+				// signed field reads as -1; TR-181 gives it as 255.
+				PowerLevel: sprintf('%d', (e.power_level == null || e.power_level == -1) ? 255 : e.power_level),
 				ChannelUsageReason: channel_usage_reason_name(e.channel_usage_reason)
 			}))
 		})),
