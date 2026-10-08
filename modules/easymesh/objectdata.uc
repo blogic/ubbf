@@ -1288,17 +1288,17 @@ function backhaul_operating_class_get(api_data, backhaul_mac) {
  * Maps an EasyMesh ChannelUsageReason numeric code to its TR-181 enum name.
  *
  * @param {number} code - Numeric reason code from anticipated_channel_usage
- * @returns {string} TR-181 enum string (Unknown for unrecognised codes)
+ * @returns {string} TR-181 enum string (empty for the reserved codes 5 to 254)
  */
 function channel_usage_reason_name(code) {
 	switch (code) {
-	case 0: return "TWTSchedule";
+	case 0: return "TWT_schedule";
 	case 1: return "TSPEC";
-	case 2: return "SchedulerPolicy";
-	case 3: return "External802.11";
-	case 4: return "Non802.11";
-	case 255: return "BSSNonUsage";
-	default: return "Unknown";
+	case 2: return "Scheduler_policy";
+	case 3: return "IEEE_802.11";
+	case 4: return "Non_IEEE_802.11";
+	case 255: return "BSS_non_usage";
+	default: return "";
 	}
 }
 
