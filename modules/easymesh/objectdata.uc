@@ -1302,28 +1302,6 @@ function channel_usage_reason_name(code) {
 	}
 }
 
-/**
- * Builds AnticipatedChannels list: groups reports by opclass, collects unique channels.
- *
- * @param {array} reports - Anticipated channel usage reports from umapd
- * @returns {array} Array of { opclass, channels } grouped by opclass
- */
-function anticipated_channels_build(reports) {
-	let by_opclass = {};
-	for (let r in reports) {
-		let oc = r.opclass ?? 0;
-		by_opclass[oc] ??= {};
-		let ch = r.channel ?? 0;
-		by_opclass[oc][ch] = true;
-	}
-
-	let result = [];
-	for (let oc, channels in by_opclass)
-		push(result, { opclass: int(oc), channels: sort(keys(channels), (a, b) => int(a) - int(b)) });
-
-	return sort(result, (a, b) => a.opclass - b.opclass);
-}
-
 const T2LM_DIRECTION = { [0]: "DL+UL", [1]: "DL", [2]: "UL" };
 
 /**
@@ -1690,7 +1668,7 @@ function device_to_object(device, api_data, is_controller, easymesh, device_cfg,
 	let backhaul_radio = backhaul_operating_class_get(api_data, backhaul?.mac_address);
 
 	let anticipated_usage = api_data.anticipated_channel_usage ?? [];
-	let anticipated_channels = anticipated_channels_build(anticipated_usage);
+	let anticipated_channels = capability.anticipated_channel_preference ?? [];
 	let ap_mld_list = values(api_data.ap_mld?.ap_mlds ?? {});
 
 	return {
@@ -1782,8 +1760,8 @@ function device_to_object(device, api_data, is_controller, easymesh, device_cfg,
 		})),
 		AnticipatedChannelsNumberOfEntries: sprintf('%d', length(anticipated_channels)),
 		AnticipatedChannels: ubbf.enumerate_instances(anticipated_channels, (ac) => ({
-			OpClass: sprintf('%d', ac.opclass),
-			ChannelList: join(',', ac.channels)
+			OpClass: sprintf('%d', ac.opclass ?? 0),
+			ChannelList: join(',', ac.channels ?? [])
 		})),
 		AnticipatedChannelUsageNumberOfEntries: sprintf('%d', length(anticipated_usage)),
 		AnticipatedChannelUsage: ubbf.enumerate_instances(anticipated_usage, (au) => ({
