@@ -1794,7 +1794,7 @@ function device_to_object(device, api_data, is_controller, easymesh, device_cfg,
 			Entry: ubbf.enumerate_instances(au.usage_entries ?? [], (e) => ({
 				BurstStartTime: e.burst_start_time ?? "",
 				BurstLength: sprintf('%d', e.burst_length ?? 0),
-				Repetitions: sprintf('%d', e.repetitions ?? 0),
+				Repetitions: sprintf('%d', e.repetitions_count ?? 0),
 				BurstInterval: sprintf('%d', e.burst_interval ?? 0),
 				RUBitmask: e.ru_bitmask ?? "",
 				TransmitterIdentifier: e.transmitter_identifier ?? "",
