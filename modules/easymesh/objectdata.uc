@@ -210,7 +210,7 @@ function spatial_reuse_to_object(sr) {
 		SRGOBSSPDMaxOffset: sprintf('%d', sr.srg_obsspd_max_offset ?? 0),
 		SRGBSSColorBitmap: sr.srg_bss_color_bitmap ?? "0000000000000000",
 		SRGPartialBSSIDBitmap: sr.srg_partial_bssid_bitmap ?? "0000000000000000",
-		NeighborBSSColorInUseBitmap: wde_lib.int_to_hexbin(sr.used_neighbor_bss_colors, 8)
+		NeighborBSSColorInUseBitmap: sr.used_neighbor_bss_colors ?? "0000000000000000"
 	};
 }
 
