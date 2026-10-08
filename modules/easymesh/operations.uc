@@ -1402,20 +1402,18 @@ function client_steer_handler(input, instance, complete, instances, command_key,
 }
 
 /**
- * Converts a SetSpatialReuse bitmap input, hexBinary of 8 octets in TR-181,
- * to the integer that umapd's set_spatial_reuse takes. umapd declares the
- * argument as a 32-bit ubus integer, so a larger value cannot reach it.
+ * Checks a SetSpatialReuse bitmap input, hexBinary of 8 octets in TR-181.
+ * umapd's set_spatial_reuse takes the same 16 hex digits.
  *
  * @param {*} value - The input argument as received
- * @returns {?number} The bitmap, or null for a value that is not 8 octets
- *                    of hex or that lies above 2147483647
+ * @returns {?string} The value unchanged, or null for a value that is not
+ *                    exactly 16 hex digits
  */
 function spatial_reuse_bitmap_parse(value) {
-	if (type(value) != 'string' || length(hexdec(value)) != 8)
+	if (type(value) != 'string' || length(value) != 16 || length(hexdec(value)) != 8)
 		return null;
 
-	let bitmap = hex(value);
-	return (bitmap >= 0 && bitmap <= 2147483647) ? bitmap : null;
+	return value;
 }
 
 /**
@@ -1483,7 +1481,7 @@ function set_spatial_reuse_handler(input, instance, complete, instances, command
 		args[arg] = spatial_reuse_bitmap_parse(input[name]);
 		if (args[arg] == null) {
 			complete(instance, USP_ERR_INVALID_ARGUMENTS,
-				`${name} must be 8 octets of hexBinary, at most 000000007fffffff`, null);
+				`${name} must be 8 octets of hexBinary (16 hex digits)`, null);
 			return;
 		}
 	}

@@ -208,8 +208,8 @@ function spatial_reuse_to_object(sr) {
 		NonSRGOBSSPDMaxOffset: sprintf('%d', sr.non_srg_obsspd_max_offset ?? 0),
 		SRGOBSSPDMinOffset: sprintf('%d', sr.srg_obsspd_min_offset ?? 0),
 		SRGOBSSPDMaxOffset: sprintf('%d', sr.srg_obsspd_max_offset ?? 0),
-		SRGBSSColorBitmap: wde_lib.int_to_hexbin(sr.srg_bss_color_bitmap, 8),
-		SRGPartialBSSIDBitmap: wde_lib.int_to_hexbin(sr.srg_partial_bssid_bitmap, 8),
+		SRGBSSColorBitmap: sr.srg_bss_color_bitmap ?? "0000000000000000",
+		SRGPartialBSSIDBitmap: sr.srg_partial_bssid_bitmap ?? "0000000000000000",
 		NeighborBSSColorInUseBitmap: wde_lib.int_to_hexbin(sr.used_neighbor_bss_colors, 8)
 	};
 }
