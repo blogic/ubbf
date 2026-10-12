@@ -13,7 +13,7 @@ const ubus_topology_get = wifi_dataelements.ubus_topology_get;
 const device_api_data_get = wifi_dataelements.device_api_data_get;
 const radios_bss_sort = wifi_dataelements.radios_bss_sort;
 const capability_radios_get = ubbf_module.utils.capabilities.capability_radios_get;
-const radio_instance_for_band = ubbf_module.utils.wifi_radio.radio_instance_for_band;
+const radio_instances_for_bands = ubbf_module.utils.wifi_radio.radio_instances_for_bands;
 const bss_by_instance = em.bss_by_instance;
 const sta_by_instance = em.sta_by_instance;
 
@@ -435,34 +435,55 @@ function akm_to_mode_enabled(tr181_akms) {
 }
 
 /**
- * Finds a radio path by frequency band or U-NII sub-band.
+ * Finds the radio paths a SetSSID() Band names, every radio of each band
+ * and sub-band it lists. An absent Band names all bands.
  *
  * @param {object} root - Root configuration object
- * @param {string} band - Band identifier (e.g., "2.4", "5", "5_UNII_3", "6")
- * @returns {string|null} TR-181 radio path or null if not found
+ * @param {string} band - Comma-separated Band values (e.g., "2.4,5_UNII_3")
+ * @returns {array} TR-181 radio paths in instance order
  */
-function radio_by_band_find(root, band) {
-	let inst = radio_instance_for_band(root.Device?.WiFi?.Radio, capability_radios_get(), band);
-	return inst ? `Device.WiFi.Radio.${inst}` : null;
+function radio_paths_for_bands(root, band) {
+	let insts = radio_instances_for_bands(root.Device?.WiFi?.Radio, capability_radios_get(),
+					      ubbf.csv_to_list(band));
+	return map(insts, (inst) => `Device.WiFi.Radio.${inst}`);
 }
 
 /**
- * Finds an SSID entry by name in Device.WiFi.SSID.
+ * Finds the Device.WiFi.SSID entries of a name, one per radio it runs on.
  *
  * @param {object} root - Root configuration object
  * @param {string} ssid_name - SSID name to search for
- * @returns {object|null} Object with inst and data, or null if not found
+ * @returns {array} Objects with inst and data, in instance order
  */
-function ssid_by_name_find(root, ssid_name) {
-	let ssids = root.Device?.WiFi?.SSID;
-	if (!ssids)
-		return null;
+function ssids_by_name_find(root, ssid_name) {
+	let ssids = root.Device?.WiFi?.SSID ?? {};
+	let insts = filter(sort(keys(ssids), (a, b) => +a - +b), (inst) => ssids[inst]?.SSID == ssid_name);
+	return map(insts, (inst) => ({ inst, data: ssids[inst] }));
+}
 
-	for (let inst, ssid in ssids) {
-		if (ssid.SSID == ssid_name)
-			return { inst, data: ssid };
+/**
+ * Gives an Alias no entry of a table holds: the name's own, else the name's
+ * with a count. TR-181 makes the Alias of each table a unique key.
+ *
+ * @param {object} table - Instances by instance number
+ * @param {string} name - Name the Alias derives from
+ * @returns {string} The Alias
+ */
+function alias_unique(table, name) {
+	let base = ubbf.alias_from_name(name);
+	let held = {};
+	for (let inst, entry in table ?? {})
+		held[entry?.Alias] = true;
+
+	if (!held[base])
+		return base;
+
+	for (let n = 2; ; n++) {
+		let suffix = `-${n}`;
+		let alias = substr(base, 0, 64 - length(suffix)) + suffix;
+		if (!held[alias])
+			return alias;
 	}
-	return null;
 }
 
 /**
@@ -490,13 +511,12 @@ function ap_by_ssid_ref_find(root, ssid_inst) {
  *
  * @param {object} input - SetSSID input parameters
  * @param {string} radio_path - TR-181 radio path for LowerLayers
- * @returns {object} Device.WiFi.SSID entry object
+ * @returns {object} Device.WiFi.SSID entry object, without Alias
  */
 function wifi_ssid_entry_create(input, radio_path) {
 	return {
 		...ubbf.schema_defaults('WiFi.SSID'),
 		Enable: input.Enable != null ? (ubbf.to_bool(input.Enable) ? 'true' : 'false') : 'true',
-		Alias: ubbf.alias_from_name(input.SSID),
 		LowerLayers: radio_path,
 		SSID: input.SSID
 	};
@@ -507,23 +527,14 @@ function wifi_ssid_entry_create(input, radio_path) {
  *
  * @param {object} existing - Existing SSID entry
  * @param {object} input - SetSSID input parameters with changes
- * @param {object} root - Root configuration object
  * @returns {object} Updated SSID entry object
  */
-function wifi_ssid_entry_update(existing, input, root) {
+function wifi_ssid_entry_update(existing, input) {
 	let updated = { ...ubbf.schema_defaults('WiFi.SSID'), ...existing };
 
 	if (input.Enable != null)
 		updated.Enable = ubbf.to_bool(input.Enable) ? 'true' : 'false';
 
-	if (input.Band != null) {
-		let bands = ubbf.csv_to_list(input.Band);
-		if (length(bands) > 0) {
-			let radio_path = radio_by_band_find(root, bands[0]);
-			if (radio_path)
-				updated.LowerLayers = radio_path;
-		}
-	}
 	return updated;
 }
 
@@ -531,10 +542,9 @@ function wifi_ssid_entry_update(existing, input, root) {
  * Creates a Device.WiFi.AccessPoint entry from SetSSID input.
  *
  * @param {object} input - SetSSID input parameters
- * @param {string} ssid_path - TR-181 SSID path for SSIDReference
- * @returns {object} Device.WiFi.AccessPoint entry object
+ * @returns {object} Device.WiFi.AccessPoint entry object, without Alias and SSIDReference
  */
-function wifi_ap_entry_create(input, ssid_path) {
+function wifi_ap_entry_create(input) {
 	let security = {
 		...ubbf.schema_defaults('WiFi.AccessPoint_Security'),
 		ModeEnabled: akm_to_mode_enabled(input.AKMsAllowed),
@@ -550,8 +560,6 @@ function wifi_ap_entry_create(input, ssid_path) {
 	return {
 		...ubbf.schema_defaults('WiFi.AccessPoint'),
 		Enable: input.Enable != null ? (ubbf.to_bool(input.Enable) ? 'true' : 'false') : 'true',
-		Alias: ubbf.alias_from_name(input.SSID),
-		SSIDReference: ssid_path,
 		SSIDAdvertisementEnabled: input.AdvertisementEnabled != null ?
 			(ubbf.to_bool(input.AdvertisementEnabled) ? 'true' : 'false') : 'true',
 		Security: security
@@ -595,7 +603,83 @@ function wifi_ap_entry_update(existing, input) {
 }
 
 /**
- * Handles SetSSID operation in non-EasyMesh mode.
+ * Adds a Device.WiFi.SSID entry and its AccessPoint, each with an Alias of
+ * its own.
+ *
+ * @param {object} root - Root configuration object
+ * @param {object} ssid - Device.WiFi.SSID entry
+ * @param {object} ap - Device.WiFi.AccessPoint entry
+ */
+function ssid_ap_add(root, ssid, ap) {
+	let wifi = root.Device.WiFi;
+	let ssid_inst = ubbf.find_next_instance(wifi.SSID);
+	wifi.SSID[ssid_inst] = { ...ssid, Alias: alias_unique(wifi.SSID, ssid.SSID) };
+
+	let ap_inst = ubbf.find_next_instance(wifi.AccessPoint);
+	wifi.AccessPoint[ap_inst] = { ...ap, Alias: alias_unique(wifi.AccessPoint, ssid.SSID),
+				      SSIDReference: `Device.WiFi.SSID.${ssid_inst}` };
+}
+
+/**
+ * Removes a Device.WiFi.SSID entry and its AccessPoint.
+ *
+ * @param {object} root - Root configuration object
+ * @param {object} entry - Object with inst of the SSID
+ */
+function ssid_ap_remove(root, entry) {
+	let ap = ap_by_ssid_ref_find(root, entry.inst);
+	if (ap)
+		delete root.Device.WiFi.AccessPoint[ap.inst];
+	delete root.Device.WiFi.SSID[entry.inst];
+}
+
+/**
+ * Changes every Device.WiFi.SSID entry of a name and its AccessPoint. A
+ * Band given moves the SSID to the radios it names: an entry on another
+ * radio goes, and a radio without one gets a copy of the first.
+ *
+ * @param {object} root - Root configuration object
+ * @param {array} existing - The SSID's entries, from ssids_by_name_find()
+ * @param {object} input - SetSSID input parameters with changes
+ * @returns {object} Result object with success flag and optional error
+ */
+function ssids_change(root, existing, input) {
+	let wanted = (input.Band != null) ? radio_paths_for_bands(root, input.Band) : null;
+	if (wanted && !length(wanted))
+		return { success: false, error: 'No matching radio found for band' };
+
+	let wifi = root.Device.WiFi;
+	for (let entry in existing) {
+		wifi.SSID[entry.inst] = wifi_ssid_entry_update(entry.data, input);
+		let ap = ap_by_ssid_ref_find(root, entry.inst);
+		if (ap)
+			wifi.AccessPoint[ap.inst] = wifi_ap_entry_update(ap.data, input);
+	}
+
+	if (!wanted)
+		return { success: true };
+
+	let template_ssid = wifi.SSID[existing[0].inst];
+	let template_ap = ap_by_ssid_ref_find(root, existing[0].inst)?.data ?? wifi_ap_entry_create(input);
+	let held = map(existing, (entry) => wifi.SSID[entry.inst].LowerLayers);
+
+	for (let entry in existing) {
+		if (index(wanted, wifi.SSID[entry.inst].LowerLayers) < 0)
+			ssid_ap_remove(root, entry);
+	}
+
+	for (let path in wanted) {
+		if (index(held, path) < 0)
+			ssid_ap_add(root, { ...template_ssid, LowerLayers: path }, template_ap);
+	}
+
+	return { success: true };
+}
+
+/**
+ * Handles SetSSID operation in non-EasyMesh mode. An SSID runs on every
+ * radio of the bands its Band names, as one Device.WiFi.SSID entry and one
+ * AccessPoint per radio.
  *
  * @param {object} input - SetSSID input parameters
  * @param {object} root - Root configuration object
@@ -607,49 +691,34 @@ function set_ssid_non_easymesh(input, root) {
 	root.Device.WiFi.SSID ??= {};
 	root.Device.WiFi.AccessPoint ??= {};
 
-	let existing_ssid = ssid_by_name_find(root, input.SSID);
+	let existing = ssids_by_name_find(root, input.SSID);
 
 	switch (input.AddRemoveChange) {
 	case 'Add':
-		if (existing_ssid)
+		if (length(existing))
 			return { success: false, error: 'SSID already exists' };
 
-		let bands = ubbf.csv_to_list(input.Band);
-		let radio_path = radio_by_band_find(root, length(bands) > 0 ? bands[0] : '2.4');
-		if (!radio_path)
+		let paths = radio_paths_for_bands(root, input.Band);
+		if (!length(paths))
 			return { success: false, error: 'No matching radio found for band' };
 
-		let ssid_inst = ubbf.find_next_instance(root.Device.WiFi.SSID);
-		let ssid_path = `Device.WiFi.SSID.${ssid_inst}`;
-		root.Device.WiFi.SSID[ssid_inst] = wifi_ssid_entry_create(input, radio_path);
-
-		let ap_inst = ubbf.find_next_instance(root.Device.WiFi.AccessPoint);
-		root.Device.WiFi.AccessPoint[ap_inst] = wifi_ap_entry_create(input, ssid_path);
+		for (let path in paths)
+			ssid_ap_add(root, wifi_ssid_entry_create(input, path), wifi_ap_entry_create(input));
 		break;
 
 	case 'Remove':
-		if (!existing_ssid)
+		if (!length(existing))
 			return { success: false, error: 'SSID not found' };
 
-		let ap_to_remove = ap_by_ssid_ref_find(root, existing_ssid.inst);
-		if (ap_to_remove)
-			delete root.Device.WiFi.AccessPoint[ap_to_remove.inst];
-		delete root.Device.WiFi.SSID[existing_ssid.inst];
+		for (let entry in existing)
+			ssid_ap_remove(root, entry);
 		break;
 
 	case 'Change':
-		if (!existing_ssid)
+		if (!length(existing))
 			return { success: false, error: 'SSID not found' };
 
-		root.Device.WiFi.SSID[existing_ssid.inst] =
-			wifi_ssid_entry_update(existing_ssid.data, input, root);
-
-		let ap_to_update = ap_by_ssid_ref_find(root, existing_ssid.inst);
-		if (ap_to_update) {
-			root.Device.WiFi.AccessPoint[ap_to_update.inst] =
-				wifi_ap_entry_update(ap_to_update.data, input);
-		}
-		break;
+		return ssids_change(root, existing, input);
 
 	default:
 		return { success: false, error: 'Invalid AddRemoveChange value' };

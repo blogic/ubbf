@@ -390,48 +390,68 @@ function easymesh_ssid_to_object(entry) {
 	};
 }
 
+const RADIO_BAND_STORED = { '2.4GHz': '2g', '5GHz': '5g', '6GHz': '6g' };
+
 /**
  * Looks up the OperatingFrequencyBand of the radio referenced by
- * wifi_ssid.LowerLayers and maps it back to a TR-181 Band value.
+ * wifi_ssid.LowerLayers, as a stored band.
  *
  * @param {object} root - Root configuration object
  * @param {string} lower_layers - Device.WiFi.Radio.{i} reference path
- * @returns {string} TR-181 Band value or empty string
+ * @returns {string|null} '2g', '5g' or '6g', or null
  */
-function radio_band_reverse(root, lower_layers) {
-	if (!lower_layers)
-		return '';
-
-	let m = match(lower_layers, /Device\.WiFi\.Radio\.(\d+)/);
+function radio_band_stored(root, lower_layers) {
+	let m = match(lower_layers ?? '', /Device\.WiFi\.Radio\.(\d+)/);
 	if (!m)
-		return '';
+		return null;
 
 	let radio = root.Device?.WiFi?.Radio?.[m[1]];
-	switch (radio?.OperatingFrequencyBand) {
-	case '2.4GHz': return '2.4';
-	case '5GHz': return '5';
-	case '6GHz': return '6';
+	return RADIO_BAND_STORED[radio?.OperatingFrequencyBand];
+}
+
+/**
+ * Groups the Device.WiFi.SSID entries by SSID name, in the order of each
+ * name's first instance. A single-AP SSID is one entry per radio it runs on.
+ *
+ * @param {object} root - Root configuration object
+ * @returns {array} { ssid, insts } per name
+ */
+function wifi_ssid_groups(root) {
+	let wifi_ssids = root.Device?.WiFi?.SSID ?? {};
+	let groups = [];
+	let by_name = {};
+
+	for (let inst in sort(filter(keys(wifi_ssids), (key) => ubbf.is_instance_key(key)), (a, b) => +a - +b)) {
+		let name = wifi_ssids[inst]?.SSID ?? '';
+		if (!by_name[name])
+			push(groups, by_name[name] = { ssid: name, insts: [] });
+		push(by_name[name].insts, inst);
 	}
-	return '';
+
+	return groups;
 }
 
 /**
  * Reconstructs a TR-181 Network.SSID.{i} object from non-EasyMesh storage
- * at Device.WiFi.SSID.{i} / Device.WiFi.AccessPoint.{i}.
+ * at Device.WiFi.SSID.{i} / Device.WiFi.AccessPoint.{i}: the settings of the
+ * name's first entry, and the bands of the radios of all its entries.
  *
  * @param {object} root - Root configuration object
- * @param {string} ssid_inst - SSID instance number
- * @param {object} wifi_ssid - Device.WiFi.SSID entry
+ * @param {object} group - { ssid, insts } from wifi_ssid_groups()
  * @returns {object} TR-181 formatted Network.SSID object
  */
-function wifi_ssid_to_object(root, ssid_inst, wifi_ssid) {
+function wifi_ssid_to_object(root, group) {
+	let ssid_inst = group.insts[0];
+	let wifi_ssid = root.Device.WiFi.SSID[ssid_inst];
 	let ap = ap_by_ssid_ref_find(root, ssid_inst)?.data;
 	let sec = ap?.Security ?? {};
+	let bands = filter(map(group.insts, (inst) => radio_band_stored(root, root.Device.WiFi.SSID[inst].LowerLayers)),
+			   (band) => band != null);
 
 	return {
 		Alias: wifi_ssid.Alias ?? ubbf.alias_from_name(wifi_ssid.SSID ?? ''),
 		SSID: wifi_ssid.SSID ?? '',
-		Band: radio_band_reverse(root, wifi_ssid.LowerLayers),
+		Band: band_reverse(uniq(bands)),
 		Enable: wifi_ssid.Enable ?? 'false',
 		AKMsAllowed: mode_enabled_to_akm(sec.ModeEnabled ?? ''),
 		SuiteSelector: sec.SuiteSelector ?? '',
@@ -459,7 +479,7 @@ function ssid_count_get(root) {
 		return length(root.EasyMesh?.SSIDs ?? []);
 	if (agent_enabled)
 		return 0;
-	return length(keys(root.Device?.WiFi?.SSID ?? {}));
+	return length(wifi_ssid_groups(root));
 }
 
 /**
@@ -485,9 +505,8 @@ function ssid_rows_build(root) {
 	if (agent_enabled)
 		return rows;
 
-	for (let inst, wifi_ssid in root.Device?.WiFi?.SSID ?? {})
-		if (ubbf.is_instance_key(inst))
-			rows[inst] = wifi_ssid_to_object(root, inst, wifi_ssid);
+	for (let group in wifi_ssid_groups(root))
+		rows[group.insts[0]] = wifi_ssid_to_object(root, group);
 	return rows;
 }
 

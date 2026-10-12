@@ -319,34 +319,51 @@ const DE_BANDS = {
 };
 
 /**
- * Finds the Device.WiFi.Radio instance for a DataElements Band value.
- *
- * The first instance of the band whose radio covers the sub-band wins.
- * Where none covers it, the first instance of the band does. An unknown
- * value stands for 2.4 GHz.
+ * Finds the Device.WiFi.Radio instances one DataElements Band value names:
+ * every instance of the band whose radio covers the sub-band, or the first
+ * instance of the band where none covers it.
  *
  * @param {object} radios - Device.WiFi.Radio instances by instance number
  * @param {array} cap_radios - Capability radios
- * @param {string} de_band - DataElements Band value, for example '5_UNII_3'
- * @returns {string|null} Instance number, or null when the band has no instance
+ * @param {object} target - Entry of DE_BANDS
+ * @returns {array} Instance numbers in instance order
  */
-export function radio_instance_for_band(radios, cap_radios, de_band) {
-	let target = DE_BANDS[de_band] ?? DE_BANDS['2.4'];
+function band_value_instances(radios, cap_radios, target) {
 	let uci_band = TR181_BAND_UCI[target.band];
-	let first;
+	let in_band = filter(sort(keys(radios ?? {}), (a, b) => +a - +b),
+			     (inst) => radios[inst]?.OperatingFrequencyBand == target.band);
+	if (!target.edges)
+		return in_band;
 
-	for (let inst in sort(keys(radios ?? {}), (a, b) => +a - +b)) {
-		let radio = radios[inst];
-		if (radio?.OperatingFrequencyBand != target.band)
-			continue;
+	let covering = filter(in_band, (inst) => {
+		let cap = radio_capability_find(cap_radios, uci_band, radios[inst].Name);
+		return length(filter(target.edges, (e) => radio_freq_overlaps(cap, e[0], e[1]))) > 0;
+	});
 
-		first ??= inst;
-		let cap = radio_capability_find(cap_radios, uci_band, radio.Name);
-		if (!target.edges || length(filter(target.edges, (e) => radio_freq_overlaps(cap, e[0], e[1]))))
-			return inst;
+	return length(covering) ? covering : slice(in_band, 0, 1);
+}
+
+/**
+ * Finds the Device.WiFi.Radio instances a DataElements Band list names.
+ *
+ * TR-181 SetSSID() gives an absent Band the value All, the bands 2.4, 5 and
+ * 6 GHz. A value TR-181 does not define names no radio.
+ *
+ * @param {object} radios - Device.WiFi.Radio instances by instance number
+ * @param {array} cap_radios - Capability radios
+ * @param {array} de_bands - DataElements Band values, for example [ '2.4', '5_UNII_3' ]
+ * @returns {array} Instance numbers in instance order, each once
+ */
+export function radio_instances_for_bands(radios, cap_radios, de_bands) {
+	let values = (!length(de_bands) || index(de_bands, 'All') >= 0) ? [ '2.4', '5', '6' ] : de_bands;
+	let found = [];
+
+	for (let value in values) {
+		if (DE_BANDS[value])
+			push(found, ...band_value_instances(radios, cap_radios, DE_BANDS[value]));
 	}
 
-	return first;
+	return sort(uniq(found), (a, b) => +a - +b);
 };
 
 /**
