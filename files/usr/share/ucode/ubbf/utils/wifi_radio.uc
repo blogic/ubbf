@@ -239,3 +239,71 @@ export function radio_capability_find(radios, band, name) {
 
 	return filter(candidates, (radio) => radio.name == name)[0];
 };
+
+/**
+ * Checks whether a radio has a frequency between two others.
+ *
+ * @param {object} radio - Capability radio with optional freq_ranges ([start, end] in kHz)
+ * @param {number} low - Lower edge in MHz
+ * @param {number} high - Upper edge in MHz
+ * @returns {boolean} True if a range of the radio overlaps low to high, or the radio has no ranges
+ */
+export function radio_freq_overlaps(radio, low, high) {
+	if (!length(radio?.freq_ranges))
+		return true;
+
+	for (let range in radio.freq_ranges) {
+		if (range[0] < high * 1000 && range[1] > low * 1000)
+			return true;
+	}
+
+	return false;
+};
+
+const TR181_BAND_UCI = { '2.4GHz': '2g', '5GHz': '5g', '6GHz': '6g' };
+
+// U-NII sub-bands of the DataElements Band values, as edges in MHz
+const DE_BANDS = {
+	'2.4': { band: '2.4GHz' },
+	'5': { band: '5GHz' },
+	'5_UNII_1': { band: '5GHz', edges: [ [ 5150, 5250 ] ] },
+	'5_UNII_2': { band: '5GHz', edges: [ [ 5250, 5350 ], [ 5470, 5725 ] ] },
+	'5_UNII_3': { band: '5GHz', edges: [ [ 5725, 5850 ] ] },
+	'5_UNII_4': { band: '5GHz', edges: [ [ 5850, 5925 ] ] },
+	'6': { band: '6GHz' },
+	'6_UNII_5': { band: '6GHz', edges: [ [ 5925, 6425 ] ] },
+	'6_UNII_6': { band: '6GHz', edges: [ [ 6425, 6525 ] ] },
+	'6_UNII_7': { band: '6GHz', edges: [ [ 6525, 6875 ] ] },
+	'6_UNII_8': { band: '6GHz', edges: [ [ 6875, 7125 ] ] }
+};
+
+/**
+ * Finds the Device.WiFi.Radio instance for a DataElements Band value.
+ *
+ * The first instance of the band whose radio covers the sub-band wins.
+ * Where none covers it, the first instance of the band does. An unknown
+ * value stands for 2.4 GHz.
+ *
+ * @param {object} radios - Device.WiFi.Radio instances by instance number
+ * @param {array} cap_radios - Capability radios
+ * @param {string} de_band - DataElements Band value, for example '5_UNII_3'
+ * @returns {string|null} Instance number, or null when the band has no instance
+ */
+export function radio_instance_for_band(radios, cap_radios, de_band) {
+	let target = DE_BANDS[de_band] ?? DE_BANDS['2.4'];
+	let uci_band = TR181_BAND_UCI[target.band];
+	let first;
+
+	for (let inst in sort(keys(radios ?? {}), (a, b) => +a - +b)) {
+		let radio = radios[inst];
+		if (radio?.OperatingFrequencyBand != target.band)
+			continue;
+
+		first ??= inst;
+		let cap = radio_capability_find(cap_radios, uci_band, radio.Name);
+		if (!target.edges || length(filter(target.edges, (e) => radio_freq_overlaps(cap, e[0], e[1]))))
+			return inst;
+	}
+
+	return first;
+};

@@ -12,6 +12,8 @@ const wifi_dataelements = ubbf_module.utils['wifi-dataelements'];
 const ubus_topology_get = wifi_dataelements.ubus_topology_get;
 const device_api_data_get = wifi_dataelements.device_api_data_get;
 const radios_bss_sort = wifi_dataelements.radios_bss_sort;
+const capability_radios_get = ubbf_module.utils.wifi.capability_radios_get;
+const radio_instance_for_band = ubbf_module.utils.wifi_radio.radio_instance_for_band;
 const bss_by_instance = em.bss_by_instance;
 const sta_by_instance = em.sta_by_instance;
 
@@ -430,45 +432,15 @@ function akm_to_mode_enabled(tr181_akms) {
 }
 
 /**
- * Finds a radio path by frequency band.
+ * Finds a radio path by frequency band or U-NII sub-band.
  *
  * @param {object} root - Root configuration object
- * @param {string} band - Band identifier (e.g., "2.4", "5", "6")
+ * @param {string} band - Band identifier (e.g., "2.4", "5", "5_UNII_3", "6")
  * @returns {string|null} TR-181 radio path or null if not found
  */
 function radio_by_band_find(root, band) {
-	let radios = root.Device?.WiFi?.Radio;
-	if (!radios)
-		return null;
-
-	let target_band;
-	switch (band) {
-	case '2.4':
-		target_band = '2.4GHz';
-		break;
-	case '5':
-	case '5_UNII_1':
-	case '5_UNII_2':
-	case '5_UNII_3':
-	case '5_UNII_4':
-		target_band = '5GHz';
-		break;
-	case '6':
-	case '6_UNII_5':
-	case '6_UNII_6':
-	case '6_UNII_7':
-	case '6_UNII_8':
-		target_band = '6GHz';
-		break;
-	default:
-		target_band = '2.4GHz';
-	}
-
-	for (let inst, radio in radios) {
-		if (radio.OperatingFrequencyBand == target_band)
-			return `Device.WiFi.Radio.${inst}`;
-	}
-	return null;
+	let inst = radio_instance_for_band(root.Device?.WiFi?.Radio, capability_radios_get(), band);
+	return inst ? `Device.WiFi.Radio.${inst}` : null;
 }
 
 /**

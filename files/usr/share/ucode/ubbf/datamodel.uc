@@ -27,6 +27,8 @@ import {
 	device_api_data_get, radios_bss_sort, steering_stats_get, steering_history_get,
 	topology_devices_get
 } from 'ubbf.utils.wifi-dataelements';
+import { capability_radios_get } from 'ubbf.utils.wifi';
+import { radio_instance_for_band } from 'ubbf.utils.wifi_radio';
 import { lower_layer_resolve_vlan } from 'ubbf.render.ubbf_helpers';
 import * as ubbf from 'ubbf';
 
@@ -333,6 +335,8 @@ function module_api_build(name) {
 				local_device_get, local_api_data_get, device_api_data_get, radios_bss_sort,
 				steering_stats_get, steering_history_get, topology_devices_get
 			},
+			wifi: { capability_radios_get },
+			wifi_radio: { radio_instance_for_band },
 			ubbf_helpers: { lower_layer_resolve_vlan },
 		},
 		schema: (key) => table ? `${name}.${key}` : objects_get()[key],
