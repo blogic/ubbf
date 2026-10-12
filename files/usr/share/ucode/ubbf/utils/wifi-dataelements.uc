@@ -7,8 +7,9 @@ import * as iwinfo from 'iwinfo';
 import * as nl80211 from 'nl80211';
 import { find_phy } from 'wifi.utils';
 import { cache_call } from 'ubbf';
-import { iwinfo_update } from 'ubbf.utils.wifi';
+import { iwinfo_update, capability_radios_get } from 'ubbf.utils.wifi';
 import { band_to_index, radio_address_derive } from 'ubbf';
+import { phy_radio_restrict, radio_capability_find } from 'ubbf.utils.wifi_radio';
 
 /**
  * Fetches wireless status from network.wireless ubus (uncached).
@@ -69,10 +70,13 @@ export function local_radio_survey_get(ifname) {
  *
  * @param {string} phy_name - PHY name (e.g., phy0)
  * @param {number} band_idx - Band index (0=2.4GHz, 1=5GHz, 3=6GHz)
+ * @param {object} radio - Capability radio; its frequency ranges limit the channels
  * @returns {object} Radio capabilities including operating classes and HE capabilities
  */
-function local_radio_capability_fetch(phy_name, band_idx) {
-	return ubbf.radio_capability_build(iwinfo.phys ?? [], phy_name, band_idx);
+function local_radio_capability_fetch(phy_name, band_idx, radio) {
+	let phys = map(iwinfo.phys ?? [], (p) => (p?.wiphy_name == phy_name) ? phy_radio_restrict(p, band_idx, radio) : p);
+
+	return ubbf.radio_capability_build(phys, phy_name, band_idx);
 }
 
 /**
@@ -80,10 +84,11 @@ function local_radio_capability_fetch(phy_name, band_idx) {
  *
  * @param {string} phy_name - PHY name (e.g., phy0)
  * @param {number} band_idx - Band index (0=2.4GHz, 1=5GHz, 3=6GHz)
+ * @param {object} radio - Capability radio; its frequency ranges limit the channels
  * @returns {object} Radio capabilities including operating classes and HE capabilities
  */
-export function local_radio_capability_get(phy_name, band_idx) {
-	return cache_call(local_radio_capability_fetch, phy_name, band_idx);
+export function local_radio_capability_get(phy_name, band_idx, radio) {
+	return cache_call(local_radio_capability_fetch, phy_name, band_idx, radio);
 };
 
 /**
@@ -162,7 +167,8 @@ function local_radios_fetch() {
 			bss: bss_list,
 			_radio_name: radio_name,
 			_phy_name: phy_name,
-			_band_idx: band_to_index(config.band)
+			_band_idx: band_to_index(config.band),
+			_cap: radio_capability_find(capability_radios_get(), config.band, radio_name)
 		});
 	}
 	return result;
@@ -229,7 +235,7 @@ function local_api_data_fetch() {
 			continue;
 
 		survey_radios[ruid] = local_radio_survey_get(radio_ifname_get(radio._radio_name));
-		capability_radios[ruid] = local_radio_capability_get(radio._phy_name, radio._band_idx);
+		capability_radios[ruid] = local_radio_capability_get(radio._phy_name, radio._band_idx, radio._cap);
 		inventory_radios[ruid] = { chipset_vendor: ubbf.chipset_vendor_get(radio._phy_name) };
 	}
 
