@@ -48,8 +48,11 @@ function device_radios_sorted(device) {
 	return radios_bss_sort(device.map?.ap_operational_bss, capability);
 }
 
+const ALL_BANDS = [ '2g', '5g', '6g' ];
+
 /**
- * Converts TR-181 band specification to OpenWrt band format.
+ * Converts TR-181 band specification to OpenWrt band format. TR-181
+ * SetSSID() gives an absent Band the value All.
  *
  * @param {string} tr181_bands - Comma-separated TR-181 band values
  * @returns {array} Array of OpenWrt band strings (2g, 5g, 6g)
@@ -57,13 +60,13 @@ function device_radios_sorted(device) {
 function band_convert(tr181_bands) {
 	let bands = ubbf.csv_to_list(tr181_bands);
 	if (length(bands) == 0)
-		return ['2g', '5g'];
+		return [ ...ALL_BANDS ];
 
 	let result = [];
 	for (let band in bands) {
 		switch (band) {
 		case 'All':
-			return ['2g', '5g', '6g'];
+			return [ ...ALL_BANDS ];
 		case '2.4':
 			push(result, '2g');
 			break;
