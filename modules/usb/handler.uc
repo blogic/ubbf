@@ -706,6 +706,17 @@ function host_driver_write(op, host) {
 }
 
 /**
+ * Tells whether the USB-core device driver holds a host: its sysfs
+ * directory then has a link with the name of the host.
+ *
+ * @param {string} host - Host sysfs name (e.g. usb1)
+ * @returns {boolean} true if the host is bound to the driver
+ */
+function host_bound(host) {
+	return fs.lstat(sprintf('%s/%s', USB_DEVICE_DRIVER, host)) != null;
+}
+
+/**
  * Sync operation handler for USB.USBHosts.Host.{i}.Reset().
  *
  * Unbinds and rebinds the root hub from the USB-core device driver.
@@ -733,7 +744,9 @@ function host_reset(input, command_key, instances, root) {
 	if (!host)
 		return -USP_ERR_OBJECT_DOES_NOT_EXIST;
 
-	if (!host_driver_write('unbind', host))
+	// The kernel rejects the unbind of a host the driver does not hold; the
+	// bind below is then the whole reset.
+	if (!host_driver_write('unbind', host) && host_bound(host))
 		return -USP_ERR_COMMAND_FAILURE;
 
 	let bound = host_driver_write('bind', host) || host_driver_write('bind', host);
