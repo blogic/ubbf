@@ -7,7 +7,8 @@ import * as iwinfo from 'iwinfo';
 import * as nl80211 from 'nl80211';
 import { find_phy } from 'wifi.utils';
 import { cache_call } from 'ubbf';
-import { iwinfo_update, capability_radios_get } from 'ubbf.utils.wifi';
+import { iwinfo_update } from 'ubbf.utils.wifi';
+import { capability_radios_get } from 'ubbf.utils.capabilities';
 import { band_to_index } from 'ubbf';
 import {
 	phy_radio_restrict, radio_capability_find, wiphy_radios_get, radio_address_key, radio_addresses_assign

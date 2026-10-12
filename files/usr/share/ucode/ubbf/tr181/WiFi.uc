@@ -9,8 +9,7 @@ import {
 	stations_numbered,
 	iwinfo_update,
 	radio_phy_get,
-	radio_supported_bands,
-	capability_radios_get
+	radio_supported_bands
 } from 'ubbf.utils.wifi';
 import {
 	log_info,
@@ -25,6 +24,7 @@ import {
 	phy_max_bitrate,
 	wpa_psk
 } from 'ubbf';
+import { capability_radios_get } from 'ubbf.utils.capabilities';
 import { channel_to_freq, radio_capability_find, radio_freq_usable } from 'ubbf.utils.wifi_radio';
 import { popen_async } from 'ubbf.utils.process';
 import { last_change_get } from 'ubbf.utils.netdev_change';
