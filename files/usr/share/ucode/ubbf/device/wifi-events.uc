@@ -195,11 +195,23 @@ function hapd_subscriber_notify_cb(req) {
 	return 0;
 }
 
-function hapd_subscriber_remove_cb(id) {
-	for (let ifname in hostapd) {
-		log_info('hostapd %s removed', ifname);
-		delete hostapd[ifname];
-	}
+/**
+ * Drops the cached status of a hostapd object that left ubus.
+ *
+ * The subscriber's remove callback names the object by id alone, and the
+ * ubus module has no lookup of an id; ubusd's ubus.object.remove event
+ * carries the path as well.
+ *
+ * @param {string} type - Event type, ubus.object.remove
+ * @param {object} data - Event data with the object's id and path
+ */
+function hapd_object_remove_cb(type, data) {
+	let ifname = hostapd_path_to_ifname(data?.path);
+	if (!ifname || !hostapd[ifname])
+		return;
+
+	log_info('hostapd %s removed', ifname);
+	delete hostapd[ifname];
 }
 
 function channel_history_status_handler(req) {
@@ -219,7 +231,8 @@ function channel_history_clear_handler(req) {
  * Registers the hostapd notification subscriber.
  */
 export function subscribe() {
-	ubus.subscriber(hapd_subscriber_notify_cb, hapd_subscriber_remove_cb, ['hostapd.*']);
+	ubus.subscriber(hapd_subscriber_notify_cb, null, ['hostapd.*']);
+	ubus.listener('ubus.object.remove', hapd_object_remove_cb);
 };
 
 /**
