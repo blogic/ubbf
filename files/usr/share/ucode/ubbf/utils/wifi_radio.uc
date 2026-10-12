@@ -519,3 +519,83 @@ export function radio_addresses_assign(wiphys) {
 
 	return assigned;
 };
+
+/**
+ * Plans a neighbour scan: one interface per radio. A radio scans on an
+ * interface of its own where it has one. The other radios scan on an
+ * interface they share with others, as an AP MLD's is. A scan covers the
+ * channels of every radio its interface runs on, so each scan names the
+ * radios whose results it gives.
+ *
+ * @param {object} status - network.wireless status, by radio name
+ * @param {object} ifaces - Interfaces that exist, by name
+ * @returns {array} { ifname, radios } per scan, radios as names
+ */
+export function radio_scan_plan(status, ifaces) {
+	let users = {};
+	let names = {};
+	for (let radio_name, radio in status ?? {}) {
+		names[radio_name] = uniq(filter(map(radio?.interfaces ?? [], (i) => i.ifname), (n) => n && ifaces?.[n]));
+		for (let ifname in names[radio_name])
+			push(users[ifname] ??= [], radio_name);
+	}
+
+	let plan = [];
+	let rest = [];
+	for (let radio_name in keys(names)) {
+		let own = filter(names[radio_name], (n) => length(users[n]) == 1)[0];
+		if (own)
+			push(plan, { ifname: own, radios: [ radio_name ] });
+		else if (length(names[radio_name]))
+			push(rest, radio_name);
+	}
+
+	while (length(rest)) {
+		let ifname = names[rest[0]][0];
+		push(plan, { ifname, radios: filter(rest, (name) => index(users[ifname], name) >= 0) });
+		rest = filter(rest, (name) => index(users[ifname], name) < 0);
+	}
+
+	return plan;
+};
+
+const SCAN_BANDS = { '2.4': '2.4GHz', '5': '5GHz', '6': '6GHz' };
+
+/**
+ * Finds the radio a neighbour scan result belongs to: of the radios scanned,
+ * the first of the result's band whose frequency ranges hold its channel.
+ *
+ * @param {array} radio_names - Radios the scanned interface runs on
+ * @param {object} status - network.wireless status, by radio name
+ * @param {array} cap_radios - Capability radios
+ * @param {string} cell_band - Band of the result as iwinfo reports it ('2.4', '5', '6')
+ * @param {number} channel - Channel of the result
+ * @returns {string|null} Radio name, or null when no scanned radio has the band
+ */
+export function radio_for_scan_result(radio_names, status, cap_radios, cell_band, channel) {
+	let band = SCAN_BANDS[cell_band];
+	let uci_band = TR181_BAND_UCI[band];
+	let in_band = filter(radio_names, (name) => status?.[name]?.config?.band == uci_band);
+	let freq = channel_to_freq(band, channel);
+
+	for (let name in in_band) {
+		if (radio_freq_usable(radio_capability_find(cap_radios, uci_band, name), freq))
+			return name;
+	}
+
+	return in_band[0];
+};
+
+/**
+ * @param {object} radios - Device.WiFi.Radio instances by instance number
+ * @param {string} name - Radio name, the wifi-device section
+ * @returns {string|null} Path of the instance whose Name it is, or null
+ */
+export function radio_path_by_name(radios, name) {
+	for (let inst in sort(keys(radios ?? {}), (a, b) => +a - +b)) {
+		if (name != null && radios[inst]?.Name == name)
+			return `Device.WiFi.Radio.${inst}`;
+	}
+
+	return null;
+};

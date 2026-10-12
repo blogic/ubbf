@@ -25,7 +25,7 @@ import {
 	wpa_psk
 } from 'ubbf';
 import { capability_radios_get } from 'ubbf.utils.capabilities';
-import { channel_to_freq, radio_capability_find, radio_freq_usable } from 'ubbf.utils.wifi_radio';
+import { channel_to_freq, radio_capability_find, radio_freq_usable, radio_path_by_name } from 'ubbf.utils.wifi_radio';
 import { popen_async } from 'ubbf.utils.process';
 import { last_change_get } from 'ubbf.utils.netdev_change';
 import { ifstats_get, ifstats_basic_get, ifstats_reset } from 'ubbf.utils.ifstats';
@@ -622,9 +622,10 @@ function associated_device_get(ctx) {
  * Parses wifi-scan JSON output into TR-181 operation output format.
  *
  * @param {string} data - Raw JSON output from wifi-scan
+ * @param {object} radios - Device.WiFi.Radio instances, to name a result's radio by path
  * @returns {object|null} TR-181 formatted output object, or null on parse failure
  */
-function scan_output_parse(data) {
+function scan_output_parse(data, radios) {
 	if (!data)
 		return null;
 
@@ -649,7 +650,7 @@ function scan_output_parse(data) {
 	for (let i = 0; i < length(parsed.results); i++) {
 		let r = parsed.results[i];
 		let idx = i + 1;
-		output[sprintf('Result.%d.Radio', idx)] = r.Radio;
+		output[sprintf('Result.%d.Radio', idx)] = radio_path_by_name(radios, r.Radio) ?? '';
 		output[sprintf('Result.%d.SSID', idx)] = r.SSID;
 		output[sprintf('Result.%d.BSSID', idx)] = r.BSSID;
 		output[sprintf('Result.%d.Mode', idx)] = r.Mode;
@@ -673,8 +674,9 @@ function scan_output_parse(data) {
  * @param {number} instance - Operation instance identifier
  * @param {function} complete - Callback to signal operation completion
  * @param {string} command_key - Command key (unused)
+ * @param {object} root - Configuration root, for the Radio instances
  */
-function neighboring_wifi_handler(input, instance, complete, command_key) {
+function neighboring_wifi_handler(input, instance, complete, command_key, root) {
 	log_info('neighboring_wifi: starting diagnostic');
 
 	popen_async('/usr/libexec/ubbf/wifi-scan', (result) => {
@@ -686,7 +688,7 @@ function neighboring_wifi_handler(input, instance, complete, command_key) {
 			return;
 		}
 
-		let output = scan_output_parse(result.data);
+		let output = scan_output_parse(result.data, root?.Device?.WiFi?.Radio);
 		if (!output) {
 			let err_msg = 'scan failed';
 			let parsed;

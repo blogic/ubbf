@@ -3,6 +3,9 @@
 
 import * as iwinfo from 'iwinfo';
 import * as nl80211 from 'nl80211';
+import * as ubus from 'ubus';
+import { capability_radios_get } from 'ubbf.utils.capabilities';
+import { radio_scan_plan, radio_for_scan_result } from 'ubbf.utils.wifi_radio';
 
 const DFS_REGION_ETSI = 2;
 const IFTYPE_ADHOC = 1;
@@ -146,7 +149,7 @@ function standards_parse(cell) {
 	return join(',', standards);
 }
 
-function cell_to_tr181(cell, radio_path, noise) {
+function cell_to_tr181(cell, radio_name, noise) {
 	let band = cell.band ?? '';
 	if (band == '2.4')
 		band = '2.4GHz';
@@ -160,7 +163,7 @@ function cell_to_tr181(cell, radio_path, noise) {
 		mode = 'AdHoc';
 
 	return {
-		Radio: radio_path,
+		Radio: radio_name,
 		SSID: cell.ssid ?? '',
 		BSSID: cell.bssid ?? '',
 		Mode: mode,
@@ -183,24 +186,27 @@ if (!ifaces || length(keys(ifaces)) == 0) {
 	exit(1);
 }
 
+let status = ubus.call({ object: 'network.wireless', method: 'status' }) ?? {};
+let plan = radio_scan_plan(status, ifaces);
+if (!length(plan)) {
+	print('{"error": "No radio has a wireless interface"}\n');
+	exit(1);
+}
+
+let cap_radios = capability_radios_get();
 let all_results = [];
 let skipped = [];
 let scanned = 0;
-let seen_phys = {};
 
-for (let ifname, iface in ifaces) {
-	let phy = iface.wiphy;
-	if (seen_phys[phy])
-		continue;
-	seen_phys[phy] = true;
-
+for (let target in plan) {
+	let ifname = target.ifname;
+	let iface = ifaces[ifname];
 	let noise = iface.noise ?? 0;
-	let radio_path = sprintf('Device.WiFi.Radio.%d', phy + 1);
 
 	let scan_results = iwinfo.scan(ifname);
 	if (!scan_results && radio_dfs_locked(iface)) {
 		push(skipped, {
-			Radio: radio_path,
+			Radio: join(',', target.radios),
 			Interface: ifname,
 			Reason: sprintf('DFS channel %d, regulatory domain %s does not allow scanning away from it',
 				(iface.wiphy_freq - 5000) / 5, iface.country || 'unset')
@@ -217,8 +223,12 @@ for (let ifname, iface in ifaces) {
 	}
 
 	scanned++;
-	for (let cell in scan_results)
-		push(all_results, cell_to_tr181(cell, radio_path, noise));
+	// A shared interface also scans the bands of radios that scan on their own
+	for (let cell in scan_results) {
+		let radio_name = radio_for_scan_result(target.radios, status, cap_radios, cell.band, cell.channel);
+		if (radio_name)
+			push(all_results, cell_to_tr181(cell, radio_name, noise));
+	}
 }
 
 if (!scanned) {
