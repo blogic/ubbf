@@ -8,8 +8,10 @@ import * as nl80211 from 'nl80211';
 import { find_phy } from 'wifi.utils';
 import { cache_call } from 'ubbf';
 import { iwinfo_update, capability_radios_get } from 'ubbf.utils.wifi';
-import { band_to_index, radio_address_derive } from 'ubbf';
-import { phy_radio_restrict, radio_capability_find } from 'ubbf.utils.wifi_radio';
+import { band_to_index } from 'ubbf';
+import {
+	phy_radio_restrict, radio_capability_find, wiphy_radios_get, radio_address_key, radio_addresses_assign
+} from 'ubbf.utils.wifi_radio';
 
 /**
  * Fetches wireless status from network.wireless ubus (uncached).
@@ -120,6 +122,23 @@ export function local_sta_data_get(ifname) {
 };
 
 /**
+ * Finds the rank of a configured radio within its band, as umapd does: the
+ * nl80211 radio the wifi-device's radio option names, else the first radio
+ * of the band.
+ *
+ * @param {object} phy - Entry of the nl80211 wiphy dump
+ * @param {object} config - The wifi-device configuration
+ * @returns {number} Rank of the radio in its band
+ */
+function radio_rank_get(phy, config) {
+	if (config.radio == null)
+		return 0;
+
+	let entry = filter(wiphy_radios_get(phy), (e) => e.band == config.band && e.index == int(config.radio))[0];
+	return entry?.rank ?? 0;
+}
+
+/**
  * Fetches list of local radios with their BSS information (uncached).
  * Each AP BSS node carries its associated_clients inline, mirroring the
  * shape of umap topology devices.
@@ -133,6 +152,9 @@ function local_radios_fetch() {
 
 	iwinfo_update();
 
+	let wiphys = map(filter(iwinfo.phys ?? [], (p) => p?.mac), (p) => ({ mac: p.mac, radios: wiphy_radios_get(p) }));
+	let ruids = radio_addresses_assign(wiphys);
+
 	let result = [];
 	for (let radio_name, radio_status in status) {
 		if (type(radio_status) != 'object')
@@ -141,7 +163,7 @@ function local_radios_fetch() {
 		let config = radio_status.config ?? {};
 		let phy_name = find_phy(config, false);
 		let phy = filter(iwinfo.phys ?? [], (p) => p?.wiphy_name == phy_name)[0];
-		let ruid = radio_address_derive(phy?.mac, config.band);
+		let ruid = phy?.mac ? ruids[radio_address_key(phy.mac, config.band, radio_rank_get(phy, config))] : null;
 		if (!ruid)
 			continue;
 

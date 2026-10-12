@@ -1,5 +1,7 @@
 'use strict';
 
+import { radio_address_derive } from 'ubbf';
+
 const BAND_ORDER = [ '2g', '5g', '6g' ];
 
 /**
@@ -49,6 +51,22 @@ export function radio_freq_usable(radio, freq) {
 };
 
 /**
+ * @param {number} freq - Frequency in MHz
+ * @returns {string|null} UCI band of the frequency, as umapd counts it
+ */
+function freq_band(freq) {
+	if (freq >= 2400 && freq < 2500)
+		return '2g';
+	if (freq >= 5000 && freq < 5900)
+		return '5g';
+	if (freq >= 5900 && freq < 7200)
+		return '6g';
+	if (freq >= 57000)
+		return '60g';
+	return null;
+}
+
+/**
  * Lists the bands of a radio's frequency ranges. A range belongs to the
  * band it starts in, as umapd counts it, so a 5 GHz range that ends on
  * 6 GHz channel 2 gives no 6 GHz.
@@ -60,15 +78,7 @@ export function radio_bands(radio) {
 	let bands = [];
 
 	for (let range in radio?.freq_ranges ?? []) {
-		let start = range[0] / 1000;
-		let band = null;
-		if (start >= 2400 && start < 2500)
-			band = '2g';
-		else if (start >= 5000 && start < 5900)
-			band = '5g';
-		else if (start >= 5900 && start < 7200)
-			band = '6g';
-
+		let band = freq_band(range[0] / 1000);
 		if (band && index(bands, band) < 0)
 			push(bands, band);
 	}
@@ -334,4 +344,178 @@ export function radio_instance_for_band(radios, cap_radios, de_band) {
 	}
 
 	return first;
+};
+
+/**
+ * @param {number} freq - Centre frequency of a channel in MHz
+ * @returns {string|null} UCI band of the channel, with the edges of umapd's
+ *                        frequencyToBand() in rrmd/opclass.uc
+ */
+function channel_freq_band(freq) {
+	if (freq >= 2412 && freq <= 2484)
+		return '2g';
+	if ((freq >= 4910 && freq <= 4980) || (freq >= 5170 && freq <= 5885))
+		return '5g';
+	if (freq >= 5925 && freq <= 7125)
+		return '6g';
+	if (freq >= 57000 && freq <= 71000)
+		return '60g';
+	return null;
+}
+
+// The order of the bands in umapd's band bits
+const BAND_BIT = { '2g': 1, '5g': 2, '60g': 4, '6g': 8 };
+
+/**
+ * @param {string} mac - MAC address, colon separated
+ * @returns {array|null} Its six octets, or null when it is no MAC address
+ */
+function mac_octets(mac) {
+	let bytes = mac ? hexdec(mac, ':') : null;
+	if (length(bytes) != 6)
+		return null;
+
+	let octets = [];
+	for (let i = 0; i < 6; i++)
+		push(octets, ord(bytes, i));
+	return octets;
+}
+
+/**
+ * Lists the radios of a wiphy as umapd counts them (wiphy_radios_get() in
+ * rrmd/opclass.uc): one entry per band of each nl80211 radio, or one per
+ * band of a wiphy that names no radios. Within a band, rank orders the
+ * entries by the lowest start of their ranges.
+ *
+ * @param {object} phy - Entry of the nl80211 wiphy dump
+ * @returns {array} Entries { band, index, low, rank }
+ */
+export function wiphy_radios_get(phy) {
+	let entries = [];
+
+	for (let radio in phy?.radios ?? []) {
+		let by_band = {};
+		for (let range in radio?.freq_ranges ?? []) {
+			let band = freq_band(range.start / 1000);
+			if (!band)
+				continue;
+			by_band[band] ??= { band, index: radio.index, low: range.start };
+			by_band[band].low = min(by_band[band].low, range.start);
+		}
+		push(entries, ...values(by_band));
+	}
+
+	if (!length(entries)) {
+		for (let wiphy_band in phy?.wiphy_bands ?? []) {
+			let band = channel_freq_band(wiphy_band?.freqs?.[0]?.freq);
+			if (band)
+				push(entries, { band, index: null, low: 0 });
+		}
+	}
+
+	let count = {};
+	for (let entry in sort([ ...entries ], (a, b) => (BAND_BIT[a.band] - BAND_BIT[b.band]) ||
+			       (a.low - b.low) || ((a.index ?? 0) - (b.index ?? 0)))) {
+		entry.rank = count[entry.band] ?? 0;
+		count[entry.band] = entry.rank + 1;
+	}
+
+	return entries;
+};
+
+/**
+ * @param {string} mac - MAC address of the wiphy
+ * @param {string} band - UCI band name
+ * @param {number} rank - Rank of the radio in the band
+ * @returns {string} Key of the radio in radio_addresses_assign()
+ */
+export function radio_address_key(mac, band, rank) {
+	return rank ? `${lc(mac)}/${band}/${rank}` : `${lc(mac)}/${band}`;
+};
+
+/**
+ * @param {string} mac - MAC address of the wiphy
+ * @param {object} taken - Addresses in use, as keys
+ * @returns {string|null} The next address of the wiphy's locally administered
+ *                        space, counting the last octet up, that is not taken
+ */
+function radio_address_next(mac, taken) {
+	let octets = mac_octets(mac);
+	if (!octets)
+		return null;
+
+	let last = octets[5];
+	octets[0] |= 0x02;
+	for (let offset = 1; offset <= 256; offset++) {
+		octets[5] = (last + offset) & 0xff;
+		let address = sprintf('%02x:%02x:%02x:%02x:%02x:%02x', ...octets);
+		if (!taken[address])
+			return address;
+	}
+
+	return null;
+}
+
+/**
+ * Assigns a unique identifier to every radio of the device, as umapd does
+ * (radio_addresses_assign() in rrmd/opclass.uc), so that a radio keeps its
+ * identifier with and without EasyMesh.
+ *
+ * The first radio of each band takes its derived value unless that is
+ * another wiphy's address or a value an earlier radio took. Those radios,
+ * then the further radios of a band, take the next free address of their
+ * wiphy's locally administered space.
+ *
+ * @param {array} wiphys - { mac, radios } per wiphy, radios from wiphy_radios_get()
+ * @returns {object} Identifiers by radio_address_key()
+ */
+export function radio_addresses_assign(wiphys) {
+	let pairs = [];
+	let further = [];
+	let permanent = {};
+
+	for (let wiphy in wiphys) {
+		let mac = lc(wiphy.mac);
+		permanent[mac] = true;
+
+		for (let radio in wiphy.radios) {
+			let value = radio_address_derive(mac, radio.band);
+			if (radio.rank > 0)
+				push(further, { mac, band: radio.band, rank: radio.rank });
+			else if (value)
+				push(pairs, { mac, band: radio.band, rank: 0, value });
+		}
+	}
+
+	let order = (a, b) => ((a.mac < b.mac) ? -1 : ((a.mac > b.mac) ? 1 : 0)) ||
+		(BAND_BIT[a.band] - BAND_BIT[b.band]) || (a.rank - b.rank);
+	sort(pairs, order);
+	sort(further, order);
+
+	let taken = { ...permanent };
+	for (let pair in pairs)
+		taken[pair.value] = true;
+
+	let claimed = {};
+	let moved = [];
+	let assigned = {};
+
+	for (let pair in pairs) {
+		if (pair.value != pair.mac && (permanent[pair.value] || claimed[pair.value])) {
+			push(moved, pair);
+			continue;
+		}
+		claimed[pair.value] = true;
+		assigned[radio_address_key(pair.mac, pair.band, 0)] = pair.value;
+	}
+
+	for (let radio in [ ...moved, ...further ]) {
+		let address = radio_address_next(radio.mac, taken);
+		if (address == null)
+			continue;
+		taken[address] = true;
+		assigned[radio_address_key(radio.mac, radio.band, radio.rank)] = address;
+	}
+
+	return assigned;
 };
