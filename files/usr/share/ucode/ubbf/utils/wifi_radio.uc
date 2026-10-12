@@ -49,6 +49,34 @@ export function radio_freq_usable(radio, freq) {
 };
 
 /**
+ * Lists the bands of a radio's frequency ranges. A range belongs to the
+ * band it starts in, as umapd counts it, so a 5 GHz range that ends on
+ * 6 GHz channel 2 gives no 6 GHz.
+ *
+ * @param {object} radio - Capability radio with optional freq_ranges
+ * @returns {array} UCI band names, empty for a radio without ranges
+ */
+export function radio_bands(radio) {
+	let bands = [];
+
+	for (let range in radio?.freq_ranges ?? []) {
+		let start = range[0] / 1000;
+		let band = null;
+		if (start >= 2400 && start < 2500)
+			band = '2g';
+		else if (start >= 5000 && start < 5900)
+			band = '5g';
+		else if (start >= 5900 && start < 7200)
+			band = '6g';
+
+		if (band && index(bands, band) < 0)
+			push(bands, band);
+	}
+
+	return bands;
+};
+
+/**
  * Restricts a band of a PHY to the frequencies of one of its radios.
  *
  * @param {object} phy - PHY object from iwinfo

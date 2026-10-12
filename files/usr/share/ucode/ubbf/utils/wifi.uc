@@ -7,7 +7,7 @@ import { readfile } from 'fs';
 import { cache_call } from 'ubbf';
 import { log_exception } from 'ubbf';
 import { instance_number, instance_rows } from 'ubbf';
-import { phy_radio_restrict } from 'ubbf.utils.wifi_radio';
+import { phy_radio_restrict, radio_bands } from 'ubbf.utils.wifi_radio';
 
 const CAPABILITIES_PATH = '/tmp/ubbf/capabilities.json';
 
@@ -246,6 +246,26 @@ export function radio_phy_get(radio, band) {
 		return null;
 
 	return { phy: phy_radio_restrict(phy, band_idx, radio), band_idx };
+};
+
+/**
+ * Returns comma-separated TR-181 band names supported by a PHY, or by one
+ * radio of it.
+ *
+ * @param {object} phy - PHY object from iwinfo
+ * @param {object} radio - Capability radio; one with frequency ranges limits
+ *                         the bands to those of its ranges
+ * @returns {string} Comma-separated band names (e.g. "2.4GHz,5GHz")
+ */
+export function radio_supported_bands(phy, radio) {
+	let bands = ubbf.phy_supported_bands(phy);
+	if (!length(radio?.freq_ranges))
+		return bands;
+
+	let names = { '2g': '2.4GHz', '5g': '5GHz', '6g': '6GHz' };
+	let radio_names = map(radio_bands(radio), (band) => names[band]);
+
+	return join(',', filter(split(bands, ','), (name) => index(radio_names, name) >= 0));
 };
 
 /**

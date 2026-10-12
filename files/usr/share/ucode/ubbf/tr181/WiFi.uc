@@ -9,6 +9,7 @@ import {
 	stations_numbered,
 	iwinfo_update,
 	radio_phy_get,
+	radio_supported_bands,
 	capability_radios_get
 } from 'ubbf.utils.wifi';
 import {
@@ -17,7 +18,6 @@ import {
 	log_err,
 	channel_width_to_bandwidth,
 	band_to_uci,
-	phy_supported_bands,
 	phy_supported_standards,
 	phy_possible_channels,
 	phy_supported_bandwidths,
@@ -228,7 +228,7 @@ function radio_get(ctx) {
 		let phy = phy_info.phy;
 		let band_idx = phy_info.band_idx;
 
-		result.SupportedFrequencyBands = phy_supported_bands(phy);
+		result.SupportedFrequencyBands = radio_supported_bands(phy, cap);
 		result.SupportedStandards = phy_supported_standards(phy, band_idx);
 		result.PossibleChannels = phy_possible_channels(phy, band_idx);
 		result.SupportedOperatingChannelBandwidths = phy_supported_bandwidths(phy, band_idx);
