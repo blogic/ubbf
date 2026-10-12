@@ -16,7 +16,7 @@ const device_api_data_get = wifi_dataelements.device_api_data_get;
 const steering_stats_get = wifi_dataelements.steering_stats_get;
 const steering_history_get = wifi_dataelements.steering_history_get;
 const topology_devices_get = wifi_dataelements.topology_devices_get;
-const radio_band_priority = ubbf_module.ubbf.radio_band_priority;
+const radios_bss_sort = wifi_dataelements.radios_bss_sort;
 const device_to_object = em.device_to_object;
 const al_index_map = em.al_index_map;
 const ap_by_ssid_ref_find = em.ap_by_ssid_ref_find;
@@ -628,8 +628,7 @@ function disallowed_opclass_channels_set(ctx) {
 		? device_api_data_get(al_mac, controller_enabled)
 		: local_api_data_get();
 	let capability = api_data?.capability ?? {};
-	let radios = sort([...(device.map?.ap_operational_bss ?? [])],
-		(a, b) => radio_band_priority(a, capability) - radio_band_priority(b, capability));
+	let radios = radios_bss_sort(device.map?.ap_operational_bss, capability);
 
 	let radio = ubbf.get_by_instance(radios, radio_inst);
 	if (!radio)

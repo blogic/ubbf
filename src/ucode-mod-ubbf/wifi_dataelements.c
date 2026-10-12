@@ -790,50 +790,6 @@ uc_ubbf_local_sta_data_build(uc_vm_t *vm, size_t nargs)
 	return result;
 }
 
-/**
- * ucode: `radio_band_priority(radio_bss, capability)`, the sort priority
- * of a radio by band: 2.4 GHz 0, 5 GHz 1, 6 GHz 2, unknown 3.
- *
- * @param vm     ucode VM context
- * @param nargs  number of arguments (2 expected: ap_operational_bss entry,
- *               capability data with radios by RUID)
- * @return       priority
- */
-uc_value_t *
-uc_ubbf_radio_band_priority(uc_vm_t *vm, size_t nargs)
-{
-	uc_value_t *ruid = ucv_object_get(uc_fn_arg(0), "radio_unique_identifier", NULL);
-	uc_value_t *radios = ucv_object_get(uc_fn_arg(1), "radios", NULL), *raw, *ocs, *oc, *cl;
-	uc_value_t *empty = ucv_string_new("");
-	int64_t prio = 3;
-	double c;
-
-	raw = ucv_key_get(vm, radios, ruid ? ruid : empty);
-	ocs = ucv_object_get(raw, "operating_classes", NULL);
-	if (!ocs)
-		ocs = ucv_object_get(ucv_object_get(raw, "basic_capabilities", NULL), "opclasses_supported", NULL);
-
-	for (size_t i = 0; prio == 3 && i < ucv_array_length(ocs); i++) {
-		oc = ucv_array_get(ocs, i);
-		cl = ucv_object_get(oc, "class", NULL);
-		if (!cl)
-			cl = ucv_object_get(oc, "opclass", NULL);
-
-		c = cl ? ucv_to_double(cl) : 0;
-		if (c >= 81 && c <= 84)
-			prio = 0;
-		else if (c >= 115 && c <= 130)
-			prio = 1;
-		else if (c >= 131 && c <= 137)
-			prio = 2;
-	}
-
-	ucv_put(raw);
-	ucv_put(empty);
-
-	return ucv_int64_new(prio);
-}
-
 /* Whether a topology device advertises the EasyMesh agent service
  * (supported_service 1). */
 static bool

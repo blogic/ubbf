@@ -369,6 +369,69 @@ export function device_api_data_get(al_mac, controller_enabled) {
 };
 
 /**
+ * @param {number} opclass - Global operating class
+ * @returns {number} Band priority: 2.4 GHz (0), 5 GHz (1), 6 GHz (2), unknown (3)
+ */
+function opclass_band_priority(opclass) {
+	if (opclass >= 81 && opclass <= 84)
+		return 0;
+	if (opclass >= 115 && opclass <= 130)
+		return 1;
+	if (opclass >= 131 && opclass <= 137)
+		return 2;
+	return 3;
+}
+
+/**
+ * Returns the sort key of a radio: the band of its first known operating
+ * class, then its lowest operating class of that band, which puts the
+ * lower channels of a band first.
+ *
+ * @param {object} radio_bss - Radio entry from ap_operational_bss
+ * @param {object} capability - Capability data keyed by RUID
+ * @returns {object} { band, opclass }, lower values first
+ */
+function radio_sort_key(radio_bss, capability) {
+	let ruid = radio_bss.radio_unique_identifier ?? "";
+	let raw = capability?.radios?.[ruid] ?? {};
+	let opclasses = map(raw.operating_classes
+		?? raw.basic_capabilities?.opclasses_supported
+		?? [], (oc) => oc.class ?? oc.opclass ?? 0);
+
+	let band = 3;
+	for (let cl in opclasses) {
+		band = opclass_band_priority(cl);
+		if (band < 3)
+			break;
+	}
+
+	let in_band = filter(opclasses, (cl) => band < 3 && opclass_band_priority(cl) == band);
+	return { band, opclass: length(in_band) ? min(...in_band) : 0 };
+}
+
+/**
+ * Sorts the radios of a device into DataElements instance order: by band,
+ * then by lowest operating class, then by RUID, so that two radios of one
+ * band keep their order between reads.
+ *
+ * @param {array} radios - Radio entries from ap_operational_bss
+ * @param {object} capability - Capability data keyed by RUID
+ * @returns {array} Sorted copy of the radios
+ */
+export function radios_bss_sort(radios, capability) {
+	let entries = map(radios ?? [], (radio) => ({
+		radio,
+		key: radio_sort_key(radio, capability),
+		ruid: radio.radio_unique_identifier ?? ""
+	}));
+
+	sort(entries, (a, b) => (a.key.band - b.key.band) || (a.key.opclass - b.key.opclass) ||
+		((a.ruid < b.ruid) ? -1 : ((a.ruid > b.ruid) ? 1 : 0)));
+
+	return map(entries, (entry) => entry.radio);
+};
+
+/**
  * Fetches network-wide steering statistics from umap controller (uncached).
  *
  * @returns {object} Steering stats with network, bss, and sta sub-objects

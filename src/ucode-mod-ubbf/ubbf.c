@@ -277,7 +277,6 @@ static const uc_function_list_t module_fns[] = {
 	{ "radio_survey_build",          uc_ubbf_radio_survey_build },
 	{ "radio_capability_build",      uc_ubbf_radio_capability_build },
 	{ "local_sta_data_build",        uc_ubbf_local_sta_data_build },
-	{ "radio_band_priority",         uc_ubbf_radio_band_priority },
 	{ "topology_devices_build",      uc_ubbf_topology_devices_build },
 	{ "device_api_data_build",       uc_ubbf_device_api_data_build },
 	{ "cpu_stats",                   uc_ubbf_cpu_stats },

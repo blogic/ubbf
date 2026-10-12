@@ -57,11 +57,10 @@ test_radio(void **state)
 		"let cap = ubbf.radio_capability_build(phys, 'phy0', 0);"
 		"let s = ubbf.radio_survey_build({ survey: { time: 1000, busy: 500, time_tx: 100, noise: -95 } });"
 		"return [ cap.basic_capabilities.opclasses_supported, cap.wifi6_capabilities.roles[0].he_160,"
-		"  cap.wifi6_capabilities.roles[0].twt_responder, s, ubbf.radio_survey_build(null),"
-		"  ubbf.radio_band_priority({ radio_unique_identifier: 'r' }, { radios: { r: { operating_classes: [ { class: 131 } ] } } }) ];",
+		"  cap.wifi6_capabilities.roles[0].twt_responder, s, ubbf.radio_survey_build(null) ];",
 		"[ [ { \"opclass\": 81, \"max_txpower_eirp\": 20, \"channels\": [ 1 ] }, "
 		"{ \"opclass\": 82, \"max_txpower_eirp\": 15, \"channels\": [ 14 ] } ], true, true, "
-		"{ \"noise\": -95, \"utilization\": 127, \"transmit\": 25, \"receive_self\": 0, \"receive_other\": 0 }, { }, 2 ]");
+		"{ \"noise\": -95, \"utilization\": 127, \"transmit\": 25, \"receive_self\": 0, \"receive_other\": 0 }, { } ]");
 }
 
 static void

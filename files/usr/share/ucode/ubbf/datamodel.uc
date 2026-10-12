@@ -24,7 +24,7 @@ import { native_modules_register, native_modules_notify } from 'ubbf.utils.dm-na
 import { schedule_refs_check, schedule_refs_prune } from 'ubbf';
 import {
 	client_query_get, ubus_topology_get, local_device_get, local_api_data_get,
-	device_api_data_get, steering_stats_get, steering_history_get,
+	device_api_data_get, radios_bss_sort, steering_stats_get, steering_history_get,
 	topology_devices_get
 } from 'ubbf.utils.wifi-dataelements';
 import { lower_layer_resolve_vlan } from 'ubbf.render.ubbf_helpers';
@@ -330,7 +330,7 @@ function module_api_build(name) {
 			process: { popen_async, task_run, TASK_MARGIN_S },
 			'wifi-dataelements': {
 				client_query_get, ubus_topology_get,
-				local_device_get, local_api_data_get, device_api_data_get,
+				local_device_get, local_api_data_get, device_api_data_get, radios_bss_sort,
 				steering_stats_get, steering_history_get, topology_devices_get
 			},
 			ubbf_helpers: { lower_layer_resolve_vlan },

@@ -10,7 +10,7 @@ const ht_caps_encode = ubbf.ht_caps_encode;
 const vht_caps_encode = ubbf.vht_caps_encode;
 const sta_he_caps_from_frame_body = ubbf.sta_he_caps_from_frame_body;
 const ubus_topology_get = wifi_dataelements.ubus_topology_get;
-const radio_band_priority = ubbf.radio_band_priority;
+const radios_bss_sort = wifi_dataelements.radios_bss_sort;
 const client_query_get = wifi_dataelements.client_query_get;
 
 const wde_lib = require('wde');
@@ -1636,8 +1636,7 @@ function device_to_object(device, api_data, is_controller, easymesh, device_cfg,
 	let ident = device.identification ?? {};
 	let caps = device.map?.capabilities ?? {};
 	let capability = api_data.capability ?? {};
-	let radios = sort([...(device.map?.ap_operational_bss ?? [])],
-		(a, b) => radio_band_priority(a, capability) - radio_band_priority(b, capability));
+	let radios = radios_bss_sort(device.map?.ap_operational_bss, capability);
 	let policy = api_data.policy?.policy ?? {};
 	let config_policy = config_policy_resolve(easymesh, device.al_address);
 	if (config_policy) {

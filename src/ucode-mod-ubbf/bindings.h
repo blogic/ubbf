@@ -320,7 +320,6 @@ uc_value_t *uc_ubbf_chipset_vendor_get(uc_vm_t *vm, size_t nargs);
 uc_value_t *uc_ubbf_radio_survey_build(uc_vm_t *vm, size_t nargs);
 uc_value_t *uc_ubbf_radio_capability_build(uc_vm_t *vm, size_t nargs);
 uc_value_t *uc_ubbf_local_sta_data_build(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_radio_band_priority(uc_vm_t *vm, size_t nargs);
 uc_value_t *uc_ubbf_topology_devices_build(uc_vm_t *vm, size_t nargs);
 uc_value_t *uc_ubbf_device_api_data_build(uc_vm_t *vm, size_t nargs);
 

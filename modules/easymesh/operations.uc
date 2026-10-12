@@ -11,7 +11,7 @@ const log_warn = ubbf_module.ubbf.log_warn;
 const wifi_dataelements = ubbf_module.utils['wifi-dataelements'];
 const ubus_topology_get = wifi_dataelements.ubus_topology_get;
 const device_api_data_get = wifi_dataelements.device_api_data_get;
-const radio_band_priority = ubbf_module.ubbf.radio_band_priority;
+const radios_bss_sort = wifi_dataelements.radios_bss_sort;
 const bss_by_instance = em.bss_by_instance;
 const sta_by_instance = em.sta_by_instance;
 
@@ -43,8 +43,7 @@ function device_radios_sorted(device) {
 	let al_mac = device.al_address;
 	let api_data = device_api_data_get(al_mac, true);
 	let capability = api_data?.capability ?? {};
-	return sort([...(device.map?.ap_operational_bss ?? [])],
-		(a, b) => radio_band_priority(a, capability) - radio_band_priority(b, capability));
+	return radios_bss_sort(device.map?.ap_operational_bss, capability);
 }
 
 /**
