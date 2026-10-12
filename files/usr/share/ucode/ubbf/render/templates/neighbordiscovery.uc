@@ -16,9 +16,8 @@ function render_config() {
 
 		// Must match the netdev the IP interface actually rides (ip.uc
 		// ifname, netifd l3_device): the NDP sysctls are per-netdev, and
-		// the TR-181 getter reads them from the l3_device. The plain
-		// resolver lands on the bridge (br-lan) while the interface uses
-		// the VLAN device on top of it (br-lanv0).
+		// the TR-181 getter reads them from the l3_device. ip.uc names
+		// that device with the same resolver.
 		let device = lower_layer_resolve_vlan(config, iface.LowerLayers);
 		if (device)
 			return device;

@@ -206,54 +206,10 @@ function render_config() {
 	}
 
 	/**
-	 * Populates 8021q VLAN device state for management ports.
-	 *
-	 * @param {object} bridge - Bridge data model object
-	 * @param {string} bridge_inst - Bridge instance number
-	 * @param {object} port_vids - Map of port instance to VID info
-	 */
-	function populate_8021q_devices(bridge, bridge_inst, port_vids) {
-		let br_name = bridge.Name;
-		if (!br_name)
-			return;
-
-		let vlan_filtering = standard_to_vlan_filtering(bridge.Standard);
-		if (!vlan_filtering)
-			return;
-
-		let ports = ubbf_instances(config, `Device.Bridging.Bridge.${bridge_inst}.Port`);
-		for (let port in ports) {
-			if (!port || !ubbf_to_bool(port.Enable))
-				continue;
-			if (!ubbf_to_bool(port.ManagementPort))
-				continue;
-
-			let port_inst = port['.instance'];
-			let port_vid_info = port_vids[port_inst];
-			if (!port_vid_info)
-				continue;
-
-			let vid = port_vid_info.vid;
-			let suffix = port_vid_info.dynamic ? '0' : sprintf('%d', vid);
-			let vlan_dev_name = `${br_name}v${suffix}`;
-			let alias = 'v' + suffix;
-
-			device_state_set(render_state, vlan_dev_name, 'type', '8021q');
-			device_state_set(render_state, vlan_dev_name, 'ifname', br_name);
-			device_state_set(render_state, vlan_dev_name, 'vid', alias);
-
-			render_state.bridge ??= {};
-			render_state.bridge[br_name] ??= {};
-			render_state.bridge[br_name].mgmt_vlan_alias = alias;
-			render_state.bridge[br_name].mgmt_vlan_suffix = suffix;
-		}
-	}
-
-	/**
 	 * Generates a UCI section name for a bridge VLAN.
 	 *
 	 * @param {string} device - Bridge device name
-	 * @param {string} suffix - 8021q device name suffix (e.g. '0', '100')
+	 * @param {string} suffix - Section name suffix (e.g. '0', '100')
 	 * @returns {string} Sanitised section name
 	 */
 	function bridge_vlan_section_name(device, suffix) {
@@ -393,19 +349,14 @@ function render_config() {
 			if (!ubbf_to_bool(port.ManagementPort))
 				continue;
 
-			let port_inst = port['.instance'];
-			let port_vid_info = port_vids[port_inst];
-			if (port_vid_info)
-				mgmt_port = { vid: port_vid_info.vid };
+			mgmt_port = port_vids[port['.instance']];
 			break;
 		}
 
 		if (!mgmt_port)
 			return;
 
-		let suffix = render_state.bridge?.[br_name]?.mgmt_vlan_suffix
-			?? sprintf('%d', mgmt_port.vid);
-		let alias = render_state.bridge?.[br_name]?.mgmt_vlan_alias;
+		let suffix = mgmt_port.dynamic ? '0' : sprintf('%d', mgmt_port.vid);
 		let section_name = bridge_vlan_section_name(br_name, suffix);
 
 		render_state.bridge ??= {};
@@ -415,12 +366,10 @@ function render_config() {
 		render_state.bridge[br_name].eth_ports = eth_ports;
 
 		bridge_vlan_section_open(br_name, section_name, mgmt_port.vid);
+		uci_set_boolean(output, `network.${section_name}.local_pvid`, true);
 
 		for (let port_ifname in eth_ports)
 			uci_list_string(output, `network.${section_name}.ports`, port_ifname);
-
-		if (alias)
-			uci_set_string(output, `network.${section_name}.alias`, alias);
 
 		return;
 	}
@@ -445,7 +394,6 @@ function render_config() {
 			let port_vids = compute_port_vids(bridge_inst, vlan_filtering);
 
 			populate_bridge(bridge, bridge_inst);
-			populate_8021q_devices(bridge, bridge_inst, port_vids);
 			generate_bridge_vlans(bridge, bridge_inst, port_vids);
 		}
 	}

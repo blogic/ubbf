@@ -659,7 +659,7 @@ function render_config() {
 	}
 
 	/**
-	 * Returns the L2 device backing the LAN IP.Interface (e.g. br-lanv0),
+	 * Returns the L2 device backing the LAN IP.Interface (e.g. br-lan),
 	 * needed for the shared-network directive.
 	 *
 	 * @param {array} ip_interfaces - IP interface instances
