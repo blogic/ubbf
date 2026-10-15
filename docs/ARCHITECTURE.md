@@ -57,7 +57,8 @@ modules/                  # Domains packaged separately as ubbf-mod-<name>
 ├── umdns/                # Device.DNS.SD
 ├── testbed/              # Device.X_UBBF.Testbed and the test harness RPC service
 ├── location/             # Device.DeviceInfo.Location: controller row, GPS row from ucode-gps
-└── cellular/             # Device.Cellular, from the ModemManager rpcd plugin
+├── cellular/             # Device.Cellular, from the ModemManager rpcd plugin
+└── softwaremodules/      # Device.SoftwareModules, from uxc and apk; see docs/SOFTWARE-MODULES.md
 ```
 
 `modules/` is outside `files/` because the base package does not ship it. Each module is its own package. See "Out-of-tree modules" below.
@@ -220,6 +221,7 @@ Reference modules in this repository:
 - `modules/cellular`: logs through `utils.logging`
 - `modules/packetcapture`: adds a command to the core object `Device.` through `members`
 - `modules/tr471`: adds `IPLayerCapacity()` to `Device.IP.Diagnostics.`, which `tr143/Diagnostics.uc` owns, and a table below it
+- `modules/softwaremodules`: async operations that run commands through `utils.process.popen_async`, and writes to rows that exist only at request time
 
 ### Rules
 

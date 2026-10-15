@@ -57,9 +57,9 @@ All clients use the same data model and the same validation.
 
 Schemas exist for these TR-181 domains (`files/usr/share/ucode/ubbf/schemas/`):
 
-Bridging, DeviceInfo, DHCPv4, DHCPv6, DNS, Ethernet, Firewall, GatewayInfo, Hosts (AccessControl; the Host table is the module `hosts`), InterfaceStack, IP (with the TR-143 diagnostics), LocalAgent, ManagementServer, NAT, NeighborDiscovery, RouterAdvertisement, Routing, SoftwareModules, SSH, Time, UnixDomainSockets, WiFi, and the vendor extensions under `Device.X_UBBF`.
+Bridging, DeviceInfo, DHCPv4, DHCPv6, DNS, Ethernet, Firewall, GatewayInfo, Hosts (AccessControl; the Host table is the module `hosts`), InterfaceStack, IP (with the TR-143 diagnostics), LocalAgent, ManagementServer, NAT, NeighborDiscovery, RouterAdvertisement, Routing, SSH, Time, UnixDomainSockets, WiFi, and the vendor extensions under `Device.X_UBBF`.
 
-Modules add more domains. Each module is a separate package, `ubbf-mod-<name>`, built from `modules/<name>/`: bulkdata, cellular, ddns, dslite, easymesh (IEEE1905 and WiFi DataElements), hosts, leds, lldp, location, multicast, packetcapture, pcp, ppp, pty, qos, qosify, security, syslog, testbed, tr471, umdns, upnp, usb, userinterface, users (with LANConfigSecurity), usfpd and wol (Ethernet WoL). The modules for domains that were part of the base package are selected by default.
+Modules add more domains. Each module is a separate package, `ubbf-mod-<name>`, built from `modules/<name>/`: bulkdata, cellular, ddns, dslite, easymesh (IEEE1905 and WiFi DataElements), hosts, leds, lldp, location, multicast, packetcapture, pcp, ppp, pty, qos, qosify, security, softwaremodules (containers, see [docs/SOFTWARE-MODULES.md](docs/SOFTWARE-MODULES.md)), syslog, testbed, tr471, umdns, upnp, usb, userinterface, users (with LANConfigSecurity), usfpd and wol (Ethernet WoL). The modules for domains that were part of the base package are selected by default.
 
 ### Diagnostics
 
@@ -107,6 +107,7 @@ The handlers in `files/usr/share/ucode/ubbf/tr181/*.uc` are written by hand.
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Implementation details, directory structure, module system |
 | [docs/MODULE-GUIDELINES.md](docs/MODULE-GUIDELINES.md) | Rules and checklist for TR-181 handlers |
 | [docs/CLI.md](docs/CLI.md) | `bbf-cli` reference |
+| [docs/SOFTWARE-MODULES.md](docs/SOFTWARE-MODULES.md) | `Device.SoftwareModules` over the uxc container stack |
 | [docs/ACL-FORMAT.md](docs/ACL-FORMAT.md) | Web UI ACL format |
 
 ## Licence
