@@ -647,57 +647,6 @@ function usp_discovery_opts_add(config, devinfo) {
 	}
 }
 
-const capability_defs = {
-	'OCI Runtime': {
-		Specification: 'OCIImage',
-		SpecificationVersion: '1.0.2',
-		SpecificationURI: 'https://github.com/opencontainers/runtime-spec'
-	},
-	'LXC': {
-		Specification: 'LXC',
-		SpecificationVersion: '1.0',
-		SpecificationURI: 'https://linuxcontainers.org/lxc'
-	}
-};
-
-/**
- * @param {array} runtimes - Detected container runtimes from capabilities.json
- * @returns {object} SoftwareModules config section with ExecEnvClass and ExecEnv
- */
-function softwaremodules_generate(runtimes) {
-	let execenv_classes = {};
-	let execenvs = {};
-
-	for (let i = 0; i < length(runtimes); i++) {
-		let rt = runtimes[i];
-		let inst = sprintf('%d', i + 1);
-		let alias = sprintf('cpe-%s', rt.name);
-
-		execenv_classes[inst] = {
-			Alias: alias,
-			Name: rt.name,
-			Vendor: rt.vendor,
-			Version: rt.version,
-			Capability: {}
-		};
-
-		let cap = capability_defs[rt.type];
-		if (cap)
-			execenv_classes[inst].Capability['1'] = cap;
-
-		execenvs[inst] = {
-			Enable: 'true',
-			Alias: alias,
-			Name: rt.name,
-			Vendor: rt.vendor,
-			Version: rt.version,
-			Type: rt.type
-		};
-	}
-
-	return { ExecEnvClass: execenv_classes, ExecEnv: execenvs };
-}
-
 /**
  * Deletes every instance under a container whose Interface field matches.
  *
@@ -1088,11 +1037,6 @@ if (discovery == 'dhcp') {
 		usp_discovery_opts_add(config, devinfo);
 }
 
-let runtimes = capabilities.runtimes ?? [];
-if (length(runtimes)) {
-	config.Device.SoftwareModules = softwaremodules_generate(runtimes);
-}
-
 // Device operating mode presets: router, dumb-ap, agent and cellular. All
 // four are emitted at first boot so the testbed can switch modes at runtime
 // (bbf-dm apply <file>); config.json is the one the /etc/ubbf/mode marker
@@ -1206,9 +1150,6 @@ if (has_network) {
 	if (wifi)
 		test_config.Device.WiFi.Radio = wifi.Radio;
 }
-
-if (length(runtimes))
-	test_config.Device.SoftwareModules = softwaremodules_generate(runtimes);
 
 if (mode == 'cellular' && has_network)
 	router_to_cellular(test_config, network, modem_path);
