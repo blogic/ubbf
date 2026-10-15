@@ -2,7 +2,7 @@
 'use strict';
 
 import * as uci from 'uci';
-import { readfile, writefile, stat, mkdir, unlink } from 'fs';
+import { readfile, writefile, mkdir, unlink } from 'fs';
 
 const valid_bands = [ '2g', '5g', '6g' ];
 
@@ -66,33 +66,6 @@ function network_extract(board) {
 	};
 }
 
-const runtime_defs = [
-	{ binary: '/sbin/uxc', name: 'uxc', vendor: 'openwrt.org',
-	  type: 'OCI Runtime', default_version: '0.3' },
-	{ binary: '/usr/bin/lxc-start', name: 'lxc', vendor: 'linuxcontainers.org',
-	  type: 'LXC', default_version: '6.0' },
-	{ binary: '/usr/bin/crun', name: 'crun', vendor: 'github.com/containers/crun',
-	  type: 'OCI Runtime', default_version: '1.17' },
-];
-
-function runtimes_detect() {
-	let runtimes = [];
-
-	for (let def in runtime_defs) {
-		if (!stat(def.binary))
-			continue;
-
-		push(runtimes, {
-			name: def.name,
-			vendor: def.vendor,
-			type: def.type,
-			version: def.default_version
-		});
-	}
-
-	return runtimes;
-}
-
 let board_json = readfile('/etc/board.json');
 let board = board_json ? json(board_json) : null;
 
@@ -103,8 +76,7 @@ let wireless_config = cursor.load('wireless') ? cursor.get_all('wireless') : {};
 
 let capabilities = {
 	radios: radios_extract(board, wireless_config),
-	network: network_extract(board),
-	runtimes: runtimes_detect()
+	network: network_extract(board)
 };
 
 mkdir('/tmp/ubbf');
