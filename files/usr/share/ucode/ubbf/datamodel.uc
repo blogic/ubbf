@@ -52,7 +52,6 @@ import * as USB from 'ubbf.tr181.USB';
 import * as IEEE1905 from 'ubbf.tr181.IEEE1905';
 import * as QoS from 'ubbf.tr181.QoS';
 import * as PPP from 'ubbf.tr181.PPP';
-import * as SoftwareModules from 'ubbf.tr181.SoftwareModules';
 import * as BulkData from 'ubbf.tr181.BulkData';
 import * as DynamicDNS from 'ubbf.tr181.DynamicDNS';
 import * as PCP from 'ubbf.tr181.PCP';
@@ -66,7 +65,6 @@ import * as GatewayInfo from 'ubbf.tr181.GatewayInfo';
 
 const optional_modules = [
 	[ '/usr/sbin/umapd', IEEE1905.model, null ],
-	[ ['/sbin/uxc', '/usr/bin/lxc-start', '/usr/bin/crun'], SoftwareModules.model, SoftwareModules.operations ],
 ];
 
 const VALIDATE_ENFORCE = true;

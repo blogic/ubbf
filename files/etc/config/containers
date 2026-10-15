@@ -1,3 +1,0 @@
-config daemon 'main'
-	option default_runtime 'uxc'
-	option monitor_interval '10'

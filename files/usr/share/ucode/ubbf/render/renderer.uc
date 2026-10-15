@@ -164,7 +164,6 @@ export function generate(config, logs) {
 	include('templates/ppp.uc', scope);
 	include('templates/userinterface.uc', scope);
 	include('templates/udpecho.uc', scope);
-	include('templates/containers.uc', scope);
 	include('templates/bulkdata.uc', scope);
 	include('templates/nlbwmon.uc', scope);
 	include('templates/ddns.uc', scope);
