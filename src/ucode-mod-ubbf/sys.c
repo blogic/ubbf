@@ -79,24 +79,6 @@ apk_package_find(const char *name, char *version, size_t size)
 }
 
 /**
- * Tests whether a named APK package is installed.
- *
- * @param vm     ucode VM context
- * @param nargs  number of arguments (1 expected: package name)
- * @return       boolean indicating installation state
- */
-uc_value_t *
-uc_ubbf_apk_installed(uc_vm_t *vm, size_t nargs)
-{
-	uc_value_t *name_val = uc_fn_arg(0);
-
-	if (ucv_type(name_val) != UC_STRING)
-		return ucv_boolean_new(false);
-
-	return ucv_boolean_new(apk_package_find(ucv_string_get(name_val), NULL, 0));
-}
-
-/**
  * Returns the version of an installed APK package.
  *
  * @param vm     ucode VM context

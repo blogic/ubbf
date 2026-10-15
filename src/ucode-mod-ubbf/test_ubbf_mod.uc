@@ -1513,19 +1513,12 @@ for (let pw in ['aabbccdd', 'aabbccddeeff', 'aa:bb:cc:dd', 'aa-bb-cc-dd-ee-ff'])
 	assert_eq(`wol_send: password ${pw} accepted`,
 		type(wol_lib.send('nonexistent_iface', 'aa:bb:cc:dd:ee:ff', pw)), 'bool');
 
-/* ---- sys.c: arch_get / apk_installed / statvfs_info / du_kib -------- */
+/* ---- sys.c: arch_get / apk_version / statvfs_info / du_kib ---------- */
 
 assert_eq('arch_get: returns string',
 	type(ubbf.arch_get()), 'string');
 assert_true('arch_get: non-empty',
 	length(ubbf.arch_get()) > 0);
-
-assert_false('apk_installed: non-string',
-	ubbf.apk_installed(null));
-assert_false('apk_installed: empty',
-	ubbf.apk_installed(''));
-assert_eq('apk_installed: returns bool',
-	type(ubbf.apk_installed('some-package-name')), 'bool');
 
 assert_eq('apk_version: non-string',
 	ubbf.apk_version(null), null);

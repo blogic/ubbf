@@ -231,7 +231,6 @@ static const uc_function_list_t module_fns[] = {
 	{ "write_file_atomic",           uc_ubbf_write_file_atomic },
 	{ "counter_bump",                uc_ubbf_counter_bump },
 	{ "arch_get",                    uc_ubbf_arch_get },
-	{ "apk_installed",               uc_ubbf_apk_installed },
 	{ "apk_version",                 uc_ubbf_apk_version },
 	{ "statvfs_info",                uc_ubbf_statvfs_info },
 	{ "du_kib",                      uc_ubbf_du_kib },
