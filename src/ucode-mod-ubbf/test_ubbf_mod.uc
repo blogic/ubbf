@@ -1579,19 +1579,12 @@ assert_false('wol_send: invalid password',
 assert_eq('wol_send: valid args return bool',
 	type(ubbf.wol_send('nonexistent_iface', 'aa:bb:cc:dd:ee:ff')), 'bool');
 
-/* ---- sys.c: arch_get / apk_installed / statvfs_info / du_kib -------- */
+/* ---- sys.c: arch_get / statvfs_info / du_kib ------------------------ */
 
 assert_eq('arch_get: returns string',
 	type(ubbf.arch_get()), 'string');
 assert_true('arch_get: non-empty',
 	length(ubbf.arch_get()) > 0);
-
-assert_false('apk_installed: non-string',
-	ubbf.apk_installed(null));
-assert_false('apk_installed: empty',
-	ubbf.apk_installed(''));
-assert_eq('apk_installed: returns bool',
-	type(ubbf.apk_installed('some-package-name')), 'bool');
 
 let svfs = ubbf.statvfs_info('/');
 assert_eq('statvfs_info: object',

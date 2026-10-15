@@ -80,7 +80,6 @@ uc_value_t *uc_ubbf_counter_bump(uc_vm_t *vm, size_t nargs);
 uc_value_t *uc_ubbf_rate_limit_check(uc_vm_t *vm, size_t nargs);
 uc_value_t *uc_ubbf_wol_send(uc_vm_t *vm, size_t nargs);
 uc_value_t *uc_ubbf_arch_get(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_apk_installed(uc_vm_t *vm, size_t nargs);
 uc_value_t *uc_ubbf_statvfs_info(uc_vm_t *vm, size_t nargs);
 uc_value_t *uc_ubbf_du_kib(uc_vm_t *vm, size_t nargs);
 uc_value_t *uc_ubbf_mac_to_base64(uc_vm_t *vm, size_t nargs);

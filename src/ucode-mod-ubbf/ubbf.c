@@ -268,7 +268,6 @@ static const uc_function_list_t module_fns[] = {
 	{ "rate_limit_check",            uc_ubbf_rate_limit_check },
 	{ "wol_send",                    uc_ubbf_wol_send },
 	{ "arch_get",                    uc_ubbf_arch_get },
-	{ "apk_installed",               uc_ubbf_apk_installed },
 	{ "statvfs_info",                uc_ubbf_statvfs_info },
 	{ "du_kib",                      uc_ubbf_du_kib },
 	{ "mac_to_base64",               uc_ubbf_mac_to_base64 },

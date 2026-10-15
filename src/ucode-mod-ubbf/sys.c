@@ -31,53 +31,6 @@ uc_ubbf_arch_get(uc_vm_t *vm, size_t nargs)
 }
 
 /**
- * Tests whether a named APK package is installed.
- *
- * Scans `/lib/apk/db/installed` for a matching `P:<name>\n` line. That
- * file is a concatenation of package records separated by blank lines,
- * with each record starting with `P:<package-name>`. This avoids the
- * fork+exec of `apk info -e <name>`.
- *
- * @param vm     ucode VM context
- * @param nargs  number of arguments (1 expected: package name)
- * @return       boolean indicating installation state
- */
-uc_value_t *
-uc_ubbf_apk_installed(uc_vm_t *vm, size_t nargs)
-{
-	uc_value_t *name_val = uc_fn_arg(0);
-	const char *name;
-	size_t nlen;
-	FILE *fp;
-	char line[512];
-
-	if (ucv_type(name_val) != UC_STRING)
-		return ucv_boolean_new(false);
-
-	name = ucv_string_get(name_val);
-	nlen = strlen(name);
-	if (nlen == 0 || nlen > sizeof(line) - 4)
-		return ucv_boolean_new(false);
-
-	fp = fopen("/lib/apk/db/installed", "r");
-	if (!fp)
-		return ucv_boolean_new(false);
-
-	while (fgets(line, sizeof(line), fp)) {
-		if (line[0] != 'P' || line[1] != ':')
-			continue;
-		if (strncmp(line + 2, name, nlen) == 0 &&
-		    (line[2 + nlen] == '\n' || line[2 + nlen] == '\0')) {
-			fclose(fp);
-			return ucv_boolean_new(true);
-		}
-	}
-
-	fclose(fp);
-	return ucv_boolean_new(false);
-}
-
-/**
  * Returns a snapshot of the filesystem hosting `path`.
  *
  * Calls `statvfs(2)` and returns an object with `total_kib`, `free_kib`,
