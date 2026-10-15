@@ -175,18 +175,21 @@ function wiphy_path_match(wiphy_path, path, suffix) {
  * Checks whether a wifi-device section belongs to a wiphy the device has.
  *
  * Detection keeps the section of a wiphy whose path changed and adds one
- * for the new path, so a section can name a wiphy that is gone. Without
- * a board.json wlan list, every section counts.
+ * for the new path, so a section can name a wiphy that is gone. Only a
+ * board.json wlan entry with a path is a wiphy: board.d writes the
+ * 'defaults' entry before wifi detection adds the wiphys. Without a wiphy
+ * in board.json, every section counts.
  *
  * @param {object} board - Parsed board.json
  * @param {string} path - Path of the wifi-device section
  * @returns {boolean} True unless board.json lists wiphys and none has the path
  */
 function wiphy_present(board, path) {
-	if (!length(board?.wlan))
+	let wiphys = filter(values(board?.wlan ?? {}), (phy_data) => length(phy_data?.path));
+	if (!length(wiphys))
 		return true;
 
-	for (let phy_name, phy_data in board.wlan) {
+	for (let phy_data in wiphys) {
 		if (wiphy_path_match(phy_data.path, path, true))
 			return true;
 	}
