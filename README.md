@@ -57,9 +57,9 @@ All clients use the same data model and the same validation.
 
 Schemas exist for these TR-181 domains (`files/usr/share/ucode/ubbf/schemas/`):
 
-Bridging, BulkData, DeviceInfo, DHCPv4, DHCPv6, DNS, DynamicDNS, Ethernet, Firewall, GatewayInfo, Hosts, IEEE1905, InterfaceStack, IP, LANConfigSecurity, LEDs, LocalAgent, ManagementServer, NAT, NeighborDiscovery, PacketCapture, PCP, PPP, QoS, RouterAdvertisement, Routing, Security, SoftwareModules, SSH, Syslog, Time, UnixDomainSockets, USB, UserInterface, Users, WiFi, WiFi DataElements (EasyMesh), and the vendor extensions under `Device.X_UBBF`.
+Bridging, BulkData, DeviceInfo, DHCPv4, DHCPv6, DNS, DynamicDNS, Ethernet, Firewall, GatewayInfo, Hosts, IEEE1905, InterfaceStack, IP, LANConfigSecurity, LEDs, LocalAgent, ManagementServer, NAT, NeighborDiscovery, PacketCapture, PCP, PPP, QoS, RouterAdvertisement, Routing, Security, SSH, Syslog, Time, UnixDomainSockets, USB, UserInterface, Users, WiFi, WiFi DataElements (EasyMesh), and the vendor extensions under `Device.X_UBBF`.
 
-Optional modules add more domains. Each module is a separate package, `ubbf-mod-<name>`, built from `modules/<name>/`: cellular, dslite, lldp, location, multicast, qosify, testbed, umdns and usfpd.
+Optional modules add more domains. Each module is a separate package, `ubbf-mod-<name>`, built from `modules/<name>/`: cellular, dslite, lldp, location, multicast, qosify, softwaremodules (containers, see [docs/SOFTWARE-MODULES.md](docs/SOFTWARE-MODULES.md)), testbed, umdns and usfpd.
 
 ### Diagnostics
 
@@ -106,6 +106,7 @@ The handlers in `files/usr/share/ucode/ubbf/tr181/*.uc` are written by hand.
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Implementation details, directory structure, module system |
 | [docs/MODULE-GUIDELINES.md](docs/MODULE-GUIDELINES.md) | Rules and checklist for TR-181 handlers |
 | [docs/CLI.md](docs/CLI.md) | `bbf-cli` reference |
+| [docs/SOFTWARE-MODULES.md](docs/SOFTWARE-MODULES.md) | `Device.SoftwareModules` over the uxc container stack |
 | [docs/ACL-FORMAT.md](docs/ACL-FORMAT.md) | Web UI ACL format |
 
 ## Licence
