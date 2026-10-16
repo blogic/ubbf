@@ -55,10 +55,23 @@ const SIZE_UNITS = { k: 1024, m: 1048576, g: 1073741824 };
 let pending = {};
 let ee_restart = { count: 0, reason: '', time: 0 };
 
+/**
+ * Builds a shell command line from escaped arguments.
+ *
+ * @param {array} parts - Command and arguments
+ * @returns {string} Command line
+ */
 function command_build(parts) {
 	return join(' ', map(parts, (p) => ubbf.shell_escape(sprintf('%s', p))));
 }
 
+/**
+ * Runs a command and collects its output.
+ *
+ * @param {array} parts - Command and arguments
+ * @param {boolean} merge_stderr - Capture stderr together with stdout
+ * @returns {object} Output in `data` and the exit code in `exitcode`
+ */
 function command_run(parts, merge_stderr) {
 	let cmd = command_build(parts) + (merge_stderr ? ' 2>&1' : ' 2>/dev/null');
 	let pipe = fs.popen(cmd, 'r');
@@ -71,6 +84,12 @@ function command_run(parts, merge_stderr) {
 	return { data, exitcode };
 }
 
+/**
+ * Runs a command and parses its JSON output.
+ *
+ * @param {array} parts - Command and arguments
+ * @returns {*|null} Parsed output, or null on failure
+ */
 function command_json(parts) {
 	let result = command_run(parts, false);
 	if (result.exitcode != 0)
@@ -84,6 +103,14 @@ function command_json(parts) {
 	}
 }
 
+/**
+ * Runs commands one after the other and stops at the first failure.
+ *
+ * @param {array} steps - Command argument arrays
+ * @param {function} done - Called with the results and the failed result, if any
+ * @param {array} results - Results collected so far
+ * @returns {void}
+ */
 function steps_run(steps, done, results) {
 	results ??= [];
 	if (!length(steps)) {
@@ -105,6 +132,12 @@ function steps_run(steps, done, results) {
 	});
 }
 
+/**
+ * Extracts a one-line message from a command result.
+ *
+ * @param {object} result - Result of command_run or popen_async
+ * @returns {string} Error, last output line or exit code
+ */
 function result_message(result) {
 	if (result?.error)
 		return result.error;
@@ -113,6 +146,12 @@ function result_message(result) {
 	return length(lines) ? trim(lines[-1]) : sprintf('exit code %d', result?.exitcode ?? -1);
 }
 
+/**
+ * Converts a uxc size with an optional k, m or g suffix to bytes.
+ *
+ * @param {string|number} value - Size
+ * @returns {number|null} Bytes, or null for an unparsable size
+ */
 function size_bytes(value) {
 	if (type(value) == 'int')
 		return value;
@@ -124,10 +163,22 @@ function size_bytes(value) {
 	return int(m[1]) * (m[2] ? SIZE_UNITS[m[2]] : 1);
 }
 
+/**
+ * Converts bytes to the kibibytes TR-181 reports.
+ *
+ * @param {number|null} bytes - Size in bytes
+ * @returns {number} Kibibytes, or -1 for an unknown size
+ */
 function kib(bytes) {
 	return bytes == null ? -1 : int(bytes / 1024);
 }
 
+/**
+ * Parses an RFC 3339 timestamp as uxc prints it.
+ *
+ * @param {string} text - Timestamp
+ * @returns {number|null} Unix time, or null for an unparsable timestamp
+ */
 function rfc3339_parse(text) {
 	let m = match(text ?? '', /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/);
 	if (!m)
@@ -139,6 +190,12 @@ function rfc3339_parse(text) {
 	});
 }
 
+/**
+ * Extracts the openwrt.req key-value tags of a package.
+ *
+ * @param {array} list - Package tags
+ * @returns {object} Tag values by key
+ */
 function tags_parse(list) {
 	let tags = {};
 	for (let tag in (list ?? [])) {
@@ -153,6 +210,12 @@ function tags_parse(list) {
 	return tags;
 }
 
+/**
+ * Percent-encodes a name as TR-181 Annex C requires.
+ *
+ * @param {string} name - Deployment unit name
+ * @returns {string} Encoded name
+ */
 function name_percent_encode(name) {
 	let out = '';
 	for (let i = 0; i < length(name); i++) {
@@ -165,6 +228,13 @@ function name_percent_encode(name) {
 	return out;
 }
 
+/**
+ * Derives the version 5 UUID of a deployment unit per TR-181 Annex C.
+ *
+ * @param {string} name - Deployment unit name
+ * @param {string} vendor - Vendor domain
+ * @returns {string} UUID
+ */
 function du_uuid(name, vendor) {
 	let fqdn = name_percent_encode(name) + '.' + vendor + '.';
 	let sha = digest.sha1(hexdec(UUID_NAMESPACE_DNS) + fqdn);
@@ -178,11 +248,21 @@ function du_uuid(name, vendor) {
 		substr(sha, 20, 12));
 }
 
+/**
+ * Lists the registered containers through uxc.
+ *
+ * @returns {array} Entries of `uxc list --format json`
+ */
 function containers_fetch() {
 	let list = command_json([ 'uxc', 'list', '--format', 'json' ]);
 	return type(list) == 'array' ? list : [];
 }
 
+/**
+ * Lists the installed container and stack packages through apk.
+ *
+ * @returns {object} Package records by name
+ */
 function packages_fetch() {
 	let list = command_json([ 'apk', 'query', '--installed', '--format', 'json',
 		'--fields', 'name,version,description,url,tags', 'container-*', 'stack-*' ]);
@@ -195,19 +275,43 @@ function packages_fetch() {
 	return packages;
 }
 
+/**
+ * Calls a method of the uvol ubus object.
+ *
+ * @param {string} method - Method name
+ * @param {object} args - Method arguments
+ * @returns {object|null} Reply
+ */
 function uvol_call(method, args) {
 	return ubus.call('uvol', method, args ?? {});
 }
 
+/**
+ * Reads the free or total volume space from uvol.
+ *
+ * @param {string} method - `free` or `total`
+ * @returns {number|null} Bytes
+ */
 function uvol_bytes(method) {
 	return utils.cache.call(uvol_call, method, {})?.bytes;
 }
 
+/**
+ * Reads the uxc version string.
+ *
+ * @returns {string} Version, or an empty string
+ */
 function uxc_version_fetch() {
 	let m = match(command_run([ 'uxc', '--version' ], false).data, /^uxc (\S+)/);
 	return m ? m[1] : '';
 }
 
+/**
+ * Finds the package a registration belongs to.
+ *
+ * @param {object} info - The org.openwrt.uxc table of a container
+ * @returns {string|null} Package name
+ */
 function package_of(info) {
 	if (info.package)
 		return info.package;
@@ -216,6 +320,13 @@ function package_of(info) {
 	return m ? 'stack-' + m[1] : null;
 }
 
+/**
+ * Derives the deployment unit name of a package.
+ *
+ * @param {string} pkg - Package name
+ * @param {object|null} info - The org.openwrt.uxc table of a container
+ * @returns {string} Name
+ */
 function du_name(pkg, info) {
 	let m = match(info?.origin ?? '', /^stack:(.+)$/);
 	if (m)
@@ -225,6 +336,11 @@ function du_name(pkg, info) {
 	return replace(pkg, /^(container|stack)-/, '');
 }
 
+/**
+ * Builds the execution unit and deployment unit rows from uxc and apk.
+ *
+ * @returns {object} Rows in `eus` and `dus`, in instance order
+ */
 function view_build() {
 	let containers = sort(utils.cache.call(containers_fetch),
 		(a, b) => (a.id < b.id) ? -1 : ((a.id > b.id) ? 1 : 0));
@@ -267,18 +383,41 @@ function view_build() {
 	return { eus, dus };
 }
 
+/**
+ * Cached wrapper around `view_build`.
+ *
+ * @returns {object} Rows in `eus` and `dus`
+ */
 function view_get() {
 	return utils.cache.call(view_build);
 }
 
+/**
+ * Finds an execution unit by instance number.
+ *
+ * @param {number} instance - Instance number
+ * @returns {object|null} Execution unit
+ */
 function eu_by_instance(instance) {
 	return ubbf.get_by_instance(view_get().eus, instance);
 }
 
+/**
+ * Finds a deployment unit by instance number.
+ *
+ * @param {number} instance - Instance number
+ * @returns {object|null} Deployment unit
+ */
 function du_by_instance(instance) {
 	return ubbf.get_by_instance(view_get().dus, instance);
 }
 
+/**
+ * Finds the first execution unit of a package.
+ *
+ * @param {string} pkg - Package name
+ * @returns {object|null} Execution unit
+ */
 function eu_by_package(pkg) {
 	for (let eu in view_get().eus) {
 		if (eu.pkg == pkg)
@@ -287,14 +426,32 @@ function eu_by_package(pkg) {
 	return null;
 }
 
+/**
+ * Builds the path of an execution unit row.
+ *
+ * @param {object} eu - Execution unit
+ * @returns {string} Path
+ */
 function eu_ref(eu) {
 	return sprintf('%s.ExecutionUnit.%d', SM, eu.index);
 }
 
+/**
+ * Tells whether a container is running or being created.
+ *
+ * @param {object} eu - Execution unit
+ * @returns {boolean} True for a live container
+ */
 function eu_live(eu) {
 	return STATUS_MAP[eu.entry.status] != null;
 }
 
+/**
+ * Tells whether containers are disabled on this device.
+ *
+ * @param {object} view - Result of view_get
+ * @returns {boolean} True when uxc reports or marks containers disabled
+ */
 function containers_disabled(view) {
 	for (let eu in view.eus) {
 		if (eu.info['containers-disabled'])
@@ -303,6 +460,12 @@ function containers_disabled(view) {
 	return !!fs.stat(DISABLED_MARKER);
 }
 
+/**
+ * Derives ExecutionFaultCode and ExecutionFaultMessage from the last exit record.
+ *
+ * @param {object} eu - Execution unit
+ * @returns {object} Fault in `code` and `message`
+ */
 function eu_fault(eu) {
 	let exit = eu.info['last-exit'];
 	if (eu_live(eu) || !exit || exit.requested)
@@ -322,6 +485,12 @@ function eu_fault(eu) {
 	return { code: 'NoFault', message: '' };
 }
 
+/**
+ * Finds the cgroup directory of a running container.
+ *
+ * @param {object} eu - Execution unit
+ * @returns {string|null} Directory under /sys/fs/cgroup
+ */
 function cgroup_dir(eu) {
 	if (!eu.entry.pid)
 		return null;
@@ -330,6 +499,13 @@ function cgroup_dir(eu) {
 	return m ? CGROUP_ROOT + m[1] : null;
 }
 
+/**
+ * Reads a numeric cgroup attribute.
+ *
+ * @param {string|null} dir - Cgroup directory
+ * @param {string} attr - Attribute file name
+ * @returns {number|null} Value, or null when absent or not numeric
+ */
 function cgroup_int(dir, attr) {
 	if (!dir)
 		return null;
@@ -338,6 +514,13 @@ function cgroup_int(dir, attr) {
 	return match(text, /^[0-9]+$/) ? int(text) : null;
 }
 
+/**
+ * Derives the CPU share of a container from its cgroup or its package tag.
+ *
+ * @param {object} eu - Execution unit
+ * @param {string|null} dir - Cgroup directory
+ * @returns {number} Percent, or -1 when unlimited
+ */
 function cpu_percent(eu, dir) {
 	let m = dir ? match(ubbf.readfile_trim(dir + '/cpu.max', ''), /^([0-9]+) ([0-9]+)$/) : null;
 	if (m)
@@ -347,6 +530,13 @@ function cpu_percent(eu, dir) {
 	return tag ? int(tag[1]) : -1;
 }
 
+/**
+ * Derives the memory limit of a container from its cgroup or its package tag.
+ *
+ * @param {object} eu - Execution unit
+ * @param {string|null} dir - Cgroup directory
+ * @returns {number} Kibibytes, or -1 when unlimited
+ */
 function memory_limit_kib(eu, dir) {
 	let limit = cgroup_int(dir, 'memory.max');
 	if (limit != null)
@@ -361,6 +551,13 @@ function memory_limit_kib(eu, dir) {
 	return kib(size_bytes(tag));
 }
 
+/**
+ * Reads the first entry of the uid_map or gid_map of a running container.
+ *
+ * @param {object} eu - Execution unit
+ * @param {string} file - `uid_map` or `gid_map`
+ * @returns {array|null} Inside and outside id
+ */
 function id_map(eu, file) {
 	if (!eu.entry.pid)
 		return null;
@@ -369,6 +566,12 @@ function id_map(eu, file) {
 	return m ? [ int(m[1]), int(m[2]) ] : null;
 }
 
+/**
+ * Reads the used space of a mounted uvol volume.
+ *
+ * @param {object|null} vol - Volume with `name` and `up`
+ * @returns {number|null} Kibibytes, or null when the volume is not mounted
+ */
 function volume_used_kib(vol) {
 	if (!vol?.up)
 		return null;
@@ -377,6 +580,12 @@ function volume_used_kib(vol) {
 	return st ? st.total_kib - st.free_kib : null;
 }
 
+/**
+ * Lists the data volumes and the overlay of a container.
+ *
+ * @param {object} eu - Execution unit
+ * @returns {array} Volume rows
+ */
 function eu_volumes(eu) {
 	let rows = [];
 
@@ -407,6 +616,12 @@ function eu_volumes(eu) {
 	return rows;
 }
 
+/**
+ * Lists the ApplicationData rows of the execution environment.
+ *
+ * @param {object} view - Result of view_get
+ * @returns {array} Volume rows in instance order
+ */
 function appdata_rows(view) {
 	let rows = [];
 	for (let eu in view.eus) {
@@ -418,6 +633,12 @@ function appdata_rows(view) {
 	return rows;
 }
 
+/**
+ * Builds a Device.SoftwareModules.ExecEnv.{i}.ApplicationData.{i} row.
+ *
+ * @param {object} row - Volume row
+ * @returns {object} TR-181 parameters
+ */
 function appdata_to_object(row) {
 	let volume = row.volume ?? sprintf('%s.%s', row.eu.name, row.name);
 	let used = row.kind == 'tmpfs' ? null : volume_used_kib({ name: volume, up: row.up });
@@ -434,6 +655,13 @@ function appdata_to_object(row) {
 	};
 }
 
+/**
+ * Lists the Device.IP.Interface rows with the given names.
+ *
+ * @param {object} root - Configuration tree
+ * @param {array|null} names - Interface names, or null for all rows
+ * @returns {array} Row paths
+ */
 function ip_interface_refs(root, names) {
 	let table = root?.Device?.IP?.Interface ?? {};
 	let refs = [];
@@ -449,6 +677,12 @@ function ip_interface_refs(root, names) {
 	return refs;
 }
 
+/**
+ * Lists the names of all Device.IP.Interface rows.
+ *
+ * @param {object} root - Configuration tree
+ * @returns {array} Interface names
+ */
 function ip_interface_names(root) {
 	let names = [];
 	for (let key, row in (root?.Device?.IP?.Interface ?? {})) {
@@ -458,6 +692,12 @@ function ip_interface_names(root) {
 	return names;
 }
 
+/**
+ * Lists the networks a container can reach.
+ *
+ * @param {object} eu - Execution unit
+ * @returns {array|null} Network names, or null for the host network
+ */
 function access_networks(eu) {
 	let net = eu.info['container-network'] ?? {};
 	let attach = net.attach ?? 'none';
@@ -472,14 +712,28 @@ function access_networks(eu) {
 	return filter(net.egress ?? [], (zone) => !match(zone, /^(vpn|container):/));
 }
 
+/**
+ * Builds the NetworkConfig object of an execution unit. The ingress redirects
+ * are fw4 state uxc-net creates over ubus, so no Device.NAT.PortMapping row
+ * exists for them.
+ *
+ * @param {object} eu - Execution unit
+ * @param {object} root - Configuration tree
+ * @returns {object} TR-181 parameters
+ */
 function networkconfig_to_object(eu, root) {
-	// The ingress redirects are fw4 state uxc-net creates over ubus; no Device.NAT.PortMapping row exists for them.
 	return {
 		AccessInterfaceRefList: join(',', ip_interface_refs(root, access_networks(eu))),
 		PortMappingRefList: ''
 	};
 }
 
+/**
+ * Lists the host objects of a container: provisioned files, data volumes and the hosts file.
+ *
+ * @param {object} eu - Execution unit
+ * @returns {array} Rows with Source, Destination and Options
+ */
 function hostobjects_of(eu) {
 	let rows = [];
 
@@ -501,6 +755,12 @@ function hostobjects_of(eu) {
 	return rows;
 }
 
+/**
+ * Builds a Device.SoftwareModules.ExecutionUnit.{i}.HostObject.{i} row.
+ *
+ * @param {object} row - Host object row
+ * @returns {object} TR-181 parameters
+ */
 function hostobject_to_object(row) {
 	return {
 		Source: row.Source ?? '',
@@ -510,11 +770,23 @@ function hostobject_to_object(row) {
 	};
 }
 
+/**
+ * Lists the environment variables of a container in key order.
+ *
+ * @param {object} eu - Execution unit
+ * @returns {array} Rows with Key and Value
+ */
 function envvariables_of(eu) {
 	let env = eu.info.env ?? {};
 	return map(sort(keys(env)), (key) => ({ Key: key, Value: sprintf('%s', env[key]) }));
 }
 
+/**
+ * Builds a Device.SoftwareModules.ExecutionUnit.{i}.EnvVariable.{i} row.
+ *
+ * @param {object} row - Environment variable row
+ * @returns {object} TR-181 parameters
+ */
 function envvariable_to_object(row) {
 	return {
 		Key: row.Key,
@@ -523,6 +795,12 @@ function envvariable_to_object(row) {
 	};
 }
 
+/**
+ * Builds the AutoRestart object of an execution unit from its respawn settings.
+ *
+ * @param {object} eu - Execution unit
+ * @returns {object} TR-181 parameters
+ */
 function autorestart_to_object(eu) {
 	let respawn = eu.info.respawn ?? {};
 
@@ -539,6 +817,12 @@ function autorestart_to_object(eu) {
 	};
 }
 
+/**
+ * Lists the Device.DeviceInfo.ProcessStatus.Process rows of a cgroup.
+ *
+ * @param {string|null} dir - Cgroup directory
+ * @returns {array} Row paths
+ */
 function process_refs(dir) {
 	if (!dir)
 		return [];
@@ -547,6 +831,14 @@ function process_refs(dir) {
 	return map(pids, (pid) => sprintf('Device.DeviceInfo.ProcessStatus.Process.%s', pid));
 }
 
+/**
+ * Builds a Device.SoftwareModules.ExecutionUnit.{i} row with its sub-objects.
+ *
+ * @param {object} eu - Execution unit
+ * @param {object} view - Result of view_get
+ * @param {object} root - Configuration tree
+ * @returns {object} TR-181 parameters
+ */
 function eu_to_object(eu, view, root) {
 	let fault = eu_fault(eu);
 	let dir = cgroup_dir(eu);
@@ -614,6 +906,12 @@ function eu_to_object(eu, view, root) {
 	};
 }
 
+/**
+ * Builds a Device.SoftwareModules.DeploymentUnit.{i} row.
+ *
+ * @param {object} du - Deployment unit
+ * @returns {object} TR-181 parameters
+ */
 function du_to_object(du) {
 	let resolved = true;
 	for (let eu in du.eus) {
@@ -643,6 +941,12 @@ function du_to_object(du) {
 	};
 }
 
+/**
+ * Builds the Device.SoftwareModules.ExecEnv.1 row for uxc.
+ *
+ * @param {object} root - Configuration tree
+ * @returns {object} TR-181 parameters
+ */
 function execenv_to_object(root) {
 	let view = view_get();
 	let disabled = containers_disabled(view);
@@ -685,6 +989,11 @@ function execenv_to_object(root) {
 	};
 }
 
+/**
+ * Builds the Device.SoftwareModules.ExecEnvClass.1 row with its OCI capability.
+ *
+ * @returns {object} TR-181 parameters
+ */
 function execenvclass_to_object() {
 	return {
 		Alias: 'cpe-uxc',
@@ -703,6 +1012,12 @@ function execenvclass_to_object() {
 	};
 }
 
+/**
+ * Get handler for Device.SoftwareModules.
+ *
+ * @param {object} ctx - Context
+ * @returns {object} Table entry counts
+ */
 function softwaremodules_get(ctx) {
 	let view = view_get();
 
@@ -714,6 +1029,12 @@ function softwaremodules_get(ctx) {
 	};
 }
 
+/**
+ * Get handler for Device.SoftwareModules.ExecEnvClass.{i}.
+ *
+ * @param {object} ctx - Context with optional instance number
+ * @returns {object|null} Single row or enumerated rows
+ */
 function execenvclass_get(ctx) {
 	if (ctx.instance == null)
 		return { '1': execenvclass_to_object() };
@@ -721,6 +1042,12 @@ function execenvclass_get(ctx) {
 	return ctx.instance == 1 ? execenvclass_to_object() : null;
 }
 
+/**
+ * Get handler for Device.SoftwareModules.ExecEnv.{i}.
+ *
+ * @param {object} ctx - Context with optional instance number
+ * @returns {object|null} Single row or enumerated rows
+ */
 function execenv_get(ctx) {
 	if (ctx.instance == null)
 		return { '1': execenv_to_object(ctx.root) };
@@ -728,6 +1055,12 @@ function execenv_get(ctx) {
 	return ctx.instance == 1 ? execenv_to_object(ctx.root) : null;
 }
 
+/**
+ * Get handler for Device.SoftwareModules.DeploymentUnit.{i}.
+ *
+ * @param {object} ctx - Context with optional instance number
+ * @returns {object|null} Single row or enumerated rows
+ */
 function du_get(ctx) {
 	let view = view_get();
 
@@ -738,6 +1071,12 @@ function du_get(ctx) {
 	return du ? du_to_object(du) : null;
 }
 
+/**
+ * Get handler for Device.SoftwareModules.ExecutionUnit.{i}.
+ *
+ * @param {object} ctx - Context with optional instance number
+ * @returns {object|null} Single row or enumerated rows
+ */
 function eu_get(ctx) {
 	let view = view_get();
 	let to_object = (eu) => eu_to_object(eu, view, ctx.root);
@@ -749,13 +1088,27 @@ function eu_get(ctx) {
 	return eu ? to_object(eu) : null;
 }
 
+/**
+ * Removes the stored copy of a table from the configuration tree. A stored
+ * row hides the rows enumerated from the stack, so a write is applied to uxc
+ * and the copy the engine materialised is dropped.
+ *
+ * @param {object} ctx - Set context
+ * @param {string} table - Table name under Device.SoftwareModules
+ * @returns {void}
+ */
 function stored_rows_drop(ctx, table) {
-	// A stored row hides the rows enumerated from the stack, so a write is applied to uxc and its stored copy removed.
 	let sm = ctx.root?.Device?.SoftwareModules;
 	if (sm)
 		delete sm[table];
 }
 
+/**
+ * Runs a uxc command for a parameter write and logs a failure.
+ *
+ * @param {array} parts - Command and arguments
+ * @returns {number} 0 on success, -1 on failure
+ */
 function uxc_apply(parts) {
 	let result = command_run(parts, true);
 	if (result.exitcode == 0)
@@ -765,6 +1118,12 @@ function uxc_apply(parts) {
 	return -1;
 }
 
+/**
+ * Set handler for Device.SoftwareModules.ExecEnv.{i}; only Enable is writable.
+ *
+ * @param {object} ctx - Set context
+ * @returns {number} 0 on success, negative to reject
+ */
 function execenv_set(ctx) {
 	stored_rows_drop(ctx, 'ExecEnv');
 	if (ctx.instance != 1 || ctx.param != 'Enable')
@@ -773,6 +1132,12 @@ function execenv_set(ctx) {
 	return uxc_apply([ 'uxc', ubbf.to_bool(ctx.value) ? 'enable-all' : 'disable-all' ]);
 }
 
+/**
+ * Set handler for Device.SoftwareModules.ExecutionUnit.{i}: AutoStart and ShutdownDelay.
+ *
+ * @param {object} ctx - Set context
+ * @returns {number} 0 on success, negative to reject
+ */
 function eu_set(ctx) {
 	let eu = eu_by_instance(ctx.instance);
 
@@ -787,6 +1152,12 @@ function eu_set(ctx) {
 	return -1;
 }
 
+/**
+ * Set handler for Device.SoftwareModules.ExecutionUnit.{i}.AutoRestart.
+ *
+ * @param {object} ctx - Set context
+ * @returns {number} 0 on success, negative to reject
+ */
 function autorestart_set(ctx) {
 	let eu = eu_by_instance(ctx.instance);
 
@@ -804,6 +1175,13 @@ function autorestart_set(ctx) {
 	return uxc_apply([ 'uxc', 'set', eu.name, '--respawn', sprintf('%s=%d', key, value) ]);
 }
 
+/**
+ * Collects the rows of a nested command argument table from the flat input.
+ *
+ * @param {object} input - Command input
+ * @param {string} prefix - Table name, for example `HostObject`
+ * @returns {array} Rows in instance order
+ */
 function input_rows(input, prefix) {
 	let rows = {};
 	let pattern = regexp('^' + replace(prefix, '.', '\\.') + '\\.([0-9]+)\\.([A-Za-z]+)$');
@@ -819,6 +1197,12 @@ function input_rows(input, prefix) {
 	return map(sort(keys(rows), (a, b) => int(a) - int(b)), (k) => rows[k]);
 }
 
+/**
+ * Emits Device.SoftwareModules.DUStateChange!.
+ *
+ * @param {object} ev - Operation, state, deployment unit, start time and fault
+ * @returns {void}
+ */
 function du_state_change_emit(ev) {
 	usp_datamodel_event(SM + '.DUStateChange!', {
 		UUID: ev.uuid ?? '',
@@ -835,6 +1219,12 @@ function du_state_change_emit(ev) {
 	});
 }
 
+/**
+ * Parses an `apk://<package>[=<version>]` URL.
+ *
+ * @param {string} url - Deployment unit URL
+ * @returns {object|null} Package, version and apk spec, or null when invalid
+ */
 function apk_url_parse(url) {
 	let m = match(url ?? '', /^apk:\/\/([A-Za-z0-9][A-Za-z0-9._+-]*)(=([A-Za-z0-9._+~-]+))?$/);
 	if (!m)
@@ -843,10 +1233,24 @@ function apk_url_parse(url) {
 	return { pkg: m[1], version: m[3], spec: m[3] ? m[1] + '=' + m[3] : m[1] };
 }
 
+/**
+ * Resolves a Device.IP.Interface path to its network name.
+ *
+ * @param {object} root - Configuration tree
+ * @param {string} ref - Path reference
+ * @returns {string|null} Network name
+ */
 function zone_of_ref(root, ref) {
 	return ubbf.interface_to_name(root, rtrim(ref ?? '', '.'));
 }
 
+/**
+ * Builds the uxc-req request from the InstallDU or Update arguments.
+ *
+ * @param {object} input - Command input
+ * @param {object} root - Configuration tree
+ * @returns {object} Request, or an object with `error`
+ */
 function request_build(input, root) {
 	let req = {};
 
@@ -880,6 +1284,13 @@ function request_build(input, root) {
 	return req;
 }
 
+/**
+ * Builds the `uxc set` arguments for the operator settings of a command.
+ *
+ * @param {object} input - Command input
+ * @param {boolean} with_autorestart - Include the AutoRestart arguments
+ * @returns {array} Arguments
+ */
 function settings_args(input, with_autorestart) {
 	let args = [];
 	let respawn = [];
@@ -919,6 +1330,12 @@ function settings_args(input, with_autorestart) {
 	return args;
 }
 
+/**
+ * Writes the OCI resources file for the requested memory and CPU limits.
+ *
+ * @param {object} input - Command input
+ * @returns {string|null} File path, or null when no limit is requested
+ */
 function resources_file_write(input) {
 	let resources = {};
 	let memory = int(input['Resources.AllocatedMemory'] ?? '-1');
@@ -935,6 +1352,14 @@ function resources_file_write(input) {
 	return fs.writefile(RESOURCES_FILE, sprintf('%J', resources)) ? RESOURCES_FILE : null;
 }
 
+/**
+ * Builds the `uxc set` step for a container, if the command carries settings.
+ *
+ * @param {string} name - Container name
+ * @param {object} input - Command input
+ * @param {boolean} with_autorestart - Include the AutoRestart arguments
+ * @returns {array} Steps for steps_run
+ */
 function settings_steps(name, input, with_autorestart) {
 	let steps = [];
 	let args = settings_args(input, with_autorestart);
@@ -948,6 +1373,14 @@ function settings_steps(name, input, with_autorestart) {
 	return steps;
 }
 
+/**
+ * Validates a request against the package tags through `uxc-req check`.
+ *
+ * @param {string} pkg - Package name
+ * @param {object} req - Request
+ * @param {function} done - Called with null, or the fault string
+ * @returns {void}
+ */
 function request_check(pkg, req, done) {
 	fs.mkdir(WORK_DIR, 0755);
 	if (!fs.writefile(REQUEST_FILE, sprintf('%J', req))) {
@@ -977,6 +1410,14 @@ function request_check(pkg, req, done) {
 	});
 }
 
+/**
+ * Completes a deployment unit operation with a fault and emits the Failed state.
+ *
+ * @param {object} op - Operation
+ * @param {number} fault_code - DUStateChange fault code
+ * @param {string} fault_string - Fault message
+ * @returns {void}
+ */
 function du_op_fail(op, fault_code, fault_string) {
 	delete pending[op.pkg];
 	utils.logging.log_err('softwaremodules: %s %s: %s', op.operation, op.pkg, fault_string);
@@ -987,6 +1428,12 @@ function du_op_fail(op, fault_code, fault_string) {
 	op.complete(op.instance, USP_ERR_COMMAND_FAILURE, fault_string, {});
 }
 
+/**
+ * Completes a deployment unit operation and emits the Installed state.
+ *
+ * @param {object} op - Operation
+ * @returns {void}
+ */
 function du_op_done(op) {
 	let du = null;
 	for (let candidate in view_get().dus) {
@@ -1004,6 +1451,13 @@ function du_op_done(op) {
 		: {});
 }
 
+/**
+ * Applies the operator settings of an operation and completes it.
+ *
+ * @param {object} op - Operation
+ * @param {boolean} with_autorestart - Include the AutoRestart arguments
+ * @returns {void}
+ */
 function du_op_settings(op, with_autorestart) {
 	let eu = eu_by_package(op.pkg);
 	let steps = eu ? settings_steps(eu.name, op.input, with_autorestart) : [];
@@ -1016,6 +1470,16 @@ function du_op_settings(op, with_autorestart) {
 	});
 }
 
+/**
+ * Async handler for Device.SoftwareModules.InstallDU().
+ *
+ * @param {object} input - Command input
+ * @param {number} instance - Request instance
+ * @param {function} complete - Completion callback
+ * @param {string} command_key - Command key
+ * @param {object} root - Configuration tree
+ * @returns {void}
+ */
 function install_du(input, instance, complete, command_key, root) {
 	let url = apk_url_parse(input?.URL);
 	let ee = rtrim(input?.ExecutionEnvRef ?? '', '.');
@@ -1060,6 +1524,12 @@ function install_du(input, instance, complete, command_key, root) {
 	});
 }
 
+/**
+ * Removes a secrets directory below the uvol meta volume.
+ *
+ * @param {string} path - Directory
+ * @returns {boolean} True when the directory is gone
+ */
 function secrets_remove(path) {
 	if (substr(path, 0, length(SECRETS_DIR) + 1) != SECRETS_DIR + '/')
 		return false;
@@ -1076,6 +1546,12 @@ function secrets_remove(path) {
 	return !!fs.rmdir(path);
 }
 
+/**
+ * Collects the volumes and secrets the package scripts left behind.
+ *
+ * @param {string} output - Output of `apk del` or `uxc reconcile`
+ * @returns {object} Names in `volumes`, directories in `secrets`
+ */
 function leftovers_parse(output) {
 	let left = { volumes: [], secrets: [] };
 
@@ -1090,6 +1566,12 @@ function leftovers_parse(output) {
 	return left;
 }
 
+/**
+ * Removes leftover volumes and secrets.
+ *
+ * @param {object} left - Result of leftovers_parse or du_leftovers
+ * @returns {string|null} Fault string, or null on success
+ */
 function leftovers_remove(left) {
 	for (let vol in left.volumes) {
 		let reply = uvol_call('remove', { name: vol });
@@ -1103,6 +1585,16 @@ function leftovers_remove(left) {
 	return null;
 }
 
+/**
+ * Async handler for Device.SoftwareModules.DeploymentUnit.{i}.Uninstall().
+ *
+ * @param {object} input - Command input
+ * @param {number} instance - Request instance
+ * @param {function} complete - Completion callback
+ * @param {array} instances - Instance numbers of the path
+ * @param {string} command_key - Command key
+ * @returns {void}
+ */
 function uninstall_du(input, instance, complete, instances, command_key) {
 	let du = du_by_instance(instances[0]);
 	if (!du) {
@@ -1136,6 +1628,12 @@ function uninstall_du(input, instance, complete, instances, command_key) {
 	});
 }
 
+/**
+ * Lists the volumes and secrets of a deployment unit.
+ *
+ * @param {object} du - Deployment unit
+ * @returns {object} Names in `volumes`, directories in `secrets`
+ */
 function du_leftovers(du) {
 	let left = { volumes: [], secrets: [] };
 	for (let eu in du.eus) {
@@ -1148,6 +1646,17 @@ function du_leftovers(du) {
 	return left;
 }
 
+/**
+ * Async handler for Device.SoftwareModules.DeploymentUnit.{i}.Update().
+ *
+ * @param {object} input - Command input
+ * @param {number} instance - Request instance
+ * @param {function} complete - Completion callback
+ * @param {array} instances - Instance numbers of the path
+ * @param {string} command_key - Command key
+ * @param {object} root - Configuration tree
+ * @returns {void}
+ */
 function update_du(input, instance, complete, instances, command_key, root) {
 	let du = du_by_instance(instances[0]);
 	if (!du) {
@@ -1217,11 +1726,26 @@ function update_du(input, instance, complete, instances, command_key, root) {
 	});
 }
 
+/**
+ * Logs the failed step of a background lifecycle command.
+ *
+ * @param {array} results - Step results
+ * @param {object|null} failed - Failed result
+ * @returns {void}
+ */
 function lifecycle_done(results, failed) {
 	if (failed)
 		utils.logging.log_err('softwaremodules: %s: %s', join(' ', failed.command), result_message(failed));
 }
 
+/**
+ * Sync handler for Device.SoftwareModules.ExecutionUnit.{i}.SetRequestedState().
+ *
+ * @param {object} input - Command input
+ * @param {string} command_key - Command key
+ * @param {array} instances - Instance numbers of the path
+ * @returns {object|null} Empty output, or null to reject
+ */
 function eu_set_requested_state(input, command_key, instances) {
 	let eu = eu_by_instance(instances[0]);
 	let state = input?.RequestedState;
@@ -1239,6 +1763,14 @@ function eu_set_requested_state(input, command_key, instances) {
 	return {};
 }
 
+/**
+ * Sync handler for Device.SoftwareModules.ExecutionUnit.{i}.Restart().
+ *
+ * @param {object} input - Command input
+ * @param {string} command_key - Command key
+ * @param {array} instances - Instance numbers of the path
+ * @returns {object|null} Empty output, or null to reject
+ */
 function eu_restart(input, command_key, instances) {
 	let eu = eu_by_instance(instances[0]);
 	if (!eu || containers_disabled(view_get()))
@@ -1248,6 +1780,14 @@ function eu_restart(input, command_key, instances) {
 	return {};
 }
 
+/**
+ * Sync handler for Device.SoftwareModules.ExecEnv.{i}.ApplicationData.{i}.Remove().
+ *
+ * @param {object} input - Command input
+ * @param {string} command_key - Command key
+ * @param {array} instances - Instance numbers of the path
+ * @returns {object|null} Empty output, or null to reject
+ */
 function appdata_remove(input, command_key, instances) {
 	let row = (instances[0] == 1) ? ubbf.get_by_instance(appdata_rows(view_get()), instances[1]) : null;
 	if (!row || row.kind == 'tmpfs' || eu_live(row.eu))
@@ -1260,10 +1800,28 @@ function appdata_remove(input, command_key, instances) {
 	return reply?.code ? null : {};
 }
 
+/**
+ * Async handler for the ExecEnv commands uxc has no counterpart for.
+ *
+ * @param {object} input - Command input
+ * @param {number} instance - Request instance
+ * @param {function} complete - Completion callback
+ * @returns {void}
+ */
 function execenv_unsupported(input, instance, complete) {
 	complete(instance, USP_ERR_COMMAND_FAILURE, 'not supported by the uxc execution environment', {});
 }
 
+/**
+ * Async handler for Device.SoftwareModules.ExecEnv.{i}.Restart().
+ *
+ * @param {object} input - Command input
+ * @param {number} instance - Request instance
+ * @param {function} complete - Completion callback
+ * @param {array} instances - Instance numbers of the path
+ * @param {string} command_key - Command key
+ * @returns {void}
+ */
 function execenv_restart(input, instance, complete, instances, command_key) {
 	let view = view_get();
 	let steps = map(filter(view.eus, eu_live), (eu) => [ 'uxc', 'kill', eu.name ]);
@@ -1289,6 +1847,16 @@ function execenv_restart(input, instance, complete, instances, command_key) {
 	});
 }
 
+/**
+ * Async handler for Device.SoftwareModules.ExecEnv.{i}.Reset().
+ *
+ * @param {object} input - Command input
+ * @param {number} instance - Request instance
+ * @param {function} complete - Completion callback
+ * @param {array} instances - Instance numbers of the path
+ * @param {string} command_key - Command key
+ * @returns {void}
+ */
 function execenv_reset(input, instance, complete, instances, command_key) {
 	let view = view_get();
 	let steps = [];
@@ -1318,6 +1886,11 @@ function execenv_reset(input, instance, complete, instances, command_key) {
 	});
 }
 
+/**
+ * Sync handler for the commands uxc has no counterpart for.
+ *
+ * @returns {null} Rejects the command
+ */
 function unsupported_sync() {
 	return null;
 }
