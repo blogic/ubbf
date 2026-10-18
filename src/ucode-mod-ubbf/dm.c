@@ -1131,6 +1131,8 @@ path_instance_segments_valid(uc_value_t *model, uc_value_t *target,
 	return true;
 }
 
+static uc_value_t *model_entry_for_parts(uc_value_t *model, char **parts, int cnt);
+
 /**
  * Reports whether a path names an instance row that was never created.
  *
@@ -1144,13 +1146,18 @@ path_instance_segments_valid(uc_value_t *model, uc_value_t *target,
  * get handler, and its rows are not ours to judge. object_add checks the
  * parents of the row it creates with this.
  *
+ * With a model, an instance of a `runtime_instances` table does not count
+ * either: path_runtime_instance_absent() decides on it, because the stored
+ * table holds only the rows written so far.
+ *
+ * @param model  registered model object, or NULL
  * @param target root of the stored configuration
  * @param parts  path segments
  * @param cnt    number of segments to examine
  * @return       true when a segment names an absent instance
  */
 static bool
-path_instance_missing(uc_value_t *target, char **parts, int cnt)
+path_instance_missing(uc_value_t *model, uc_value_t *target, char **parts, int cnt)
 {
 	uc_value_t *node = target;
 
@@ -1162,7 +1169,9 @@ path_instance_missing(uc_value_t *target, char **parts, int cnt)
 
 		if (!child && key_is_instance(parts[i]) &&
 		    ucv_type(node) == UC_OBJECT)
-			return true;
+			return !model || !ucv_is_truish(ucv_object_get(
+				model_entry_for_parts(model, parts, i + 1),
+				"runtime_instances", NULL));
 
 		node = child;
 	}
@@ -1579,7 +1588,7 @@ uc_dm_params_set(uc_vm_t *vm, size_t nargs)
 			continue;
 		}
 
-		if (path_instance_missing(target, path_parts, path_cnt - 1) ||
+		if (path_instance_missing(model, target, path_parts, path_cnt - 1) ||
 		    path_runtime_instance_absent(vm, model, target, path_parts, path_cnt - 1)) {
 			fprintf(stderr, "ubbf.dm.params_set: no such instance for %s\n",
 				path);
@@ -1723,7 +1732,7 @@ uc_dm_object_add(uc_vm_t *vm, size_t nargs)
 		return ucv_int64_new(0);
 	}
 
-	if (path_instance_missing(target, parts, cnt)) {
+	if (path_instance_missing(NULL, target, parts, cnt)) {
 		fprintf(stderr, "ubbf.dm.object_add: rejecting %s, a parent instance does not exist\n",
 			path);
 		free(buf);

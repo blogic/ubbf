@@ -1852,6 +1852,8 @@ dm_live.set_config({ Device: { L: {}, M: {} } });
 dm_live.trans_start();
 assert_eq('writable_rows: write into a live row', dm_live.params_set({ 'Device.L.Row.2.Enable': 'false' }), 0);
 assert_eq('writable_rows: the write is stored', dm_live.config()?.Device?.L?.Row?.['2']?.Enable, 'false');
+assert_eq('writable_rows: write into a second live row, the table being stored',
+	  dm_live.params_set({ 'Device.L.Row.1.Enable': 'true' }), 0);
 assert_eq('writable_rows: write into a row that is not live',
 	  dm_live.params_set({ 'Device.L.Row.5.Enable': 'false' }), -2);
 assert_null('writable_rows: no phantom row', dm_live.config()?.Device?.L?.Row?.['5']);
@@ -1861,9 +1863,9 @@ dm_live.trans_commit();
 dm_live.runtime_reload();
 
 let live_tree = dm_live.get_subtree_with_state('Device.L')?.Row;
-assert_eq('writable_rows: both rows after the write',
-	  [ live_tree?.['1']?.Live, live_tree?.['2']?.Live, live_tree?.['2']?.Enable ],
-	  [ 'yes', 'stored', 'false' ]);
+assert_eq('writable_rows: both rows after the writes',
+	  [ live_tree?.['1']?.Live, live_tree?.['1']?.Enable, live_tree?.['2']?.Live, live_tree?.['2']?.Enable ],
+	  [ 'stored', 'true', 'stored', 'false' ]);
 
 /* The same rules compiled into a schema table, when a build tree is given. */
 let rules_build_dir = getenv('UBBF_BUILD_DIR');
