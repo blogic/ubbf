@@ -1,6 +1,6 @@
 # Device.SoftwareModules
 
-The module `modules/softwaremodules/` publishes TR-181 Issue 2 Amendment 19 Software Modules for the OpenWrt container stack: apk packages built by the containers feed, `uvol` volumes, `uxc` registrations and `procd` supervision. The data model keeps no record of its own. Every row is read from the stack when a controller asks, and every write goes through a stack command.
+The module `modules/softwaremodules/` publishes TR-181 Issue 2 Amendment 19 Software Modules for the OpenWrt container stack: apk packages built by the containers feed, `uvol` volumes, `uxc` registrations and `procd` supervision. The data model keeps no record of the stack. Every row is read from the stack when a controller asks, and every write goes through a stack command.
 
 ## Stack
 
@@ -31,9 +31,9 @@ The module `modules/softwaremodules/` publishes TR-181 Issue 2 Amendment 19 Soft
 | `SetRequestedState()`, `Restart()` | `uxc create` and `uxc start`, `uxc kill`, `uxc restart`, started in the background; the result shows in `Status` and `ExecutionFaultCode`. |
 | `DUStateChange!` | sent after every install, update and uninstall with the TR-181 fault codes 7002, 7004, 7223 and 7229. |
 
-Instance numbers are positions in the name-sorted lists of packages and registrations. They shift when a package is installed or removed; `Alias` is the stable key.
+Instance numbers come from the instance map (`utils/instance-map.uc`): `DeploymentUnit` by package name, `ExecutionUnit` by registration name, `ApplicationData` by registration and volume name. A row keeps its number while other rows come and go, and a number is not given to another package or registration (TR-369 R-ARC.8). A package that is installed again gets its old number.
 
-A write to a parameter of an enumerated row is applied to uxc and the copy the data model engine stored is dropped again, because a stored row would hide the rows read from the stack.
+`ExecEnv` and `ExecutionUnit` are `runtime_instances` tables with `writable_rows`: a write into a row read from the stack stores that row, and the get handler shows the stack over the stored values. The set handler checks the write and keeps its uxc command; the commit hook runs the commands of the transaction, so an aborted transaction changes nothing in the stack. `Uninstall()` deletes the stored rows of the execution units that go with the package.
 
 ## Not modelled
 

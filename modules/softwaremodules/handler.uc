@@ -6,6 +6,10 @@ const model = ubbf_module.model;
 const operations = ubbf_module.operations;
 
 const schema = ubbf_module.schema;
+const on_commit = ubbf_module.on_commit;
+const on_abort = ubbf_module.on_abort;
+const config_apply = ubbf_module.config_apply;
+const instance_map = utils['instance-map'];
 
 const fs = require('fs');
 const ubus = require('ubus');
@@ -14,6 +18,10 @@ const digest = require('digest');
 const SM = 'Device.SoftwareModules';
 const EE_REF = SM + '.ExecEnv.1';
 const CLASS_REF = SM + '.ExecEnvClass.1';
+const DU_TABLE = SM + '.DeploymentUnit';
+const EU_TABLE = SM + '.ExecutionUnit';
+const APPDATA_TABLE = EE_REF + '.ApplicationData';
+const CONFIG_PATH = '/etc/ubbf/config.json';
 const META_DIR = '/tmp/run/uvol/.meta';
 const DISABLED_MARKER = META_DIR + '/uxc/disabled';
 const SECRETS_DIR = META_DIR + '/secrets';
@@ -53,6 +61,10 @@ const SIZE_UNITS = { k: 1024, m: 1048576, g: 1073741824 };
 
 let pending = {};
 let ee_restart = { count: 0, reason: '', time: 0 };
+
+// uxc commands of the parameter writes of the open transaction; they run
+// when it commits, so an aborted transaction changes nothing in the stack.
+let staged = [];
 
 /**
  * Runs a command and collects its output.
@@ -343,7 +355,7 @@ function view_build() {
 		if (!name)
 			continue;
 
-		let eu = { name, entry, info, pkg: package_of(info), index: length(eus) + 1 };
+		let eu = { name, entry, info, pkg: package_of(info) };
 		push(eus, eu);
 		if (!eu.pkg)
 			continue;
@@ -355,10 +367,16 @@ function view_build() {
 	for (let pkg in packages)
 		dus_by_pkg[pkg] ??= { pkg, name: du_name(pkg, null), eus: [] };
 
+	let eu_numbers = instance_map.instance_numbers(EU_TABLE, map(eus, (eu) => eu.name));
+	for (let eu in eus)
+		eu.index = eu_numbers[eu.name];
+
+	let pkgs = sort(keys(dus_by_pkg));
+	let du_numbers = instance_map.instance_numbers(DU_TABLE, pkgs);
 	let dus = [];
-	for (let pkg in sort(keys(dus_by_pkg))) {
+	for (let pkg in pkgs) {
 		let du = dus_by_pkg[pkg];
-		du.index = length(dus) + 1;
+		du.index = du_numbers[pkg];
 		du.pkg_info = packages[pkg];
 		du.tags = tags_parse(du.pkg_info?.tags);
 		du.vendor = du.eus[0]?.info?.publisher ?? du.tags.publisher ?? '';
@@ -382,13 +400,46 @@ function view_get() {
 }
 
 /**
+ * Finds the row with an instance number. The numbers come from the
+ * instance map, so a row keeps its number while others come and go
+ * (TR-369 R-ARC.8).
+ *
+ * @param {array} rows - Rows with `index`
+ * @param {number|string} instance - Instance number
+ * @returns {object|null} Row
+ */
+function row_by_instance(rows, instance) {
+	let n = ubbf.to_int(instance);
+	for (let row in rows)
+		if (row.index == n)
+			return row;
+
+	return null;
+}
+
+/**
+ * Builds the rows of a table by instance number.
+ *
+ * @param {array} rows - Rows with `index`
+ * @param {function} to_object - Converter of a row
+ * @returns {object} Instance number to TR-181 row
+ */
+function rows_numbered(rows, to_object) {
+	let out = {};
+	for (let row in rows)
+		out[sprintf('%d', row.index)] = to_object(row);
+
+	return out;
+}
+
+/**
  * Finds an execution unit by instance number.
  *
  * @param {number} instance - Instance number
  * @returns {object|null} Execution unit
  */
 function eu_by_instance(instance) {
-	return ubbf.get_by_instance(view_get().eus, instance);
+	return row_by_instance(view_get().eus, instance);
 }
 
 /**
@@ -398,7 +449,7 @@ function eu_by_instance(instance) {
  * @returns {object|null} Deployment unit
  */
 function du_by_instance(instance) {
-	return ubbf.get_by_instance(view_get().dus, instance);
+	return row_by_instance(view_get().dus, instance);
 }
 
 /**
@@ -609,16 +660,18 @@ function eu_volumes(eu) {
  * Lists the ApplicationData rows of the execution environment.
  *
  * @param {object} view - Result of view_get
- * @returns {array} Volume rows in instance order
+ * @returns {array} Volume rows, each with its instance number in `index`
  */
 function appdata_rows(view) {
 	let rows = [];
-	for (let eu in view.eus) {
-		for (let row in eu_volumes(eu)) {
-			row.index = length(rows) + 1;
-			push(rows, row);
-		}
-	}
+	for (let eu in view.eus)
+		push(rows, ...eu_volumes(eu));
+
+	let key = (row) => `${row.eu.name}/${row.name}`;
+	let numbers = instance_map.instance_numbers(APPDATA_TABLE, map(rows, key));
+	for (let row in rows)
+		row.index = numbers[key(row)];
+
 	return rows;
 }
 
@@ -974,7 +1027,7 @@ function execenv_to_object(root) {
 		AvailableRoles: '',
 		AvailableAccessInterfaces: join(',', ip_interface_names(root)),
 		AvailableUserRoles: '',
-		ApplicationData: ubbf.enumerate_instances(appdata, appdata_to_object)
+		ApplicationData: rows_numbered(appdata, appdata_to_object)
 	};
 }
 
@@ -1032,14 +1085,17 @@ function execenvclass_get(ctx) {
 }
 
 /**
- * Get handler for Device.SoftwareModules.ExecEnv.{i}.
+ * Get handler for Device.SoftwareModules.ExecEnv.{i}. The rows come from
+ * the stack (runtime_instances); a write stores its row (writable_rows).
+ * Enumerate mode leaves out the stored rows, which the dispatcher reads one
+ * by one, and a stored row shows the stack over the stored values.
  *
  * @param {object} ctx - Context with optional instance number
  * @returns {object|null} Single row or enumerated rows
  */
 function execenv_get(ctx) {
 	if (ctx.instance == null)
-		return { '1': execenv_to_object(ctx.root) };
+		return ctx.root?.Device?.SoftwareModules?.ExecEnv?.['1'] ? {} : { '1': execenv_to_object(ctx.root) };
 
 	return ctx.instance == 1 ? execenv_to_object(ctx.root) : null;
 }
@@ -1054,14 +1110,17 @@ function du_get(ctx) {
 	let view = view_get();
 
 	if (ctx.instance == null)
-		return ubbf.enumerate_instances(view.dus, du_to_object);
+		return rows_numbered(view.dus, du_to_object);
 
-	let du = ubbf.get_by_instance(view.dus, ctx.instance);
+	let du = row_by_instance(view.dus, ctx.instance);
 	return du ? du_to_object(du) : null;
 }
 
 /**
- * Get handler for Device.SoftwareModules.ExecutionUnit.{i}.
+ * Get handler for Device.SoftwareModules.ExecutionUnit.{i}. The rows come from
+ * the stack (runtime_instances); a write stores its row (writable_rows).
+ * Enumerate mode leaves out the stored rows, which the dispatcher reads one
+ * by one, and a stored row shows the stack over the stored values.
  *
  * @param {object} ctx - Context with optional instance number
  * @returns {object|null} Single row or enumerated rows
@@ -1070,26 +1129,19 @@ function eu_get(ctx) {
 	let view = view_get();
 	let to_object = (eu) => eu_to_object(eu, view, ctx.root);
 
-	if (ctx.instance == null)
-		return ubbf.enumerate_instances(view.eus, to_object);
+	if (ctx.instance == null) {
+		let stored = ctx.root?.Device?.SoftwareModules?.ExecutionUnit ?? {};
+		let rows = rows_numbered(view.eus, to_object);
 
-	let eu = ubbf.get_by_instance(view.eus, ctx.instance);
+		for (let n in keys(rows))
+			if (stored[n])
+				delete rows[n];
+
+		return rows;
+	}
+
+	let eu = row_by_instance(view.eus, ctx.instance);
 	return eu ? to_object(eu) : null;
-}
-
-/**
- * Removes the stored copy of a table from the configuration tree. A stored
- * row hides the rows enumerated from the stack, so a write is applied to uxc
- * and the copy the engine materialised is dropped.
- *
- * @param {object} ctx - Set context
- * @param {string} table - Table name under Device.SoftwareModules
- * @returns {void}
- */
-function stored_rows_drop(ctx, table) {
-	let sm = ctx.root?.Device?.SoftwareModules;
-	if (sm)
-		delete sm[table];
 }
 
 /**
@@ -1108,17 +1160,46 @@ function uxc_apply(parts) {
 }
 
 /**
+ * Keeps the uxc command of a parameter write for the commit.
+ *
+ * @param {array} parts - Command and arguments
+ * @returns {number} 0
+ */
+function write_stage(parts) {
+	push(staged, parts);
+	return 0;
+}
+
+/**
+ * Commit hook: runs the uxc commands of the writes that the transaction
+ * accepted. The stack cannot refuse a value that the set handler passed,
+ * so a failure is logged; the next read shows the state of the stack.
+ */
+function staged_apply() {
+	let list = staged;
+	staged = [];
+
+	for (let parts in list)
+		uxc_apply(parts);
+
+	if (!length(list))
+		return;
+
+	utils.cache.invalidate(containers_fetch);
+	utils.cache.invalidate(view_build);
+}
+
+/**
  * Set handler for Device.SoftwareModules.ExecEnv.{i}; only Enable is writable.
  *
  * @param {object} ctx - Set context
  * @returns {number} 0 on success, negative to reject
  */
 function execenv_set(ctx) {
-	stored_rows_drop(ctx, 'ExecEnv');
 	if (ctx.instance != 1 || ctx.param != 'Enable')
 		return -1;
 
-	return uxc_apply([ 'uxc', ubbf.to_bool(ctx.value) ? 'enable-all' : 'disable-all' ]);
+	return write_stage([ 'uxc', ubbf.to_bool(ctx.value) ? 'enable-all' : 'disable-all' ]);
 }
 
 /**
@@ -1129,14 +1210,12 @@ function execenv_set(ctx) {
  */
 function eu_set(ctx) {
 	let eu = eu_by_instance(ctx.instance);
-
-	stored_rows_drop(ctx, 'ExecutionUnit');
 	if (!eu)
 		return -1;
 	if (ctx.param == 'AutoStart')
-		return uxc_apply([ 'uxc', ubbf.to_bool(ctx.value) ? 'enable' : 'disable', eu.name ]);
+		return write_stage([ 'uxc', ubbf.to_bool(ctx.value) ? 'enable' : 'disable', eu.name ]);
 	if (ctx.param == 'ShutdownDelay')
-		return uxc_apply([ 'uxc', 'set', eu.name, '--stop-timeout', int(ctx.value) ]);
+		return write_stage([ 'uxc', 'set', eu.name, '--stop-timeout', int(ctx.value) ]);
 
 	return -1;
 }
@@ -1149,19 +1228,17 @@ function eu_set(ctx) {
  */
 function autorestart_set(ctx) {
 	let eu = eu_by_instance(ctx.instance);
-
-	stored_rows_drop(ctx, 'ExecutionUnit');
 	if (!eu)
 		return -1;
 	if (ctx.param == 'RetryCount')
-		return uxc_apply([ 'uxc', 'respawn-reset', eu.name, int(ctx.value) ]);
+		return write_stage([ 'uxc', 'respawn-reset', eu.name, int(ctx.value) ]);
 
 	let key = RESPAWN_KEYS[ctx.param];
 	if (!key)
 		return -1;
 
 	let value = (key == 'enable') ? (ubbf.to_bool(ctx.value) ? 1 : 0) : int(ctx.value);
-	return uxc_apply([ 'uxc', 'set', eu.name, '--respawn', sprintf('%s=%d', key, value) ]);
+	return write_stage([ 'uxc', 'set', eu.name, '--respawn', sprintf('%s=%d', key, value) ]);
 }
 
 /**
@@ -1575,6 +1652,35 @@ function leftovers_remove(left) {
 }
 
 /**
+ * Deletes the stored rows of the execution units of an uninstalled
+ * deployment unit. A write stored them (writable_rows); the instance map
+ * gives their numbers to no other unit, so nothing else would remove them.
+ *
+ * @param {object} du - Deployment unit
+ */
+function eu_rows_forget(du) {
+	let stored;
+	try {
+		stored = json(fs.readfile(CONFIG_PATH) ?? '{}')?.Device?.SoftwareModules?.ExecutionUnit ?? {};
+	} catch (e) {
+		return;
+	}
+
+	let gone = filter(du.eus, (eu) => stored[`${eu.index}`]);
+	let ops = map(gone, (eu) => ({ op: 'del', path: `${EU_TABLE}.${eu.index}.` }));
+	if (!length(ops))
+		return;
+
+	let report = (result) => {
+		if (!result?.success)
+			utils.logging.log_err('softwaremodules: failed to delete the stored rows of %s', du.pkg);
+	};
+	let result = config_apply(ops, report);
+	if (result)
+		report(result);
+}
+
+/**
  * Async handler for Device.SoftwareModules.DeploymentUnit.{i}.Uninstall().
  *
  * @param {object} input - Command input
@@ -1609,6 +1715,7 @@ function uninstall_du(input, instance, complete, instances, command_key) {
 
 		let fault = retain ? null : leftovers_remove(leftovers_parse(results[0].data));
 		delete pending[du.pkg];
+		eu_rows_forget(du);
 		du_state_change_emit({
 			operation: 'Uninstall', state: 'Uninstalled', uuid: du.uuid, version: du.version,
 			start: op.start, fault_code: fault ? FAULT_REQUEST_DENIED : 0, fault_string: fault
@@ -1778,7 +1885,7 @@ function eu_restart(input, command_key, instances) {
  * @returns {object|null} Empty output, or null to reject
  */
 function appdata_remove(input, command_key, instances) {
-	let row = (instances[0] == 1) ? ubbf.get_by_instance(appdata_rows(view_get()), instances[1]) : null;
+	let row = (instances[0] == 1) ? row_by_instance(appdata_rows(view_get()), instances[1]) : null;
 	if (!row || row.kind == 'tmpfs' || eu_live(row.eu))
 		return null;
 
@@ -1890,19 +1997,28 @@ model[SM + '.ExecEnvClass.{i}'] = { schema: schema('ExecEnvClass'), get: execenv
 model[SM + '.ExecEnvClass.{i}.Capability'] = {};
 model[SM + '.ExecEnvClass.{i}.Capability.{i}'] = { schema: schema('ExecEnvClass_Capability') };
 model[SM + '.ExecEnv'] = {};
-model[SM + '.ExecEnv.{i}'] = { schema: schema('ExecEnv'), get: execenv_get, set: execenv_set };
+model[SM + '.ExecEnv.{i}'] = {
+	schema: schema('ExecEnv'), get: execenv_get, set: execenv_set,
+	runtime_instances: true, writable_rows: true
+};
 model[SM + '.ExecEnv.{i}.ApplicationData'] = {};
 model[SM + '.ExecEnv.{i}.ApplicationData.{i}'] = { schema: schema('ExecEnv_ApplicationData') };
 model[SM + '.DeploymentUnit'] = {};
 model[SM + '.DeploymentUnit.{i}'] = { schema: schema('DeploymentUnit'), get: du_get };
 model[SM + '.ExecutionUnit'] = {};
-model[SM + '.ExecutionUnit.{i}'] = { schema: schema('ExecutionUnit'), get: eu_get, set: eu_set };
+model[SM + '.ExecutionUnit.{i}'] = {
+	schema: schema('ExecutionUnit'), get: eu_get, set: eu_set,
+	runtime_instances: true, writable_rows: true
+};
 model[SM + '.ExecutionUnit.{i}.HostObject'] = {};
 model[SM + '.ExecutionUnit.{i}.HostObject.{i}'] = { schema: schema('ExecutionUnit_HostObject') };
 model[SM + '.ExecutionUnit.{i}.EnvVariable'] = {};
 model[SM + '.ExecutionUnit.{i}.EnvVariable.{i}'] = { schema: schema('ExecutionUnit_EnvVariable') };
 model[SM + '.ExecutionUnit.{i}.AutoRestart'] = { schema: schema('ExecutionUnit_AutoRestart'), set: autorestart_set };
 model[SM + '.ExecutionUnit.{i}.NetworkConfig'] = { schema: schema('ExecutionUnit_NetworkConfig') };
+
+on_commit(staged_apply);
+on_abort(() => { staged = []; });
 
 operations[SM + '.InstallDU()'] = { type: 'async', handler: install_du };
 operations[SM + '.DeploymentUnit.{i}.Update()'] = { type: 'async', handler: update_du };
