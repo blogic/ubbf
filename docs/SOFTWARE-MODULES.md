@@ -46,6 +46,8 @@ A write to a parameter of an enumerated row is applied to uxc and the copy the d
 
 `ubbf-mod-softwaremodules` needs `uxc`, `uxc-req`, `uvol` with its rpcd plugin, `apk` and `ucode-mod-digest`.
 
+The package in `ubbf-feed/ubbf/Makefile` depends on `uxc`, `uvol`, `kmod-fs-ext4`, `block-mount`, `kmod-veth` and `ucode-mod-digest`; the base package pulled the first five before. `apk` is part of every image. `uxc-req` is not a dependency yet: the OpenWrt tree of this project has no package of that name, and the containers feed was not checked for it.
+
 ## Verification
 
 With a container package installed on the device:

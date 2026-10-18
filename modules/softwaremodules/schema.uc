@@ -1,6 +1,10 @@
 'use strict';
 
-// Hand-maintained from TR-181 2.19 (dm/spec/tr-181-2-19-0-softwaremodules*.xml); included by handler.uc with { schemas } as the scope.
+// Hand-maintained from TR-181 2.19 (dm/spec/tr-181-2-19-0-softwaremodules*.xml).
+//
+// Included with { schemas } as the scope by module_api_build() in
+// datamodel.uc and by schema-gen.uc; there is nothing to export from an
+// included file, so each definition is added to that object.
 
 schemas.SoftwareModules = {
     path: "Device.SoftwareModules.",
@@ -109,7 +113,8 @@ schemas.ExecEnvClass = {
         "Version": "",
         "DeploymentUnitRef": "",
         "CapabilityNumberOfEntries": "0"
-    }
+    },
+    addable: false
 };
 
 schemas.ExecEnvClass_Capability = {
@@ -123,7 +128,8 @@ schemas.ExecEnvClass_Capability = {
         "Specification": "",
         "SpecificationVersion": "",
         "SpecificationURI": ""
-    }
+    },
+    addable: false
 };
 
 schemas.ExecEnv = {
@@ -227,7 +233,13 @@ schemas.ExecEnv = {
         "AvailableRoles": "",
         "AvailableAccessInterfaces": "",
         "AvailableUserRoles": ""
-    }
+    },
+    constraints: {
+        "InitialRunLevel": { max: 65535 },
+        "InitialExecutionUnitRunLevel": { min: -1, max: 65535 },
+        "Signers": { list: true }
+    },
+    addable: false
 };
 
 schemas.ExecEnv_ApplicationData = {
@@ -252,7 +264,8 @@ schemas.ExecEnv_ApplicationData = {
         "Alias": "",
         "ApplicationUUID": "",
         "Utilization": "0"
-    }
+    },
+    addable: false
 };
 
 schemas.DeploymentUnit = {
@@ -336,7 +349,8 @@ schemas.DeploymentUnit = {
         "Installed": "0001-01-01T00:00:00Z",
         "LastUpdate": "0001-01-01T00:00:00Z",
         "ModuleVersion": ""
-    }
+    },
+    addable: false
 };
 
 schemas.ExecutionUnit = {
@@ -420,7 +434,11 @@ schemas.ExecutionUnit = {
         "ExecutionEnvRef": "",
         "HostObjectNumberOfEntries": "0",
         "EnvVariableNumberOfEntries": "0"
-    }
+    },
+    constraints: {
+        "RunLevel": { max: 65535 }
+    },
+    addable: false
 };
 
 schemas.ExecutionUnit_HostObject = {
@@ -436,7 +454,8 @@ schemas.ExecutionUnit_HostObject = {
         "Destination": "",
         "Options": "",
         "Alias": ""
-    }
+    },
+    addable: false
 };
 
 schemas.ExecutionUnit_EnvVariable = {
@@ -450,7 +469,8 @@ schemas.ExecutionUnit_EnvVariable = {
         "Key": "",
         "Value": "",
         "Alias": ""
-    }
+    },
+    addable: false
 };
 
 schemas.ExecutionUnit_AutoRestart = {

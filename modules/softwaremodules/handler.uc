@@ -5,12 +5,11 @@ const utils = ubbf_module.utils;
 const model = ubbf_module.model;
 const operations = ubbf_module.operations;
 
+const schema = ubbf_module.schema;
+
 const fs = require('fs');
 const ubus = require('ubus');
 const digest = require('digest');
-
-let schemas = {};
-include('schema.uc', { schemas });
 
 const SM = 'Device.SoftwareModules';
 const EE_REF = SM + '.ExecEnv.1';
@@ -56,16 +55,6 @@ let pending = {};
 let ee_restart = { count: 0, reason: '', time: 0 };
 
 /**
- * Builds a shell command line from escaped arguments.
- *
- * @param {array} parts - Command and arguments
- * @returns {string} Command line
- */
-function command_build(parts) {
-	return join(' ', map(parts, (p) => ubbf.shell_escape(sprintf('%s', p))));
-}
-
-/**
  * Runs a command and collects its output.
  *
  * @param {array} parts - Command and arguments
@@ -73,7 +62,7 @@ function command_build(parts) {
  * @returns {object} Output in `data` and the exit code in `exitcode`
  */
 function command_run(parts, merge_stderr) {
-	let cmd = command_build(parts) + (merge_stderr ? ' 2>&1' : ' 2>/dev/null');
+	let cmd = utils.process.cmd_build(parts) + (merge_stderr ? ' 2>&1' : ' 2>/dev/null');
 	let pipe = fs.popen(cmd, 'r');
 	if (!pipe)
 		return { data: '', exitcode: -1 };
@@ -1895,25 +1884,25 @@ function unsupported_sync() {
 	return null;
 }
 
-model[SM] = { schema: schemas.SoftwareModules, get: softwaremodules_get };
+model[SM] = { schema: schema('SoftwareModules'), get: softwaremodules_get };
 model[SM + '.ExecEnvClass'] = {};
-model[SM + '.ExecEnvClass.{i}'] = { schema: schemas.ExecEnvClass, get: execenvclass_get };
+model[SM + '.ExecEnvClass.{i}'] = { schema: schema('ExecEnvClass'), get: execenvclass_get };
 model[SM + '.ExecEnvClass.{i}.Capability'] = {};
-model[SM + '.ExecEnvClass.{i}.Capability.{i}'] = { schema: schemas.ExecEnvClass_Capability };
+model[SM + '.ExecEnvClass.{i}.Capability.{i}'] = { schema: schema('ExecEnvClass_Capability') };
 model[SM + '.ExecEnv'] = {};
-model[SM + '.ExecEnv.{i}'] = { schema: schemas.ExecEnv, get: execenv_get, set: execenv_set };
+model[SM + '.ExecEnv.{i}'] = { schema: schema('ExecEnv'), get: execenv_get, set: execenv_set };
 model[SM + '.ExecEnv.{i}.ApplicationData'] = {};
-model[SM + '.ExecEnv.{i}.ApplicationData.{i}'] = { schema: schemas.ExecEnv_ApplicationData };
+model[SM + '.ExecEnv.{i}.ApplicationData.{i}'] = { schema: schema('ExecEnv_ApplicationData') };
 model[SM + '.DeploymentUnit'] = {};
-model[SM + '.DeploymentUnit.{i}'] = { schema: schemas.DeploymentUnit, get: du_get };
+model[SM + '.DeploymentUnit.{i}'] = { schema: schema('DeploymentUnit'), get: du_get };
 model[SM + '.ExecutionUnit'] = {};
-model[SM + '.ExecutionUnit.{i}'] = { schema: schemas.ExecutionUnit, get: eu_get, set: eu_set };
+model[SM + '.ExecutionUnit.{i}'] = { schema: schema('ExecutionUnit'), get: eu_get, set: eu_set };
 model[SM + '.ExecutionUnit.{i}.HostObject'] = {};
-model[SM + '.ExecutionUnit.{i}.HostObject.{i}'] = { schema: schemas.ExecutionUnit_HostObject };
+model[SM + '.ExecutionUnit.{i}.HostObject.{i}'] = { schema: schema('ExecutionUnit_HostObject') };
 model[SM + '.ExecutionUnit.{i}.EnvVariable'] = {};
-model[SM + '.ExecutionUnit.{i}.EnvVariable.{i}'] = { schema: schemas.ExecutionUnit_EnvVariable };
-model[SM + '.ExecutionUnit.{i}.AutoRestart'] = { schema: schemas.ExecutionUnit_AutoRestart, set: autorestart_set };
-model[SM + '.ExecutionUnit.{i}.NetworkConfig'] = { schema: schemas.ExecutionUnit_NetworkConfig };
+model[SM + '.ExecutionUnit.{i}.EnvVariable.{i}'] = { schema: schema('ExecutionUnit_EnvVariable') };
+model[SM + '.ExecutionUnit.{i}.AutoRestart'] = { schema: schema('ExecutionUnit_AutoRestart'), set: autorestart_set };
+model[SM + '.ExecutionUnit.{i}.NetworkConfig'] = { schema: schema('ExecutionUnit_NetworkConfig') };
 
 operations[SM + '.InstallDU()'] = { type: 'async', handler: install_du };
 operations[SM + '.DeploymentUnit.{i}.Update()'] = { type: 'async', handler: update_du };

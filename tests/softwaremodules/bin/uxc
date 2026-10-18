@@ -1,0 +1,14 @@
+#!/bin/sh
+# Stand-in for uxc: two registrations of one package; logs every call.
+echo "uxc $*" >> "${SM_LOG:-/dev/null}"
+case "$1" in
+--version) echo "uxc 1.2.3" ;;
+list) cat <<'JSON'
+[
+ { "id": "web", "state": "running", "org.openwrt.uxc": { "name": "web", "package": "container-web", "publisher": "example.org", "package-version": "1.0-r1" } },
+ { "id": "db", "state": "stopped", "org.openwrt.uxc": { "name": "db", "package": "container-db", "publisher": "example.org" } }
+]
+JSON
+;;
+esac
+exit 0
