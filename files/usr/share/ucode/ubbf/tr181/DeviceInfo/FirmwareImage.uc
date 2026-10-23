@@ -7,6 +7,7 @@ import { transfer_complete } from 'ubbf';
 import { curl_download, curl_exit_to_status } from 'ubbf';
 import { log_err } from 'ubbf';
 import { task_run, TASK_MARGIN_S } from 'ubbf.utils.process';
+import { cmd_build } from 'ubbf';
 import * as ubus from 'ubus';
 import * as ubbf from 'ubbf';
 
@@ -76,7 +77,7 @@ function boot_bank_status() {
  * @returns {string|null} Variable value, or null if unset
  */
 function fw_printenv(name) {
-	let p = fs.popen(sprintf("fw_printenv -n '%s' 2>/dev/null", name), 'r');
+	let p = fs.popen(cmd_build([ 'fw_printenv', '-n', name, { raw: '2>/dev/null' } ]), 'r');
 	if (!p)
 		return null;
 	let val = trim(p.read('all') ?? '');

@@ -19,6 +19,7 @@ import * as uci from 'uci';
 import * as fs from 'fs';
 import * as rtnl from 'rtnl';
 import * as log from 'log';
+import { cmd_build } from 'ubbf';
 
 const POLL_INTERVAL_MS = 2000;
 
@@ -180,8 +181,8 @@ function route_lan_remove(ip, lan_dev) {
  * @param {string} src - RG source IPv4 (the secondary)
  */
 function default_route_install(wan_dev, gw, src) {
-	let cmd = sprintf('ip -4 route replace default via %s dev %s onlink src %s 2>/dev/null',
-		gw, wan_dev, src);
+	let cmd = cmd_build([ 'ip', '-4', 'route', 'replace', 'default', 'via', gw, 'dev', wan_dev,
+		'onlink', 'src', src, { raw: '2>/dev/null' } ]);
 	let rc = system(cmd);
 	if (rc != 0)
 		log.syslog(log.LOG_WARNING, 'default_route_install rc=%d cmd=%s', rc, cmd);

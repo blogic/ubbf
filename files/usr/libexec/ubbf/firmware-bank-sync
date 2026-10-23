@@ -4,9 +4,10 @@
 
 import * as fs from 'fs';
 import * as ubus from 'ubus';
+import { cmd_build } from 'ubbf';
 
 function fw_printenv(name) {
-	let p = fs.popen(sprintf("fw_printenv -n '%s' 2>/dev/null", name), 'r');
+	let p = fs.popen(cmd_build([ 'fw_printenv', '-n', name, { raw: '2>/dev/null' } ]), 'r');
 	if (!p)
 		return null;
 	let val = trim(p.read('all') ?? '');
@@ -15,7 +16,7 @@ function fw_printenv(name) {
 }
 
 function fw_setenv(name, value) {
-	return system(sprintf("fw_setenv '%s' '%s'", name, value)) == 0;
+	return system(cmd_build([ 'fw_setenv', name, value ])) == 0;
 }
 
 function boot_bank_status() {
