@@ -5,9 +5,7 @@ import * as iwinfo from 'iwinfo';
 import {
 	wireless_status_get,
 	ssid_ifname_get,
-	assoclist_get,
 	stations_numbered,
-	iwinfo_update,
 	radio_phy_get,
 	radio_supported_bands
 } from 'ubbf.utils.wifi';
@@ -24,6 +22,7 @@ import {
 	phy_max_bitrate,
 	wpa_psk
 } from 'ubbf';
+import { assoclist_get, iwinfo_update } from 'ubbf.utils.wifi_iwinfo';
 import { capability_radios_get } from 'ubbf.utils.capabilities';
 import { channel_to_freq, radio_capability_find, radio_freq_usable, radio_path_by_name } from 'ubbf.utils.wifi_radio';
 import { popen_async } from 'ubbf.utils.process';

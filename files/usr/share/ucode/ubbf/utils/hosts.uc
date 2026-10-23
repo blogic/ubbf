@@ -9,7 +9,8 @@ import {
 	dhcpsnoop_dump_get
 } from 'ubbf.utils.dhcp';
 import { cache_call } from 'ubbf';
-import { wireless_status_get, assoclist_get, station_number } from 'ubbf.utils.wifi';
+import { wireless_status_get, station_number } from 'ubbf.utils.wifi';
+import { assoclist_get } from 'ubbf.utils.wifi_iwinfo';
 import { instance_numbers, instance_rows } from 'ubbf';
 
 const HOSTS_TABLE = 'Device.Hosts.Host';

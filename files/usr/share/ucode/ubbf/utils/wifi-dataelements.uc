@@ -7,7 +7,7 @@ import * as iwinfo from 'iwinfo';
 import * as nl80211 from 'nl80211';
 import { find_phy } from 'wifi.utils';
 import { cache_call } from 'ubbf';
-import { iwinfo_update } from 'ubbf.utils.wifi';
+import { iwinfo_update } from 'ubbf.utils.wifi_iwinfo';
 import { capability_radios_get } from 'ubbf.utils.capabilities';
 import { band_to_index } from 'ubbf';
 import {

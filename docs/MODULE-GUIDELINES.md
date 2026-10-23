@@ -408,7 +408,8 @@ Use the cache for these calls:
 
 Cached functions in the code:
 
-- `utils/wifi.uc`: `wireless_status_get()`, `assoclist_get()`, `iwinfo_update()`
+- `utils/wifi.uc`: `wireless_status_get()`, `phys_get()`
+- `utils/wifi_iwinfo.uc`: `assoclist_get()`, `iwinfo_update()`. iwinfo calls hostapd when it loads, so no render template may import this module.
 - `utils/dhcp.uc`: `dhcpsnoop_dump_get()`, `ipv6_leases_get()`, `ipv6_leases_raw_get()`
 
 ### Error Handling

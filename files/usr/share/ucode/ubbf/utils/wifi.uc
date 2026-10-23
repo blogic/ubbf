@@ -1,10 +1,9 @@
 'use strict';
 
-import * as iwinfo from 'iwinfo';
+import * as nl80211 from 'nl80211';
 import * as ubus from 'ubus';
 import * as ubbf from 'ubbf';
 import { cache_call } from 'ubbf';
-import { log_exception } from 'ubbf';
 import { instance_number, instance_rows } from 'ubbf';
 import { phy_radio_restrict, radio_bands } from 'ubbf.utils.wifi_radio';
 
@@ -85,49 +84,22 @@ export function ssid_ifname_get(ssid_instance) {
 };
 
 /**
- * Refreshes the iwinfo interface cache from kernel (uncached).
+ * Fetches the wiphy dump from nl80211 (uncached).
  *
- * @returns {boolean} Always returns true as sentinel for caching
+ * @returns {array} PHYs indexed by wiphy number, as iwinfo.phys holds them
  */
-function iwinfo_update_fetch() {
-	try {
-		iwinfo.update();
-	} catch (e) {
-		log_exception('iwinfo_update', e);
-	}
-	return true;
+function phys_fetch() {
+	return nl80211.request(nl80211.const.NL80211_CMD_GET_WIPHY, nl80211.const.NLM_F_DUMP,
+		{ split_wiphy_dump: true }) ?? [];
 }
 
 /**
- * Refreshes the iwinfo interface cache from kernel (cached).
+ * Gets the wiphy dump from nl80211 (cached).
  *
- * @returns {boolean} Always returns true
+ * @returns {array} PHYs indexed by wiphy number; a phy in another netns is null
  */
-export function iwinfo_update() {
-	return cache_call(iwinfo_update_fetch);
-};
-
-/**
- * Fetches WiFi association list for an interface (uncached).
- *
- * @param {string} ifname - Interface name
- * @returns {object} Station associations keyed by MAC address
- */
-function assoclist_fetch(ifname) {
-	iwinfo_update();
-	if (!iwinfo.ifaces?.[ifname])
-		return {};
-	return iwinfo.assoclist(ifname);
-}
-
-/**
- * Gets WiFi association list for an interface (cached).
- *
- * @param {string} ifname - Interface name
- * @returns {object} Station associations keyed by MAC address
- */
-export function assoclist_get(ifname) {
-	return cache_call(assoclist_fetch, ifname);
+export function phys_get() {
+	return cache_call(phys_fetch);
 };
 
 function stations_table(ap_instance) {
@@ -173,7 +145,7 @@ export function station_number(ap_instance, mac) {
  */
 export function phy_for_band(band) {
 	let band_idx = ubbf.band_to_index(band);
-	let phys = iwinfo.phys ?? [];
+	let phys = phys_get();
 	let fallback = null;
 
 	// The wiphy dump is indexed by wiphy number: a phy in another netns
@@ -205,7 +177,7 @@ export function phy_for_band(band) {
  */
 export function radio_phy_get(radio, band) {
 	let band_idx = ubbf.band_to_index(band);
-	let phy = radio?.phy ? filter(iwinfo.phys ?? [], (p) => p?.wiphy_name == radio.phy)[0] : null;
+	let phy = radio?.phy ? filter(phys_get(), (p) => p?.wiphy_name == radio.phy)[0] : null;
 
 	if (!phy?.wiphy_bands?.[band_idx])
 		phy = phy_for_band(band)?.phy;
