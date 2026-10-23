@@ -50,9 +50,8 @@ function render_config() {
 			push(lines, key_data.Key);
 		}
 
-		if (!dry_run)
-			ubbf.write_file_atomic('/etc/dropbear/authorized_keys',
-				length(lines) > 0 ? join('\n', lines) + '\n' : '');
+		effect_file_replace('/etc/dropbear/authorized_keys',
+			length(lines) > 0 ? join('\n', lines) + '\n' : '');
 	}
 
 	let enable = ubbf_enabled(config, 'Device.SSH.Enable');

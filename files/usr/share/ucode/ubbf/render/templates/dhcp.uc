@@ -725,17 +725,14 @@ function render_config() {
 	 * @param {number} lease_time - lease in seconds
 	 */
 	function admz_snippet_write(path, lan_dev, net_base, mask, lease_time) {
-		if (dry_run)
-			return;
-
 		let lines = [];
 		if (lan_dev)
 			push(lines, sprintf('shared-network=%s,%s', lan_dev, net_base));
 		push(lines, sprintf('dhcp-range=%s,static,%s,%d', net_base, mask, lease_time));
 		let m = match(path, /^(.+)\/[^\/]+$/);
 		if (m)
-			fs.mkdir(m[1], 0755);
-		fs.writefile(path, join('\n', lines) + '\n');
+			effect_dir_create(m[1]);
+		effect_file_write(path, join('\n', lines) + '\n');
 	}
 
 	/**
@@ -853,8 +850,8 @@ function render_config() {
 
 		// Default: remove the conf-dir snippet. We rewrite it below
 		// only when ADMZ is in the ACTIVE-with-lease branch.
-		if (snippet_path && !dry_run)
-			fs.unlink(snippet_path);
+		if (snippet_path)
+			effect_file_remove(snippet_path);
 
 		if (!admz || !ubbf_to_bool(admz.Enable))
 			return;

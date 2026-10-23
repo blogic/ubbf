@@ -5,7 +5,6 @@ global.topdir = '/usr/share/ucode/ubbf/render';
 const modules_dir = '/usr/share/ucode/ubbf/modules';
 
 import * as fs from 'fs';
-global.fs = fs;
 
 import {
 	b,
@@ -64,24 +63,19 @@ import * as ssh_keys from 'ubbf.utils.ssh_keys';
 import { dns_learned_row } from 'ubbf';
 import { DNS_RESOLV_AUTO, DNS_RESOLV_FILTERED } from 'ubbf.utils.dns';
 import { schedule_windows } from 'ubbf';
+import { render_scope_effects } from 'ubbf.render.effects';
 
 /**
- * Generates UCI configuration from UBBF data model.
+ * Builds the scope every template and module render runs in.
  *
  * @param {object} config - UBBF configuration data model
+ * @param {array} output - Array the templates append UCI batch lines to
  * @param {array} logs - Array to collect log messages
- * @param {boolean} dry_run - Render only: the templates write no file and
- *     reload no service, as they do for an apply
- * @returns {object} Object with uci (string) and logs (array of {level, msg})
+ * @param {array} effects - Array the templates append device changes to
+ * @returns {object} Template scope
  */
-export function generate(config, logs, dry_run) {
-	logs = logs || [];
-
-	services.init();
-
+export function render_scope_build(config, output, logs, effects) {
 	let render_state = {};
-	let output = [];
-
 	let template_path = topdir + '/templates';
 
 	// The core renders ScheduleRef itself, at the fixed place of each rule
@@ -110,7 +104,6 @@ export function generate(config, logs, dry_run) {
 		target_to_uci,
 		config,
 		render_state,
-		dry_run: !!dry_run,
 
 		ubbf,
 		ubbf_get: ubbf.get,
@@ -172,7 +165,9 @@ export function generate(config, logs, dry_run) {
 
 		warn: (fmt, ...args) => push(logs, { level: 'warning', msg: sprintf(fmt, ...args) }),
 		error: (fmt, ...args) => push(logs, { level: 'error', msg: sprintf(fmt, ...args) }),
-		info: (fmt, ...args) => push(logs, { level: 'info', msg: sprintf(fmt, ...args) })
+		info: (fmt, ...args) => push(logs, { level: 'info', msg: sprintf(fmt, ...args) }),
+
+		...render_scope_effects(effects)
 	};
 
 	/**
@@ -194,6 +189,29 @@ export function generate(config, logs, dry_run) {
 				e?.stacktrace?.[0]?.context ?? '');
 		}
 	};
+
+	return scope;
+};
+
+/**
+ * Generates UCI configuration from UBBF data model.
+ *
+ * The render changes nothing on the device: what a template must change
+ * besides UCI comes back in `effects`, for `effects_run()` after the commit.
+ *
+ * @param {object} config - UBBF configuration data model
+ * @param {array} logs - Array to collect log messages
+ * @returns {object} Object with uci (string), logs (array of {level, msg})
+ *                   and effects (array, see render/effects.uc)
+ */
+export function generate(config, logs) {
+	logs = logs || [];
+
+	services.init();
+
+	let output = [];
+	let effects = [];
+	let scope = render_scope_build(config, output, logs, effects);
 
 	include('templates/firewall.uc', scope);
 	include('templates/ssh.uc', scope);
@@ -236,6 +254,7 @@ export function generate(config, logs, dry_run) {
 	push(output, '');
 	return {
 		uci: join('\n', output),
-		logs: logs
+		logs: logs,
+		effects: effects
 	};
 };

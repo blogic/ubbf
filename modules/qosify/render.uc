@@ -345,8 +345,7 @@ function render_config() {
 	let classes = generate_classes(dscp_maps);
 
 	let rules_content = generate_classifier_rules(classifiers, dns_classifiers, classes);
-	if (!dry_run)
-		ubbf.write_file_atomic(QOSIFY_CONF_PATH, rules_content);
+	effect_file_replace(QOSIFY_CONF_PATH, rules_content);
 
 	generate_defaults(qosify_config, classes);
 	generate_interfaces(interface_configs);

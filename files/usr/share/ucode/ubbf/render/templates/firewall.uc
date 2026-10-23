@@ -80,8 +80,7 @@ function generate_dos_nft(dos, upstream_devices) {
 	let drop_malformed_tcp = ubbf_to_bool(dos.DropMalformedTCP);
 
 	if (length(upstream_devices) == 0 || (!icmp_rate_limit && !drop_malformed_tcp)) {
-		if (!dry_run)
-			fs.unlink(DOS_NFT_PATH);
+		effect_file_remove(DOS_NFT_PATH);
 		return false;
 	}
 
@@ -101,10 +100,8 @@ function generate_dos_nft(dos, upstream_devices) {
 		}
 	}
 
-	if (!dry_run) {
-		fs.mkdir('/tmp/ubbf', 0755);
-		fs.writefile(DOS_NFT_PATH, join('\n', lines) + '\n');
-	}
+	effect_dir_create('/tmp/ubbf');
+	effect_file_write(DOS_NFT_PATH, join('\n', lines) + '\n');
 	return true;
 }
 

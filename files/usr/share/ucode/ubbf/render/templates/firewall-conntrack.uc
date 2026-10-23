@@ -144,10 +144,8 @@ let max_sessions = ubbf_to_int(ubbf_get(config, 'Device.NAT')?.X_UBBF_MaxSession
 if (max_sessions > 0)
 	sysctl.nf_conntrack_max = sprintf('%d', max_sessions);
 
-if (!dry_run) {
-	fs.mkdir('/tmp/ubbf', 0755);
-	fs.writefile(STATE_PATH, sprintf("%.J\n", { alg: entries, sysctl }));
-}
+effect_dir_create('/tmp/ubbf');
+effect_file_write(STATE_PATH, sprintf("%.J\n", { alg: entries, sysctl }));
 
 // fw-alg-apply is a one-shot reconciler.  Enable+start it on every apply
 // so kernel module presence and runtime params stay in sync with the

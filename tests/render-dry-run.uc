@@ -1,5 +1,5 @@
-// Host test of `apply --dry-run`: generate() with dry_run set writes no file
-// and reloads no service, and the same config without it does write, which
+// Host test of `apply --dry-run`: generate() writes no file and reloads no
+// service, and the effects it records for the same config do write, which
 // shows that the config reaches each template that writes.
 'use strict';
 
@@ -7,6 +7,7 @@ import * as fs from 'fs';
 import { describe, it, assert, mock, beforeEach } from 'utest';
 import { state_clear } from 'test_env';
 import { generate } from 'ubbf.render.renderer';
+import { effects_run } from 'ubbf.render.effects';
 
 function tree(dir) {
 	let out = [];
@@ -55,12 +56,12 @@ describe('apply --dry-run', () => {
 
 	it('writes nothing in a dry run', () => {
 		let before = written();
-		generate(config, [], true);
+		generate(config, []);
 		assert.match(before, written());
 	});
 
-	it('writes the files of each template without dry run', () => {
-		generate(config, [], false);
+	it('writes the files of each template through its effects', () => {
+		effects_run(generate(config, []).effects);
 		let files = written();
 		for (let path in OUTPUTS)
 			assert.match(true, index(files, path) >= 0, `an apply writes ${path}`);

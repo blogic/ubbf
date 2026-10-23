@@ -62,8 +62,7 @@ function render_config() {
 		state.meta.rotate = rotate;
 		state.meta.min_free_space = min_free;
 
-		if (!dry_run)
-			fs.writefile(path, sprintf('%.J\n', state));
+		effect_file_write(path, sprintf('%.J\n', state));
 	}
 
 	let kf = ubbf_get(config, 'Device.DeviceInfo.KernelFaults');

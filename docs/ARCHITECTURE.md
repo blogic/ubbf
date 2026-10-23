@@ -99,11 +99,16 @@ render/templates/*.uc
 /tmp/ubbf/uci.batch
         |
         v
-uci batch, uci commit
+uci batch, uci commit, copy to /var/run/uci
+        |
+        v
+render effects (render/effects.uc)
         |
         v
 service reloads
 ```
+
+The render itself changes nothing on the device. `apply --dry-run` (the validation that bbf-device runs before every apply, `bbf-cli apply -n` and `config_validate()`) runs the same render and prints the UCI batch, the logs, the services and the effects as JSON, then exits. Only a real apply runs the effects, with `effects_run()`, after the UCI copy and before the service loop: a daemon that an effect reloads then reads its new UCI.
 
 ## Programs
 
@@ -515,6 +520,7 @@ Rules for templates:
 - Do not declare a top-level `let output = []` and do not import modules. `output`, the `ubbf` module and the other dependencies come through the scope that `renderer.uc` builds.
 - Register services for reload with `services.set_enabled()`.
 - Share computed values between templates through `render_state`.
+- Record every other change to the device as an effect, in the order it must run: `effect_file_write(path, content)`, `effect_file_replace(path, content)` (atomic; empty content removes the file), `effect_file_remove(path)`, `effect_dir_create(path)` (mode 0755), `effect_ubus_call(object, method, [data])` and `effect_command(command)` (a shell command). The scope's `fs` holds only the read functions and a `popen()` for mode `'r'`; the scope's `ubbf` has no `write_file_atomic`, and `system()` raises. The scope does not block `global.system()`, `require()`, an `import`, a write through `uci_cursor()` or a command run by `popen()`. Status reads over `ubus` stay allowed. The scope comes from `render_scope_build()` in `renderer.uc`.
 
 ### Utilities (`utils/*.uc`)
 

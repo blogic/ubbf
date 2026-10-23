@@ -4,6 +4,7 @@
 import { access, readfile, writefile, lsdir, unlink, mkdir } from 'fs';
 import { generate } from 'ubbf.render.renderer';
 import * as services from 'ubbf.render.services';
+import { effects_run } from 'ubbf.render.effects';
 import { log_init, log_info, log_err } from 'ubbf';
 import { uci_change_update } from 'ubbf';
 
@@ -46,7 +47,7 @@ for (let arg in ARGV) {
 		print("  CONFIG_FILE     Path to config.json (required)\n");
 		print("\n");
 		print("Options:\n");
-		print("  -n, --dry-run   Output JSON with UCI commands and logs\n");
+		print("  -n, --dry-run   Output JSON with UCI commands, logs and effects; change nothing\n");
 		print("  -h, --help      Show this help message\n");
 		exit(0);
 	} else if (substr(arg, 0, 1) != '-')
@@ -71,13 +72,14 @@ if (!config) {
 }
 
 let logs = [];
-let result = generate(config, logs, dry_run);
+let result = generate(config, logs);
 
 if (dry_run) {
 	printf("%.J\n", {
 		uci: result.uci,
 		logs: result.logs,
-		services: services.services
+		services: services.services,
+		effects: result.effects
 	});
 	exit(0);
 }
@@ -126,6 +128,9 @@ if (!access(RUN_UCI, 'r'))
 for (let name in lsdir(RUN_UCI) ?? [])
 	unlink(`${RUN_UCI}/${name}`);
 system(sprintf("cp %s/* %s/", TMP_SHADOW, RUN_UCI));
+
+// After the UCI copy, so that a daemon an effect reloads reads its new UCI.
+effects_run(result.effects);
 
 for (let service, enabled in services.services) {
 	if (enabled)

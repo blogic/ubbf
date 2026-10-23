@@ -284,10 +284,10 @@ function render_config() {
 
 	let new_content = sprintf('%.J\n', policy_data);
 	let old_content = fs.readfile(policy_path);
-	if (new_content != old_content && !dry_run) {
-		fs.mkdir('/etc/umap-policy.d', 0755);
-		fs.writefile(policy_path, new_content);
-		ubus.call({ object: 'umap', method: 'reload' });
+	if (new_content != old_content) {
+		effect_dir_create('/etc/umap-policy.d');
+		effect_file_write(policy_path, new_content);
+		effect_ubus_call('umap', 'reload');
 	}
 
 }
