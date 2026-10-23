@@ -612,15 +612,15 @@ function sta_measurement_report_encode(beacon_report) {
 }
 
 const cellular_data_pref_names = {
-	[1]: "Excluded",
-	[2]: "Should not use",
-	[3]: "Should use"
+	[0]: "Excluded",
+	[1]: "Should not use",
+	[255]: "Should use"
 };
 
 /**
- * Maps MBO cellular data preference subelement value to TR-181 enumeration.
+ * Maps an MBO Cellular Data Connection Preference value to the TR-181 enumeration.
  *
- * @param {number} val - MBO subelement 6 value (1=excluded, 2=not preferred, 3=preferred)
+ * @param {number} val - MBO attribute 5 value (0=excluded, 1=not preferred, 255=preferred)
  * @returns {string} TR-181 CellularDataPreference enumeration value
  */
 function cellular_data_pref_name(val) {
