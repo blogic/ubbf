@@ -7,7 +7,7 @@ import { transfer_complete } from 'ubbf';
 import { curl_download, curl_exit_to_status } from 'ubbf';
 import { log_err } from 'ubbf';
 import { task_run, TASK_MARGIN_S } from 'ubbf.utils.process';
-import { cmd_build } from 'ubbf';
+import { fw_printenv } from 'ubbf.utils.fw_env';
 import * as ubus from 'ubus';
 import * as ubbf from 'ubbf';
 
@@ -68,21 +68,6 @@ function boot_bank_status() {
 		log_err('boot_bank_status: malformed JSON: %s', e);
 		return null;
 	}
-}
-
-/**
- * Reads a U-Boot environment variable.
- *
- * @param {string} name - Variable name
- * @returns {string|null} Variable value, or null if unset
- */
-function fw_printenv(name) {
-	let p = fs.popen(cmd_build([ 'fw_printenv', '-n', name, { raw: '2>/dev/null' } ]), 'r');
-	if (!p)
-		return null;
-	let val = trim(p.read('all') ?? '');
-	p.close();
-	return (val != '') ? val : null;
 }
 
 /**

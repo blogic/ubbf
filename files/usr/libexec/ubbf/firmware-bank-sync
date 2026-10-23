@@ -4,20 +4,7 @@
 
 import * as fs from 'fs';
 import * as ubus from 'ubus';
-import { cmd_build } from 'ubbf';
-
-function fw_printenv(name) {
-	let p = fs.popen(cmd_build([ 'fw_printenv', '-n', name, { raw: '2>/dev/null' } ]), 'r');
-	if (!p)
-		return null;
-	let val = trim(p.read('all') ?? '');
-	p.close();
-	return (val != '') ? val : null;
-}
-
-function fw_setenv(name, value) {
-	return system(cmd_build([ 'fw_setenv', name, value ])) == 0;
-}
+import { fw_printenv, fw_setenv } from 'ubbf.utils.fw_env';
 
 function boot_bank_status() {
 	let p = fs.popen('/usr/libexec/boot-bank status 2>/dev/null', 'r');
