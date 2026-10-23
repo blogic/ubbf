@@ -3,6 +3,9 @@
 START=99
 USE_PROCD=1
 PORT=7548
+# Above the 150 s curl limit of ubbf-testbed (TESTBED_RPC_TIMEOUT): the
+# handler answers only when its command ends.
+TRANSFER_TIMEOUT=155000
 
 . /lib/functions/uwsd.sh
 
@@ -20,7 +23,7 @@ listen :$PORT {
 	}
 
 	idle-timeout 600000;
-	transfer-timeout 120000;
+	transfer-timeout $TRANSFER_TIMEOUT;
 }
 EOF
 }
