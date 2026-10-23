@@ -92,6 +92,36 @@ export function task_run(fn, callback, opts) {
 	return task;
 };
 
+// A first word in single quotes is a word that cmd_build() escaped
+const FIRST_WORD_RE = /^[ \t\n]*('([^']*)'|([^ \t\n'][^ \t\n]*))?/;
+
+function first_word(text) {
+	let m = match(text, FIRST_WORD_RE);
+	return m[2] ?? m[3] ?? '';
+}
+
+/**
+ * The arguments of a command can hold credentials (curl -u, mosquitto_pub
+ * -P), so a log names the program alone.
+ *
+ * @param {string|array} cmd - Command string or cmd_build parts
+ * @returns {string} argv[0] of the parts, or the first word of the string
+ */
+function cmd_program(cmd) {
+	if (type(cmd) != 'array')
+		return first_word(sprintf('%s', cmd));
+
+	for (let p in cmd) {
+		if (p == null)
+			continue;
+		if (type(p) == 'object' && p.raw != null)
+			return first_word(sprintf('%s', p.raw));
+		return sprintf('%s', p);
+	}
+
+	return '';
+}
+
 /**
  * Executes a command asynchronously using uloop task.
  *
@@ -110,10 +140,10 @@ export function task_run(fn, callback, opts) {
 export function popen_async(cmd, callback, opts) {
 	opts ??= {};
 
+	log_debug('popen_async: %s', cmd_program(cmd));
+
 	if (type(cmd) == 'array')
 		cmd = ubbf.cmd_build(cmd);
-
-	log_debug('popen_async: %s', cmd);
 
 	return task_run(() => {
 		let start_time = opts.capture_time ? time() : null;
