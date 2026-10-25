@@ -108,7 +108,7 @@ render effects (render/effects.uc)
 service reloads
 ```
 
-The render itself changes nothing on the device. `apply --dry-run` (the validation that bbf-device runs before every apply, `bbf-cli apply -n` and `config_validate()`) runs the same render and prints the UCI batch, the logs, the services and the effects as JSON, then exits. Only a real apply runs the effects, with `effects_run()`, after the UCI copy and before the service loop: a daemon that an effect reloads then reads its new UCI.
+The render itself changes nothing on the device. `apply --dry-run` (the validation that bbf-device runs before every apply, `bbf-cli apply -n` and `config_validate()`) runs the same render and prints the UCI batch, the logs, the services and the effects as JSON, then exits. The printed batch masks each value that a template sets with `uci_set_secret()`; the batch of a real apply holds the values. Only a real apply runs the effects, with `effects_run()`, after the UCI copy and before the service loop: a daemon that an effect reloads then reads its new UCI.
 
 ## Programs
 

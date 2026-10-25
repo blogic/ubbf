@@ -46,7 +46,7 @@ function render_config() {
         if (http) {
             uci_set_string(output, section_path + '.http_url', http.URL);
             uci_set_string(output, section_path + '.http_username', http.Username);
-            uci_set_string(output, section_path + '.http_password', http.Password);
+            uci_set_secret(output, section_path + '.http_password', http.Password);
             uci_set_string(output, section_path + '.http_method', http.Method);
             uci_set_string(output, section_path + '.http_compression', http.Compression);
             uci_set_boolean(output, section_path + '.http_use_date_header', ubbf_to_bool(http.UseDateHeader ?? 'true'));

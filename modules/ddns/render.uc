@@ -55,7 +55,7 @@ function render_config() {
 			uci_set_string(output, `${s}.username`, client.Username);
 
 		if (client.Password)
-			uci_set_string(output, `${s}.password`, client.Password);
+			uci_set_secret(output, `${s}.password`, client.Password);
 
 		// ddns-scripts reads the address of ip_network from netifd; the
 		// hotplug script restarts the section on events of `interface`.

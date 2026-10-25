@@ -974,6 +974,11 @@ Source: `render/uci_helpers.uc`. Each helper takes the shared `output` array as 
 | `uci_section(output, 'pkg type')` | `add <pkg> <type>` (anonymous) |
 | `uci_named_section(output, 'pkg.name', type)` | `set <pkg>.<name>=<type>` |
 | `uci_comment(output, comment)` | The comment text. The caller supplies the `#`. |
+| `uci_set_secret(output, path, value)` | `set <path>='<value>'`, shown as `'<secret>'` in a dry-run |
+
+A template sets every secret value with `uci_set_secret()`: the value of a
+parameter that its schema marks `secured`, and each field that
+`EASYMESH_SECRETS` names.
 
 ### State Sharing
 

@@ -148,11 +148,11 @@ function render_config() {
 		}
 
 		if (ap.Password && ap.Password != '')
-			uci_set_string(output, `network.${name}.password`, ap.Password);
+			uci_set_secret(output, `network.${name}.password`, ap.Password);
 
 		let pin = ubbf_get(config, ref)?.USIM?.PIN;
 		if (pin && pin != '')
-			uci_set_string(output, `network.${name}.pincode`, pin);
+			uci_set_secret(output, `network.${name}.pincode`, pin);
 
 		uci_set_string(output, `network.${name}.iptype`, ipversion_to_uci(ap.IPVersion));
 		if (other_upstream_exists(ref)) {

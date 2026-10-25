@@ -83,8 +83,12 @@ function render_config() {
 		if (keys)
 			for (let key in ['c_sign_key_privkey', 'c_sign_key_pubkey_x', 'c_sign_key_pubkey_y',
 			                 'net_access_key_privkey', 'net_access_key_pubkey_x', 'net_access_key_pubkey_y', 'connector',
-			                 'pp_key_privkey', 'pp_key_pubkey_x', 'pp_key_pubkey_y'])
-				uci_set_string(output, `umapd.controller.${key}`, keys[key]);
+			                 'pp_key_privkey', 'pp_key_pubkey_x', 'pp_key_pubkey_y']) {
+				if (index(EASYMESH_SECRETS.Controller, key) >= 0)
+					uci_set_secret(output, `umapd.controller.${key}`, keys[key]);
+				else
+					uci_set_string(output, `umapd.controller.${key}`, keys[key]);
+			}
 
 		let ts = config.EasyMesh?.TrafficSeparation;
 		if (ts?.enabled)
@@ -111,8 +115,9 @@ function render_config() {
 		uci_named_section(output, `umapd.${section_name}`, section_type);
 		uci_set_string(output, `umapd.${section_name}.ssid`, entry.ssid);
 
-		if (entry.key)
-			uci_set_string(output, `umapd.${section_name}.key`, entry.key);
+		for (let field in EASYMESH_SECRETS.SSIDs)
+			if (entry[field])
+				uci_set_secret(output, `umapd.${section_name}.${field}`, entry[field]);
 
 		for (let auth in entry.authentication ?? [])
 			uci_list_string(output, `umapd.${section_name}.authentication`, auth);

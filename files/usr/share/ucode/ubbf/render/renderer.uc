@@ -21,6 +21,9 @@ import {
 	uci_set,
 	uci_list,
 	uci_comment,
+	uci_secret_set,
+	uci_output_masked,
+	EASYMESH_SECRETS,
 	ipversion_to_family,
 	protocols_to_uci,
 	format_ip_with_mask,
@@ -77,6 +80,7 @@ import { render_scope_effects } from 'ubbf.render.effects';
 export function render_scope_build(config, output, logs, effects) {
 	let render_state = {};
 	let template_path = topdir + '/templates';
+	let uci_secrets = [];
 
 	// The core renders ScheduleRef itself, at the fixed place of each rule
 	// in the firewall order; the module only provides Device.Schedules.
@@ -84,6 +88,9 @@ export function render_scope_build(config, output, logs, effects) {
 
 	let scope = {
 		output,
+		uci_secrets,
+		uci_set_secret: (out, path, value) => uci_secret_set(out, uci_secrets, path, value),
+		EASYMESH_SECRETS,
 		b,
 		s,
 		uci_set_string,
@@ -194,25 +201,11 @@ export function render_scope_build(config, output, logs, effects) {
 };
 
 /**
- * Generates UCI configuration from UBBF data model.
+ * Runs every template and module render in a scope, in render order.
  *
- * The render changes nothing on the device: what a template must change
- * besides UCI comes back in `effects`, for `effects_run()` after the commit.
- *
- * @param {object} config - UBBF configuration data model
- * @param {array} logs - Array to collect log messages
- * @returns {object} Object with uci (string), logs (array of {level, msg})
- *                   and effects (array, see render/effects.uc)
+ * @param {object} scope - Scope from render_scope_build()
  */
-export function generate(config, logs) {
-	logs = logs || [];
-
-	services.init();
-
-	let output = [];
-	let effects = [];
-	let scope = render_scope_build(config, output, logs, effects);
-
+export function templates_render(scope) {
 	include('templates/firewall.uc', scope);
 	include('templates/ssh.uc', scope);
 	include('templates/dhcp.uc', scope);
@@ -250,10 +243,35 @@ export function generate(config, logs) {
 	}
 
 	include('templates/device.uc', scope);
+};
+
+/**
+ * Generates UCI configuration from UBBF data model.
+ *
+ * The render changes nothing on the device: what a template must change
+ * besides UCI comes back in `effects`, for `effects_run()` after the commit.
+ *
+ * @param {object} config - UBBF configuration data model
+ * @param {array} logs - Array to collect log messages
+ * @returns {object} Object with uci (string), uci_masked (the same batch with
+ *                   every secret value masked), logs (array of {level, msg})
+ *                   and effects (array, see render/effects.uc)
+ */
+export function generate(config, logs) {
+	logs = logs || [];
+
+	services.init();
+
+	let output = [];
+	let effects = [];
+	let scope = render_scope_build(config, output, logs, effects);
+
+	templates_render(scope);
 
 	push(output, '');
 	return {
 		uci: join('\n', output),
+		uci_masked: uci_output_masked(output, scope.uci_secrets),
 		logs: logs,
 		effects: effects
 	};

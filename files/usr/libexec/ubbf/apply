@@ -76,7 +76,7 @@ let result = generate(config, logs);
 
 if (dry_run) {
 	printf("%.J\n", {
-		uci: result.uci,
+		uci: result.uci_masked,
 		logs: result.logs,
 		services: services.services,
 		effects: result.effects

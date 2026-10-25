@@ -102,7 +102,7 @@ function render_config() {
 				uci_set_string(output, `network.${name}.username`, iface.Username);
 
 			if (iface.Password && iface.Password != '')
-				uci_set_string(output, `network.${name}.password`, iface.Password);
+				uci_set_secret(output, `network.${name}.password`, iface.Password);
 
 			let max_mru = ubbf_to_int(iface.MaxMRUSize);
 			if (max_mru != null && max_mru > 0)

@@ -60,6 +60,54 @@ export function uci_set_string(output, path, value) {
 		push(output, cmd);
 };
 
+const SECRET_MASK = '<secret>';
+
+/**
+ * Fields of the EasyMesh sections of config.json, which have no schema and
+ * so no secured mark, whose values are secret: per `config.EasyMesh` key,
+ * the fields of the object, or of each entry of the array, under it.
+ */
+export const EASYMESH_SECRETS = {
+	Controller: [ 'c_sign_key_privkey', 'net_access_key_privkey', 'pp_key_privkey' ],
+	SSIDs: [ 'key' ]
+};
+
+/**
+ * Adds a string set command for a secret value to output, and records the
+ * command in `secrets`, so that uci_output_masked() shows it without the
+ * value. A template calls it as `uci_set_secret(output, path, value)` from
+ * the render scope, which supplies `secrets`.
+ *
+ * @param {array} output - Output array to append to
+ * @param {array} secrets - Records of the secret commands of `output`
+ * @param {string} path - UCI path
+ * @param {string} value - Secret string value to set
+ */
+export function uci_secret_set(output, secrets, path, value) {
+	let cmd = uci_cmd('set', path, value, s);
+	if (!cmd)
+		return;
+
+	push(output, cmd);
+	if (value !== '')
+		push(secrets, { line: length(output) - 1, masked: uci_cmd('set', path, SECRET_MASK, s) });
+};
+
+/**
+ * Joins output into a UCI batch string with every secret value masked, for
+ * the batch that a dry-run shows to its caller.
+ *
+ * @param {array} output - Array of UCI commands
+ * @param {array} secrets - Records that uci_secret_set() wrote for `output`
+ * @returns {string} Newline-joined UCI batch with the secret values masked
+ */
+export function uci_output_masked(output, secrets) {
+	let lines = [ ...output ];
+	for (let secret in secrets)
+		lines[secret.line] = secret.masked;
+	return join('\n', lines);
+};
+
 /**
  * Adds a boolean set command to output.
  *

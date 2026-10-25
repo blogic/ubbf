@@ -439,10 +439,10 @@ function render_config() {
 				if (auth_port != null && auth_port > 0)
 					uci_set_number(output, 'wireless.@wifi-iface[-1].auth_port', auth_port);
 				if (security.RadiusSecret)
-					uci_set_string(output, 'wireless.@wifi-iface[-1].auth_secret', security.RadiusSecret);
+					uci_set_secret(output, 'wireless.@wifi-iface[-1].auth_secret', security.RadiusSecret);
 			} else {
 				let key = is_sae ? security.SAEPassphrase : personal_key(security);
-				uci_set_string(output, 'wireless.@wifi-iface[-1].key', key);
+				uci_set_secret(output, 'wireless.@wifi-iface[-1].key', key);
 			}
 
 			let ieee80211w = security_to_ieee80211w(mode, security.MFPConfig);
@@ -460,7 +460,7 @@ function render_config() {
 				if (acct_port != null && acct_port > 0)
 					uci_set_number(output, 'wireless.@wifi-iface[-1].acct_port', acct_port);
 				if (accounting.Secret)
-					uci_set_string(output, 'wireless.@wifi-iface[-1].acct_secret', accounting.Secret);
+					uci_set_secret(output, 'wireless.@wifi-iface[-1].acct_secret', accounting.Secret);
 			}
 
 			let wps = ap.WPS;
@@ -470,7 +470,7 @@ function render_config() {
 					uci_set_boolean(output, 'wireless.@wifi-iface[-1].wps_pushbutton', true);
 				let pin_requested = (index(methods, 'PIN') >= 0 && wps.PIN);
 				if (pin_requested)
-					uci_set_string(output, 'wireless.@wifi-iface[-1].wps_pin', wps.PIN);
+					uci_set_secret(output, 'wireless.@wifi-iface[-1].wps_pin', wps.PIN);
 				if (index(methods, 'Label') >= 0 || pin_requested)
 					uci_set_boolean(output, 'wireless.@wifi-iface[-1].wps_label', true);
 			}
@@ -566,10 +566,10 @@ function render_config() {
 			if (auth_port != null && auth_port > 0)
 				uci_set_number(output, 'wireless.@wifi-iface[-1].auth_port', auth_port);
 			if (security.RadiusSecret)
-				uci_set_string(output, 'wireless.@wifi-iface[-1].auth_secret', security.RadiusSecret);
+				uci_set_secret(output, 'wireless.@wifi-iface[-1].auth_secret', security.RadiusSecret);
 		} else {
 			let key = is_sae ? security.SAEPassphrase : personal_key(security);
-			uci_set_string(output, 'wireless.@wifi-iface[-1].key', key);
+			uci_set_secret(output, 'wireless.@wifi-iface[-1].key', key);
 		}
 
 		let ieee80211w = security_to_ieee80211w(mode, security.MFPConfig);

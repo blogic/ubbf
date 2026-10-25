@@ -147,6 +147,7 @@ case 'apply':
 		}
 	}
 
+	delete result.output;
 	break;
 
 case 'reboot':
