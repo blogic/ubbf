@@ -4,8 +4,13 @@ CERT_DIR=/etc/ubbf
 
 [ -f /usr/bin/pkgen -a ! -f $CERT_DIR/cert.pem ] && {
 	mkdir -p $CERT_DIR
-	cn=$(cat /etc/board.json | jsonfilter -e '@.system.label_macaddr')
-	[ -z "$cn" ] && cn=$(cat /sys/class/net/eth0/address)
+	. /lib/functions/system.sh
+	cn=$(get_mac_label)
+	[ -z "$cn" ] && for dev in $(jsonfilter -i /etc/board.json -e '@.network.*.device' -e '@.network.*.ports[*]'); do
+		[ -r /sys/class/net/$dev/address ] || continue
+		cn=$(cat /sys/class/net/$dev/address)
+		break
+	done
 	cn=$(echo $cn | tr -d : | awk '{print tolower($0)}')
 	(
 		umask 077
