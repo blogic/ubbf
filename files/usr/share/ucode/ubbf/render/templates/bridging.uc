@@ -113,20 +113,6 @@ function render_config() {
 	}
 
 	/**
-	 * Converts a TR-181 STP timer in centiseconds (HelloTime, MaxAge) to
-	 * the whole seconds of the netifd bridge options.
-	 *
-	 * @param {string} value - Timer in centiseconds
-	 * @returns {string|null} Timer in seconds, or null if not set
-	 */
-	function centiseconds_to_seconds(value) {
-		let cs = ubbf_to_int(value);
-		if (cs == null)
-			return null;
-		return sprintf('%d', cs / 100);
-	}
-
-	/**
 	 * Populates render state for a bridge device with STP and port config.
 	 *
 	 * @param {object} bridge - Bridge data model object
@@ -155,14 +141,10 @@ function render_config() {
 
 			if (stp.BridgePriority && stp.BridgePriority != '')
 				device_state_set(render_state, br_name, 'priority', stp.BridgePriority);
-			let hello_time = centiseconds_to_seconds(stp.HelloTime);
-			if (hello_time != null)
-				device_state_set(render_state, br_name, 'hello_time', hello_time);
-			let max_age = centiseconds_to_seconds(stp.MaxAge);
-			if (max_age != null)
-				device_state_set(render_state, br_name, 'max_age', max_age);
-			if (stp.ForwardingDelay && stp.ForwardingDelay != '')
-				device_state_set(render_state, br_name, 'forward_delay', stp.ForwardingDelay);
+			let timers = stp_timers_get(stp);
+			device_state_set(render_state, br_name, 'hello_time', sprintf('%d', timers.hello_time));
+			device_state_set(render_state, br_name, 'max_age', sprintf('%d', timers.max_age));
+			device_state_set(render_state, br_name, 'forward_delay', sprintf('%d', timers.forward_delay));
 		}
 
 		if (!vlan_filtering) {

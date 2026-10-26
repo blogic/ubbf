@@ -67,6 +67,7 @@ import { dns_learned_row } from 'ubbf';
 import { DNS_RESOLV_AUTO, DNS_RESOLV_FILTERED } from 'ubbf.utils.dns';
 import { schedule_windows } from 'ubbf';
 import { render_scope_effects } from 'ubbf.render.effects';
+import { stp_timers_get } from 'ubbf.utils.stp';
 
 /**
  * Builds the scope every template and module render runs in.
@@ -169,6 +170,7 @@ export function render_scope_build(config, output, logs, effects) {
 		DNS_RESOLV_FILTERED,
 		schedule_windows: (refs, inline_rows) =>
 			schedule_windows(config, refs, inline_rows, schedules_installed),
+		stp_timers_get,
 
 		warn: (fmt, ...args) => push(logs, { level: 'warning', msg: sprintf(fmt, ...args) }),
 		error: (fmt, ...args) => push(logs, { level: 'error', msg: sprintf(fmt, ...args) }),

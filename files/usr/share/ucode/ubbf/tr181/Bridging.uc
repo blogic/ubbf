@@ -7,6 +7,7 @@ import { last_change_get } from 'ubbf.utils.netdev_change';
 import { ifstats_get, ifstats_reset } from 'ubbf.utils.ifstats';
 import { lower_layers_wifi } from 'ubbf';
 import { log_err } from 'ubbf';
+import { stp_timers_get } from 'ubbf.utils.stp';
 
 /**
  * Get handler for Device.Bridging.Bridge.{i}.
@@ -31,6 +32,9 @@ function bridge_get(ctx) {
 /**
  * Get handler for Device.Bridging.Bridge.{i}.STP.
  *
+ * An enabled STP whose timers the bridge cannot run (stp_timers_get())
+ * reports Status Error_Misconfigured.
+ *
  * @param {object} ctx - Context with config and instance info
  * @returns {object|null} STP properties with status
  */
@@ -38,10 +42,15 @@ function bridge_stp_get(ctx) {
 	if (!ctx.config)
 		return null;
 
-	return {
-		...ubbf.schema_defaults('Bridging.Bridge_STP'),
-		...ctx.config
-	};
+	let stp = { ...ubbf.schema_defaults('Bridging.Bridge_STP'), ...ctx.config };
+
+	if (!ubbf.to_bool(stp.Enable))
+		return { ...stp, Status: 'Disabled' };
+
+	if (!stp_timers_get(ctx.config).valid)
+		return { ...stp, Status: 'Error_Misconfigured' };
+
+	return { ...stp, Status: 'Enabled' };
 }
 
 /**
@@ -226,8 +235,7 @@ export const model = {
 
 	'Device.Bridging.Bridge.{i}.STP': {
 		schema: 'Bridging.Bridge_STP',
-		get: bridge_stp_get,
-		enable_status_derive: true
+		get: bridge_stp_get
 	},
 
 	'Device.Bridging.Bridge.{i}.Port': {
