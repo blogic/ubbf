@@ -219,6 +219,25 @@ function sysupgrade_handler(req) {
 	return { status: 'scheduled' };
 }
 
+/**
+ * Writes the archive of the files that survive an upgrade. A dual-bank
+ * flash bypasses sysupgrade and writes this archive into the new bank.
+ *
+ * @param {object} req - ubus request; args.path is the archive to write
+ * @returns {object} The archive path, or an error
+ */
+function backup_handler(req) {
+	let path = req.args?.path ?? '';
+	if (path == '')
+		return { error: 'path required' };
+
+	let backup = backup_create(path, BACKUP_FILES);
+	if (!backup)
+		return { error: 'no backup created' };
+
+	return { path: backup };
+}
+
 function apply_handler(req) {
 	let do_apply = req.args?.apply ?? false;
 	let file_path = req.args?.file ?? CONFIG_PATH;
@@ -288,7 +307,7 @@ export function is_shutting_down() {
  * Returns the ubus method table for lifecycle operations.
  *
  * @returns {object} Method definitions for reboot, shutdown, factory_reset,
- *                   sysupgrade, apply, apply_state
+ *                   sysupgrade, backup, apply, apply_state
  */
 export function ubus_methods() {
 	return {
@@ -307,6 +326,10 @@ export function ubus_methods() {
 		sysupgrade: {
 			call: sysupgrade_handler,
 			args: { command_key: '', local: true, url: '' }
+		},
+		backup: {
+			call: backup_handler,
+			args: { path: '' }
 		},
 		apply: {
 			call: apply_handler,

@@ -14,6 +14,7 @@ const FIRMWARE_PATH = '/tmp/ubbf/firmware.bin';
 const DOWNLOAD_TIMEOUT_S = 300;
 const UPGRADE_DELAY_MS = 15000;
 const BOOT_BANK_BIN = '/usr/libexec/boot-bank';
+const BANK_BACKUP_PATH = '/tmp/boot-bank-backup.tgz';
 
 const CHECKSUM_ALGOS = {
 	'SHA-1': 'sha1_file',
@@ -205,6 +206,24 @@ function firmware_validate(path) {
 }
 
 /**
+ * Builds the boot-bank command that flashes the inactive bank. The flash
+ * bypasses sysupgrade, so it takes the archive that sysupgrade would keep
+ * and writes it into the new bank.
+ *
+ * @param {string} image - Path to the validated firmware image
+ * @returns {string} Shell command for system()
+ */
+function bank_flash_cmd(image) {
+	let backup = ubus.call('bbf-device', 'backup', { path: BANK_BACKUP_PATH })?.path;
+	if (!backup) {
+		log_err('no backup archive, the configuration will not carry over to the new bank');
+		return sprintf("%s flash '%s'", BOOT_BANK_BIN, image);
+	}
+
+	return sprintf("%s flash '%s' '%s'", BOOT_BANK_BIN, image, backup);
+}
+
+/**
  * Schedules firmware activation (dual-bank: switch + reboot, single-bank: sysupgrade).
  *
  * @param {string} firmware_path - Path to firmware image (unused for dual-bank)
@@ -334,7 +353,7 @@ function download_handler(input, instance, complete, instances, command_key) {
 			}
 
 			if (dual_bank_get()) {
-				let rc = system(sprintf("%s flash '%s'", BOOT_BANK_BIN, result.download_path));
+				let rc = system(bank_flash_cmd(result.download_path));
 				if (rc != 0) {
 					transfer_complete(ctx, 'boot-bank flash failed');
 					return;
