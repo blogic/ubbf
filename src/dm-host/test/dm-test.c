@@ -36,6 +36,7 @@ item_get(struct ubbf_dm_req *req)
 		return UBBF_DM_ABSENT;
 
 	blobmsg_printf(req->out, "Index", "%lld", (long long)req->instance);
+	blobmsg_add_string(req->out, "Path", req->path);
 	return UBBF_DM_OK;
 }
 

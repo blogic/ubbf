@@ -1,0 +1,8 @@
+#!/bin/sh
+# Stand-in for resolveip: logs its arguments to $RESOLVEIP_LOG and gives an
+# IPv6 address for the names in $RESOLVEIP_V6.
+echo "$*" >> "$RESOLVEIP_LOG"
+for name in $RESOLVEIP_V6; do
+	[ "$name" = "$4" ] && echo 2001:db8::99
+done
+exit 0

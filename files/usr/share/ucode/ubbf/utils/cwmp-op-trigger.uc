@@ -27,7 +27,7 @@ let staged = [];
  * @returns {string} Overlay file path under OP_DIR
  */
 export function overlay_path(path) {
-	return sprintf('%s/%s.json', OP_DIR, replace(path, '.', '_', true));
+	return sprintf('%s/%s.json', OP_DIR, replace(path, '.', '_'));
 };
 
 /**
@@ -48,14 +48,15 @@ export function overlay_read(path) {
 };
 
 /**
- * Writes an operation's result overlay.
+ * Writes an operation's result overlay. The file is replaced atomically,
+ * because the get handler reads it while the runner writes.
  *
  * @param {string} path - TR-181 object path
  * @param {object} data - Result parameters keyed by TR-181 names
  * @returns {boolean} True on success
  */
 export function overlay_write(path, data) {
-	return fs.writefile(overlay_path(path), sprintf('%.J\n', data)) != null;
+	return ubbf.write_file_atomic(overlay_path(path), sprintf('%.J\n', data));
 };
 
 /**

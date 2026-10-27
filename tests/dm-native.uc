@@ -77,7 +77,8 @@ let item = model['Device.X_UBBF_DMTest.Item.{i}'].get;
 assert_eq('get with config and needs', get({ config: { Name: 'x' }, root }),
 	{ Value: 'hello', Name: 'x', Needs: 'yes' });
 assert_eq('get without needs', get({ root: {} }), { Value: 'hello', Name: '', Needs: 'no' });
-assert_eq('item 2', item({ instance: 2, root }), { Index: '2' });
+assert_eq('item 2', item({ instance: 2, instances: [ 2 ], root }),
+	{ Index: '2', Path: 'Device.X_UBBF_DMTest.Item.2' });
 assert_eq('item 5 absent', item({ instance: 5, root }), null);
 
 let echo = operations['Device.X_UBBF_DMTest.Echo()'].handler;

@@ -5,16 +5,17 @@ import { popen } from 'fs';
 import { netifd_status_get } from 'ubbf.utils.netifd';
 
 /**
- * Extracts the host of a URL, without the brackets of an IPv6 literal.
+ * Extracts the host of a URL, without the user information and without
+ * the brackets of an IPv6 literal (RFC 3986 section 3.2).
  *
  * @param {string} url - ACS URL
  * @returns {string|null} host, or null when the URL has none
  */
 function url_host(url) {
-	let m = match(url ?? '', /^[A-Za-z][A-Za-z0-9+.-]*:\/\/(\[([0-9A-Fa-f:.]+)\]|([^\/:?#]+))/);
+	let m = match(url ?? '', /^[A-Za-z][A-Za-z0-9+.-]*:\/\/([^\/?#@]*@)?(\[([0-9A-Fa-f:.]+)\]|([^\/:?#@]+))/);
 	if (!m)
 		return null;
-	return m[2] ?? m[3];
+	return m[3] ?? m[4];
 }
 
 /**
@@ -30,7 +31,8 @@ function acs_on_ipv6(url) {
 		return false;
 	if (index(host, ':') >= 0)
 		return true;
-	if (!match(host, /^[A-Za-z0-9.-]+$/))
+	// a name that starts with '-' would reach resolveip as an option
+	if (!match(host, /^[A-Za-z0-9][A-Za-z0-9.-]*$/))
 		return false;
 
 	let p = popen(`resolveip -6 -t 2 ${host} 2>/dev/null`, 'r');

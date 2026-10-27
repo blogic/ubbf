@@ -1,0 +1,4 @@
+#!/bin/sh
+# Stand-in for dm-host that keeps the channel on fd 3 open and never
+# answers, so the describe request of the loader times out.
+exec sleep 30

@@ -153,6 +153,26 @@ module_start = function(m) {
 };
 
 /**
+ * Ends a module that the loader leaves out: its process, its channel and
+ * the restart that module_down() can have armed after a failed start or
+ * a describe without a reply.
+ *
+ * @param {object} m - Module state
+ */
+function module_drop(m) {
+	m.timer?.cancel();
+	m.timer = null;
+
+	let chan = m.chan, pid = m.pid;
+	m.chan = null;
+	m.pid = null;
+
+	chan?.disconnect();
+	if (pid)
+		ubbf.module_kill(pid);
+}
+
+/**
  * Sends a request to a module and waits for the reply. A module that does
  * not answer in time is ended.
  *
@@ -192,6 +212,20 @@ function needs_collect(m, root) {
 }
 
 /**
+ * Puts the instance numbers of a request into the `{i}` of a pattern, in
+ * order. A `{i}` without a number stays, as in an enumeration.
+ *
+ * @param {string} pattern - Object pattern
+ * @param {array} instances - Instance numbers of the path
+ * @returns {string} Object path
+ */
+function pattern_fill(pattern, instances) {
+	let n = 0;
+	return join('.', map(split(pattern, '.'), (seg) =>
+		(seg == '{i}' && n < length(instances ?? [])) ? sprintf('%d', instances[n++]) : seg));
+}
+
+/**
  * Builds the get handler of an object, which forwards to the module.
  *
  * @param {object} m - Module state
@@ -202,7 +236,7 @@ function get_forward(m, pattern) {
 	return (ctx) => {
 		let data = {
 			pattern,
-			path: ctx.path ?? pattern,
+			path: pattern_fill(pattern, ctx.instances),
 			instance: ctx.instance ?? 0,
 			needs: needs_collect(m, ctx.root)
 		};
@@ -379,14 +413,9 @@ export function native_modules_register(model, operations, opts) {
 	for (let path in sort(glob(hooks.glob ?? MODULES_GLOB) ?? [])) {
 		let m = { path, pid: null, chan: null, crashes: 0, pending: {}, needs: [] };
 
-		if (!module_start(m))
-			continue;
-
-		if (!module_register(m, request(m, 'describe', { api: DM_API }), model, operations)) {
-			let chan = m.chan;
-			m.chan = null;
-			chan?.disconnect();
-			ubbf.module_kill(m.pid);
+		if (!module_start(m) ||
+		    !module_register(m, request(m, 'describe', { api: DM_API }), model, operations)) {
+			module_drop(m);
 			continue;
 		}
 
