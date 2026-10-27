@@ -251,7 +251,9 @@ path_runtime_instance_absent(uc_vm_t *vm, uc_value_t *model, uc_value_t *target,
  * its get handler makes them. A value stored under a row makes it a stored
  * row, and subtree_dispatch() then stops enumerating the live rows, so the
  * table shrinks to that one row. Only a set handler of the written object
- * can take such a write.
+ * can take such a write, or a table with `writable_rows`, whose handler
+ * shows stored and live rows side by side; path_runtime_instance_absent()
+ * has then checked that the row is live.
  *
  * @param model  registered model object
  * @param target root of the stored configuration
@@ -275,7 +277,8 @@ path_runtime_row_write(uc_value_t *model, uc_value_t *target,
 			uc_value_t *row = model_entry_for_parts(model, parts, i + 1);
 			uc_value_t *obj = model_entry_for_parts(model, parts, cnt);
 
-			if (!model_entry_cpe_maintained(row))
+			if (!model_entry_cpe_maintained(row) ||
+			    ucv_is_truish(ucv_object_get(row, "writable_rows", NULL)))
 				return false;
 
 			return !ucv_is_callable(ucv_object_get(obj, "set", NULL));

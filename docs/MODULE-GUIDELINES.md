@@ -468,7 +468,7 @@ The dispatcher stores the new value first. Then it calls the set handler with th
 
 To reject the write, return a negative integer. The dispatcher then restores the previous value. Any other return value accepts the write.
 
-A writable parameter in a table that the CPE maintains (`addable: false` or `maxInstances: 0` on the entry, or `addable: false` or `max_instances: 0` on the schema) needs a set handler, or the write fails with 7020: the dispatcher does not store a row that only a get handler makes. See "Tables under a core parent" in `ARCHITECTURE.md`.
+A writable parameter in a table that the CPE maintains (`addable: false` or `maxInstances: 0` on the entry, or `addable: false` or `max_instances: 0` on the schema) needs `runtime_instances` and `writable_rows` on the entry (see "Runtime Rows Next to Persisted Rows"), or a set handler, or the write fails with 7020: the dispatcher does not store a row that only a get handler makes. See "Tables under a core parent" in `ARCHITECTURE.md`.
 
 ```ucode
 function pool_set(ctx) {

@@ -227,12 +227,13 @@ schemas.Configuration_Interface = {
 schemas.Interface = {
     path: "Device.USB.Interface.{i}.",
     schema: {
-        "Enable": dm_type.BOOL | dm_type.WRITABLE,
+        "Enable": dm_type.BOOL,
         "Status": dm_type.STRING,
         "Alias": dm_type.STRING,
         "Name": dm_type.STRING,
+        "Description": dm_type.STRING | dm_type.WRITABLE,
         "LastChange": dm_type.UINT,
-        "LowerLayers": dm_type.STRING | dm_type.WRITABLE,
+        "LowerLayers": dm_type.STRING,
         "Upstream": dm_type.BOOL,
         "MaxBitRate": dm_type.UINT,
         "MACAddress": dm_type.STRING,
@@ -242,13 +243,18 @@ schemas.Interface = {
         "Status": "",
         "Alias": "",
         "Name": "",
+        "Description": "",
         "LastChange": "0",
         "LowerLayers": "",
         "MaxBitRate": "0",
         "MACAddress": "",
         "Port": ""
     },
+    since: {
+        "Description": "2.21"
+    },
     constraints: {
+        "Description": { max_length: 256 },
         "LowerLayers": { list: true, list_max_length: 1024 }
     },
     addable: false

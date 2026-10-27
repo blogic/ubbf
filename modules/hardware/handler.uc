@@ -246,17 +246,6 @@ function button_get(ctx) {
 }
 
 /**
- * Set handler for the tables the device makes (CPU.{i}, Button.{i}): it
- * lets the dispatcher store a row the device makes, for Alias and Name.
- *
- * @param {object} ctx - Set context
- * @returns {number} 0
- */
-function row_set(ctx) {
-	return 0;
-}
-
-/**
  * Get handler for Device.Hardware.Buttons.Button.{i}.TriggerCondition.{i}:
  * the stored row, Active from the ubbf-device plugin.
  *
@@ -325,7 +314,6 @@ model['Device.Hardware.CPUs.CPU'] = {};
 model['Device.Hardware.CPUs.CPU.{i}'] = {
 	schema: schema('CPU'),
 	get: cpu_get,
-	set: row_set,
 	runtime_instances: true,
 	writable_rows: true,
 	since: '2.20'
@@ -348,7 +336,6 @@ model['Device.Hardware.Buttons.Button'] = {};
 model['Device.Hardware.Buttons.Button.{i}'] = {
 	schema: schema('Button'),
 	get: button_get,
-	set: row_set,
 	runtime_instances: true,
 	writable_rows: true,
 	since: '2.21'

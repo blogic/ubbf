@@ -241,10 +241,14 @@ function interface_stamp(root, instance) {
  * @returns {object} Cellular properties
  */
 function cellular_get(ctx) {
+	let rows = { ...(ctx.config?.Interface ?? {}) };
+	for (let key, n in ubbf.instance_numbers(CELLULAR_TABLE, modem_keys(modems_get())))
+		rows[sprintf('%d', n)] = true;
+
 	return {
 		RoamingEnabled: ctx.config?.RoamingEnabled ?? 'false',
 		RoamingStatus: '',
-		InterfaceNumberOfEntries: sprintf('%d', length(modem_keys(modems_get()))),
+		InterfaceNumberOfEntries: sprintf('%d', length(filter(keys(rows), ubbf.is_instance_key))),
 		AccessPointNumberOfEntries: sprintf('%d', ubbf.instance_count(ctx.config?.AccessPoint))
 	};
 }
@@ -252,24 +256,37 @@ function cellular_get(ctx) {
 /**
  * Get handler for Device.Cellular.Interface.{i}.
  *
- * Enumerate mode (ctx.instance == null) returns one row per modem in dump
- * order; the per-row mode resolves one modem.
+ * The table holds the modems ModemManager reports (runtime_instances); a
+ * write stores its row (writable_rows). A stored row whose modem is gone
+ * stays visible as NotPresent, so the render can still bind its netifd
+ * interface at boot and its values can be read and changed. Enumerate
+ * mode leaves out the stored rows, which the dispatcher reads one by one.
  *
  * @param {object} ctx - Context with instance and stored config
- * @returns {object|null} Enumerated rows, single row, or null
+ * @returns {object|null} Rows by instance, one row, or null
  */
 function interface_get(ctx) {
 	if (ctx.instance == null) {
 		let modems = modems_get();
-		let stored_rows = ctx.root?.Device?.Cellular?.Interface ?? {};
-		return ubbf.instance_rows(CELLULAR_TABLE, modem_keys(modems), (key, n) =>
-			interface_row(filter(modems, (m) => modem_key(m) == key)[0], stored_rows[sprintf('%d', n)] ?? {}));
+		let stored = ctx.root?.Device?.Cellular?.Interface ?? {};
+		let rows = ubbf.instance_rows(CELLULAR_TABLE, modem_keys(modems), (key, n) =>
+			interface_row(filter(modems, (m) => modem_key(m) == key)[0], {}));
+
+		for (let n in keys(rows))
+			if (stored[n])
+				delete rows[n];
+
+		return rows;
 	}
 
 	let modem = modem_by_instance(ctx.instance);
+	if (!ctx.config)
+		return modem ? interface_row(modem, {}) : null;
+
 	if (!modem)
-		return null;
-	return interface_row(modem, ctx.config ?? {});
+		return { ...ubbf.ctx_config(ctx), Status: 'NotPresent' };
+
+	return interface_row(modem, ctx.config);
 }
 
 /**
@@ -412,7 +429,9 @@ model['Device.Cellular.Interface.{i}'] = {
 	schema: schema('Interface'),
 	get: interface_get,
 	set: interface_set,
-	maxInstances: 0
+	maxInstances: 0,
+	runtime_instances: true,
+	writable_rows: true
 };
 
 model['Device.Cellular.Interface.{i}.Stats'] = {

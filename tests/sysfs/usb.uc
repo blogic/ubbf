@@ -3,7 +3,7 @@
 // sysfs attributes.
 'use strict';
 
-import { describe, it, assert, setup } from 'utest';
+import { describe, it, assert, beforeEach } from 'utest';
 import * as fs from 'fs';
 import * as ubbf from 'ubbf';
 import { state_clear } from 'test_env';
@@ -113,13 +113,38 @@ function reset(n) {
 	return api.operations['Device.USB.USBHosts.Host.{i}.Reset()'].handler({}, '', [ n ], {});
 }
 
-setup(() => {
-	state_clear();
-	ubbf.instance_map_own(true);
-	sysfs_build();
-});
+function dm_new() {
+	let dm = ubbf.create();
+	assert.match(true, dm.register(api.model), 'model registers');
+	dm.load('/dev/null');
+	dm.set_config({ Device: { USB: {} } });
+	dm.runtime_reload();
+	return dm;
+}
+
+function write(dm, params) {
+	dm.trans_start();
+	let rc = dm.params_set(params);
+	if (rc < 0) {
+		dm.trans_abort();
+		return rc;
+	}
+	dm.trans_commit();
+	dm.runtime_reload();
+	return rc;
+}
+
+function interface_number(rows, name) {
+	return filter(keys(rows), (n) => rows[n].Name == name)[0];
+}
 
 describe('USB handler', () => {
+	beforeEach(() => {
+		state_clear();
+		ubbf.instance_map_own(true);
+		sysfs_build();
+	});
+
 	it('reads the class values as hexBinary', () => {
 		assert.match('09', device_by_number('2').DeviceClass, 'hub');
 		assert.match('02', device_by_number('2').DeviceProtocol, 'hub protocol');
@@ -211,7 +236,7 @@ describe('USB handler', () => {
 	it('sorts the USB netdevs by interface, then by name', () => {
 		assert.match([ 'eth9', 'usb1x', 'eth3' ], map(require('usb').net_interfaces(), (i) => i.ifname));
 		assert.match([ 'eth9', 'usb1x', 'eth3' ],
-			map(values(api.model['Device.USB.Interface'].get({})), (row) => row.Name), 'Interface rows');
+			map(values(api.model['Device.USB.Interface.{i}'].get({ root: {} })), (row) => row.Name), 'Interface rows');
 	});
 
 	it('builds the same Port row for the table and for one instance', () => {
@@ -219,8 +244,33 @@ describe('USB handler', () => {
 			assert.match(port, api.model['Device.USB.Port.{i}'].get({ instance: n }), `port ${n}`);
 	});
 
-	it('has a read-only Host Enable and PowerManagementEnable', () => {
+	it('stores a Description of a live Interface row and keeps the other rows', () => {
+		let dm = dm_new();
+		let rows = dm.get_subtree_with_state('Device.USB.Interface');
+		let n = interface_number(rows, 'eth3');
+		assert.match([ '', '' ], [ rows[n].Description, rows[interface_number(rows, 'eth9')].Description ]);
+
+		assert.match(0, write(dm, { [`Device.USB.Interface.${n}.Description`]: 'uplink' }));
+		assert.match({ Description: 'uplink' }, dm.config()?.Device?.USB?.Interface?.[n], 'only the written value is stored');
+
+		rows = dm.get_subtree_with_state('Device.USB.Interface');
+		assert.match([ 'eth3', 'eth9', 'usb1x' ], sort(map(values(rows), (r) => r.Name)), 'the live rows stay visible');
+		assert.match([ 'uplink', 'Down' ], [ rows[n].Description, rows[n].Status ]);
+		assert.match('3', dm.get_subtree_with_state('Device.USB').InterfaceNumberOfEntries);
+
+		assert.match(true, write(dm, { 'Device.USB.Interface.99.Description': 'x' }) < 0, 'no such row');
+
+		fs.rmdir(`${SYS}/1-1.4:1.1/net/eth3`);
+		rows = dm.get_subtree_with_state('Device.USB.Interface');
+		assert.match([ 'NotPresent', 'uplink' ], [ rows[n]?.Status, rows[n]?.Description ], 'a stored row whose netdev is gone');
+		assert.match('3', dm.get_subtree_with_state('Device.USB').InterfaceNumberOfEntries);
+	});
+
+	it('has read-only parameters that nothing applies', () => {
 		assert.match(0, schemas.Host.schema.Enable & dm_type.WRITABLE, 'Enable');
 		assert.match(0, schemas.Host.schema.PowerManagementEnable & dm_type.WRITABLE, 'PowerManagementEnable');
+		assert.match(0, schemas.Interface.schema.Enable & dm_type.WRITABLE, 'Interface Enable');
+		assert.match(0, schemas.Interface.schema.LowerLayers & dm_type.WRITABLE, 'Interface LowerLayers');
+		assert.match(true, (schemas.Interface.schema.Description & dm_type.WRITABLE) != 0, 'Interface Description');
 	});
 });

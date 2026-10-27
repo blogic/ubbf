@@ -263,13 +263,17 @@ describe('stable numbering of found rows', () => {
 		const cellular = handler_load('cellular').model['Device.Cellular.Interface.{i}'];
 
 		let croot = { Device: { Cellular: { Interface: { '1': { Enable: 'false' } } } } };
+		let stored_row = () => cellular.get({ instance: 1, config: croot.Device.Cellular.Interface['1'], root: croot });
 		let crows = cellular.get({ root: croot });
-		assert.match([ '/sys/devA', '/sys/devB' ], [ crows['1'].X_UBBF_Device, crows['2'].X_UBBF_Device ],
+		assert.match([ '2' ], keys(crows), 'enumerate mode leaves out the stored row');
+		assert.match([ '/sys/devA', '/sys/devB' ], [ stored_row().X_UBBF_Device, crows['2'].X_UBBF_Device ],
 			'first modems follow the dump order');
-		assert.match('false', crows['1'].Enable, 'row 1 has its setting');
+		assert.match('false', stored_row().Enable, 'row 1 has its setting');
 
 		devices.modems = [ { generic: { device: '/sys/devB' } } ];
 		assert.match([ '2' ], keys(cellular.get({ root: croot })), 'a leaving modem does not shift the other');
+		assert.match([ 'NotPresent', 'false' ], [ stored_row().Status, stored_row().Enable ],
+			'the stored row of a leaving modem stays');
 
 		let cpins = pins_of(croot);
 		assert.match({ '1': '/sys/devA' }, cpins['Device.Cellular.Interface'], 'the stored row pins its modem');
@@ -277,8 +281,35 @@ describe('stable numbering of found rows', () => {
 		pins_load(cpins);
 		devices.modems = [ { generic: { device: '/sys/devB' } }, { generic: { device: '/sys/devA' } } ];
 		crows = cellular.get({ root: croot });
-		assert.match([ '/sys/devA', '/sys/devB' ], [ crows['1'].X_UBBF_Device, crows['2'].X_UBBF_Device ],
+		assert.match([ '/sys/devA', '/sys/devB' ], [ stored_row().X_UBBF_Device, crows['2'].X_UBBF_Device ],
 			'the pinned modem keeps row 1 after a reboot');
+	});
+
+	it('stores a write into a live Cellular.Interface row and keeps the other modems', () => {
+		ubus_set({ modems: [ { generic: { device: '/sys/devA' } }, { generic: { device: '/sys/devB' } } ] });
+
+		let api = api_new();
+		let schemas = {};
+		include('../modules/cellular/schema.uc', { schemas });
+		api.schema = (k) => schemas[k];
+		include('../modules/cellular/handler.uc', { ubbf_module: api });
+
+		let dm = ubbf.create();
+		assert.match(true, dm.register(api.model), 'model registers');
+		dm.load('/dev/null');
+		dm.set_config({ Device: { Cellular: {} } });
+		dm.runtime_reload();
+
+		dm.trans_start();
+		assert.match(0, dm.params_set({ 'Device.Cellular.Interface.2.Description': 'backup' }), 'write into a live row');
+		assert.match(true, dm.params_set({ 'Device.Cellular.Interface.5.Description': 'x' }) < 0, 'no such modem');
+		dm.trans_commit();
+		dm.runtime_reload();
+
+		let rows = dm.get_subtree_with_state('Device.Cellular.Interface');
+		assert.match([ '1', '2' ], sort(filter(keys(rows), ubbf.is_instance_key)), 'the other modem stays visible');
+		assert.match([ 'backup', '/sys/devB' ], [ rows['2'].Description, rows['2'].X_UBBF_Device ]);
+		assert.match('2', dm.get_subtree_with_state('Device.Cellular').InterfaceNumberOfEntries);
 	});
 
 	// Two devices, the first leaves, then another device takes its port.

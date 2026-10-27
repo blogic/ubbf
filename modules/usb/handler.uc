@@ -296,6 +296,21 @@ function usb_net_interface_by_instance(instance) {
 }
 
 /**
+ * Counts the rows of Device.USB.Interface: the USB netdevs and the stored
+ * rows whose netdev is gone.
+ *
+ * @param {object|null} stored - Stored rows of the table
+ * @returns {number} Number of rows
+ */
+function interface_count(stored) {
+	let rows = { ...(stored ?? {}) };
+
+	for (let n in keys(usb_net_interfaces_numbered()))
+		rows[n] = true;
+	return length(filter(keys(rows), ubbf.is_instance_key));
+}
+
+/**
  * Builds configuration interface instances for a USB device.
  *
  * @param {string} dev - USB device name
@@ -447,9 +462,8 @@ function host_devices_build(host, usb) {
  */
 function usb_get(ctx) {
 	let usb = usb_snapshot();
-	let net_ifaces = ubbf.cache_call(usb_lib.net_interfaces);
 	return {
-		InterfaceNumberOfEntries: sprintf('%d', length(net_ifaces)),
+		InterfaceNumberOfEntries: sprintf('%d', interface_count(ctx.config?.Interface)),
 		PortNumberOfEntries: sprintf('%d', length(usb.ports))
 	};
 }
@@ -583,9 +597,11 @@ function port_get(ctx) {
  * Builds a TR-181 USB.Interface row from a usb_net_interfaces entry.
  *
  * @param {object} iface - Entry with device, ifname, path
+ * @param {object|null} config - Stored row, for the values a controller
+ *                               wrote
  * @returns {object} TR-181 Interface row
  */
-function interface_row(iface) {
+function interface_row(iface, config) {
 	let carrier = ubbf.readfile_trim(sprintf('%s/carrier', iface.path));
 
 	return {
@@ -593,6 +609,7 @@ function interface_row(iface) {
 		Status: (carrier == '1') ? 'Up' : 'Down',
 		Alias: ubbf.alias_from_name(iface.ifname),
 		Name: iface.ifname,
+		Description: config?.Description ?? '',
 		LastChange: '0',
 		LowerLayers: '',
 		Upstream: 'false',
@@ -603,36 +620,36 @@ function interface_row(iface) {
 }
 
 /**
- * Gets all USB network interfaces as enumerated instances.
- *
- * @param {object} ctx - Context
- * @returns {object} Enumerated interface instances
- */
-function interface_container_get(ctx) {
-	let rows = {};
-	for (let n, iface in usb_net_interfaces_numbered())
-		rows[n] = interface_row(iface);
-	return rows;
-}
-
-/**
  * Get handler for Device.USB.Interface.{i}.
  *
- * USB interfaces are fully dynamic: no stored config exists, so both
- * enumerate mode and per-instance reads resolve from the live
- * usb_net_interfaces list.
+ * The table holds the USB netdevs (runtime_instances); a write of
+ * Description stores its row (writable_rows). A stored row whose netdev
+ * is gone stays visible as NotPresent, so its Description can still be
+ * read and changed. Enumerate mode leaves out the stored rows, which the
+ * dispatcher reads one by one.
  *
- * @param {object} ctx - Context with instance
- * @returns {object|null} Enumerated rows, single row, or null
+ * @param {object} ctx - Context with instance and stored config
+ * @returns {object|null} Rows by instance, one row, or null
  */
 function interface_get(ctx) {
-	if (ctx.instance == null)
-		return interface_container_get(ctx);
+	if (ctx.instance == null) {
+		let stored = ctx.root?.Device?.USB?.Interface ?? {};
+		let rows = {};
+
+		for (let n, iface in usb_net_interfaces_numbered())
+			if (!stored[n])
+				rows[n] = interface_row(iface, null);
+		return rows;
+	}
 
 	let iface = usb_net_interface_by_instance(ctx.instance);
+	if (!ctx.config)
+		return iface?.ifname ? interface_row(iface, null) : null;
+
 	if (!iface?.ifname)
-		return null;
-	return interface_row(iface);
+		return { ...ubbf.ctx_config(ctx), Status: 'NotPresent' };
+
+	return interface_row(iface, ctx.config);
 }
 
 /**
@@ -731,13 +748,13 @@ model['Device.USB'] = {
 	get: usb_get
 };
 
-model['Device.USB.Interface'] = {
-	get: interface_container_get
-};
+model['Device.USB.Interface'] = {};
 
 model['Device.USB.Interface.{i}'] = {
 	schema: schema('Interface'),
-	get: interface_get
+	get: interface_get,
+	runtime_instances: true,
+	writable_rows: true
 };
 
 model['Device.USB.Interface.{i}.Stats'] = {

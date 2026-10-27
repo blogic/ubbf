@@ -1601,6 +1601,28 @@ describe('writable_rows', () => {
 			'writable_rows: both rows after the writes');
 	});
 
+	it('a write into a live row of a table the CPE maintains', () => {
+		let dm = ubbf.create();
+
+		dm.register({
+			'Device.C': {},
+			'Device.C.Row.{i}': { schema: live_schema, get: live_row_get, addable: false,
+			                      runtime_instances: true, writable_rows: true },
+			'Device.D': {},
+			'Device.D.Row.{i}': { schema: live_schema, get: live_row_get, addable: false }
+		});
+		dm.load('/dev/null');
+		dm.set_config({ Device: { C: {}, D: {} } });
+
+		dm.trans_start();
+		assert.match(0, dm.params_set({ 'Device.C.Row.2.Enable': 'false' }),
+			'writable_rows: stored without a set handler');
+		assert.match('false', dm.config()?.Device?.C?.Row?.['2']?.Enable, 'writable_rows: the write is stored');
+		assert.match(-3, dm.params_set({ 'Device.D.Row.2.Enable': 'false' }),
+			'without writable_rows: nothing stores the write');
+		dm.trans_abort();
+	});
+
 	it('a row added below a live row', () => {
 		let dm = ubbf.create();
 
