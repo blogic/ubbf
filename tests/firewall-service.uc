@@ -27,7 +27,7 @@ function render(template, table, row) {
 
 	include(TEMPLATES + template, { ...h, output, config, ubbf, ubbf_instances: ubbf.instances,
 		ubbf_to_bool: ubbf.to_bool, ubbf_to_int: ubbf.to_int, interface_to_name: ubbf.interface_to_name,
-		csv_to_list: ubbf.csv_to_list });
+		csv_to_list: ubbf.csv_to_list, schedule_windows: () => null });
 
 	let rule = {};
 	for (let line in output) {

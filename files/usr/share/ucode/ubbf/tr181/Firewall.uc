@@ -9,6 +9,8 @@ import { upstream_interface_ref } from 'ubbf.utils.helpers';
 import { last_changed_get } from 'ubbf.utils.uci_change_track';
 import { chain_rule_unsupported } from 'ubbf.utils.firewall';
 import { log_err } from 'ubbf.utils.logging';
+import { modules_registered } from 'ubbf.utils.modules';
+import { refs_intervals, intervals_active, week_seconds } from 'ubbf.utils.schedule';
 
 const CONFIG_PATH = '/etc/ubbf/config.json';
 
@@ -245,7 +247,8 @@ function pinhole_del(ctx) {
  *
  * TR-181 makes an enabled pinhole inoperable unless exactly one of DestIP
  * and DestMACAddress is set and Interface resolves; firewall-pinholes.uc
- * emits no rule for such an entry.
+ * emits no rule for such an entry. A scheduled pinhole is Inactive outside
+ * the windows of its ScheduleRef.
  *
  * @param {object} ctx - handler context with config / root / instance
  * @returns {object|null} Pinhole instance with Status derived
@@ -267,6 +270,10 @@ function pinhole_get(ctx) {
 	if (!cfg.Interface || cfg.Interface == '' ||
 	    !interface_resolve(ctx.root, cfg.Interface))
 		return { ...cfg, Status: 'Error_Misconfigured' };
+
+	let iv = modules_registered.schedules ? refs_intervals(ctx.root, cfg.ScheduleRef) : null;
+	if (iv != null && !intervals_active(iv, week_seconds(localtime(time()))))
+		return { ...cfg, Status: 'Inactive' };
 
 	return { ...cfg, Status: 'Enabled' };
 }

@@ -4,6 +4,21 @@ import * as ubbf from 'ubbf';
 import { uci_set_boolean, uci_set_string } from 'ubbf.render.uci_helpers';
 
 /**
+ * Sets the time options of a schedule window on the most recently emitted
+ * firewall.@rule[-1] section.
+ *
+ * @param {string[]} output - UCI batch line accumulator
+ * @param {object} window - Window from intervals_to_windows() in
+ *     utils/schedule.uc
+ */
+export function rule_window_set(output, window) {
+	uci_set_string(output, 'firewall.@rule[-1].start_time', window.start_time);
+	uci_set_string(output, 'firewall.@rule[-1].stop_time', window.stop_time);
+	// fw4 rejects a list for weekdays; it wants one space separated option
+	uci_set_string(output, 'firewall.@rule[-1].weekdays', join(' ', window.weekdays));
+};
+
+/**
  * Appends fw4 reflection options to the most recently emitted
  * firewall.@redirect[-1] section. fw4 defaults to reflection=1 with
  * reflection_src=internal, so without this the SNAT source on a

@@ -56,10 +56,11 @@ import {
 } from 'ubbf.utils.routing';
 import {
 	redirect_emit_reflection, chain_rule_unsupported, chain_rules_ordered, chain_rule_set_matches,
-	firewall_set_resolve
+	firewall_set_resolve, rule_window_set
 } from 'ubbf.utils.firewall';
 import * as ssh_keys from 'ubbf.utils.ssh_keys';
 import { dns_learned_row, DNS_RESOLV_AUTO, DNS_RESOLV_FILTERED } from 'ubbf.utils.dns';
+import { schedule_windows } from 'ubbf.utils.schedule';
 
 /**
  * Generates UCI configuration from UBBF data model.
@@ -79,6 +80,10 @@ export function generate(config, logs, dry_run) {
 	let output = [];
 
 	let template_path = topdir + '/templates';
+
+	// The core renders ScheduleRef itself, at the fixed place of each rule
+	// in the firewall order; the module only provides Device.Schedules.
+	let schedules_installed = !!fs.stat(modules_dir + '/schedules/handler.uc');
 
 	let scope = {
 		output,
@@ -152,9 +157,12 @@ export function generate(config, logs, dry_run) {
 		chain_rules_ordered,
 		chain_rule_set_matches,
 		firewall_set_resolve,
+		rule_window_set,
 		dns_learned_row,
 		DNS_RESOLV_AUTO,
 		DNS_RESOLV_FILTERED,
+		schedule_windows: (refs, inline_rows) =>
+			schedule_windows(config, refs, inline_rows, schedules_installed),
 
 		warn: (fmt, ...args) => push(logs, { level: 'warning', msg: sprintf(fmt, ...args) }),
 		error: (fmt, ...args) => push(logs, { level: 'error', msg: sprintf(fmt, ...args) }),

@@ -37,6 +37,9 @@ import { write_gate_create } from 'ubbf.utils.write-gate';
 import { modules_registered } from 'ubbf.utils.modules';
 import { native_modules_register, native_modules_notify } from 'ubbf.utils.dm-native';
 import {
+	schedule_ref_set, schedule_refs_prune, schedule_state, start_time_valid, week_seconds
+} from 'ubbf.utils.schedule';
+import {
 	ht_caps_encode, vht_caps_encode, sta_he_caps_from_frame_body,
 	client_query_get, ubus_topology_get, local_device_get, local_api_data_get,
 	device_api_data_get, steering_stats_get, steering_history_get,
@@ -354,6 +357,7 @@ function module_api_build(name) {
 			path: { interface_resolve, ethernet_interface_path, path_kind: (p) => model_path_known(p) },
 			process: { cmd_build, popen_async, task_run, TASK_MARGIN_S },
 			protocol: { ACTIVE_PROTOCOL },
+			schedule: { schedule_state, start_time_valid, week_seconds },
 			'wifi-dataelements': {
 				ht_caps_encode, vht_caps_encode,
 				sta_he_caps_from_frame_body, client_query_get, ubus_topology_get,
@@ -749,6 +753,20 @@ function model_filter() {
 
 const model_dropped = model_filter();
 
+/**
+ * Gives every object with a ScheduleRef parameter a check of that
+ * parameter. TR-181 makes ScheduleRef a strong reference to
+ * Device.Schedules.Schedule, a table of the schedules module: without the
+ * module the object accepts only an empty value.
+ */
+function schedule_ref_checks_install() {
+	for (let pattern, entry in full_model)
+		if (schema_members(entry)?.ScheduleRef != null)
+			entry.set = schedule_ref_set(entry.set, () => !!modules_registered.schedules);
+}
+
+schedule_ref_checks_install();
+
 const operation_patterns = {};
 for (let pattern in all_operations) {
 	if (index(pattern, '{i}') < 0)
@@ -983,6 +1001,7 @@ export function trans_commit() {
 	orders_compute(dm.config(), orders_before);
 	names_compute(dm.config());
 	firewall_reconcile(full_model, dm.config());
+	schedule_refs_prune(dm.config());
 
 	in_transaction = false;
 	write_gate.release();
@@ -1040,6 +1059,7 @@ function config_replace(config) {
 	orders_compute(dm.config(), before);
 	names_compute(dm.config());
 	firewall_reconcile(full_model, dm.config());
+	schedule_refs_prune(dm.config());
 
 	if (config_persist() == null)
 		return { success: false, error: 'Failed to persist config' };
@@ -2082,6 +2102,7 @@ writefile(RUNTIME_DIR + '/callbacks.json', sprintf('%.J\n', extract_callbacks(fu
 orders_compute(dm.config(), null);
 names_compute(dm.config());
 firewall_reconcile(full_model, dm.config());
+schedule_refs_prune(dm.config());
 
 if (config_persist()) {
 	log_info('load: config changed - applying');

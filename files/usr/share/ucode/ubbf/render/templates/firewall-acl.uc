@@ -1,29 +1,20 @@
 function render_config() {
 /**
- * Computes a fw4 stop_time HH:MM:SS by adding a duration in seconds
- * to a HH:MM start time. Wraps modulo 24 hours; the caller decides
- * whether the wrap is meaningful.
+ * Returns the time windows of an AccessControl entry: its ScheduleRef and,
+ * until TR-181 2.21, its inline Schedule rows.
  *
- * @param {string} start_time - Start time in HH:MM format
- * @param {number} duration - Duration in seconds
- * @returns {string|null} Stop time in HH:MM:SS format, or null on parse failure
+ * @param {object} ac - AccessControl instance
+ * @returns {array|null} Windows, or null when the entry is not scheduled
  */
-function schedule_stop_time(start_time, duration) {
-	let m = match(start_time, /^([0-9]{2}):([0-9]{2})$/);
-	if (!m)
-		return null;
-
-	let total_secs = (int(m[1]) * 3600) + (int(m[2]) * 60) + duration;
-	let hours = int(total_secs / 3600) % 24;
-	let mins = int((total_secs % 3600) / 60);
-	let secs = total_secs % 60;
-	return sprintf('%02d:%02d:%02d', hours, mins, secs);
+function acl_windows(ac) {
+	let inline = (dm_visible(null, '2.21') && type(ac.Schedule) == 'object') ? values(ac.Schedule) : null;
+	return schedule_windows(ac.ScheduleRef, inline);
 }
 
 /**
  * Emits firewall rules for a single AccessControl entry against a zone.
  * Deny entries produce a forward and input REJECT pair; scheduled
- * Allow entries produce per-schedule ACCEPT rules followed by a
+ * Allow entries produce an ACCEPT rule per time window followed by a
  * Block REJECT pair to deny traffic outside the schedule windows.
  *
  * @param {array} output - UCI batch output array to append to
@@ -54,46 +45,21 @@ function acl_rules_emit(output, ac, zone) {
 		return;
 	}
 
-	let schedules = ac.Schedule;
-	if (type(schedules) != 'object')
+	let windows = acl_windows(ac);
+	if (windows == null)
 		return;
 
-	let has_enabled_schedule;
-	for (let inst, sched in schedules) {
-		if (!ubbf_to_bool(sched.Enable))
-			continue;
-
-		has_enabled_schedule = true;
-
+	for (let n = 0; n < length(windows); n++) {
 		uci_section(output, 'firewall rule');
 		uci_set_string(output, 'firewall.@rule[-1].name',
-			sprintf('ACL-Allow-%s-%s-S%s', name_prefix, zone, inst));
+			sprintf('ACL-Allow-%s-%s-W%d', name_prefix, zone, n + 1));
 		uci_set_string(output, 'firewall.@rule[-1].proto', 'all');
 		uci_set_string(output, 'firewall.@rule[-1].src', zone);
 		uci_set_string(output, 'firewall.@rule[-1].dest', '*');
 		uci_set_string(output, 'firewall.@rule[-1].src_mac', mac);
 		uci_set_string(output, 'firewall.@rule[-1].target', 'ACCEPT');
-
-		if (sched.StartTime && sched.StartTime != '') {
-			uci_set_string(output, 'firewall.@rule[-1].start_time',
-				sched.StartTime + ':00');
-
-			let duration = ubbf_to_int(sched.Duration);
-			if (duration && duration > 0) {
-				let stop = schedule_stop_time(sched.StartTime, duration);
-				if (stop)
-					uci_set_string(output, 'firewall.@rule[-1].stop_time', stop);
-			}
-		}
-
-		// fw4 rejects a list for weekdays; it wants one space separated option
-		let days = csv_to_list(sched.Day);
-		if (length(days))
-			uci_set_string(output, 'firewall.@rule[-1].weekdays', join(' ', days));
+		rule_window_set(output, windows[n]);
 	}
-
-	if (!has_enabled_schedule)
-		return;
 
 	uci_section(output, 'firewall rule');
 	uci_set_string(output, 'firewall.@rule[-1].name',
