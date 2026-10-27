@@ -3,7 +3,7 @@
 import * as ubus from 'ubus';
 import * as uci from 'uci';
 import {
-	ipv6_pool_clients, prefix_length_nibble_check, client_snoop_entry
+	ipv6_pool_clients_numbered, prefix_length_nibble_check, client_snoop_entry
 } from 'ubbf.utils.dhcp';
 import { log_err } from 'ubbf.utils.logging';
 import { datetime_format } from 'ubbf.utils.helpers';
@@ -216,6 +216,16 @@ function lease_to_client(client, index) {
 }
 
 /**
+ * Path of a DHCPv6 server pool, the scope of its client numbers.
+ *
+ * @param {number} instance - Pool instance number
+ * @returns {string} Device.DHCPv6.Server.Pool.<instance>
+ */
+function pool_path(instance) {
+	return sprintf('Device.DHCPv6.Server.Pool.%d', instance);
+}
+
+/**
  * Get handler for Device.DHCPv6.Server.Pool.{i}.
  *
  * @param {object} ctx - Context with pool config
@@ -225,8 +235,9 @@ function pool_get(ctx) {
 	if (!ctx.config)
 		return null;
 
-	let leases = ipv6_pool_clients(ctx.root, ctx.parent ?? ctx.config);
-	let to_client = (lease, idx) => lease_to_client(lease, idx + 1);
+	let clients = {};
+	for (let n, client in ipv6_pool_clients_numbered(pool_path(ctx.instance), ctx.root, ctx.config))
+		clients[n] = lease_to_client(client, +n);
 
 	let iface_ref = ctx.config.Interface;
 	let prefix_refs = [];
@@ -245,8 +256,8 @@ function pool_get(ctx) {
 		...ctx.config,
 		IANAPrefixes: prefix_csv,
 		IAPDPrefixes: prefix_csv,
-		ClientNumberOfEntries: sprintf('%d', length(leases)),
-		Client: ubbf.enumerate_instances(leases, to_client)
+		ClientNumberOfEntries: sprintf('%d', length(clients)),
+		Client: clients
 	};
 }
 
@@ -278,18 +289,20 @@ function pool_set(ctx) {
  * @returns {object|null} Single client or enumerated clients for the pool
  */
 function pool_client_get(ctx) {
-	let leases = ipv6_pool_clients(ctx.root, ctx.parent ?? ctx.config);
+	let leases = ipv6_pool_clients_numbered(pool_path(ctx.instances?.[0]), ctx.root, ctx.parent ?? ctx.config);
 
-	let to_client = (lease, idx) => lease_to_client(lease, idx + 1);
+	if (ctx.instance == null) {
+		let clients = {};
+		for (let n, lease in leases)
+			clients[n] = lease_to_client(lease, +n);
+		return clients;
+	}
 
-	if (ctx.instance == null)
-		return ubbf.enumerate_instances(leases, to_client);
-
-	let lease = ubbf.get_by_instance(leases, ctx.instance);
+	let lease = leases[sprintf('%d', ctx.instance)];
 	if (!lease)
 		return null;
 
-	return to_client(lease, ctx.instance - 1);
+	return lease_to_client(lease, ctx.instance);
 }
 
 /**

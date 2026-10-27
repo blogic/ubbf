@@ -22,8 +22,6 @@ const RESET_KEEP_PATH = '/overlay/sysupgrade.tgz';
 const BACKUP_FILES = [
 	'/etc/usp/bbf.json',
 	'/etc/ubbf/config.json',
-	// The Certificate instance numbers that config.json refers to.
-	'/etc/ubbf/security-instances.json',
 	// The device certificate and the CA that signed it, which
 	// uci-defaults/ubbf-certs makes only when cert.pem is missing.
 	'/etc/ubbf/ca.pem',
@@ -41,11 +39,10 @@ const BACKUP_FILES = [
 	'/etc/group',
 	'/etc/ubbf/users-managed.json',
 	// What AddCertificateBundle() and AddCABundle() installed, with the
-	// Alias and CABundle numbers that refer to it.
+	// Alias that refers to it. config.json pins the instance numbers.
 	'/etc/ubbf/certs',
 	'/etc/ubbf/cabundles',
 	'/etc/ubbf/security-aliases.json',
-	'/etc/ubbf/security-cabundles.json',
 	'/etc/config/obuspa',
 	'/etc/usp/acs-ca.pem',
 	// The CWMP counterparts of the two above: the ACS binding with its

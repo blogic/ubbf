@@ -51,7 +51,7 @@ const DEFAULT_FACILITY = 1;
 const DEFAULT_SEVERITY = 5;
 
 let certificates = {};
-include('../security/certificates.uc', { certificates });
+include('../security/certificates.uc', { certificates, instance_map: instance_map_readonly });
 
 let syslog = {};
 include('./shared.uc', { syslog });

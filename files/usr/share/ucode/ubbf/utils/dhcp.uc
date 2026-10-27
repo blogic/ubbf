@@ -6,6 +6,7 @@ import * as ubbf from 'ubbf';
 import { call as cache_call } from 'ubbf.utils.cache';
 import { interface_resolve } from 'ubbf.utils.path';
 import { netifd_status_get } from 'ubbf.utils.netifd';
+import { instance_rows } from 'ubbf.utils.instance-map';
 
 /**
  * Fetches snooped DHCP client data from udhcpsnoop (uncached).
@@ -87,8 +88,8 @@ export function ipv6_leases_raw_get() {
 
 /**
  * Returns the clients of a DHCPv6 server pool, one per DUID, in the order
- * of the odhcpd leases. The position is the instance number of
- * Device.DHCPv6.Server.Pool.{i}.Client.{i}.
+ * of the odhcpd leases. ipv6_pool_clients_numbered() gives them their
+ * instance numbers.
  *
  * @param {object} root - Root data model object
  * @param {object} pool - Pool row with its Interface reference
@@ -134,6 +135,22 @@ export function ipv6_pool_clients(root, pool) {
 };
 
 /**
+ * Numbers the clients of a DHCPv6 server pool by DUID, so that a client
+ * keeps its number while other clients come and go.
+ *
+ * @param {string} pool_path - Path of the pool, e.g. Device.DHCPv6.Server.Pool.1
+ * @param {object} root - Root data model object
+ * @param {object} pool - Pool row with its Interface reference
+ * @returns {object} Instance number to ipv6_pool_clients() client
+ */
+export function ipv6_pool_clients_numbered(pool_path, root, pool) {
+	let by_duid = {};
+	for (let c in ipv6_pool_clients(root, pool))
+		by_duid[c.duid] = c;
+	return instance_rows(pool_path + '.Client', keys(by_duid), (duid) => by_duid[duid]);
+};
+
+/**
  * Validates that an IPv6 prefix length lands on a nibble boundary
  * (multiple of 4 bits, in [0, 128]). RFC 7084 / TR-181 PD recommends
  * delegating only on nibble boundaries (typically /48, /52, /56, /60, /64).
@@ -160,10 +177,7 @@ export const leases_parse = ubbf.leases_parse;
 /**
  * Returns leases whose IP falls inside a DHCPv4 pool address range,
  * sorted by lease expiry descending so the most recently granted lease
- * appears first. dnsmasq's lease file is not stored in any reliable
- * order, and TR-181 callers expect Pool.{i}.Client.1 to track the most
- * recent grant rather than whichever entry happens to sit at the top
- * of the file.
+ * appears first. pool_leases_numbered() gives them their instance numbers.
  *
  * @param {object} pool_config - Pool object with MinAddress and MaxAddress
  * @returns {array} Leases inside the pool range, newest expiry first
@@ -191,6 +205,26 @@ export function leases_for_pool(pool_config) {
 	sort(pool_leases, (a, b) => (b?.expiry ?? 0) - (a?.expiry ?? 0));
 
 	return pool_leases;
+};
+
+/**
+ * Numbers the leases of a DHCPv4 server pool by client MAC, so that a
+ * client keeps its number across renewals while other clients come and
+ * go. A second lease of one MAC is known by MAC and address.
+ *
+ * @param {string} pool_path - Path of the pool, e.g. Device.DHCPv4.Server.Pool.1
+ * @param {object} pool_config - Pool object with MinAddress and MaxAddress
+ * @returns {object} Instance number to lease
+ */
+export function pool_leases_numbered(pool_path, pool_config) {
+	let by_key = {};
+	for (let lease in leases_for_pool(pool_config)) {
+		let key = lc(lease.mac);
+		if (by_key[key])
+			key = sprintf('%s/%s', key, lease.ip);
+		by_key[key] = lease;
+	}
+	return instance_rows(pool_path + '.Client', keys(by_key), (key) => by_key[key]);
 };
 
 /**

@@ -3,8 +3,8 @@
 import * as fs from 'fs';
 import * as ubbf from 'ubbf';
 import { netifd_status_get } from 'ubbf.utils.netifd';
-import { instance_numbers, instance_seed } from 'ubbf.utils.instance-map';
-import { DNS_LEARNED_BASE, dns_learned_row } from 'ubbf.utils.dns';
+import { instance_numbers, instance_floor, instance_lookup } from 'ubbf.utils.instance-map';
+import { dns_learned_row } from 'ubbf.utils.dns';
 import { handler as nslookup_handler } from 'ubbf.tr143.NSLookup';
 import { op_trigger_set, op_overlay_get } from 'ubbf.utils.cwmp-op-trigger';
 
@@ -165,8 +165,9 @@ function learned_key(row) {
 }
 
 /**
- * Numbers the learned rows of a table. A stored row of a learned server
- * keeps its number, also after a reboot clears the volatile map.
+ * Numbers the learned rows of a table after the stored rows. A stored row
+ * of a learned server keeps its number after a reboot through its pin in
+ * config.json.
  *
  * @param {string} table - Table path
  * @param {array} rows - Learned rows
@@ -174,18 +175,10 @@ function learned_key(row) {
  * @returns {object} Instance number to learned row
  */
 function learned_rows_number(table, rows, stored) {
-	let seed = {};
-	for (let inst, row in stored ?? {}) {
-		let n = ubbf.to_int(inst);
-		if (dns_learned_row(n) && row?.Type)
-			seed[learned_key(row)] = n - DNS_LEARNED_BASE;
-	}
-	instance_seed(table, seed, true);
-
-	let numbers = instance_numbers(table, map(rows, learned_key), true);
+	let numbers = instance_numbers(table, map(rows, learned_key), instance_floor(stored));
 	let result = {};
 	for (let row in rows) {
-		let inst = sprintf('%d', DNS_LEARNED_BASE + numbers[learned_key(row)]);
+		let inst = sprintf('%d', numbers[learned_key(row)]);
 		result[inst] = { ...row, Alias: `cpe-${inst}` };
 	}
 	return result;
@@ -226,7 +219,7 @@ function learned_table_get(table, stored_get, learned_get) {
 			return live;
 
 		let row = live ? { ...live, Enable: ctx.config.Enable ?? live.Enable } : ubbf.ctx_config(ctx);
-		let present = live || !dns_learned_row(ctx.instance);
+		let present = live || !dns_learned_row(ctx.config);
 
 		row.Status = (present && ubbf.to_bool(row.Enable)) ? 'Enabled' : 'Disabled';
 		return row;
@@ -245,7 +238,7 @@ function learned_table_get(table, stored_get, learned_get) {
  */
 function learned_table_set(table, stored_get, learned_get) {
 	return function(ctx) {
-		if (!dns_learned_row(ctx.instance))
+		if (instance_lookup(table, ctx.instance) == null)
 			return 0;
 
 		if (ctx.param == 'DNSServer' || ctx.param == 'Interface')

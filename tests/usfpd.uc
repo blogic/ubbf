@@ -10,7 +10,7 @@
 'use strict';
 
 import * as ubbf from 'ubbf';
-import { instance_numbers, instance_key, instance_rows, instance_seed } from 'ubbf.utils.instance-map';
+import { instance_numbers, instance_key, instance_rows } from 'ubbf.utils.instance-map';
 import * as sfp from 'ubbf.utils.sfp';
 
 let pass = 0, fail = 0;
@@ -27,7 +27,7 @@ const api = {
 	ubbf,
 	utils: {
 		cache: { call: (fn, ...args) => fn(...args) },
-		'instance-map': { instance_numbers, instance_key, instance_rows, instance_seed },
+		'instance-map': { instance_numbers, instance_key, instance_rows },
 		'dm-version': { dm_visible: () => true },
 		ethtool: { ethtool_properties_get: () => ({ SupportedLinkModes: '1000baseX/Full,10000baseSR/Full,2500baseX/Full' }) },
 		netdev_change: { last_change_get: (netdev) => (netdev == 'eth2') ? '42' : '0' },

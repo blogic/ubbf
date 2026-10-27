@@ -9,6 +9,144 @@ import { last_change_get } from 'ubbf.utils.netdev_change';
 import { prefix_length_nibble_check } from 'ubbf.utils.dhcp';
 import { ifstats_get, ifstats_aggregate, ifstats_reset, ip_interface_members } from 'ubbf.utils.ifstats';
 import { link_local_addresses_get, ipv6_prefix_rows } from 'ubbf.utils.ipv6';
+import { instance_stack } from 'ubbf.utils.instance-map';
+
+/**
+ * Brings an IPv6 address or prefix to one spelling, so that a stored value
+ * matches the address netifd reports.
+ *
+ * @param {string} addr - Address, optionally with /length
+ * @returns {string|null} Canonical address, with /length when one was given
+ */
+function ip_canonical(addr) {
+	if (type(addr) != 'string' || addr == '')
+		return null;
+	let parts = split(addr, '/', 2);
+	let bytes = iptoarr(parts[0]);
+	if (!bytes)
+		return null;
+	let ip = arrtoip(bytes);
+	return (length(parts) > 1) ? sprintf('%s/%s', ip, parts[1]) : ip;
+}
+
+/**
+ * Netifd devices of an IP.Interface: the IPv6 status of an upstream
+ * interface comes from its `<name>6` companion.
+ *
+ * @param {object} iface - Stored IP.Interface row
+ * @returns {object} { netifd, netifd6, l2_dev, upstream }
+ */
+function interface_status(iface) {
+	let netifd = netifd_status_get(iface?.Name);
+	let upstream = ubbf.to_bool(iface?.Upstream);
+	return {
+		netifd,
+		netifd6: upstream ? netifd_status_get(iface.Name + '6') : netifd,
+		l2_dev: netifd?.l3_device ?? netifd?.device,
+		upstream
+	};
+}
+
+/**
+ * Numbers the IPv4 addresses of an interface: a stored row keeps its
+ * number and its address, a DHCP row takes the leased address, and the
+ * other addresses follow the stored rows.
+ *
+ * @param {object} iface - Stored IP.Interface row
+ * @param {object} st - interface_status() of the row
+ * @returns {object} Instance number to netifd ipv4-address entry
+ */
+function ipv4_items(iface, st) {
+	return instance_stack(iface?.IPv4Address, st.netifd?.['ipv4-address'] ?? [],
+		(row, a) => (row?.AddressingType ?? 'Static') == 'Static' && row?.IPAddress == a.address,
+		(row, a) => (row?.AddressingType ?? 'Static') != 'Static');
+}
+
+/**
+ * Lists the IPv6 addresses of an interface: netifd ipv6-address, the local
+ * addresses of the prefix assignments (PD), and the kernel link-local
+ * addresses, each with the Origin it has without a stored row.
+ *
+ * @param {object} st - interface_status() of the row
+ * @returns {array} Items { data, origin, permanent }
+ */
+function ipv6_address_list(st) {
+	let items = [];
+
+	// On an upstream interface odhcp6c hands netifd its IA_NA leases as /128
+	// and its SLAAC addresses with the length of their prefix, in one list;
+	// the list of a downstream interface holds no such mix.
+	for (let a in st.netifd6?.['ipv6-address'] ?? [])
+		push(items, { data: a, origin: 'DHCPv6', permanent: false, lease: !st.upstream || a.mask == 128 });
+
+	for (let pa in st.netifd6?.['ipv6-prefix-assignment'] ?? []) {
+		// netifd always emits the local-address table and only fills
+		// address/mask when the assignment is enabled
+		if (!pa?.['local-address']?.address)
+			continue;
+		// PA rows with RA/PD-sourced lifetimes are Child (auto-configured from
+		// a delegated parent prefix); PA rows without lifetimes come from a
+		// locally-configured prefix (e.g. ULA) and are Static per TR-181.
+		let has_lifetime = (pa.preferred != null) || (pa.valid != null);
+		push(items, {
+			data: {
+				address: pa['local-address'].address,
+				mask: pa['local-address'].mask,
+				preferred: pa.preferred,
+				valid: pa.valid
+			},
+			origin: has_lifetime ? 'Child' : 'Static',
+			permanent: !has_lifetime
+		});
+	}
+
+	// Kernel-assigned link-local addresses have no RA/DHCPv6 lifetime;
+	// pull them directly via rtnl on the L2 device and mark permanent.
+	for (let ll in link_local_addresses_get(st.l2_dev))
+		push(items, { data: ll, origin: 'AutoConfigured', permanent: true });
+
+	return items;
+}
+
+/**
+ * Numbers the IPv6 addresses of an interface: a stored row with an address
+ * takes that address, a stored row without one takes the first address of
+ * its Origin (a DHCPv6 row only a lease), and the other addresses follow
+ * the stored rows.
+ *
+ * @param {object} iface - Stored IP.Interface row
+ * @param {object} st - interface_status() of the row
+ * @returns {object} Instance number to ipv6_address_list() item
+ */
+function ipv6_address_items(iface, st) {
+	return instance_stack(iface?.IPv6Address, ipv6_address_list(st),
+		(row, item) => ip_canonical(row?.IPAddress) != null &&
+			ip_canonical(row.IPAddress) == ip_canonical(item.data.address),
+		(row, item) => !row?.IPAddress && (row?.Origin ?? 'DHCPv6') == item.origin &&
+			(item.origin != 'DHCPv6' || item.lease));
+}
+
+/**
+ * Numbers the dynamic IPv6 prefixes of an interface: a stored row with a
+ * Prefix takes that prefix, a stored row of the same Origin without one
+ * takes the first prefix of that Origin, and the other prefixes follow the
+ * stored rows. A Child row (with ParentPrefix) takes the next delegated
+ * prefix on an upstream interface, where ipv6_prefix_get() reads it from
+ * the same netifd list; on a downstream interface it reads a prefix
+ * assignment, which is not in this list.
+ *
+ * @param {object} iface - Stored IP.Interface row
+ * @param {object} st - interface_status() of the row
+ * @returns {object} Instance number to ipv6_prefix_rows() item
+ */
+function ipv6_prefix_items(iface, st) {
+	return instance_stack(iface?.IPv6Prefix, ipv6_prefix_rows(iface?.Name, st.upstream, st.l2_dev),
+		(row, item) => !row?.ParentPrefix && ip_canonical(row?.Prefix) != null &&
+			ip_canonical(row.Prefix) == ip_canonical(sprintf('%s/%d', item.data.address, item.data.mask)),
+		(row, item) => row?.ParentPrefix
+			? (st.upstream && item.origin == 'PrefixDelegation')
+			: (!row?.Prefix && row?.Origin == item.origin));
+}
 
 
 /**
@@ -58,15 +196,9 @@ function interface_get(ctx) {
 	if (!ctx.config)
 		return null;
 
-	let name = ctx.config.Name;
-	let netifd = netifd_status_get(name);
-	let upstream = ubbf.to_bool(ctx.config.Upstream);
-	let netifd6 = upstream ? netifd_status_get(name + '6') : netifd;
-
-	let ipv4_addrs = netifd?.['ipv4-address'] ?? [];
-	let ipv6_addrs = netifd6?.['ipv6-address'] ?? [];
-
-	let l2_dev = netifd?.l3_device ?? netifd?.device;
+	let st = interface_status(ctx.config);
+	let netifd = st.netifd;
+	let l2_dev = st.l2_dev;
 	let result = {
 		...ctx.config,
 		Status: netifd?.up ? 'Up' : 'Down',
@@ -84,72 +216,35 @@ function interface_get(ctx) {
 	}
 
 	let config_ipv4 = ctx.config.IPv4Address ?? {};
-	let ipv4_objects = [];
-	for (let i = 0; i < length(ipv4_addrs); i++)
-		push(ipv4_objects, ubbf.ipv4_addr_to_object(ipv4_addrs[i], config_ipv4?.['' + (i + 1)]?.AddressingType));
-	if (length(ipv4_objects) > 0)
-		result.IPv4Address = ubbf.enumerate_instances(ipv4_objects, (obj) => obj);
-	result.IPv4AddressNumberOfEntries = sprintf('%d',
-		result.IPv4Address ? length(keys(result.IPv4Address)) : 0);
+	let ipv4 = {};
+	for (let n, a in ipv4_items(ctx.config, st))
+		ipv4[n] = ubbf.ipv4_addr_to_object(a, config_ipv4[n]?.AddressingType);
+	if (length(ipv4) > 0)
+		result.IPv4Address = ipv4;
+	result.IPv4AddressNumberOfEntries = sprintf('%d', length(ipv4));
 
 	// TR-181 IPv6Address holds both directly-assigned addresses and
-	// addresses derived from local prefix assignments (PD). Merge both
-	// netifd lists into one TR-181 instance space; ipv6_idx is the
-	// running TR-181 instance counter across both sources.
+	// addresses derived from local prefix assignments (PD), in one
+	// instance space.
 	let config_ipv6 = ctx.config.IPv6Address ?? {};
-	let all_ipv6 = [];
-	let ipv6_idx = 0;
-	for (let a in ipv6_addrs) {
-		ipv6_idx++;
-		push(all_ipv6, ubbf.ipv6_addr_to_object(a, config_ipv6?.['' + ipv6_idx]?.Origin ?? 'DHCPv6'));
-	}
-
-	let prefix_assignments = netifd6?.['ipv6-prefix-assignment'] ?? [];
-	for (let pa in prefix_assignments) {
-		// netifd always emits the local-address table and only fills
-		// address/mask when the assignment is enabled
-		if (!pa?.['local-address']?.address)
-			continue;
-		ipv6_idx++;
-		let has_lifetime = (pa.preferred != null) || (pa.valid != null);
-		let addr_obj = {
-			address: pa['local-address'].address,
-			mask: pa['local-address'].mask,
-			preferred: pa.preferred,
-			valid: pa.valid
-		};
-		// PA rows with RA/PD-sourced lifetimes are Child (auto-configured from
-		// a delegated parent prefix); PA rows without lifetimes come from a
-		// locally-configured prefix (e.g. ULA) and are Static per TR-181.
-		let default_origin = has_lifetime ? 'Child' : 'Static';
-		let origin = config_ipv6?.['' + ipv6_idx]?.Origin ?? default_origin;
-		push(all_ipv6, ubbf.ipv6_addr_to_object(addr_obj, origin, !has_lifetime));
-	}
-
-	// Kernel-assigned link-local addresses have no RA/DHCPv6 lifetime;
-	// pull them directly via rtnl on the L2 device and mark permanent.
-	for (let ll in link_local_addresses_get(l2_dev)) {
-		ipv6_idx++;
-		push(all_ipv6, ubbf.ipv6_addr_to_object(ll, config_ipv6?.['' + ipv6_idx]?.Origin ?? 'AutoConfigured', true));
-	}
-
-	if (length(all_ipv6) > 0)
-		result.IPv6Address = ubbf.enumerate_instances(all_ipv6, (obj) => obj);
-	result.IPv6AddressNumberOfEntries = sprintf('%d',
-		result.IPv6Address ? length(keys(result.IPv6Address)) : 0);
+	let ipv6 = {};
+	for (let n, item in ipv6_address_items(ctx.config, st))
+		ipv6[n] = ubbf.ipv6_addr_to_object(item.data, config_ipv6[n]?.Origin ?? item.origin, item.permanent);
+	if (length(ipv6) > 0)
+		result.IPv6Address = ipv6;
+	result.IPv6AddressNumberOfEntries = sprintf('%d', length(ipv6));
 
 	// Upstream interfaces combine two prefix sources: netifd's ipv6-prefix
 	// (the DHCPv6-PD grant) and RA-learned PIOs. RA PIOs come from the
 	// odhcp6c.user.d hook state file when present (our stack runs
 	// accept_ra=0 so the kernel FIB has no RTPROT_RA routes); fall back
 	// to the kernel FIB for setups where the kernel does process RAs.
-	let all_prefixes = ipv6_prefix_rows(name, upstream, l2_dev);
-
-	if (length(all_prefixes) > 0)
-		result.IPv6Prefix = ubbf.enumerate_instances(all_prefixes,
-			(item) => ubbf.ipv6_prefix_to_object(item.data, item.origin));
-	result.IPv6PrefixNumberOfEntries = sprintf('%d',
-		result.IPv6Prefix ? length(keys(result.IPv6Prefix)) : 0);
+	let prefixes = {};
+	for (let n, item in ipv6_prefix_items(ctx.config, st))
+		prefixes[n] = ubbf.ipv6_prefix_to_object(item.data, item.origin);
+	if (length(prefixes) > 0)
+		result.IPv6Prefix = prefixes;
+	result.IPv6PrefixNumberOfEntries = sprintf('%d', length(prefixes));
 
 	return result;
 }
@@ -251,10 +346,7 @@ function ipv4_address_get(ctx) {
 	if (!ctx.config)
 		return null;
 
-	let name = ctx.parent?.Name;
-	let netifd = netifd_status_get(name);
-	let addrs = netifd?.['ipv4-address'] ?? [];
-	let addr_data = addrs[ctx.instance - 1];
+	let addr_data = ipv4_items(ctx.parent, interface_status(ctx.parent))[sprintf('%d', ctx.instance)];
 
 	if (addr_data) {
 		return {
@@ -303,51 +395,12 @@ function ipv6_address_get(ctx) {
 	if (ctx.config.Origin == 'Static')
 		return { ...ctx.config, Status: status, IPAddressStatus: enabled ? 'Preferred' : 'Invalid' };
 
-	let name = ctx.parent?.Name;
-	let upstream = ubbf.to_bool(ctx.parent?.Upstream);
-	let netifd = netifd_status_get(upstream ? name + '6' : name);
-	let base_netifd = upstream ? netifd_status_get(name) : netifd;
-	let l2_dev = base_netifd?.l3_device ?? base_netifd?.device;
+	let item = ipv6_address_items(ctx.parent, interface_status(ctx.parent))[sprintf('%d', ctx.instance)];
+	if (!item)
+		return { ...ctx.config, Status: status, IPAddressStatus: 'Invalid' };
 
-	let addrs = netifd?.['ipv6-address'] ?? [];
-	// same filter as interface_get(): netifd always emits the
-	// local-address table, address is only present when enabled
-	let prefixes = filter(netifd?.['ipv6-prefix-assignment'] ?? [],
-		(pa) => pa?.['local-address']?.address);
-	let addr_data = addrs[ctx.instance - 1];
-
-	// interface_get() merges netifd ipv6-address, ipv6-prefix-assignment
-	// local-addresses, and rtnl-derived link-local into one TR-181
-	// IPv6Address instance space. Mirror that ordering for per-instance reads.
-	// For prefix-assignment rows the lifetimes live on the parent object, not
-	// the local-address sub-object: lift them before emitting.
-	if (!addr_data) {
-		let prefix_data = prefixes[ctx.instance - 1 - length(addrs)];
-		if (prefix_data?.['local-address']) {
-			let obj = ubbf.ipv6_addr_to_object({
-				address: prefix_data['local-address'].address,
-				preferred: prefix_data.preferred,
-				valid: prefix_data.valid
-			});
-			return { ...ctx.config, Status: status, ...ipv6_fields(obj, IPV6_ADDRESS_FIELDS) };
-		}
-	}
-
-	if (!addr_data) {
-		let link_locals = link_local_addresses_get(l2_dev);
-		let ll = link_locals[ctx.instance - 1 - length(addrs) - length(prefixes)];
-		if (ll) {
-			let obj = ubbf.ipv6_addr_to_object(ll, null, true);
-			return { ...ctx.config, Status: status, ...ipv6_fields(obj, IPV6_ADDRESS_FIELDS) };
-		}
-	}
-
-	if (addr_data) {
-		let obj = ubbf.ipv6_addr_to_object(addr_data);
-		return { ...ctx.config, Status: status, ...ipv6_fields(obj, IPV6_ADDRESS_FIELDS) };
-	}
-
-	return { ...ctx.config, Status: status, IPAddressStatus: 'Invalid' };
+	let obj = ubbf.ipv6_addr_to_object(item.data, null, item.permanent);
+	return { ...ctx.config, Status: status, ...ipv6_fields(obj, IPV6_ADDRESS_FIELDS) };
 }
 
 /**
@@ -357,27 +410,27 @@ function ipv6_address_get(ctx) {
  * @returns {object|null} IPv6 prefix properties
  */
 function ipv6_prefix_get(ctx) {
-	let name = ctx.parent?.Name;
-	let upstream = ubbf.to_bool(ctx.parent?.Upstream);
+	let st = interface_status(ctx.parent);
 
 	if (!ctx.config) {
-		if (!upstream)
+		if (!st.upstream)
 			return null;
-		let base = netifd_status_get(name);
-		let l2_dev = base?.l3_device ?? base?.device;
-		let row = ipv6_prefix_rows(name, upstream, l2_dev)[ctx.instance - 1];
+		let row = ipv6_prefix_items(ctx.parent, st)[sprintf('%d', ctx.instance)];
 		if (!row)
 			return null;
 		return ubbf.ipv6_prefix_to_object(row.data, row.origin);
 	}
 
-	let netifd = netifd_status_get(upstream ? name + '6' : name);
 	// On upstream (WAN) interfaces netifd reports prefixes received via
 	// DHCPv6-PD or RA in ipv6-prefix; on downstream (LAN) interfaces it
 	// reports the locally-derived sub-prefixes in ipv6-prefix-assignment.
-	let prefix_key = upstream ? 'ipv6-prefix' : 'ipv6-prefix-assignment';
-	let prefixes = netifd?.[prefix_key] ?? [];
-	let prefix_data = prefixes[ctx.instance - 1];
+	// The stored Child rows take these in the order of their numbers.
+	let prefix_key = st.upstream ? 'ipv6-prefix' : 'ipv6-prefix-assignment';
+	let prefixes = st.netifd6?.[prefix_key] ?? [];
+	let children = sort(filter(keys(ctx.parent?.IPv6Prefix ?? {}),
+		(n) => ubbf.is_instance_key(n) && ctx.parent.IPv6Prefix[n]?.ParentPrefix), (a, b) => +a - +b);
+	let pos = index(children, sprintf('%d', ctx.instance));
+	let prefix_data = (pos >= 0) ? prefixes[pos] : null;
 
 	let enabled = ubbf.to_bool(ctx.config.Enable);
 	let status = enabled ? 'Enabled' : 'Disabled';

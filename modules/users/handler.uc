@@ -17,15 +17,17 @@ const uci = require('uci');
 const users = require('users');
 
 const schema = ubbf_module.schema;
+const instance_map = utils['instance-map'];
 
 // The accounts this module manages are rows of the configuration, and the
 // commit hook writes them to /etc/passwd, /etc/shadow and /etc/group. Every
-// other account belongs to the system. It shows as a read-only row numbered
-// from RUNTIME_BASE plus its uid (or gid), which no configured row reaches,
-// so that its number does not change when another account comes or goes.
+// other account belongs to the system. It shows as a read-only row that the
+// instance map numbers by its name after the configured rows, so that its
+// number does not change when another account comes or goes.
 const CONFIG_PATH = '/etc/ubbf/config.json';
 const RECORD_PATH = '/etc/ubbf/users-managed.json';
-const RUNTIME_BASE = 10000;
+const USER_TABLE = 'Device.Users.User';
+const GROUP_TABLE = 'Device.Users.Group';
 const ID_MIN = 1000;
 const ID_MAX = 60000;
 const NAME_MAX = 32;
@@ -245,12 +247,12 @@ function group_name_by_ref(ref, group_rows, gr) {
 	if (n == null)
 		return null;
 
-	if (n < RUNTIME_BASE) {
-		let name = group_rows[sprintf('%d', n)]?.Groupname;
+	if (group_rows[sprintf('%d', n)]) {
+		let name = group_rows[sprintf('%d', n)].Groupname;
 		return name_valid(name) ? name : null;
 	}
 
-	let entry = entry_find(gr, 'gid', n - RUNTIME_BASE);
+	let entry = entry_find(gr, 'groupname', instance_map.instance_lookup(GROUP_TABLE, n));
 	if (!entry || names_index(group_rows, 'Groupname')[entry.groupname])
 		return null;
 
@@ -263,16 +265,17 @@ function group_name_by_ref(ref, group_rows, gr) {
  * @param {object} pw - passwd entry
  * @param {array} gr - group entries
  * @param {object} group_idx - Configured group name to instance
+ * @param {object} group_numbers - System group name to instance number
  * @returns {string} Comma-separated references
  */
-function group_refs_build(pw, gr, group_idx) {
+function group_refs_build(pw, gr, group_idx, group_numbers) {
 	let refs = [];
 
 	for (let g in gr) {
 		if (g.gid != pw.gid && index(g.members ?? [], pw.username) < 0)
 			continue;
 
-		let inst = group_idx[g.groupname] ?? sprintf('%d', RUNTIME_BASE + g.gid);
+		let inst = group_idx[g.groupname] ?? sprintf('%d', group_numbers[g.groupname]);
 		push(refs, `Device.Users.Group.${inst}`);
 	}
 
@@ -286,10 +289,11 @@ function group_refs_build(pw, gr, group_idx) {
  * @param {object} sp_map - Username to shadow entry
  * @param {array} gr - group entries
  * @param {object} group_idx - Configured group name to instance
+ * @param {object} group_numbers - System group name to instance number
  * @param {array} shells - Shells from /etc/shells
  * @returns {object} TR-181 User object
  */
-function system_user_to_object(pw, sp_map, gr, group_idx, shells) {
+function system_user_to_object(pw, sp_map, gr, group_idx, group_numbers, shells) {
 	let hash = sp_map[pw.username]?.hash ?? '';
 
 	return {
@@ -298,7 +302,7 @@ function system_user_to_object(pw, sp_map, gr, group_idx, shells) {
 		UserID: sprintf('%d', pw.uid),
 		Username: pw.username,
 		Password: '',
-		GroupParticipation: group_refs_build(pw, gr, group_idx),
+		GroupParticipation: group_refs_build(pw, gr, group_idx, group_numbers),
 		RoleParticipation: '',
 		StaticUser: 'true',
 		Language: '',
@@ -339,29 +343,45 @@ function shell_to_object(shell) {
 }
 
 /**
+ * Numbers the system groups, the groups that no configured row names.
+ *
+ * @param {object} root - Configuration tree
+ * @param {array} gr - group entries
+ * @returns {object} Group name to instance number
+ */
+function system_group_numbers(root, gr) {
+	let stored = root?.Device?.Users?.Group;
+	let group_idx = names_index(rows_get(stored), 'Groupname');
+	let names = map(filter(gr, (g) => !group_idx[g.groupname]), (g) => g.groupname);
+
+	return instance_map.instance_numbers(GROUP_TABLE, names, instance_map.instance_floor(stored));
+}
+
+/**
  * Builds the rows of the system accounts.
  *
  * @param {object} root - Configuration tree
- * @returns {object} Rows keyed by RUNTIME_BASE plus uid
+ * @returns {object} Rows keyed by instance number
  */
 function system_users_get(root) {
-	let user_idx = names_index(rows_get(root?.Device?.Users?.User), 'Username');
+	let stored = root?.Device?.Users?.User;
+	let user_idx = names_index(rows_get(stored), 'Username');
 	let group_idx = names_index(rows_get(root?.Device?.Users?.Group), 'Groupname');
 	let gr = users.group_get_all() ?? [];
+	let group_numbers = system_group_numbers(root, gr);
 	let shells = users.shells_get();
+	let accounts = filter(users.passwd_get_all() ?? [], (pw) => !user_idx[pw.username]);
+	let numbers = instance_map.instance_numbers(USER_TABLE, map(accounts, (pw) => pw.username),
+		instance_map.instance_floor(stored));
 	let sp_map = {};
 	let rows = {};
 
 	for (let sp in users.shadow_get_all() ?? [])
 		sp_map[sp.username] = sp;
 
-	for (let pw in users.passwd_get_all() ?? []) {
-		if (user_idx[pw.username])
-			continue;
-
-		rows[sprintf('%d', RUNTIME_BASE + pw.uid)] =
-			system_user_to_object(pw, sp_map, gr, group_idx, shells);
-	}
+	for (let pw in accounts)
+		rows[sprintf('%d', numbers[pw.username])] =
+			system_user_to_object(pw, sp_map, gr, group_idx, group_numbers, shells);
 
 	return rows;
 }
@@ -370,18 +390,16 @@ function system_users_get(root) {
  * Builds the rows of the system groups.
  *
  * @param {object} root - Configuration tree
- * @returns {object} Rows keyed by RUNTIME_BASE plus gid
+ * @returns {object} Rows keyed by instance number
  */
 function system_groups_get(root) {
-	let group_idx = names_index(rows_get(root?.Device?.Users?.Group), 'Groupname');
+	let gr = users.group_get_all() ?? [];
+	let numbers = system_group_numbers(root, gr);
 	let rows = {};
 
-	for (let g in users.group_get_all() ?? []) {
-		if (group_idx[g.groupname])
-			continue;
-
-		rows[sprintf('%d', RUNTIME_BASE + g.gid)] = system_group_to_object(g);
-	}
+	for (let g in gr)
+		if (numbers[g.groupname] != null)
+			rows[sprintf('%d', numbers[g.groupname])] = system_group_to_object(g);
 
 	return rows;
 }
@@ -741,7 +759,8 @@ function role_set(ctx) {
  * @returns {number|null} Refusal, or null to delete the configured row
  */
 function system_row_del(ctx) {
-	return (ctx.instance >= RUNTIME_BASE) ? -USP_ERR_OBJECT_NOT_DELETABLE : null;
+	let table = (index(ctx.path, GROUP_TABLE + '.') == 0) ? GROUP_TABLE : USER_TABLE;
+	return (instance_map.instance_lookup(table, ctx.instance) != null) ? -USP_ERR_OBJECT_NOT_DELETABLE : null;
 }
 
 /**
@@ -948,10 +967,14 @@ function shadow_sync(state, rows, names) {
  */
 function group_enabled(ref, group_rows) {
 	let n = ref_instance(ref, 'Group');
-	if (n == null || n >= RUNTIME_BASE)
+	if (n == null)
 		return true;
 
-	return group_rows[sprintf('%d', n)]?.Enable == 'true';
+	let row = group_rows[sprintf('%d', n)];
+	if (!row)
+		return instance_map.instance_lookup(GROUP_TABLE, n) != null;
+
+	return row.Enable == 'true';
 }
 
 /**

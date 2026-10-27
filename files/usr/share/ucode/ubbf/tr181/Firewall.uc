@@ -11,13 +11,14 @@ import { chain_rule_unsupported } from 'ubbf.utils.firewall';
 import { log_err } from 'ubbf.utils.logging';
 import { modules_registered } from 'ubbf.utils.modules';
 import { refs_intervals, intervals_active, week_seconds } from 'ubbf.utils.schedule';
+import { instance_items, instance_floor, instance_lookup } from 'ubbf.utils.instance-map';
 
 const CONFIG_PATH = '/etc/ubbf/config.json';
 
-// UPnP pinholes live in upnpd, not in the configuration. They appear as rows
-// numbered from this base so they never collide with persisted instances and
-// keep their number for the life of the daemon's lease table.
-const UPNP_INSTANCE_BASE = 10000;
+// UPnP pinholes live in upnpd, not in the configuration. The instance map
+// numbers them by the pinhole id of upnpd, which survives a restart of the
+// daemon and is never given again, after the stored rows.
+const PINHOLE_TABLE = 'Device.Firewall.Pinhole';
 
 // The parameters whose write can make a Chain.Rule unsupported, for each
 // reason chain_rule_unsupported() gives.
@@ -192,30 +193,26 @@ function upnp_pinhole_to_object(p, iface_ref) {
 }
 
 /**
- * Rows without configuration are the UPnP pinholes, keyed from
- * UPNP_INSTANCE_BASE by the daemon's row id.
+ * Rows without configuration are the UPnP pinholes, numbered by the
+ * instance map after the stored rows.
  *
  * @param {object} ctx - Handler context
  * @returns {object|null} One instance, or the UPnP rows in enumerate mode
  */
 function upnp_pinholes_get(ctx) {
-	let pinholes = cache.call(upnp_pinholes_fetch);
+	let pinholes = instance_items(PINHOLE_TABLE, cache.call(upnp_pinholes_fetch),
+		(p) => sprintf('%d', p.id), instance_floor(ctx.root?.Device?.Firewall?.Pinhole));
 	let iface_ref = upstream_interface_ref(ctx.root);
 
 	if (ctx.instance) {
-		let wanted = ctx.instance - UPNP_INSTANCE_BASE;
-
-		for (let p in pinholes)
-			if (p.id == wanted)
-				return upnp_pinhole_to_object(p, iface_ref);
-
-		return null;
+		let p = pinholes[sprintf('%d', ctx.instance)];
+		return p ? upnp_pinhole_to_object(p, iface_ref) : null;
 	}
 
 	let rows = {};
 
-	for (let p in pinholes)
-		rows[sprintf('%d', UPNP_INSTANCE_BASE + p.id)] = upnp_pinhole_to_object(p, iface_ref);
+	for (let n, p in pinholes)
+		rows[n] = upnp_pinhole_to_object(p, iface_ref);
 
 	return rows;
 }
@@ -228,13 +225,14 @@ function upnp_pinholes_get(ctx) {
  * @returns {boolean} True when the row was a UPnP pinhole and is gone
  */
 function pinhole_del(ctx) {
-	if (ctx.instance < UPNP_INSTANCE_BASE)
+	let id = instance_lookup(PINHOLE_TABLE, ctx.instance);
+	if (id == null)
 		return false;
 
 	let res = ubus.call({
 		object: 'upnpd',
 		method: 'delete_pinhole',
-		data: { id: ctx.instance - UPNP_INSTANCE_BASE }
+		data: { id: +id }
 	});
 
 	cache.invalidate(upnp_pinholes_fetch);

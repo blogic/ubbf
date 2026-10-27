@@ -2,7 +2,7 @@
 
 import * as ubus from 'ubus';
 import * as ubbf from 'ubbf';
-import { leases_for_pool, leases_parse, dhcpsnoop_dump_get, client_snoop_entry, static_address_states } from 'ubbf.utils.dhcp';
+import { pool_leases_numbered, leases_parse, dhcpsnoop_dump_get, client_snoop_entry, static_address_states } from 'ubbf.utils.dhcp';
 import { netifd_status_get } from 'ubbf.utils.netifd';
 
 /**
@@ -232,6 +232,16 @@ function lease_to_client(lease) {
 }
 
 /**
+ * Path of a DHCPv4 server pool, the scope of its client numbers.
+ *
+ * @param {number} instance - Pool instance number
+ * @returns {string} Device.DHCPv4.Server.Pool.<instance>
+ */
+function pool_path(instance) {
+	return sprintf('Device.DHCPv4.Server.Pool.%d', instance);
+}
+
+/**
  * Get handler for Device.DHCPv4.Server.Pool.{i}.
  *
  * @param {object} ctx - Context with config containing pool settings
@@ -241,12 +251,14 @@ function pool_get(ctx) {
 	if (!ctx.config)
 		return null;
 
-	let leases = leases_for_pool(ctx.config);
+	let clients = {};
+	for (let n, lease in pool_leases_numbered(pool_path(ctx.instance), ctx.config))
+		clients[n] = lease_to_client(lease);
 
 	return {
 		...ctx.config,
-		ClientNumberOfEntries: sprintf('%d', length(leases)),
-		Client: ubbf.enumerate_instances(leases, lease_to_client)
+		ClientNumberOfEntries: sprintf('%d', length(clients)),
+		Client: clients
 	};
 }
 
@@ -261,12 +273,16 @@ function pool_client_get(ctx) {
 	if (!parent)
 		return null;
 
-	let leases = leases_for_pool(parent);
+	let leases = pool_leases_numbered(pool_path(ctx.instances?.[0]), parent);
 
-	if (ctx.instance == null)
-		return ubbf.enumerate_instances(leases, lease_to_client);
+	if (ctx.instance == null) {
+		let clients = {};
+		for (let n, lease in leases)
+			clients[n] = lease_to_client(lease);
+		return clients;
+	}
 
-	let lease = ubbf.get_by_instance(leases, ctx.instance);
+	let lease = leases[sprintf('%d', ctx.instance)];
 	if (!lease)
 		return null;
 

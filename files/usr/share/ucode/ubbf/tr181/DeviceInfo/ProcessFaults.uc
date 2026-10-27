@@ -7,37 +7,30 @@ import { curl_upload, CURL_TRANSFER_TIMEOUT_S } from 'ubbf.utils.curl';
 import { log_info, log_err } from 'ubbf.utils.logging';
 import { task_run, TASK_MARGIN_S } from 'ubbf.utils.process';
 import * as ubbf from 'ubbf';
+import { faults_state_normalise, entries_find, json_state_load } from 'ubbf.device.common';
+import { instance_id_rows } from 'ubbf.utils.instance-map';
 
 const FAULTS_PATH = '/etc/ubbf/process-faults.json';
 
 /**
- * Loads the persisted process fault state.
+ * Loads the persisted process fault state as ubbf-device does, with the
+ * id of each fault, its instance number.
  *
- * @returns {object} `{ meta, faults }`; legacy bare-array files are migrated in-memory
+ * @returns {object} `{ meta, faults }`
  */
 function faults_load() {
-	let data = fs.readfile(FAULTS_PATH);
-	if (!data)
-		return { meta: {}, faults: [] };
-
-	let parsed = json(data);
-	if (type(parsed) == 'array')
-		return { meta: {}, faults: parsed };
-	if (type(parsed) == 'object')
-		return { meta: parsed.meta ?? {}, faults: parsed.faults ?? [] };
-	return { meta: {}, faults: [] };
+	return faults_state_normalise(json_state_load(FAULTS_PATH, null));
 }
 
 /**
  * Maps a stored process fault entry to TR-181 ProcessFault parameters.
  *
- * @param {object} fault - Fault entry from the persisted store
- * @param {number} idx - Zero-based array index, used to derive a stable Alias
+ * @param {object} fault - Fault entry from the persisted store, with its id
  * @returns {object} TR-181 formatted ProcessFault object
  */
-function fault_to_object(fault, idx) {
+function fault_to_object(fault) {
 	return {
-		Alias: sprintf('cpe-fault-%d', idx + 1),
+		Alias: sprintf('cpe-fault-%d', fault.id),
 		ProcessID: fault.pid ?? '',
 		ProcessName: fault.process_name ?? '',
 		FaultLocation: '',
@@ -74,13 +67,13 @@ function fault_get(ctx) {
 	let state = faults_load();
 
 	if (ctx.instance == null)
-		return ubbf.enumerate_instances(state.faults, fault_to_object);
+		return instance_id_rows(state.faults, fault_to_object);
 
-	let fault = ubbf.get_by_instance(state.faults, ctx.instance);
+	let fault = entries_find(state.faults, ctx.instance);
 	if (!fault)
 		return null;
 
-	return fault_to_object(fault, ctx.instance - 1);
+	return fault_to_object(fault);
 }
 
 /**
@@ -97,7 +90,7 @@ function remove_handler(input, instance, complete, instances) {
 	}
 
 	let result = ubus.call({ object: 'bbf-device', method: 'process_faults_remove',
-		data: { index: fault_idx - 1 } });
+		data: { id: fault_idx } });
 
 	if (result?.error) {
 		complete(instance, USP_ERR_COMMAND_FAILURE, result.error, {});
@@ -141,7 +134,7 @@ function upload_handler(input, instance, complete, instances, command_key) {
 	}
 
 	let state = faults_load();
-	let fault = ubbf.get_by_instance(state.faults, fault_idx);
+	let fault = entries_find(state.faults, fault_idx);
 	if (!fault) {
 		complete(instance, USP_ERR_INVALID_ARGUMENTS, 'Invalid fault instance', {});
 		return;
@@ -162,7 +155,7 @@ function upload_handler(input, instance, complete, instances, command_key) {
 	if (username != '')
 		opts = { ...opts, username, password };
 
-	let fault_data = fault_to_object(fault, fault_idx - 1);
+	let fault_data = fault_to_object(fault);
 	let tmpfile = ubbf.tmpfile_name('process-fault-upload', '.json');
 	if (!tmpfile || fs.writefile(tmpfile, sprintf('%.J\n', fault_data)) == null) {
 		if (tmpfile)

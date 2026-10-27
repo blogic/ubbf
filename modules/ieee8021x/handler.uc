@@ -20,7 +20,7 @@ const instance_map = ubbf_module.utils['instance-map'];
 const ubus = require('ubus');
 
 let certificates = {};
-include('../security/certificates.uc', { certificates });
+include('../security/certificates.uc', { certificates, instance_map });
 
 let ieee8021x = {};
 include('shared.uc', { ieee8021x, certificates });

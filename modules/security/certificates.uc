@@ -1,8 +1,11 @@
 'use strict';
 
-// Included with { certificates } as the scope, by handler.uc in the agent and
-// by the syslog and userinterface modules, so all of them number the
-// certificates the same way. Each function is added to that object.
+// Included with { certificates, instance_map } as the scope, by handler.uc
+// in the agent and by the syslog, userinterface and ieee8021x modules, so
+// all of them number the certificates the same way. Each function is added
+// to `certificates`. The agent passes utils['instance-map'], which numbers
+// new certificates; the render and ubbf-device pass instance_map_readonly
+// from utils/instance-map.uc, which only reads the numbers.
 
 const fs = require('fs');
 const openssl = require('openssl');
@@ -10,9 +13,12 @@ const ubbf = require('ubbf');
 
 // A stored reference, for example Syslog Network.Certificate, must keep its
 // certificate when the CA store changes (TR-369 R-ARC.8), so the instance
-// numbers come from this map and are never given to another certificate.
-const INSTANCES_PATH = '/etc/ubbf/security-instances.json';
-const INSTANCES_LOCK = '/var/run/ubbf-security-instances.lock';
+// numbers come from the instance map and are never given to another
+// certificate; config.json pins the ones that it names.
+const instance_numbers = instance_map.instance_numbers;
+const instance_retire = instance_map.instance_retire;
+const CERTIFICATE_TABLE = 'Device.Security.Certificate';
+const CABUNDLE_TABLE = 'Device.Security.CABundle';
 const CAFILE_DIR = '/var/run/ubbf-security';
 
 // Certificates with their keys from AddCertificateBundle(), and CA bundles
@@ -20,11 +26,10 @@ const CAFILE_DIR = '/var/run/ubbf-security';
 const CERTS_DIR = '/etc/ubbf/certs';
 const CABUNDLES_DIR = '/etc/ubbf/cabundles';
 const CABUNDLE_FILE = 'bundle.pem';
-const CABUNDLE_NUMBERS_PATH = '/etc/ubbf/security-cabundles.json';
 const ALIASES_PATH = '/etc/ubbf/security-aliases.json';
 
 // The CA bundles the device brings, as CABundle 1 and 2. A CA bundle added
-// by a controller gets a number above them from CABUNDLE_NUMBERS_PATH.
+// by a controller gets a number above them from the instance map.
 const BUNDLE_SOURCES = [
 	{ path: '/etc/ssl/certs', bundle: 'system-ca', file: '/etc/ssl/certs/ca-certificates.crt' },
 	{ path: '/etc/ubbf/ca', bundle: 'local-ca' },
@@ -144,7 +149,7 @@ function source_collect(source, found) {
 }
 
 /**
- * Reads a JSON map, for example of certificate keys to instance numbers.
+ * Reads a JSON map, for example of certificate keys to aliases.
  *
  * @param {string} path - File of the map
  * @returns {object} The map, empty when the file is missing or not valid
@@ -175,37 +180,6 @@ function map_save(path, map) {
 	let tmp = path + '.tmp';
 	if (fs.writefile(tmp, sprintf('%J\n', map)) == null || !fs.rename(tmp, path))
 		warn(`security: cannot write ${path}\n`);
-}
-
-/**
- * Gives the next free instance numbers to new keys and saves the map. The
- * agent and apply both scan, so the lock keeps them from giving one number
- * twice. A number is never given again, also after its row is deleted.
- *
- * @param {string} path - File of the map
- * @param {array} keys - Keys without a number
- * @param {number} first - Lowest number to give
- * @returns {object} The updated map
- */
-function numbers_allocate(path, keys, first) {
-	let lock = fs.open(INSTANCES_LOCK, 'w');
-	lock?.lock('x');
-
-	let numbers = map_load(path);
-	let next = first;
-
-	for (let key, num in numbers)
-		if (num >= next)
-			next = num + 1;
-
-	for (let key in keys)
-		if (!(key in numbers))
-			numbers[key] = next++;
-
-	map_save(path, numbers);
-	lock?.close();
-
-	return numbers;
 }
 
 /**
@@ -253,10 +227,7 @@ function certs_scan_live() {
 		});
 	}
 
-	let numbers = map_load(INSTANCES_PATH);
-	let missing = map(filter(found.certs, (e) => !(e.key in numbers)), (e) => e.key);
-	if (length(missing))
-		numbers = numbers_allocate(INSTANCES_PATH, missing, 1);
+	let numbers = instance_numbers(CERTIFICATE_TABLE, map(found.certs, (e) => e.key));
 
 	let aliases = map_load(ALIASES_PATH);
 	for (let entry in found.certs) {
@@ -265,17 +236,14 @@ function certs_scan_live() {
 		entry.added = index(entry.path, CERTS_DIR + '/') == 0;
 	}
 
-	let bundle_numbers = map_load(CABUNDLE_NUMBERS_PATH);
-	let unnumbered = map(filter(added, (s) => !(s.bundle in bundle_numbers)), (s) => s.bundle);
-	if (length(unnumbered))
-		bundle_numbers = numbers_allocate(CABUNDLE_NUMBERS_PATH, unnumbered, length(BUNDLE_SOURCES) + 1);
+	let bundle_numbers = instance_numbers(CABUNDLE_TABLE, map(added, (s) => s.bundle), length(BUNDLE_SOURCES) + 1);
 
 	for (let bundle in bundles)
 		bundle.instance ??= bundle_numbers[bundle.name];
 
 	return {
-		certs: sort(found.certs, (a, b) => a.instance - b.instance),
-		bundles: sort(bundles, (a, b) => a.instance - b.instance)
+		certs: sort(filter(found.certs, (e) => e.instance != null), (a, b) => a.instance - b.instance),
+		bundles: sort(filter(bundles, (b) => b.instance != null), (a, b) => a.instance - b.instance)
 	};
 }
 
@@ -616,8 +584,8 @@ function cabundle_update(instance, input) {
 
 /**
  * Deletes a CA bundle that AddCABundle() installed (CABundle.{i}.Delete(),
- * TR-181 2.21). Its instance number stays taken, under a key that no name
- * can have, so a new bundle of the same name gets a new number.
+ * TR-181 2.21). Its instance number stays taken (instance_retire()), so a
+ * new bundle of the same name gets a new number.
  *
  * @param {number} instance - CABundle instance number
  * @returns {number} 0, or a fault code
@@ -632,13 +600,7 @@ function cabundle_delete(instance) {
 	if (!fs.rmdir(bundle.path))
 		return USP_ERR_COMMAND_FAILURE;
 
-	let lock = fs.open(INSTANCES_LOCK, 'w');
-	lock?.lock('x');
-	let numbers = map_load(CABUNDLE_NUMBERS_PATH);
-	numbers[sprintf('#%d', bundle.instance)] = bundle.instance;
-	delete numbers[bundle.name];
-	map_save(CABUNDLE_NUMBERS_PATH, numbers);
-	lock?.close();
+	instance_retire(CABUNDLE_TABLE, bundle.name);
 
 	return 0;
 }

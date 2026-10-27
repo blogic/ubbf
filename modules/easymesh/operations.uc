@@ -2,7 +2,7 @@
 
 // Included by handler.uc with { em } as the scope. Like the handler, it binds
 // at the top what its functions use later, and it adds
-// set_topology_devices_get() and ap_by_ssid_ref_find() to em.
+// set_device_by_instance() and ap_by_ssid_ref_find() to em.
 
 const ubbf = ubbf_module.ubbf;
 const operations = ubbf_module.operations;
@@ -12,6 +12,8 @@ const wifi_dataelements = ubbf_module.utils['wifi-dataelements'];
 const ubus_topology_get = wifi_dataelements.ubus_topology_get;
 const device_api_data_get = wifi_dataelements.device_api_data_get;
 const radio_band_priority = wifi_dataelements.radio_band_priority;
+const bss_by_instance = em.bss_by_instance;
+const sta_by_instance = em.sta_by_instance;
 
 const ubus = require('ubus');
 const uloop = require('uloop');
@@ -19,15 +21,16 @@ const fs = require('fs');
 const unlink = fs.unlink;
 const writefile = fs.writefile;
 
-let topology_devices_get;
+let device_by_instance;
 
 /**
  * Initializes the operations module with required dependencies.
  *
- * @param {function} fn - Function to get topology devices
+ * @param {function} fn - (root, instance): the Network.Device with that
+ *                        instance number
  */
-function set_topology_devices_get(fn) {
-	topology_devices_get = fn;
+function set_device_by_instance(fn) {
+	device_by_instance = fn;
 }
 
 /**
@@ -296,6 +299,42 @@ function ssid_entry_find(ssids, ssid_name) {
 		if (ssids[i].ssid == ssid_name)
 			return i;
 	return -1;
+}
+
+/**
+ * Numbers the EasyMesh SSID entries for Network.SSID.{i}: an entry keeps
+ * the number it got when it was added, so a removal moves no other entry.
+ * An entry without one follows the highest number, in list order.
+ *
+ * @param {array} ssids - root.EasyMesh.SSIDs
+ * @returns {object} Instance number to entry
+ */
+function easymesh_ssid_rows(ssids) {
+	let top = 0;
+	for (let e in ssids ?? [])
+		top = max(top, ubbf.to_int(e?.instance) ?? 0);
+
+	let rows = {};
+	for (let e in ssids ?? [])
+		rows[sprintf('%d', ubbf.to_int(e?.instance) ?? ++top)] = e;
+	return rows;
+}
+
+/**
+ * Adds an entry to root.EasyMesh.SSIDs with the next instance number, and
+ * gives the entries without one the number they have now.
+ *
+ * @param {array} ssids - root.EasyMesh.SSIDs
+ * @param {object} entry - ssid_entry_create() result
+ */
+function easymesh_ssid_add(ssids, entry) {
+	let top = 0;
+	for (let n, e in easymesh_ssid_rows(ssids)) {
+		e.instance = +n;
+		top = max(top, +n);
+	}
+	entry.instance = top + 1;
+	push(ssids, entry);
 }
 
 /**
@@ -679,7 +718,7 @@ function set_ssid_handler(input, instance, complete, command_key, root) {
 				complete(instance, USP_ERR_INVALID_ARGUMENTS, 'SSID already exists', null);
 				return;
 			}
-			push(root.EasyMesh.SSIDs, ssid_entry_create(input));
+			easymesh_ssid_add(root.EasyMesh.SSIDs, ssid_entry_create(input));
 			break;
 		case 'Remove':
 			if (existing_idx < 0) {
@@ -789,8 +828,7 @@ function channel_scan_request_handler(input, instance, complete, instances, comm
 	let device_instance = instances[0];
 	let radio_instance = instances[1];
 
-	let devices = topology_devices_get(root);
-	let device = ubbf.get_by_instance(devices, device_instance);
+	let device = device_by_instance(root, device_instance);
 	if (!device) {
 		complete(instance, USP_ERR_COMMAND_FAILURE, 'Device not found', null);
 		return;
@@ -848,8 +886,7 @@ function initiate_wps_pbc_handler(input, instance, complete, instances, command_
 	let controller_enabled = ubbf.to_bool(network?.X_UBBF_EasyMesh?.Controller?.Enable);
 
 	if (controller_enabled) {
-		let devices = topology_devices_get(root);
-		let device = ubbf.get_by_instance(devices, device_instance);
+		let device = device_by_instance(root, device_instance);
 		if (!device) {
 			complete(instance, USP_ERR_COMMAND_FAILURE, 'Device not found', null);
 			return;
@@ -1077,8 +1114,7 @@ function steer_wifi_backhaul_handler(input, instance, complete, instances, comma
 	}
 
 	let device_instance = instances[0];
-	let devices = topology_devices_get(root);
-	let device = ubbf.get_by_instance(devices, device_instance);
+	let device = device_by_instance(root, device_instance);
 	if (!device) {
 		complete(instance, USP_ERR_COMMAND_FAILURE, 'Device not found', null);
 		return;
@@ -1136,8 +1172,7 @@ function set_sta_steering_state_handler(input, instance, complete, instances, co
 	}
 
 	let device_instance = instances[0];
-	let devices = topology_devices_get(root);
-	let device = ubbf.get_by_instance(devices, device_instance);
+	let device = device_by_instance(root, device_instance);
 	if (!device) {
 		complete(instance, USP_ERR_COMMAND_FAILURE, 'Device not found', null);
 		return;
@@ -1173,8 +1208,7 @@ function refresh_ap_metrics_handler(input, instance, complete, instances, comman
 	}
 
 	let device_instance = instances[0];
-	let devices = topology_devices_get(root);
-	let device = ubbf.get_by_instance(devices, device_instance);
+	let device = device_by_instance(root, device_instance);
 	if (!device) {
 		complete(instance, USP_ERR_COMMAND_FAILURE, 'Device not found', null);
 		return;
@@ -1227,8 +1261,7 @@ function channel_selection_request_handler(input, instance, complete, instances,
 	let device_instance = instances[0];
 	let radio_instance = instances[1];
 
-	let devices = topology_devices_get(root);
-	let device = ubbf.get_by_instance(devices, device_instance);
+	let device = device_by_instance(root, device_instance);
 	if (!device) {
 		complete(instance, USP_ERR_COMMAND_FAILURE, 'Device not found', null);
 		return;
@@ -1296,8 +1329,7 @@ function client_steer_handler(input, instance, complete, instances, command_key,
 	let bss_instance = instances[2];
 	let sta_instance = instances[3];
 
-	let devices = topology_devices_get(root);
-	let device = ubbf.get_by_instance(devices, device_instance);
+	let device = device_by_instance(root, device_instance);
 	if (!device) {
 		complete(instance, USP_ERR_COMMAND_FAILURE, 'Device not found', null);
 		return;
@@ -1310,8 +1342,7 @@ function client_steer_handler(input, instance, complete, instances, command_key,
 		return;
 	}
 
-	let bss_list = radio.bss ?? [];
-	let bss = ubbf.get_by_instance(bss_list, bss_instance);
+	let bss = bss_by_instance(radio, bss_instance);
 	if (!bss) {
 		complete(instance, USP_ERR_COMMAND_FAILURE, 'BSS not found', null);
 		return;
@@ -1323,8 +1354,7 @@ function client_steer_handler(input, instance, complete, instances, command_key,
 		return;
 	}
 
-	let sta_list = bss.associated_clients ?? [];
-	let sta = ubbf.get_by_instance(sta_list, sta_instance);
+	let sta = sta_by_instance(bss, sta_instance);
 	if (!sta) {
 		complete(instance, USP_ERR_COMMAND_FAILURE, 'STA not found', null);
 		return;
@@ -1395,8 +1425,7 @@ function set_spatial_reuse_handler(input, instance, complete, instances, command
 	let device_instance = instances[0];
 	let radio_instance = instances[1];
 
-	let devices = topology_devices_get(root);
-	let device = ubbf.get_by_instance(devices, device_instance);
+	let device = device_by_instance(root, device_instance);
 	if (!device) {
 		complete(instance, USP_ERR_COMMAND_FAILURE, 'Device not found', null);
 		return;
@@ -1472,8 +1501,7 @@ function set_tx_power_limit_handler(input, instance, complete, instances, comman
 	let device_instance = instances[0];
 	let radio_instance = instances[1];
 
-	let devices = topology_devices_get(root);
-	let device = ubbf.get_by_instance(devices, device_instance);
+	let device = device_by_instance(root, device_instance);
 	if (!device) {
 		complete(instance, USP_ERR_COMMAND_FAILURE, 'Device not found', null);
 		return;
@@ -1545,8 +1573,7 @@ function set_anticipated_channel_preference_handler(input, instance, complete, i
 	}
 
 	let device_instance = instances[0];
-	let devices = topology_devices_get(root);
-	let device = ubbf.get_by_instance(devices, device_instance);
+	let device = device_by_instance(root, device_instance);
 	if (!device) {
 		complete(instance, USP_ERR_COMMAND_FAILURE, 'Device not found', null);
 		return;
@@ -1593,8 +1620,7 @@ function set_qm_descriptors_handler(input, instance, complete, instances, comman
 	let radio_instance = instances[1];
 	let bss_instance = instances[2];
 
-	let devices = topology_devices_get(root);
-	let device = ubbf.get_by_instance(devices, device_instance);
+	let device = device_by_instance(root, device_instance);
 	if (!device) {
 		complete(instance, USP_ERR_COMMAND_FAILURE, 'Device not found', null);
 		return;
@@ -1613,8 +1639,7 @@ function set_qm_descriptors_handler(input, instance, complete, instances, comman
 		return;
 	}
 
-	let bss_list = radio.bss ?? [];
-	let bss = ubbf.get_by_instance(bss_list, bss_instance);
+	let bss = bss_by_instance(radio, bss_instance);
 	if (!bss) {
 		complete(instance, USP_ERR_COMMAND_FAILURE, 'BSS not found', null);
 		return;
@@ -1685,8 +1710,7 @@ function set_eht_operations_handler(input, instance, complete, instances, comman
 	let radio_instance = instances[1];
 	let bss_instance = instances[2];
 
-	let devices = topology_devices_get(root);
-	let device = ubbf.get_by_instance(devices, device_instance);
+	let device = device_by_instance(root, device_instance);
 	if (!device) {
 		complete(instance, USP_ERR_COMMAND_FAILURE, 'Device not found', null);
 		return;
@@ -1707,8 +1731,7 @@ function set_eht_operations_handler(input, instance, complete, instances, comman
 
 	let ruid = radio.radio_unique_identifier;
 
-	let bss_list = radio.bss ?? [];
-	let bss = ubbf.get_by_instance(bss_list, bss_instance);
+	let bss = bss_by_instance(radio, bss_instance);
 	if (!bss) {
 		complete(instance, USP_ERR_COMMAND_FAILURE, 'BSS not found', null);
 		return;
@@ -1753,8 +1776,7 @@ function radio_enable_handler(input, instance, complete, instances, command_key,
 	let device_instance = instances[0];
 	let radio_instance = instances[1];
 
-	let devices = topology_devices_get(root);
-	let device = ubbf.get_by_instance(devices, device_instance);
+	let device = device_by_instance(root, device_instance);
 	if (!device) {
 		complete(instance, USP_ERR_COMMAND_FAILURE, 'Device not found', null);
 		return;
@@ -1897,5 +1919,6 @@ const dataelements_operations = {
 for (let path, entry in dataelements_operations)
 	operations[path] = entry;
 
-em.set_topology_devices_get = set_topology_devices_get;
+em.set_device_by_instance = set_device_by_instance;
 em.ap_by_ssid_ref_find = ap_by_ssid_ref_find;
+em.easymesh_ssid_rows = easymesh_ssid_rows;

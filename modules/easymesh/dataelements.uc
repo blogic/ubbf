@@ -20,9 +20,16 @@ const radio_band_priority = wifi_dataelements.radio_band_priority;
 const device_to_object = em.device_to_object;
 const al_index_map = em.al_index_map;
 const ap_by_ssid_ref_find = em.ap_by_ssid_ref_find;
+const easymesh_ssid_rows = em.easymesh_ssid_rows;
 const easymesh_model = em.easymesh_model;
+const instance_numbers = ubbf_module.utils['instance-map'].instance_numbers;
 
 const ubus = require('ubus');
+
+// The instance map keeps each device, by its AL MAC, on its number, so the
+// stored rows of a device (DisAllowedOpClassChannels) stay with it when
+// the topology lists the devices in another order.
+const DEVICE_TABLE = 'Device.WiFi.DataElements.Network.Device';
 
 /**
  * Gets list of devices from EasyMesh topology or local device.
@@ -41,7 +48,33 @@ function devices_get(root) {
 	return topology_devices_get();
 }
 
-em.set_topology_devices_get(devices_get);
+/**
+ * Numbers the devices by their AL MAC.
+ *
+ * @param {object} root - Root configuration object
+ * @returns {object} Instance number to device
+ */
+function devices_numbered(root) {
+	let devices = devices_get(root);
+	let numbers = instance_numbers(DEVICE_TABLE, map(devices, (d) => d.al_address));
+	let rows = {};
+	for (let d in devices)
+		rows[sprintf('%d', numbers[d.al_address])] = d;
+	return rows;
+}
+
+/**
+ * Returns the device with an instance number.
+ *
+ * @param {object} root - Root configuration object
+ * @param {*} instance - Instance number of Network.Device
+ * @returns {object|null} Device, null when no device has the number
+ */
+function device_by_instance(root, instance) {
+	return devices_numbered(root)[sprintf('%d', +instance)];
+}
+
+em.set_device_by_instance(device_by_instance);
 
 /**
  * Fetches event data buffers from bbf-device.
@@ -205,7 +238,7 @@ function device_get(ctx) {
 	let topology = is_easymesh ? ubus_topology_get() : null;
 	let colocated_agent_id = topology?.colocated_agent_id;
 
-	let devices = devices_get(ctx.root);
+	let devices = devices_numbered(ctx.root);
 
 	let steer_stats = controller_enabled ? steering_stats_get() : {};
 	let steer_history = controller_enabled ? steering_history_get() : {};
@@ -213,21 +246,19 @@ function device_get(ctx) {
 
 	if (ctx.instance == null) {
 		let result = {};
-		for (let i = 0; i < length(devices); i++) {
-			let device = devices[i];
+		for (let dev_inst, device in devices) {
 			let api_data = is_easymesh
 				? device_api_data_get(device.al_address, controller_enabled)
 				: local_api_data_get();
 			api_data.steering_stats = steer_stats;
 			api_data.steering_history = steer_history;
 			let is_controller = controller_enabled && device.al_address == colocated_agent_id;
-			let dev_inst = sprintf('%d', i + 1);
 			result[dev_inst] = device_to_object(device, api_data, is_controller, easymesh, devices_cfg?.[dev_inst], ieee1905_idx);
 		}
 		return result;
 	}
 
-	let device = ubbf.get_by_instance(devices, ctx.instance);
+	let device = devices[sprintf('%d', ctx.instance)];
 	if (!device)
 		return null;
 
@@ -433,33 +464,32 @@ function ssid_count_get(root) {
 }
 
 /**
- * Builds the ordered list of Network.SSID.{i} objects from the active
- * storage, selecting EasyMesh or non-EasyMesh source by enablement.
+ * Builds the Network.SSID.{i} objects from the active storage, selecting
+ * EasyMesh or non-EasyMesh source by enablement. An EasyMesh SSID keeps
+ * the number it got when it was added, a WiFi.SSID row its own number.
  *
  * @param {object} root - Root configuration object
- * @returns {array} Array of TR-181 formatted Network.SSID objects
+ * @returns {object} Instance number to TR-181 formatted Network.SSID object
  */
-function ssid_list_build(root) {
+function ssid_rows_build(root) {
 	let network = root.Device?.WiFi?.DataElements?.Network ?? {};
 	let controller_enabled = ubbf.to_bool(network.X_UBBF_EasyMesh?.Controller?.Enable);
 	let agent_enabled = ubbf.to_bool(network.X_UBBF_EasyMesh?.Agent?.Enable);
+	let rows = {};
 
 	if (controller_enabled) {
-		let ssids = root.EasyMesh?.SSIDs ?? [];
-		let result = [];
-		for (let entry in ssids)
-			push(result, easymesh_ssid_to_object(entry));
-		return result;
+		for (let n, entry in easymesh_ssid_rows(root.EasyMesh?.SSIDs))
+			rows[n] = easymesh_ssid_to_object(entry);
+		return rows;
 	}
 
 	if (agent_enabled)
-		return [];
+		return rows;
 
-	let result = [];
-	let wifi_ssids = root.Device?.WiFi?.SSID ?? {};
-	for (let inst, wifi_ssid in wifi_ssids)
-		push(result, wifi_ssid_to_object(root, inst, wifi_ssid));
-	return result;
+	for (let inst, wifi_ssid in root.Device?.WiFi?.SSID ?? {})
+		if (ubbf.is_instance_key(inst))
+			rows[inst] = wifi_ssid_to_object(root, inst, wifi_ssid);
+	return rows;
 }
 
 /**
@@ -469,12 +499,12 @@ function ssid_list_build(root) {
  * @returns {object|null} SSID entry or enumerated instances
  */
 function network_ssid_get(ctx) {
-	let ssid_list = ssid_list_build(ctx.root);
+	let rows = ssid_rows_build(ctx.root);
 
 	if (ctx.instance == null)
-		return ubbf.enumerate_instances(ssid_list, (e) => e);
+		return rows;
 
-	return ubbf.get_by_instance(ssid_list, ctx.instance);
+	return rows[sprintf('%d', ctx.instance)];
 }
 
 /**
@@ -584,8 +614,7 @@ function disallowed_opclass_channels_set(ctx) {
 	if (!device_inst || !radio_cfg)
 		return;
 
-	let topo_devices = devices_get(ctx.root);
-	let device = ubbf.get_by_instance(topo_devices, device_inst);
+	let device = device_by_instance(ctx.root, device_inst);
 	if (!device)
 		return;
 

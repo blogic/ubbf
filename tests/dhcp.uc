@@ -1,7 +1,9 @@
 // Host test of the StaticAddress states in utils/dhcp.uc
 // (Device.DHCPv4.Server.Pool.{i}.StaticAddress.{i}.Status). Run from the
-// repository root with the native module built for the host:
-//   ucode -L "$PWD/files/usr/share/ucode/*.uc" -L "<host build>/*.so" tests/dhcp.uc
+// repository root with the native module built for the host; tests/hosts/
+// holds a stand-in for udebug:
+//   ucode -L "$PWD/tests/hosts/*.uc" -L "$PWD/files/usr/share/ucode/*.uc" \
+//     -L "<host build>/*.so" tests/dhcp.uc
 'use strict';
 
 import { static_address_states } from 'ubbf.utils.dhcp';

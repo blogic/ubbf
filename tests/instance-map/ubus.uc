@@ -14,5 +14,6 @@ return {
 		if (method == 'optical_status')
 			return { Name: cages[args.name]?.netdev, Status: 'Up' };
 		return null;
-	}
+	},
+	error: () => 'Not found'
 };

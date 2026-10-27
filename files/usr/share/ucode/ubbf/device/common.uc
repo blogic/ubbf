@@ -4,6 +4,7 @@ import * as ubus from 'ubus';
 import * as ubbf from 'ubbf';
 import { readfile } from 'fs';
 import { log_warn } from 'ubbf.utils.logging';
+import { instance_ids } from 'ubbf.utils.instance-map';
 
 const DEFAULT_MAX_ENTRIES = 100;
 
@@ -36,18 +37,53 @@ export function storage_free_kib(path) {
 };
 
 /**
- * Normalises a parsed faults file into the { meta, faults } shape.
- * Older formats stored a bare array of faults.
+ * Normalises a parsed faults file into the { meta, faults } shape, with an
+ * id on each fault and the next id in meta.next_id. Older formats stored a
+ * bare array of faults.
  *
  * @param {*} parsed - Raw parsed JSON value
  * @returns {object} Object with meta and faults fields
  */
 export function faults_state_normalise(parsed) {
+	let state = { meta: {}, faults: [] };
 	if (type(parsed) == 'array')
-		return { meta: {}, faults: parsed };
-	if (type(parsed) == 'object')
-		return { meta: parsed.meta ?? {}, faults: parsed.faults ?? [] };
-	return { meta: {}, faults: [] };
+		state.faults = parsed;
+	else if (type(parsed) == 'object')
+		state = { meta: parsed.meta ?? {}, faults: parsed.faults ?? [] };
+
+	state.meta.next_id = instance_ids(state.faults, state.meta.next_id);
+	return state;
+};
+
+/**
+ * Finds the entry with an id in a record store.
+ *
+ * @param {array} entries - Entries with ids (instance_ids())
+ * @param {*} id - Instance number of the row
+ * @returns {object|null} The entry, null when none has the id
+ */
+export function entries_find(entries, id) {
+	for (let e in entries)
+		if (e?.id == id)
+			return e;
+	return null;
+};
+
+/**
+ * Removes the entry with an id from a record store.
+ *
+ * @param {array} entries - Entries with ids (instance_ids())
+ * @param {*} id - Instance number of the row
+ * @returns {boolean} True when an entry had the id
+ */
+export function entries_remove(entries, id) {
+	for (let i, e in entries) {
+		if (e?.id != id)
+			continue;
+		splice(entries, i, 1);
+		return true;
+	}
+	return false;
 };
 
 /**

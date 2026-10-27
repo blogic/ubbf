@@ -1,7 +1,8 @@
 // Host test of utils/instance-map.uc and the stable numbering of
 // Device.Optical, Cellular and USB tables (TR-369 R-ARC.8). The map
-// files live in /etc/ubbf and /tmp/ubbf, so run it in a private mount
-// namespace; tests/instance-map/ holds stand-ins for ubus and usb,
+// lives in /tmp/ubbf, and the test checks that /etc/ubbf holds none, so
+// run it in a private mount namespace; tests/instance-map/ holds
+// stand-ins for ubus and usb,
 // tests/hosts/ one for udebug:
 //   unshare -rm sh -c 'mount -t tmpfs none /etc/ubbf &&
 //     mount -t tmpfs none /tmp/ubbf && ucode -L "$PWD/tests/instance-map/*.uc" \
@@ -10,7 +11,11 @@
 'use strict';
 
 import * as fs from 'fs';
-import { instance_numbers, instance_key, instance_rows, instance_seed, instance_prune } from 'ubbf.utils.instance-map';
+import {
+	instance_numbers, instance_key, instance_rows, instance_prune, instance_next,
+	instance_table_known, instance_floor, instance_pins, instance_pins_load, instance_lookup,
+	instance_retire, instance_numbers_known, instance_map_readonly, instance_stack, instance_number
+} from 'ubbf.utils.instance-map';
 
 let pass = 0, fail = 0;
 
@@ -20,6 +25,15 @@ function check(name, got, expected) {
 	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
 }
 
+const MAP = '/tmp/ubbf/instance-map.json';
+
+function file_numbers(table) {
+	let numbers = {};
+	for (let key, entry in json(fs.readfile(MAP))[table]?.keys ?? {})
+		numbers[key] = entry.n;
+	return numbers;
+}
+
 check('first numbers follow the order', instance_numbers('T', [ 'a', 'b', 'c' ]), { a: 1, b: 2, c: 3 });
 check('a key keeps its number', instance_numbers('T', [ 'c', 'a' ]), { c: 3, a: 1 });
 check('a new key gets a new number', instance_numbers('T', [ 'd', 'a' ]), { d: 4, a: 1 });
@@ -27,17 +41,101 @@ check('a number is not reused', instance_numbers('T', [ 'b' ]), { b: 2 });
 check('key of a number', instance_key('T', [ 'a', 'd' ], 4), 'd');
 check('key of a number not present', instance_key('T', [ 'a' ], 4), null);
 check('rows by number', instance_rows('T', [ 'd', 'a' ], (k, n) => k), { '4': 'd', '1': 'a' });
-check('map persisted', json(fs.readfile('/etc/ubbf/instance-map.json')).T.keys, { a: 1, b: 2, c: 3, d: 4 });
-check('volatile map in /tmp', [ instance_numbers('H', [ 'x' ], true), !!fs.stat('/tmp/ubbf/instance-map.json') ],
-	[ { x: 1 }, true ]);
+check('map in /tmp only', [ file_numbers('T'), fs.stat('/etc/ubbf/instance-map.json') ],
+	[ { a: 1, b: 2, c: 3, d: 4 }, null ]);
 
 // Random session ids never come back: their keys go, the next number stays.
-instance_numbers('S', [ 's1', 's2' ], true);
-instance_prune('S', [ 's2' ], true);
-check('pruned key is gone', json(fs.readfile('/tmp/ubbf/instance-map.json')).S.keys, { s2: 2 });
-check('a pruned number is not reused', instance_numbers('S', [ 's2', 's3' ], true), { s2: 2, s3: 3 });
-instance_prune('none', [ 'a' ], true);
+instance_numbers('S', [ 's1', 's2' ]);
+instance_prune('S', [ 's2' ]);
+check('pruned key is gone', file_numbers('S'), { s2: 2 });
+check('a pruned number is not reused', instance_numbers('S', [ 's2', 's3' ]), { s2: 2, s3: 3 });
+instance_prune('none', [ 'a' ]);
 check('prune of an unknown table writes nothing', json(fs.readfile('/tmp/ubbf/instance-map.json')).none, null);
+
+// Rows that the CPE finds follow the stored rows, and an add takes a
+// number that no found row gets afterwards.
+check('floor of a stored table', instance_floor({ '1': {}, '3': {}, Alias: 'x' }), 4);
+check('floor of an empty table', instance_floor(null), 1);
+check('a found row follows the stored rows', instance_numbers('F', [ 'x' ], 4), { x: 4 });
+check('a known table', [ instance_table_known('F'), instance_table_known('G') ], [ true, false ]);
+check('an add takes the next number', instance_next('F', 4), 5);
+check('a found row after an add', instance_numbers('F', [ 'x', 'y' ], 4), { x: 4, y: 6 });
+check('an add above a higher floor', instance_next('F', 9), 9);
+
+// Stored rows keep their numbers and take the items they claim; the other
+// items follow the highest stored row in their order.
+let by_name = (row, item) => row.Name == item;
+let loose = (row, item) => row.Name == null;
+check('stack: stored rows take their items', instance_stack({ '1': { Name: 'b' }, '3': { Name: 'a' } }, [ 'a', 'b', 'c' ], by_name),
+	{ '1': 'b', '3': 'a', '4': 'c' });
+check('stack: a stored row without its item is absent', instance_stack({ '2': { Name: 'x' } }, [ 'a' ], by_name), { '3': 'a' });
+check('stack: a named item goes to its row before a loose row takes one',
+	instance_stack({ '1': {}, '2': { Name: 'a' } }, [ 'a', 'b' ], by_name, loose), { '2': 'a', '1': 'b' });
+check('stack: no stored rows', instance_stack(null, [ 'a', 'b' ], by_name), { '1': 'a', '2': 'b' });
+
+// Pins: config.json keeps the numbers of the mapped rows that it stores or
+// names; a reboot clears the map, and the pins give those numbers back.
+instance_numbers('Device.P.Row', [ 'k1', 'k2', 'k3' ]);
+instance_numbers('Device.P.Row.2.Sub', [ 's1' ]);
+let pconfig = { Device: {
+	P: { Row: { '2': { Enable: 'false' } } },
+	Q: { Ref: 'Device.P.Row.3.Name,Device.P.Row.2.Sub.1', Text: 'Device.P.Row.9' }
+} };
+check('pins of stored and named rows', instance_pins(pconfig),
+	{ 'Device.P.Row': { '2': 'k2', '3': 'k3' }, 'Device.P.Row.2.Sub': { '1': 's1' } });
+check('no pins without mapped rows', instance_pins({ Device: { Q: { Ref: 'Device.Z.1' } } }), {});
+
+// A table that the map does not hold stands for one after a reboot.
+instance_pins_load({ 'Device.R.Row': { '2': 'k2', '3': 'k3' } });
+check('a pinned key keeps its number after a reboot', instance_numbers('Device.R.Row', [ 'k3', 'k9' ]), { k3: 3, k9: 4 });
+check('a pinned key that is absent keeps its number reserved', instance_numbers('Device.R.Row', [ 'k2' ]), { k2: 2 });
+instance_pins_load({ 'Device.R.Row': { '4': 'k5' } });
+check('a pin yields to a key that holds its number', instance_numbers('Device.R.Row', [ 'k5' ]), { k5: 5 });
+instance_pins_load({ 'Device.R.Row': { '7': 'k3' } });
+check('a pin moves its key to the pinned number', instance_numbers('Device.R.Row', [ 'k3' ]), { k3: 7 });
+
+// A row gone for good keeps its number under a key no row has.
+instance_numbers('Device.B.Bundle', [ 'lab' ], 3);
+instance_retire('Device.B.Bundle', 'lab');
+check('a retired key gets a new number', instance_numbers('Device.B.Bundle', [ 'lab' ]), { lab: 4 });
+check('the retired number stays taken', instance_lookup('Device.B.Bundle', 3), '#3');
+
+// Another process only reads the numbers, and sees what the agent writes.
+check('known numbers only', instance_numbers_known('Device.B.Bundle', [ 'lab', 'new' ]), { lab: 4 });
+check('read-only numbering numbers nothing',
+	[ instance_map_readonly.instance_numbers('Device.B.Bundle', [ 'new' ]), instance_lookup('Device.B.Bundle', 5) ],
+	[ {}, null ]);
+let file = json(fs.readfile('/tmp/ubbf/instance-map.json'));
+file['Device.W.Row'] = { next: 3, keys: { w: { n: 2 } } };
+fs.writefile('/tmp/ubbf/instance-map.json', sprintf('%J', file));
+check('a write of another process is read', instance_lookup('Device.W.Row', 2), 'w');
+
+// A key that no read saw for a day leaves the map; a pinned or retired key
+// stays, and the next free number stays.
+let up = clock(true)[0];
+file = json(fs.readfile(MAP));
+file['Device.E.Row'] = { next: 5, keys: {
+	old: { n: 1, last_seen: up - 90000 },
+	pin: { n: 2, last_seen: up - 90000 },
+	recent: { n: 3, last_seen: up - 3600 },
+	'#4': { n: 4 }
+} };
+fs.writefile(MAP, sprintf('%J', file));
+fs.writefile('/etc/ubbf/config.json', sprintf('%J', { Device: {}, _instances: { 'Device.E.Row': { '2': 'pin' } } }));
+check('a lookup of one row removes no key', [ instance_number('Device.E.Row', 'new'), instance_lookup('Device.E.Row', 1) ], [ 5, 'old' ]);
+instance_numbers('Device.E.Row', [ 'new' ]);
+check('an absent key unseen for a day leaves the map',
+	map([ 1, 2, 3, 4 ], (n) => instance_lookup('Device.E.Row', n)), [ null, 'pin', 'recent', '#4' ]);
+check('its number is not given again', instance_numbers('Device.E.Row', [ 'new', 'old' ]), { new: 5, old: 6 });
+check('a pinned stale key counts as seen', json(fs.readfile(MAP))['Device.E.Row'].keys.pin.last_seen >= up, true);
+fs.unlink('/etc/ubbf/config.json');
+
+// After a reboot the first reader seeds the map from the pins of config.json.
+fs.writefile('/etc/ubbf/config.json', sprintf('%J', { Device: {}, _instances: { 'Device.C.Cert': { '4': 'file:/a.pem' } } }));
+fs.unlink('/tmp/ubbf/instance-map.json');
+check('the pins of config.json seed a missing map', instance_numbers_known('Device.C.Cert', [ 'file:/a.pem' ]), { 'file:/a.pem': 4 });
+check('the seeded map is written', file_numbers('Device.C.Cert'), { 'file:/a.pem': 4 });
+fs.unlink('/etc/ubbf/config.json');
 
 // Device.Optical.Interface: two optical cages, a setting on cage A, then
 // cage A loses its optical SFP.
@@ -45,7 +143,7 @@ const api = {
 	ubbf: require('ubbf'),
 	utils: {
 		cache: { call: (fn, ...args) => fn(...args) },
-		'instance-map': { instance_numbers, instance_key, instance_rows, instance_seed },
+		'instance-map': { instance_numbers, instance_key, instance_rows },
 		'dm-version': { dm_visible: () => true },
 		ethtool: { ethtool_properties_get: () => ({}) },
 		netdev_change: { last_change_get: () => '0' },
@@ -83,20 +181,29 @@ check('row 1 without its SFP is NotPresent', optical.get({ instance: 1, config: 
 global.usfpd_cages = { sfpA: { optical: true, netdev: 'ethA' }, sfpB: { optical: true, netdev: 'ethB' } };
 check('cage A back on instance 1', optical.get({ instance: 1, config: stored['1'], root }).Name, 'ethA');
 
-// Device.Cellular.Interface: a stored row names its modem by device path,
-// a second modem comes first in the dump, then the first modem leaves.
+// Device.Cellular.Interface: two modems in dump order, a setting on row 1,
+// then the first modem leaves; after a reboot the pin of row 1 keeps its
+// modem on row 1 although the dump lists it second.
 const capi = { ...api, model: {}, operations: {} };
 include('../modules/cellular/handler.uc', { ubbf_module: capi });
 const cellular = capi.model['Device.Cellular.Interface.{i}'];
 
-global.mm_modems = [ { generic: { device: '/sys/devB' } }, { generic: { device: '/sys/devA' } } ];
-let croot = { Device: { Cellular: { Interface: { '1': { X_UBBF_Device: '/sys/devA', Enable: 'false' } } } } };
+global.mm_modems = [ { generic: { device: '/sys/devA' } }, { generic: { device: '/sys/devB' } } ];
+let croot = { Device: { Cellular: { Interface: { '1': { Enable: 'false' } } } } };
 let crows = cellular.get({ root: croot });
-check('stored modem keeps its row', crows['1'].X_UBBF_Device, '/sys/devA');
-check('other modem gets a new number', crows['2'].X_UBBF_Device, '/sys/devB');
+check('first modems follow the dump order', [ crows['1'].X_UBBF_Device, crows['2'].X_UBBF_Device ], [ '/sys/devA', '/sys/devB' ]);
+check('row 1 has its setting', crows['1'].Enable, 'false');
 
 global.mm_modems = [ { generic: { device: '/sys/devB' } } ];
 check('a leaving modem does not shift the other', keys(cellular.get({ root: croot })), [ '2' ]);
+
+let cpins = instance_pins(croot);
+check('the stored row pins its modem', cpins['Device.Cellular.Interface'], { '1': '/sys/devA' });
+fs.unlink('/tmp/ubbf/instance-map.json');
+instance_pins_load(cpins);
+global.mm_modems = [ { generic: { device: '/sys/devB' } }, { generic: { device: '/sys/devA' } } ];
+crows = cellular.get({ root: croot });
+check('the pinned modem keeps row 1 after a reboot', [ crows['1'].X_UBBF_Device, crows['2'].X_UBBF_Device ], [ '/sys/devA', '/sys/devB' ]);
 
 // Device.USB: two devices, the first leaves, then another device takes its
 // port.

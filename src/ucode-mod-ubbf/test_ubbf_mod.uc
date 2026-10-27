@@ -477,6 +477,25 @@ assert_eq('dm.object_del: NumberOfEntries updated',
 	cfg3?.Device?.Test?.ItemNumberOfEntries, '1');
 dm2.trans_abort();
 
+/* A numberer gives the number of a table that shares its numbers with
+ * runtime rows: it gets the table path and one above the highest stored
+ * row, and a number that a stored row holds or null falls back to the
+ * lowest free one. */
+let numberer_args = [];
+dm2.trans_start();
+let numbered = dm2.object_add('Device.Test.Item', (table, floor) => {
+	push(numberer_args, [ table, floor ]);
+	return 7;
+});
+assert_eq('dm.object_add: numberer gives the number', numbered, 7);
+assert_eq('dm.object_add: numberer gets the table and the floor',
+	numberer_args, [ [ 'Device.Test.Item', 2 ] ]);
+assert_eq('dm.object_add: a number of a stored row falls back',
+	dm2.object_add('Device.Test.Item', () => 1), 2);
+assert_eq('dm.object_add: a null number falls back',
+	dm2.object_add('Device.Test.Item', () => null), 3);
+dm2.trans_abort();
+
 /* ---- runtime table counts on the parent ------------------------------- */
 
 /* Row.{i} is registered before its parent on purpose: the walk follows
@@ -1951,6 +1970,59 @@ if (rules_build_dir && length(ubbf.schema_tables_load(rules_build_dir + '/schema
 		dm_order.trans_abort();
 	}
 }
+
+/* ---- get context: instances of the path ------------------------------- */
+
+let seen_schema = { schema: { Seen: T_STRING }, defaults: {} };
+
+function seen_get(ctx) {
+	if (ctx.instance == null)
+		return { '7': { Seen: 'enumerated below ' + join('.', ctx.instances) } };
+	return { ...(ctx.config ?? {}), Seen: join('.', ctx.instances) };
+}
+
+let dm_inst = ubbf.create();
+dm_inst.register({
+	'Device.N': {},
+	'Device.N.Row.{i}': { schema: seen_schema, get: seen_get },
+	'Device.N.Row.{i}.Sub.{i}': { schema: seen_schema, get: seen_get },
+	'Device.N.Row.{i}.Live.{i}': { schema: seen_schema, get: seen_get }
+});
+dm_inst.load('/dev/null');
+dm_inst.set_config({ Device: { N: { Row: { '2': { Sub: { '3': {} } } } } } });
+dm_inst.runtime_reload();
+
+let inst_tree = dm_inst.get_subtree_with_state('Device.N');
+assert_eq('get context: instances of a row', inst_tree?.Row?.['2']?.Seen, '2');
+assert_eq('get context: instances of a row below a row', inst_tree?.Row?.['2']?.Sub?.['3']?.Seen, '2.3');
+assert_eq('get context: enumerate mode gets the instances of the parent row',
+	  inst_tree?.Row?.['2']?.Live?.['7']?.Seen, 'enumerated below 2');
+
+let inst_paths = { 'Device.N.Row.2.Sub.3.Seen': null };
+dm_inst.params_get(inst_paths);
+assert_eq('get context: instances for a single parameter', inst_paths['Device.N.Row.2.Sub.3.Seen'], '2.3');
+
+/* ---- writable_rows: a row added below a live row ---------------------- */
+
+let child_schema = { schema: { Alias: T_STRING, Enable: T_BOOL | W }, defaults: { Alias: '' } };
+
+let dm_child = ubbf.create();
+dm_child.register({
+	'Device.L': {},
+	'Device.L.Row.{i}': { schema: live_schema, get: live_row_get, set: () => 0,
+	                      runtime_instances: true, writable_rows: true },
+	'Device.L.Row.{i}.Child.{i}': { schema: child_schema }
+});
+dm_child.load('/dev/null');
+dm_child.set_config({ Device: { L: {} } });
+
+dm_child.trans_start();
+assert_eq('writable_rows: store one live row', dm_child.params_set({ 'Device.L.Row.1.Enable': 'true' }), 0);
+assert_eq('writable_rows: add below another live row, the table being stored',
+	  dm_child.object_add('Device.L.Row.2.Child'), 1);
+assert_eq('writable_rows: add below a row that is not live', dm_child.object_add('Device.L.Row.5.Child'), 0);
+assert_null('writable_rows: no phantom parent row', dm_child.config()?.Device?.L?.Row?.['5']);
+dm_child.trans_abort();
 
 /* ---- summary ---------------------------------------------------------- */
 

@@ -1,8 +1,14 @@
-// Host test of the users module handler (Device.Users, User.{i}). Run from
-// the repository root; tests/users/ holds a stand-in for the native users
-// module:
-//   ucode -L "$PWD/tests/users/*.uc" tests/users.uc
+// Host test of the users module handler (Device.Users, User.{i}). The
+// instance map numbers the system rows and lives in /tmp/ubbf, so run it in
+// a private mount namespace from the repository root, with the native
+// module built for the host; tests/users/ holds a stand-in for the native
+// users module, tests/hosts/ one for udebug:
+//   unshare -rm sh -c 'mount -t tmpfs none /tmp/ubbf && ucode \
+//     -L "$PWD/tests/users/*.uc" -L "$PWD/tests/hosts/*.uc" \
+//     -L "$PWD/files/usr/share/ucode" -L "<host build>/*.so" tests/users.uc'
 'use strict';
+
+import { instance_numbers, instance_lookup, instance_floor } from 'ubbf.utils.instance-map';
 
 let pass = 0, fail = 0;
 
@@ -17,7 +23,7 @@ let etc_avail_kib = 1024;
 
 const api = {
 	ubbf: { statvfs_info: () => ({ avail_kib: etc_avail_kib }), to_bool: (v) => v === true || v == 'true' || v == '1' },
-	utils: {},
+	utils: { 'instance-map': { instance_numbers, instance_lookup, instance_floor } },
 	schema: (k) => k,
 	on_commit: () => null,
 	on_precommit: (cb) => { precommit = cb; },
@@ -29,6 +35,7 @@ const api = {
 global.USP_ERR_INVALID_VALUE = 7012;
 global.USP_ERR_PARAM_READ_ONLY = 7013;
 global.USP_ERR_UNIQUE_KEY_CONFLICT = 7025;
+global.USP_ERR_OBJECT_NOT_DELETABLE = 7024;
 
 include('../modules/users/handler.uc', { ubbf_module: api });
 
@@ -36,12 +43,15 @@ const user = api.model['Device.Users.User.{i}'];
 const root = { Device: { Users: { User: { '1': { Username: 'alice' } } } } };
 
 let system = user.get({ root });
-check('system rows skip configured accounts', keys(system), [ '10000', '10002' ]);
-check('system account enabled', system['10000'].Enable, 'true');
-check('system account with a * hash is disabled', system['10002'].Enable, 'false');
-check('system HomeDirectory', system['10000'].HomeDirectory, 'file:///root');
-check('system Shell', system['10000'].Shell, 'Device.Users.SupportedShell.1');
-check('system row by instance', user.get({ root, instance: 10000 }).Username, 'root');
+check('system rows follow the configured rows, configured accounts skipped', keys(system), [ '2', '3' ]);
+check('system account enabled', system['2'].Enable, 'true');
+check('system account with a * hash is disabled', system['3'].Enable, 'false');
+check('system HomeDirectory', system['2'].HomeDirectory, 'file:///root');
+check('system Shell', system['2'].Shell, 'Device.Users.SupportedShell.1');
+check('system GroupParticipation names the system group', system['2'].GroupParticipation, 'Device.Users.Group.1');
+check('system row by instance', user.get({ root, instance: 2 }).Username, 'root');
+check('a system row is not deletable', user.del({ path: 'Device.Users.User.2', instance: 2 }), -7024);
+check('a configured row is deletable', user.del({ path: 'Device.Users.User.1', instance: 1 }), null);
 
 let alice = user.get({ root, config: { Username: 'alice' } });
 check('configured HomeDirectory from passwd', alice.HomeDirectory, 'file:///home/alice');

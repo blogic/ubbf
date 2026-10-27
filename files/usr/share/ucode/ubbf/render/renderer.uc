@@ -61,6 +61,7 @@ import {
 import * as ssh_keys from 'ubbf.utils.ssh_keys';
 import { dns_learned_row, DNS_RESOLV_AUTO, DNS_RESOLV_FILTERED } from 'ubbf.utils.dns';
 import { schedule_windows } from 'ubbf.utils.schedule';
+import { instance_map_readonly } from 'ubbf.utils.instance-map';
 
 /**
  * Generates UCI configuration from UBBF data model.
@@ -161,6 +162,7 @@ export function generate(config, logs, dry_run) {
 		dns_learned_row,
 		DNS_RESOLV_AUTO,
 		DNS_RESOLV_FILTERED,
+		instance_map_readonly,
 		schedule_windows: (refs, inline_rows) =>
 			schedule_windows(config, refs, inline_rows, schedules_installed),
 

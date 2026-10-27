@@ -20,7 +20,7 @@ const uloop = require('uloop');
 const schema = ubbf_module.schema;
 
 let certificates = {};
-include('../security/certificates.uc', { certificates });
+include('../security/certificates.uc', { certificates, instance_map });
 
 const CONFIG_PATH = '/etc/ubbf/config.json';
 
@@ -207,9 +207,9 @@ function sessions_numbered(row) {
 	for (let s in sessions)
 		by_id[s.id] = s;
 
-	instance_map.instance_prune(table, ids, true);
+	instance_map.instance_prune(table, ids);
 
-	return instance_map.instance_rows(table, ids, (id) => by_id[id], true);
+	return instance_map.instance_rows(table, ids, (id) => by_id[id]);
 }
 
 /**

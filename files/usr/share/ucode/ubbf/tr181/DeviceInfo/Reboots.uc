@@ -4,21 +4,24 @@ import * as fs from 'fs';
 import * as ubus from 'ubus';
 import { datetime_format } from 'ubbf.utils.helpers';
 import * as ubbf from 'ubbf';
+import { entries_find, json_state_load } from 'ubbf.device.common';
+import { instance_ids, instance_id_rows } from 'ubbf.utils.instance-map';
 
 const REBOOTS_PATH = '/etc/ubbf/reboots.json';
 const BOOT_CYCLE_PATH = '/tmp/ubbf/boot-cycle';
 
 /**
- * Loads the persisted reboot history list.
+ * Loads the persisted reboot history list as ubbf-device does, with the
+ * id of each entry, its instance number.
  *
  * @returns {array} Array of reboot entries, empty when the file is missing or invalid
  */
 function reboots_load() {
-	let data = fs.readfile(REBOOTS_PATH);
-	if (!data)
+	let reboots = json_state_load(REBOOTS_PATH, []);
+	if (type(reboots) != 'array')
 		return [];
-
-	return json(data) ?? [];
+	instance_ids(reboots);
+	return reboots;
 }
 
 /**
@@ -28,20 +31,19 @@ function reboots_load() {
  * @returns {string} Device.DeviceInfo.Reboots.Reboot.{i}, or empty without history
  */
 export function last_reboot_path() {
-	let count = length(reboots_load());
-	return count ? sprintf('Device.DeviceInfo.Reboots.Reboot.%d', count) : '';
+	let last = reboots_load()[-1];
+	return last ? sprintf('Device.DeviceInfo.Reboots.Reboot.%d', last.id) : '';
 };
 
 /**
  * Maps a stored reboot entry to TR-181 Reboot parameters.
  *
- * @param {object} entry - Reboot entry from the persisted store
- * @param {number} idx - Zero-based array index, used to derive a stable Alias
+ * @param {object} entry - Reboot entry from the persisted store, with its id
  * @returns {object} TR-181 formatted Reboot object
  */
-function reboot_to_object(entry, idx) {
+function reboot_to_object(entry) {
 	return {
-		Alias: sprintf('cpe-reboot-%d', idx + 1),
+		Alias: sprintf('cpe-reboot-%d', entry.id),
 		TimeStamp: datetime_format(entry.timestamp),
 		FirmwareUpdated: entry.firmware_updated ? 'true' : 'false',
 		Cause: entry.cause ?? '',
@@ -91,13 +93,13 @@ function reboot_get(ctx) {
 	let reboots = reboots_load();
 
 	if (ctx.instance == null)
-		return ubbf.enumerate_instances(reboots, reboot_to_object);
+		return instance_id_rows(reboots, reboot_to_object);
 
-	let entry = ubbf.get_by_instance(reboots, ctx.instance);
+	let entry = entries_find(reboots, ctx.instance);
 	if (!entry)
 		return null;
 
-	return reboot_to_object(entry, ctx.instance - 1);
+	return reboot_to_object(entry);
 }
 
 /**
@@ -114,7 +116,7 @@ function remove_handler(input, instance, complete, instances) {
 	}
 
 	let result = ubus.call({ object: 'bbf-device', method: 'reboots_remove',
-		data: { index: idx - 1 } });
+		data: { id: idx } });
 
 	if (result?.error) {
 		complete(instance, USP_ERR_COMMAND_FAILURE, result.error, {});

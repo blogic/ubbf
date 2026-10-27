@@ -73,20 +73,6 @@ function modem_keys(modems) {
 	return filter(map(modems, modem_key), (key) => key != '');
 }
 
-/**
- * Takes the instance numbers that stored rows give their modems, so a row
- * stays with the modem it was written for.
- *
- * @param {object} root - Configuration tree
- */
-function modem_numbers_seed(root) {
-	let numbers = {};
-	for (let inst, row in root?.Device?.Cellular?.Interface)
-		if (row?.X_UBBF_Device)
-			numbers[row.X_UBBF_Device] = inst;
-	instance_map.instance_seed(CELLULAR_TABLE, numbers);
-}
-
 function modem_by_instance(instance) {
 	let modems = modems_get();
 	let key = instance_map.instance_key(CELLULAR_TABLE, modem_keys(modems), instance);
@@ -274,8 +260,6 @@ function cellular_get(ctx) {
  * @returns {object|null} Enumerated rows, single row, or null
  */
 function interface_get(ctx) {
-	modem_numbers_seed(ctx.root);
-
 	if (ctx.instance == null) {
 		let modems = modems_get();
 		let stored_rows = ctx.root?.Device?.Cellular?.Interface ?? {};
@@ -295,7 +279,6 @@ function interface_get(ctx) {
  * @param {object} ctx - Set context with root and instance
  */
 function interface_set(ctx) {
-	modem_numbers_seed(ctx.root);
 	interface_stamp(ctx.root, ctx.instance);
 }
 

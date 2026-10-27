@@ -23,7 +23,11 @@ import {
 	hosts_state_get, host_active_track, hosts_state_flush, hosts_inactive_remove
 } from 'ubbf.utils.hosts';
 import { ifstats_get, ifstats_basic_get, ifstats_reset } from 'ubbf.utils.ifstats';
-import { instance_numbers, instance_key, instance_rows, instance_seed, instance_prune } from 'ubbf.utils.instance-map';
+import {
+	instance_numbers, instance_key, instance_rows, instance_prune, instance_floor,
+	instance_next, instance_table_known, instance_lookup, instance_items, instance_retire,
+	instance_pins, instance_pins_load
+} from 'ubbf.utils.instance-map';
 import { SUPPORTED_SFP_TYPES, sfp_type_resolve, sfp_allowed } from 'ubbf.utils.sfp';
 import { link_local_addresses_get } from 'ubbf.utils.ipv6';
 import { netifd_status_get } from 'ubbf.utils.netifd';
@@ -349,7 +353,10 @@ function module_api_build(name) {
 				hosts_state_get, host_active_track, hosts_state_flush, hosts_inactive_remove
 			},
 			ifstats: { ifstats_get, ifstats_basic_get, ifstats_reset },
-			'instance-map': { instance_numbers, instance_key, instance_rows, instance_seed, instance_prune },
+			'instance-map': {
+				instance_numbers, instance_key, instance_rows, instance_prune, instance_floor,
+				instance_lookup, instance_items, instance_retire
+			},
 			sfp: { SUPPORTED_SFP_TYPES, sfp_type_resolve, sfp_allowed },
 			ipv6: { link_local_addresses_get },
 			logging: { log_debug, log_info, log_notice, log_warn, log_err, log_exception },
@@ -844,6 +851,58 @@ function names_compute(data) {
 }
 
 /**
+ * Serialises a configuration with the `_instances` section, which pins the
+ * instance numbers of the runtime rows that it stores or names
+ * (`instance_pins()` in utils/instance-map.uc). The live tree does not
+ * hold the section.
+ *
+ * @param {object} config - Configuration tree
+ * @param {object} [pins] - Pins to write, else computed from the map
+ * @returns {string} The file content
+ */
+function config_content(config, pins) {
+	pins ??= instance_pins(config);
+	return sprintf('%.J\n', length(pins) ? { ...config, _instances: pins } : config);
+}
+
+/**
+ * Takes the `_instances` section out of a configuration and seeds the
+ * instance map with its pins.
+ *
+ * @param {object} config - Configuration tree, changed in place
+ * @returns {object|null} The pins, or null when the tree had none
+ */
+function config_pins_take(config) {
+	let pins = config?._instances;
+	if (pins == null)
+		return null;
+
+	delete config._instances;
+	instance_pins_load(pins);
+	return pins;
+}
+
+/**
+ * Loads config.json into the live tree and sets the digest of what was
+ * read, so that config_persist() writes again only when the content
+ * changes; a pin that no row needs any more counts as a change.
+ *
+ * @returns {boolean} True when the config was loaded
+ */
+function config_load() {
+	if (!dm.load(CONFIG_PATH))
+		return false;
+
+	let config = dm.config();
+	let pins = config_pins_take(config);
+	if (pins != null)
+		dm.runtime_reload();
+
+	dm.set_digest(digest.sha256(config_content(config, pins ?? {})));
+	return true;
+}
+
+/**
  * Serialises the current configuration to disk.
  *
  * Always writes the runtime cache at `RUNTIME_DIR/config.json`. Writes the
@@ -857,7 +916,7 @@ function names_compute(data) {
  */
 function config_persist() {
 	let config = dm.config();
-	let content = sprintf('%.J\n', config);
+	let content = config_content(config);
 	ubbf.write_file_atomic(RUNTIME_DIR + '/config.json', content, CONFIG_MODE);
 
 	let new_hash = digest.sha256(content);
@@ -928,14 +987,6 @@ export function trans_abort() {
 };
 
 /**
- * Makes the live tree the stored configuration again.
- */
-function config_stored_load() {
-	if (dm.load(CONFIG_PATH))
-		dm.set_digest(digest.sha256(sprintf('%.J\n', dm.config())));
-}
-
-/**
  * Undoes a commit whose apply failed, so that the controller's error holds:
  * the live tree and config.json go back to the configuration before the
  * transaction, and the abort hooks drop what the set handlers staged. The
@@ -951,7 +1002,7 @@ function commit_rollback(previous, persisted) {
 		log_err('transaction: restoring the config from before the transaction');
 		dm.set_config(previous);
 		if (config_persist() == null) {
-			config_stored_load();
+			config_load();
 			apply_pending = true;
 		}
 	}
@@ -1012,7 +1063,7 @@ export function trans_commit() {
 	// change would be gone after a restart.
 	if (persisted == null) {
 		log_err('transaction: commit not persisted, restoring the stored config');
-		config_stored_load();
+		config_load();
 		hooks_run(abort_hooks, 'abort hook');
 		return -1;
 	}
@@ -1054,6 +1105,7 @@ export function trans_commit() {
  */
 function config_replace(config) {
 	let before = order_snapshot(dm.config());
+	config_pins_take(config);
 	dm.set_config(config);
 
 	orders_compute(dm.config(), before);
@@ -1826,6 +1878,31 @@ function runtime_del(path) {
 }
 
 /**
+ * Gives the number of a row that a controller adds to a table whose
+ * runtime rows the instance map numbers, so that a row the CPE finds later
+ * never gets it.
+ *
+ * @param {string} table - Table path with the numbers of its parent rows
+ * @param {number} floor - One above the highest stored row
+ * @returns {number|null} The number, or null for a table the map does not
+ *                        number
+ */
+function add_number(table, floor) {
+	return instance_table_known(table) ? instance_next(table, floor) : null;
+}
+
+/**
+ * Adds an instance to a table of the configuration.
+ *
+ * @param {string} path - Object path of the table
+ * @returns {number} The new instance number, or 0 when the path is invalid
+ *                   or the table is full
+ */
+export function object_add(path) {
+	return dm.object_add(path, add_number);
+};
+
+/**
  * Deletes an instance: through the table handler's `del` hook when it takes
  * the row, else from the configuration.
  *
@@ -1914,7 +1991,7 @@ function operations_run(operations) {
 				result.success = false;
 				result.reason = 'invalid_path';
 			} else {
-				let instance = dm.object_add(op.path);
+				let instance = object_add(op.path);
 				if (!instance) {
 					result.success = false;
 					result.reason = 'max_instances';
@@ -2023,9 +2100,8 @@ export function config_write(job, done) {
  * @returns {boolean} True when the config was loaded
  */
 export function config_reload() {
-	if (!dm.load(CONFIG_PATH))
+	if (!config_load())
 		return false;
-	dm.set_digest(digest.sha256(sprintf('%.J\n', dm.config())));
 	commit_hooks_run();
 	return true;
 };
@@ -2070,13 +2146,12 @@ export function get_webui_data(path, role) {
 if (!stat(RUNTIME_DIR))
 	mkdir(RUNTIME_DIR);
 
-if (!dm.load(CONFIG_PATH))
+// config_load() sets the baseline over the canonical serialisation, matching
+// config_persist()'s comparison; hashing the raw file bytes instead makes
+// every load look changed and forces a persist + apply per DM load (one per
+// CWMP session).
+if (!config_load())
 	die('config.json is required');
-
-// Baseline over the canonical serialisation, matching config_persist()'s
-// comparison; hashing the raw file bytes instead makes every load look
-// changed and forces a persist + apply per DM load (one per CWMP session).
-dm.set_digest(digest.sha256(sprintf('%.J\n', dm.config())));
 
 /**
  * Builds a callbacks-only view of the data model for offline inspection.

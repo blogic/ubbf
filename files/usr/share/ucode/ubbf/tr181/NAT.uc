@@ -7,11 +7,12 @@ import { upstream_interface_ref, text_clamp } from 'ubbf.utils.helpers';
 import { netifd_status_get } from 'ubbf.utils.netifd';
 import { ipv6_prefix_rows } from 'ubbf.utils.ipv6';
 import { nptv6_setting_check, prefix6_parse, prefix6_contains } from 'ubbf.utils.nptv6';
+import { instance_items, instance_floor, instance_lookup } from 'ubbf.utils.instance-map';
 
-// UPnP mappings live in upnpd, not in the configuration. They appear as rows
-// numbered from this base so they never collide with persisted instances and
-// keep their number for the life of the daemon's lease table.
-const UPNP_INSTANCE_BASE = 10000;
+// UPnP mappings live in upnpd, not in the configuration. The instance map
+// numbers them by the mapping id of upnpd, which survives a restart of the
+// daemon and is never given again, after the stored rows.
+const PORT_MAPPING_TABLE = 'Device.NAT.PortMapping';
 
 /**
  * Get handler for Device.NAT.
@@ -70,8 +71,8 @@ function upnp_mapping_to_object(m, iface_ref) {
  * Get handler for Device.NAT.PortMapping.{i}.
  *
  * Persisted rows come back with their configuration; rows without
- * configuration are the UPnP mappings, keyed from UPNP_INSTANCE_BASE by
- * the daemon's mapping id.
+ * configuration are the UPnP mappings, numbered by the instance map after
+ * the stored rows.
  *
  * @param {object} ctx - Handler context
  * @returns {object|null} One instance, or the UPnP rows in enumerate mode
@@ -86,23 +87,19 @@ function port_mapping_get(ctx) {
 		};
 	}
 
-	let mappings = cache.call(upnp_mappings_fetch);
+	let mappings = instance_items(PORT_MAPPING_TABLE, cache.call(upnp_mappings_fetch),
+		(m) => sprintf('%d', m.id), instance_floor(ctx.root?.Device?.NAT?.PortMapping));
 	let iface_ref = upstream_interface_ref(ctx.root);
 
 	if (ctx.instance) {
-		let wanted = ctx.instance - UPNP_INSTANCE_BASE;
-
-		for (let m in mappings)
-			if (m.id == wanted)
-				return upnp_mapping_to_object(m, iface_ref);
-
-		return null;
+		let m = mappings[sprintf('%d', ctx.instance)];
+		return m ? upnp_mapping_to_object(m, iface_ref) : null;
 	}
 
 	let rows = {};
 
-	for (let m in mappings)
-		rows[sprintf('%d', UPNP_INSTANCE_BASE + m.id)] = upnp_mapping_to_object(m, iface_ref);
+	for (let n, m in mappings)
+		rows[n] = upnp_mapping_to_object(m, iface_ref);
 
 	return rows;
 }
@@ -115,13 +112,14 @@ function port_mapping_get(ctx) {
  * @returns {boolean} True when the row was a UPnP mapping and is gone
  */
 function port_mapping_del(ctx) {
-	if (ctx.instance < UPNP_INSTANCE_BASE)
+	let id = instance_lookup(PORT_MAPPING_TABLE, ctx.instance);
+	if (id == null)
 		return false;
 
 	let res = ubus.call({
 		object: 'upnpd',
 		method: 'delete_mapping',
-		data: { id: ctx.instance - UPNP_INSTANCE_BASE }
+		data: { id: +id }
 	});
 
 	cache.invalidate(upnp_mappings_fetch);

@@ -2,18 +2,21 @@
 // CABundle.{i}.Delete() clear the references to the deleted row in the
 // stored configuration (TR-181: "If the referenced object is deleted, the
 // parameter value MUST be set to an empty string"). It needs the real
-// openssl module, not the stand-in of tests/render, and writes below /etc.
-// Run from the repository root; <host build> holds ubbf.so and openssl.so:
+// openssl module, not the stand-in of tests/render, and writes below /etc
+// and /tmp/ubbf (the instance map). Run from the repository root; <host
+// build> holds ubbf.so and openssl.so, tests/hosts/ a stand-in for udebug:
 //   unshare -rm sh -e -c 'repo=$PWD; mount -t tmpfs none /usr/share;
 //     mkdir -p /usr/share/ucode/ubbf/modules;
 //     for e in "$repo"/files/usr/share/ucode/ubbf/*; do ln -s "$e" /usr/share/ucode/ubbf/; done;
 //     ln -s "$repo/modules/security" /usr/share/ucode/ubbf/modules/;
-//     mount -t tmpfs none /etc; mount -t tmpfs none /run;
-//     exec ucode -L /usr/share/ucode -L "$1/*.so" "$repo/tests/security-refs.uc"' sh <host build>
+//     mount -t tmpfs none /etc; mount -t tmpfs none /run; mount -t tmpfs none /tmp/ubbf;
+//     exec ucode -L "$repo/tests/hosts/*.uc" -L /usr/share/ucode -L "$1/*.so" \
+//       "$repo/tests/security-refs.uc"' sh <host build>
 'use strict';
 
 import * as fs from 'fs';
 import * as ubbf from 'ubbf';
+import * as instance_map from 'ubbf.utils.instance-map';
 
 let pass = 0, fail = 0;
 
@@ -37,7 +40,8 @@ const api = {
 	ubbf,
 	utils: {
 		cache: { call: (fn, ...args) => fn(...args), invalidate: () => null },
-		logging: { log_warn: () => null }
+		logging: { log_warn: () => null },
+		'instance-map': instance_map
 	},
 	schema: (k) => k,
 	schema_defaults: () => ({}),

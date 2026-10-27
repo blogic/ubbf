@@ -1,6 +1,9 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 /* Copyright (C) 2026 John Crispin <john@phrozen.org> */
 
+#include <inttypes.h>
+#include <limits.h>
+
 #include "ubbf.h"
 
 /* params_set answers -1 for a path the model does not describe and this for
@@ -1264,7 +1267,9 @@ model_entry_cpe_maintained(uc_value_t *entry)
 
 static uc_value_t *call_get_handler(uc_vm_t *vm, uc_value_t *handler,
 				    int64_t instance, uc_value_t *config,
-				    uc_value_t *parent, uc_value_t *runtime);
+				    uc_value_t *parent, uc_value_t *runtime,
+				    uc_value_t *instances);
+static uc_value_t *instances_from_parts(uc_vm_t *vm, char **parts, int cnt);
 
 /**
  * Asks the get handler of a table whether it makes a row at run time.
@@ -1293,15 +1298,16 @@ runtime_row_live(uc_vm_t *vm, uc_value_t *row, uc_value_t *target,
 	}
 
 	result = call_get_handler(vm, get_fn, strtoll(parts[cnt - 1], NULL, 10),
-				  NULL, parent, target);
+				  NULL, parent, target,
+				  instances_from_parts(vm, parts, cnt));
 	ucv_put(result);
 
 	return result != NULL;
 }
 
 /**
- * Reports whether a write names a row of a `runtime_instances` table that
- * the stored configuration does not hold.
+ * Reports whether a write, or an add below a row, names a row of a
+ * `runtime_instances` table that the stored configuration does not hold.
  *
  * Such a table mixes stored rows with rows a get handler adds, and a
  * controller can write only the stored ones. The table container may be
@@ -1309,7 +1315,7 @@ runtime_row_live(uc_vm_t *vm, uc_value_t *row, uc_value_t *target,
  * alone; without this check the write would store the row, and a stored
  * row stops the enumeration of the runtime rows. A table that also has
  * `writable_rows` takes a write into a row its get handler makes, which
- * the write then stores.
+ * the write then stores, and an add of a row below such a row.
  *
  * @param vm     ucode VM context
  * @param model  registered model object
@@ -1710,6 +1716,66 @@ pattern_path_build(char **parts, int cnt, char *out, size_t out_len)
 }
 
 /**
+ * Asks a numberer for the instance number of a new row.
+ *
+ * The numberer gets the table path, with the instance numbers that alias
+ * resolution put in place, and one above the highest stored row. A number
+ * that is not positive or that a stored row holds is not taken.
+ *
+ * @param vm         ucode VM context
+ * @param numberer   callable, or NULL
+ * @param parts      resolved segments of the table path
+ * @param cnt        number of segments
+ * @param container  stored table
+ * @return           the number, or 0 to fall back to find_next_inst()
+ */
+static int
+numbered_inst(uc_vm_t *vm, uc_value_t *numberer, char **parts, int cnt,
+	      uc_value_t *container)
+{
+	char path[512], key[16];
+	size_t off = 0;
+	int64_t top = 0, n = 0;
+	uc_value_t *path_val, *floor_val, *result;
+
+	if (!ucv_is_callable(numberer))
+		return 0;
+
+	for (int i = 0; i < cnt; i++) {
+		int len = snprintf(path + off, sizeof(path) - off, "%s%s",
+				   i ? "." : "", parts[i]);
+		if (len < 0 || (size_t)len >= sizeof(path) - off)
+			return 0;
+		off += len;
+	}
+
+	ucv_object_foreach(container, k, v) {
+		(void)v;
+		if (key_is_instance(k) && strtoll(k, NULL, 10) > top)
+			top = strtoll(k, NULL, 10);
+	}
+
+	path_val = ucv_string_new(path);
+	floor_val = ucv_int64_new(top + 1);
+	result = invoke_callback(vm, numberer, 2, path_val, floor_val);
+	ucv_put(path_val);
+	ucv_put(floor_val);
+
+	if (ucv_type(result) == UC_INTEGER)
+		n = ucv_int64_get(result);
+	ucv_put(result);
+
+	if (n < 1 || n > INT_MAX)
+		return 0;
+
+	snprintf(key, sizeof(key), "%" PRId64, n);
+	if (ucv_object_get(container, key, NULL))
+		return 0;
+
+	return (int)n;
+}
+
+/**
  * Adds a new instance to a TR-181 multi-instance container.
  *
  * Navigates (creating as needed) to the container, allocates the next
@@ -1718,8 +1784,13 @@ pattern_path_build(char **parts, int cnt, char *out, size_t out_len)
  * `<TableName>NumberOfEntries` field. The pattern path used for default
  * lookup is the supplied path with `.{i}` appended.
  *
+ * An optional numberer, `(table, floor) => number`, gives the number of a
+ * table whose runtime rows share the numbers with its stored rows; see
+ * numbered_inst(). Without one, or when it answers null, the number is the
+ * lowest one that no stored row holds.
+ *
  * @param vm     ucode VM context
- * @param nargs  number of arguments (1 expected: container path)
+ * @param nargs  number of arguments (container path, optional numberer)
  * @return       new instance number, or 0 when the path is invalid or
  *               the row limit of the table is reached
  */
@@ -1767,7 +1838,8 @@ uc_dm_object_add(uc_vm_t *vm, size_t nargs)
 		return ucv_int64_new(0);
 	}
 
-	if (path_instance_missing(NULL, target, parts, cnt)) {
+	if (path_instance_missing(model, target, parts, cnt) ||
+	    path_runtime_instance_absent(vm, model, target, parts, cnt)) {
 		fprintf(stderr, "ubbf.dm.object_add: rejecting %s, a parent instance does not exist\n",
 			path);
 		free(buf);
@@ -1854,7 +1926,9 @@ uc_dm_object_add(uc_vm_t *vm, size_t nargs)
 		return ucv_int64_new(0);
 	}
 
-	new_inst = (int)find_next_inst(container);
+	new_inst = numbered_inst(vm, uc_fn_arg(1), parts, cnt, container);
+	if (!new_inst)
+		new_inst = (int)find_next_inst(container);
 
 	/* apply schema defaults */
 	uc_value_t *new_obj = ucv_object_new(vm);
@@ -2235,27 +2309,54 @@ instance_matches_base_c(char **inst_parts, int inst_cnt,
 }
 
 /**
+ * Collects the instance numbers of a path, outermost first, for the
+ * `instances` member of a get context: a handler below a row learns from
+ * it which row it serves, as an operation handler does.
+ *
+ * @param vm     ucode VM context
+ * @param parts  path segments
+ * @param cnt    number of segments to scan
+ * @return       new array of integers
+ */
+static uc_value_t *
+instances_from_parts(uc_vm_t *vm, char **parts, int cnt)
+{
+	uc_value_t *arr = ucv_array_new(vm);
+
+	for (int i = 0; i < cnt; i++)
+		if (key_is_instance(parts[i]))
+			ucv_array_push(arr, ucv_int64_new(strtoll(parts[i], NULL, 10)));
+
+	return arr;
+}
+
+/**
  * Invokes a `get` handler with a freshly built context object.
  *
- * Constructs `{ instance, config, parent, root }` and discards any
- * non-object return so callers can rely on the result being either NULL
- * or a TR-181 object.
+ * Constructs `{ instance, instances, config, parent, root }` and discards
+ * any non-object return so callers can rely on the result being either
+ * NULL or a TR-181 object.
  *
- * @param vm       ucode VM context
- * @param handler  callable get handler
- * @param instance current instance number, or 0 if not applicable
- * @param config   per-instance config (may be NULL)
- * @param parent   parent-instance config (may be NULL)
- * @param runtime  runtime tree root
- * @return         handler result object, or NULL on failure
+ * @param vm        ucode VM context
+ * @param handler   callable get handler
+ * @param instance  current instance number, or 0 if not applicable
+ * @param config    per-instance config (may be NULL)
+ * @param parent    parent-instance config (may be NULL)
+ * @param runtime   runtime tree root
+ * @param instances instance numbers of the path from instances_from_parts(),
+ *                  owned by the context; in enumerate mode those of the
+ *                  parent rows (may be NULL)
+ * @return          handler result object, or NULL on failure
  */
 static uc_value_t *
 call_get_handler(uc_vm_t *vm, uc_value_t *handler, int64_t instance,
-		 uc_value_t *config, uc_value_t *parent, uc_value_t *runtime)
+		 uc_value_t *config, uc_value_t *parent, uc_value_t *runtime,
+		 uc_value_t *instances)
 {
 	uc_value_t *ctx = ucv_object_new(vm);
 
 	ucv_object_add(ctx, "instance", instance ? ucv_int64_new(instance) : NULL);
+	ucv_object_add(ctx, "instances", instances ? instances : ucv_array_new(vm));
 	ucv_object_add(ctx, "config", config ? ucv_get(config) : NULL);
 	ucv_object_add(ctx, "parent", parent ? ucv_get(parent) : NULL);
 	ucv_object_add(ctx, "root", runtime ? ucv_get(runtime) : NULL);
@@ -2891,7 +2992,9 @@ dispatch_subtree(uc_vm_t *vm, ubbf_dm_t *dm, const char *path,
 
 				a_result = call_get_handler(vm, ancestor.handler,
 							    ancestor.instance,
-							    a_merged, anc_parent, runtime);
+							    a_merged, anc_parent, runtime,
+							    instances_from_parts(vm, base_parts_arr,
+										 ancestor.pattern_len));
 				ucv_put(a_merged);
 
 				if (anc_cache && a_result)
@@ -3085,7 +3188,8 @@ dispatch_subtree(uc_vm_t *vm, ubbf_dm_t *dm, const char *path,
 				uc_value_t *result = NULL;
 				if (get_fn)
 					result = call_get_handler(vm, get_fn, inst_num,
-								  merged, parent_config, runtime);
+								  merged, parent_config, runtime,
+								  instances_from_parts(vm, ip_parts, ip_cnt));
 				if (has_flag)
 					status_overlay(vm, &result, merged);
 				ucv_put(merged);
@@ -3201,7 +3305,9 @@ dispatch_subtree(uc_vm_t *vm, ubbf_dm_t *dm, const char *path,
 				ucv_put(defs);
 
 				uc_value_t *result = call_get_handler(vm, get_fn, inst_num,
-								      merged, parent_config, runtime);
+								      merged, parent_config, runtime,
+								      instances_from_parts(vm, base_parts_arr,
+											   base_cnt));
 				if (has_flag)
 					status_overlay(vm, &result, merged);
 				ucv_put(merged);
@@ -3249,7 +3355,9 @@ dispatch_subtree(uc_vm_t *vm, ubbf_dm_t *dm, const char *path,
 					}
 
 					uc_value_t *result = call_get_handler(vm, get_fn, 0,
-									      NULL, parent_data, runtime);
+									      NULL, parent_data, runtime,
+									      instances_from_parts(vm, pp_parts,
+												   pp_cnt));
 					if (!result) {
 						free(pp_buf);
 						continue;
@@ -3279,7 +3387,7 @@ dispatch_subtree(uc_vm_t *vm, ubbf_dm_t *dm, const char *path,
 
 				if (i_count <= 1 && last_i >= 0) {
 					uc_value_t *result = call_get_handler(vm, get_fn, 0,
-									      NULL, NULL, runtime);
+									      NULL, NULL, runtime, NULL);
 					if (result) {
 						int container_idx = last_i - 1;
 

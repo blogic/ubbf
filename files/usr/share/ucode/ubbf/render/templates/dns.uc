@@ -73,7 +73,7 @@ function render_config() {
 		let learned_disabled = false;
 
 		for (let srv in servers) {
-			if (dns_learned_row(srv['.instance'])) {
+			if (dns_learned_row(srv)) {
 				if (!ubbf_to_bool(srv.Enable))
 					learned_disabled = true;
 				continue;

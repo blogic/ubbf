@@ -10,7 +10,7 @@ import * as fs from 'fs';
 import * as uloop from 'uloop';
 import * as ubbf from 'ubbf';
 import { generate } from 'ubbf.render.renderer';
-import { instance_numbers, instance_key, instance_rows, instance_seed, instance_prune } from 'ubbf.utils.instance-map';
+import { instance_numbers, instance_key, instance_rows, instance_prune } from 'ubbf.utils.instance-map';
 
 const RUN_DIR = '/var/run/ubbf-ui';
 const WEBSESSIONS_DIR = `${RUN_DIR}/websessions`;
@@ -52,7 +52,7 @@ const api = {
 	utils: {
 		helpers: { datetime_format: (t) => t },
 		logging: { log_err: () => null, log_info: () => null, log_exception: (l, e) => warn(`${e}\n`) },
-		'instance-map': { instance_numbers, instance_key, instance_rows, instance_seed, instance_prune }
+		'instance-map': { instance_numbers, instance_key, instance_rows, instance_prune }
 	},
 	schema: (k) => k,
 	on_commit: (fn) => { commit_hook = fn; },

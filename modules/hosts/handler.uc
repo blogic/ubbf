@@ -102,26 +102,20 @@ function host_interface_find(mac, lookup) {
 /**
  * Gets the AssociatedDevice path for a WiFi client.
  *
- * The SSID instance from ubbf_ssid cannot be used as the AccessPoint
- * instance directly; the two only coincide while SSIDs and APs are created
- * in lockstep. Resolve the AP through the SSIDReference-derived map.
+ * hosts_build() resolves the AccessPoint of the station's SSID through
+ * SSIDReference and numbers the station on that AccessPoint.
  *
  * @param {string} mac - MAC address
  * @param {object} wifi_assocs - WiFi associations map
- * @param {object} ap_by_ssid - Map of SSID instance to AccessPoint instance
  * @returns {string} AssociatedDevice path or empty string
  */
-function associated_device_get(mac, wifi_assocs, ap_by_ssid) {
+function associated_device_get(mac, wifi_assocs) {
 	let wifi = wifi_assocs[mac];
-	if (!wifi)
-		return '';
-
-	let ap_inst = ap_by_ssid[sprintf('%d', wifi.ssid_instance)];
-	if (!ap_inst)
+	if (!wifi?.ap_instance || wifi.sta_number == null)
 		return '';
 
 	return sprintf('Device.WiFi.AccessPoint.%s.AssociatedDevice.%d',
-		ap_inst, wifi.sta_index);
+		wifi.ap_instance, wifi.sta_number);
 }
 
 /**
@@ -210,7 +204,7 @@ function host_converter_create(lookup, state) {
 			HostName: host_name,
 			Active: active ? 'true' : 'false',
 			ActiveLastChange: active_last_change,
-			AssociatedDevice: active ? associated_device_get(mac, lookup.wifi_assocs, lookup.ap_by_ssid) : '',
+			AssociatedDevice: active ? associated_device_get(mac, lookup.wifi_assocs) : '',
 			Layer1Interface: iface.layer1,
 			Layer3Interface: layer3.path,
 			InterfaceType: iface.type,

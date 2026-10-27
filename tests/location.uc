@@ -1,12 +1,16 @@
-// Host test of the location module handler. Run from the repository root
-// with the native module built for the host; tests/location/ holds
-// stand-ins for the ubus and uci modules, which the handler requires:
-//   ucode -L "$PWD/tests/location/*.uc" -L "$PWD/files/usr/share/ucode/*.uc" \
-//     -L "<host build>/*.so" tests/location.uc
+// Host test of the location module handler. The instance map numbers the
+// GPS row and lives in /tmp/ubbf, so run it in a private mount namespace
+// from the repository root, with the native module built for the host;
+// tests/location/ holds stand-ins for the ubus and uci modules, which the
+// handler requires, tests/hosts/ one for udebug:
+//   unshare -rm sh -c 'mount -t tmpfs none /tmp/ubbf && ucode \
+//     -L "$PWD/tests/location/*.uc" -L "$PWD/tests/hosts/*.uc" \
+//     -L "$PWD/files/usr/share/ucode" -L "<host build>/*.so" tests/location.uc'
 'use strict';
 
 import * as ubbf from 'ubbf';
 import { datetime_format } from 'ubbf.utils.helpers';
+import { instance_numbers, instance_lookup, instance_floor } from 'ubbf.utils.instance-map';
 
 let pass_count = 0;
 let fail_count = 0;
@@ -50,7 +54,8 @@ function handler_load(protocol) {
 			helpers: { datetime_format },
 			deviceinfo: { deviceinfo_get: () => identity },
 			logging: { log_warn: () => null },
-			protocol: { ACTIVE_PROTOCOL: protocol }
+			protocol: { ACTIVE_PROTOCOL: protocol },
+			'instance-map': { instance_numbers, instance_lookup, instance_floor }
 		},
 		schema: (k) => k,
 		model: {}
@@ -68,11 +73,13 @@ assert_eq('entry: runtime rows next to one stored row',
 
 global.GPS_REPLY = null;
 assert_eq('no daemon: no runtime row', entry.get({ instance: null, config: null }), {});
-assert_eq('no daemon: no GPS row', entry.get({ instance: 10000, config: null }), null);
+assert_eq('no daemon: no GPS row', entry.get({ instance: 2, config: null }), null);
 
+// The GPS row follows the stored row of the controller.
 global.GPS_REPLY = { signal: false };
-assert_eq('no fix: one GPS row without a position', entry.get({ instance: null, config: null }), {
-	'10000': {
+let lroot = { Device: { DeviceInfo: { Location: { '1': { Source: 'External' } } } } };
+assert_eq('no fix: one GPS row without a position, after the stored row', entry.get({ instance: null, config: null, root: lroot }), {
+	'2': {
 		Source: 'GPS',
 		AcquiredTime: '0001-01-01T00:00:00Z',
 		ExternalSource: '',
@@ -83,7 +90,7 @@ assert_eq('no fix: one GPS row without a position', entry.get({ instance: null, 
 assert_eq('no fix: another instance is not the GPS row', entry.get({ instance: 1, config: null }), null);
 
 global.GPS_REPLY = { age: 3, latitude: '52.520008', longitude: '13.404954', date: '2026-10-18', time: '12:35:19', valid: true };
-let row = entry.get({ instance: 10000, config: null });
+let row = entry.get({ instance: 2, config: null });
 assert_eq('fix: receiver date and time', row.AcquiredTime, '2026-10-18T12:35:19Z');
 assert_match('fix: entity', row.DataObject, /<presence [^>]* entity="mac:2005b6ff8618">/);
 assert_match('fix: device ID', row.DataObject, /<dm:deviceID>mac:2005b6ff8618<\/dm:deviceID>/);
@@ -91,17 +98,17 @@ assert_match('fix: WGS 84 point', row.DataObject, /<gml:pos>52.520008 13.404954<
 assert_match('fix: timestamp', row.DataObject, /<dm:timestamp>2026-10-18T12:35:19Z<\/dm:timestamp>/);
 
 global.GPS_REPLY = { age: 3, latitude: '52.5', longitude: '13.4', valid: false };
-row = entry.get({ instance: 10000, config: null });
+row = entry.get({ instance: 2, config: null });
 assert_eq('lost fix: last position kept', length(row.DataObject) > 0, true);
 let expected = [ datetime_format(time() - 4), datetime_format(time() - 3) ];
 assert_eq('no date: fix time from age', index(expected, row.AcquiredTime) >= 0, true);
 
 identity = { ManufacturerOUI: '2005B6', SerialNumber: 'a"b<c' };
-row = entry.get({ instance: 10000, config: null });
+row = entry.get({ instance: 2, config: null });
 assert_match('identity: escaped', row.DataObject, /entity="mac:2005b6a&quot;b&lt;c"/);
 
 identity = {};
-row = entry.get({ instance: 10000, config: null });
+row = entry.get({ instance: 2, config: null });
 assert_eq('no identity: no document', row.DataObject, '');
 identity = { ManufacturerOUI: '2005B6', SerialNumber: 'FF8618' };
 
@@ -129,7 +136,7 @@ entry.set({ param: 'Alias', value: 'x', instance: 1, config: stored });
 assert_eq('set: other parameter keeps the time', stored.AcquiredTime, 'unchanged');
 stored.AcquiredTime = before;
 
-assert_eq('del: GPS row refused', entry.del({ path: 'Device.DeviceInfo.Location.10000.', instance: 10000 }),
+assert_eq('del: GPS row refused', entry.del({ path: 'Device.DeviceInfo.Location.2.', instance: 2 }),
 	-USP_ERR_OBJECT_NOT_DELETABLE);
 assert_eq('del: stored row goes to the dispatcher', entry.del({ path: 'Device.DeviceInfo.Location.1.', instance: 1 }), null);
 

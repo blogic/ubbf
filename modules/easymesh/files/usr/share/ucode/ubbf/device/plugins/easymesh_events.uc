@@ -3,7 +3,7 @@
 import * as ubus from 'ubus';
 import * as ubbf from 'ubbf';
 import { dm_event_send } from 'ubbf.utils.events';
-import { topology_devices_get } from 'ubbf.utils.wifi-dataelements';
+import { instance_numbers_known } from 'ubbf.utils.instance-map';
 
 const EVENT_BUFFER_MAX = 64;
 
@@ -56,21 +56,17 @@ function backhaul_result_code_name(code) {
 }
 
 /**
- * Resolves an AL MAC to a DataElements Device instance number.
+ * Resolves an AL MAC to a DataElements Device instance number, as the
+ * agent numbered the device; only the agent gives numbers.
  *
  * @param {string} al_mac - AL MAC address to resolve
- * @returns {number|null} 1-based instance number, or null if not found
+ * @returns {number|null} Instance number, or null if the agent has none
  */
 function device_instance_resolve(al_mac) {
 	if (!al_mac)
 		return null;
 
-	let devices = topology_devices_get();
-	for (let i = 0; i < length(devices); i++)
-		if (devices[i].al_address == al_mac)
-			return i + 1;
-
-	return null;
+	return instance_numbers_known('Device.WiFi.DataElements.Network.Device', [ al_mac ])[al_mac];
 }
 
 /**

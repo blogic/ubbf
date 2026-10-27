@@ -303,7 +303,7 @@ function dns_relay_servers(config, forwardings, cfg) {
 
 	let rows = length(refs)
 		? map(refs, (ref) => ubbf_get(config, rtrim(ref, '.')))
-		: filter(forwardings, (fwd) => !dns_learned_row(fwd['.instance']));
+		: filter(forwardings, (fwd) => !dns_learned_row(fwd));
 
 	return uniq(filter(map(rows, (fwd) => dns_forwarder_server(config, fwd)), (s) => s != null));
 }

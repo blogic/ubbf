@@ -6,6 +6,7 @@ import * as ubbf from 'ubbf';
 import * as digest from 'digest';
 import { call as cache_call } from 'ubbf.utils.cache';
 import { log_exception } from 'ubbf.utils.logging';
+import { instance_number, instance_rows } from 'ubbf.utils.instance-map';
 
 /**
  * Fetches wireless status from network.wireless ubus (uncached).
@@ -127,6 +128,36 @@ function assoclist_fetch(ifname) {
  */
 export function assoclist_get(ifname) {
 	return cache_call(assoclist_fetch, ifname);
+};
+
+function stations_table(ap_instance) {
+	return sprintf('Device.WiFi.AccessPoint.%s.AssociatedDevice', ap_instance);
+}
+
+/**
+ * Numbers the stations of an access point by MAC, so that a station keeps
+ * its number while other stations come and go.
+ *
+ * @param {*} ap_instance - AccessPoint instance number
+ * @param {object} stations - assoclist_get() result, keyed by MAC
+ * @returns {object} Instance number to { mac, sta }
+ */
+export function stations_numbered(ap_instance, stations) {
+	let by_mac = {};
+	for (let mac, sta in stations ?? {})
+		by_mac[uc(mac)] = { mac, sta };
+	return instance_rows(stations_table(ap_instance), keys(by_mac), (mac) => by_mac[mac]);
+};
+
+/**
+ * Returns the AssociatedDevice instance number of a station.
+ *
+ * @param {*} ap_instance - AccessPoint instance number
+ * @param {string} mac - Station MAC address
+ * @returns {number} The instance number
+ */
+export function station_number(ap_instance, mac) {
+	return instance_number(stations_table(ap_instance), uc(mac));
 };
 
 const STANDARD_ORDER = ['g', 'n', 'ac', 'ax', 'be'];

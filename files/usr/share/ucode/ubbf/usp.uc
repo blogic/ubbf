@@ -4,7 +4,7 @@
 import {
 	dm, schema_build, trans_start, trans_commit, trans_abort,
 	run_sync_op, run_async_op, param_schema, object_writable,
-	object_delete, runtime_row_exists
+	object_add, object_delete, runtime_row_exists
 } from 'ubbf.datamodel';
 import { log_init, log_info } from 'ubbf.utils.logging';
 import 'ubbf.ubus-object';
@@ -108,7 +108,7 @@ usp_set_cb({
 			return -USP_ERR_OBJECT_NOT_CREATABLE;
 		// dm.object_add() answers 0 when the table is full; the USP core
 		// reads 0 as a created instance, so it must become an error here
-		let instance = dm.object_add(path);
+		let instance = object_add(path);
 		if (!instance)
 			return -USP_ERR_RESOURCES_EXCEEDED;
 		return instance;

@@ -160,7 +160,7 @@ function host_devices(host, usb) {
  * @returns {number|null} Port instance number or null
  */
 function port_instance_for_name(name, usb) {
-	return instance_map.instance_numbers(PORT_TABLE, port_keys(usb), true)[port_key(name)];
+	return instance_map.instance_numbers(PORT_TABLE, port_keys(usb))[port_key(name)];
 }
 
 /**
@@ -173,7 +173,7 @@ function port_instance_for_name(name, usb) {
 function host_device_instance_for_name(dev, usb) {
 	let host = sprintf('usb%d', device_bus_get(dev));
 	return instance_map.instance_numbers(host_device_table(host),
-		map(host_devices(host, usb), device_key), true)[device_key(dev)];
+		map(host_devices(host, usb), device_key))[device_key(dev)];
 }
 
 /**
@@ -184,7 +184,7 @@ function host_device_instance_for_name(dev, usb) {
  * @returns {number|null} Host instance number or null
  */
 function host_instance_for_name(host, usb) {
-	return instance_map.instance_numbers(HOST_TABLE, usb.hosts, true)[host];
+	return instance_map.instance_numbers(HOST_TABLE, usb.hosts)[host];
 }
 
 /**
@@ -208,7 +208,7 @@ function usb_net_interfaces_numbered() {
 	for (let iface in ifaces)
 		by_path[iface.path] = iface;
 
-	return instance_map.instance_rows(INTERFACE_TABLE, keys(by_path), (path) => by_path[path], true);
+	return instance_map.instance_rows(INTERFACE_TABLE, keys(by_path), (path) => by_path[path]);
 }
 
 function usb_net_interface_by_instance(instance) {
@@ -286,7 +286,7 @@ function device_state_get(info) {
  */
 function host_devices_build(host, usb) {
 	let devs = host_devices(host, usb);
-	let numbers = instance_map.instance_numbers(host_device_table(host), map(devs, device_key), true);
+	let numbers = instance_map.instance_numbers(host_device_table(host), map(devs, device_key));
 	let devices_data = {};
 
 	for (let dev in devs) {
@@ -390,7 +390,7 @@ function usbhosts_get(ctx) {
 		AllowAllDevices: ctx.config?.AllowAllDevices ?? 'true',
 		AllowedDeviceNumberOfEntries: sprintf('%d', ubbf.instance_count(ctx.config?.AllowedDevice)),
 		HostNumberOfEntries: sprintf('%d', length(usb.hosts)),
-		Host: instance_map.instance_rows(HOST_TABLE, usb.hosts, to_object, true)
+		Host: instance_map.instance_rows(HOST_TABLE, usb.hosts, to_object)
 	};
 }
 
@@ -405,9 +405,9 @@ function host_get(ctx) {
 	let to_object = (host) => host_to_object(host, usb);
 
 	if (ctx.instance == null)
-		return instance_map.instance_rows(HOST_TABLE, usb.hosts, to_object, true);
+		return instance_map.instance_rows(HOST_TABLE, usb.hosts, to_object);
 
-	let host = instance_map.instance_key(HOST_TABLE, usb.hosts, ctx.instance, true);
+	let host = instance_map.instance_key(HOST_TABLE, usb.hosts, ctx.instance);
 	if (!host)
 		return null;
 
@@ -430,7 +430,7 @@ function port_power_get(port_type, info) {
 
 function port_container_get(ctx) {
 	let usb = usb_lib.enumerate();
-	let numbers = instance_map.instance_numbers(PORT_TABLE, port_keys(usb), true);
+	let numbers = instance_map.instance_numbers(PORT_TABLE, port_keys(usb));
 	let port_instances = {};
 
 	for (let host in usb.hosts) {
@@ -472,7 +472,7 @@ function port_container_get(ctx) {
  * @returns {string|null} sysfs device name
  */
 function port_name_resolve(instance) {
-	let key = instance_map.instance_key(PORT_TABLE, port_keys(usb_lib.enumerate()), instance, true);
+	let key = instance_map.instance_key(PORT_TABLE, port_keys(usb_lib.enumerate()), instance);
 
 	return (key == null) ? null : split(key, '|')[0];
 }
@@ -647,7 +647,7 @@ function host_reset(input, command_key, instances) {
 	if (idx == null)
 		return null;
 
-	let host = instance_map.instance_key(HOST_TABLE, usb_lib.enumerate().hosts, idx, true);
+	let host = instance_map.instance_key(HOST_TABLE, usb_lib.enumerate().hosts, idx);
 	if (!host)
 		return null;
 

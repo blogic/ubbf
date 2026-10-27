@@ -12,14 +12,15 @@ const ubus = require('ubus');
 const uci = require('uci');
 
 const schema = ubbf_module.schema;
+const instance_map = utils['instance-map'];
 
 const GPS = 'gps';
 const CRS_WGS84_2D = 'urn:ogc:def:crs:EPSG::4326';
 const PROTOCOL = uc(utils.protocol.ACTIVE_PROTOCOL);
 
-// Stored rows are numbered from 1 by the dispatcher; the GPS row keeps a
-// number they never reach.
-const GPS_INSTANCE = 10000;
+// The instance map numbers the GPS row after the stored rows.
+const LOCATION_TABLE = 'Device.DeviceInfo.Location';
+const GPS_KEY = 'gps';
 
 let identity_warned;
 
@@ -206,10 +207,13 @@ function location_get(ctx) {
 	if (!info)
 		return ctx.instance ? null : {};
 
-	if (ctx.instance)
-		return (ctx.instance == GPS_INSTANCE) ? location_to_object(info) : null;
+	let n = instance_map.instance_numbers(LOCATION_TABLE, [ GPS_KEY ],
+		instance_map.instance_floor(ctx.root?.Device?.DeviceInfo?.Location))[GPS_KEY];
 
-	return { [GPS_INSTANCE]: location_to_object(info) };
+	if (ctx.instance)
+		return (ctx.instance == n) ? location_to_object(info) : null;
+
+	return { [n]: location_to_object(info) };
 }
 
 /**
@@ -236,7 +240,7 @@ function location_set(ctx) {
  * @returns {number|null} Refusal for the GPS row
  */
 function location_del(ctx) {
-	return (ctx.instance == GPS_INSTANCE) ? -USP_ERR_OBJECT_NOT_DELETABLE : null;
+	return (instance_map.instance_lookup(LOCATION_TABLE, ctx.instance) == GPS_KEY) ? -USP_ERR_OBJECT_NOT_DELETABLE : null;
 }
 
 model['Device.DeviceInfo.Location'] = {};

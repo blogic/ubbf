@@ -6,12 +6,12 @@ import * as ubbf from 'ubbf';
 import {
 	leases_parse,
 	ipv6_leases_get,
-	leases_for_pool,
-	ipv6_pool_clients,
+	pool_leases_numbered,
+	ipv6_pool_clients_numbered,
 	dhcpsnoop_dump_get
 } from 'ubbf.utils.dhcp';
 import { call as cache_call } from 'ubbf.utils.cache';
-import { wireless_status_get, assoclist_get } from 'ubbf.utils.wifi';
+import { wireless_status_get, assoclist_get, station_number } from 'ubbf.utils.wifi';
 import { instance_numbers, instance_rows } from 'ubbf.utils.instance-map';
 
 const HOSTS_TABLE = 'Device.Hosts.Host';
@@ -38,7 +38,7 @@ function leases_by_mac() {
  * Walks all radios and AP interfaces in network.wireless status, matching
  * iface.config.ubbf_ssid for the SSID instance number.
  *
- * @returns {object} Map of uppercase MAC to { ssid_instance, sta_index }
+ * @returns {object} Map of uppercase MAC to { ssid_instance }
  */
 function wifi_associations_get() {
 	let result = {};
@@ -60,14 +60,8 @@ function wifi_associations_get() {
 			if (!stations)
 				continue;
 
-			let sta_idx = 1;
-			for (let mac, sta in stations) {
-				result[uc(mac)] = {
-					ssid_instance: int(ssid_inst),
-					sta_index: sta_idx
-				};
-				sta_idx++;
-			}
+			for (let mac in stations)
+				result[uc(mac)] = { ssid_instance: int(ssid_inst) };
 		}
 	}
 
@@ -155,17 +149,17 @@ function netifd_interfaces_get() {
 }
 
 /**
- * Adds the path of the first pool client of each MAC to a lookup.
+ * Adds the path of the lowest-numbered pool client of each MAC to a lookup.
  *
  * @param {object} result - Map of upper-case MAC to client path, filled in
  * @param {string} base - Path of the pool, e.g. Device.DHCPv4.Server.Pool.1
- * @param {array} clients - Pool clients in instance order, each with `mac`
+ * @param {object} clients - Instance number to pool client, each with `mac`
  */
 function pool_clients_index(result, base, clients) {
-	for (let i = 0; i < length(clients); i++) {
-		let mac = clients[i].mac;
+	for (let n in sort(keys(clients), (a, b) => +a - +b)) {
+		let mac = clients[n].mac;
 		if (mac && !result[mac])
-			result[mac] = sprintf('%s.Client.%d', base, i + 1);
+			result[mac] = sprintf('%s.Client.%s', base, n);
 	}
 }
 
@@ -182,11 +176,15 @@ function pool_clients_index(result, base, clients) {
 function pool_client_by_mac(root) {
 	let v4 = {}, v6 = {}, result = {};
 
-	for (let inst, pool in root?.Device?.DHCPv4?.Server?.Pool ?? {})
-		pool_clients_index(v4, `Device.DHCPv4.Server.Pool.${inst}`, leases_for_pool(pool));
+	for (let inst, pool in root?.Device?.DHCPv4?.Server?.Pool ?? {}) {
+		let base = `Device.DHCPv4.Server.Pool.${inst}`;
+		pool_clients_index(v4, base, pool_leases_numbered(base, pool));
+	}
 
-	for (let inst, pool in root?.Device?.DHCPv6?.Server?.Pool ?? {})
-		pool_clients_index(v6, `Device.DHCPv6.Server.Pool.${inst}`, ipv6_pool_clients(root, pool));
+	for (let inst, pool in root?.Device?.DHCPv6?.Server?.Pool ?? {}) {
+		let base = `Device.DHCPv6.Server.Pool.${inst}`;
+		pool_clients_index(v6, base, ipv6_pool_clients_numbered(base, root, pool));
+	}
 
 	for (let mac in uniq([...keys(v4), ...keys(v6)]))
 		result[mac] = join(',', filter([v4[mac], v6[mac]], (p) => p != null));
@@ -228,7 +226,7 @@ let _root;
  * neighbours, IPv6 leases, bridge FDB, WiFi associations and netifd
  * interface state. Reads the config root from the module-level _root.
  *
- * @returns {object} { hosts, wifi_assocs, ap_ifnames, ap_by_ssid, fdb, config,
+ * @returns {object} { hosts, wifi_assocs, ap_ifnames, fdb, config,
  *                     netifd_ifaces, leases_by_mac, snoop_by_mac,
  *                     pool_client_paths }
  */
@@ -239,6 +237,11 @@ function hosts_build_internal() {
 	let wifi_assocs = wifi_associations_get();
 	let ap_ifnames = ap_ssid_by_ifname();
 	let ap_by_ssid = ap_by_ssid_instance(_root);
+	for (let mac, wifi in wifi_assocs) {
+		wifi.ap_instance = ap_by_ssid[sprintf('%d', wifi.ssid_instance)];
+		if (wifi.ap_instance)
+			wifi.sta_number = station_number(wifi.ap_instance, mac);
+	}
 	let fdb = cache_call(ubbf.bridge_fdb_parse);
 	let netifd_ifaces = netifd_interfaces_get();
 	let snoop = dhcpsnoop_dump_get();
@@ -250,7 +253,6 @@ function hosts_build_internal() {
 		hosts,
 		wifi_assocs,
 		ap_ifnames,
-		ap_by_ssid,
 		fdb,
 		config: _root,
 		netifd_ifaces,
@@ -474,7 +476,7 @@ export function hosts_numbered(root) {
 	for (let h in hosts)
 		by_mac[h.mac] = h;
 
-	return instance_rows(HOSTS_TABLE, map(hosts, (h) => h.mac), (mac) => by_mac[mac], true);
+	return instance_rows(HOSTS_TABLE, map(hosts, (h) => h.mac), (mac) => by_mac[mac]);
 };
 
 /**
@@ -587,7 +589,7 @@ export function host_path_by_mac(root, mac) {
 		return '';
 
 	mac = uc(mac);
-	let n = instance_numbers(HOSTS_TABLE, map(hosts_downstream_get(root), (h) => h.mac), true)[mac];
+	let n = instance_numbers(HOSTS_TABLE, map(hosts_downstream_get(root), (h) => h.mac))[mac];
 
 	return (n != null) ? `Device.Hosts.Host.${n}` : '';
 };

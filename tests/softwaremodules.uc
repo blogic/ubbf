@@ -16,7 +16,7 @@ import * as fs from 'fs';
 import * as uloop from 'uloop';
 import * as ubbf from 'ubbf';
 import { cmd_build, popen_async } from 'ubbf.utils.process';
-import { instance_numbers, instance_key, instance_rows, instance_seed, instance_prune } from 'ubbf.utils.instance-map';
+import { instance_numbers, instance_key, instance_rows, instance_prune } from 'ubbf.utils.instance-map';
 
 let pass = 0, fail = 0;
 
@@ -67,7 +67,7 @@ const api = {
 		helpers: { datetime_format: (t) => t ? sprintf('%d', t) : '0001-01-01T00:00:00Z' },
 		logging: { log_err: () => null, log_info: () => null, log_warn: () => null },
 		process: { cmd_build, popen_async },
-		'instance-map': { instance_numbers, instance_key, instance_rows, instance_seed, instance_prune }
+		'instance-map': { instance_numbers, instance_key, instance_rows, instance_prune }
 	},
 	schema: (k) => table ? `softwaremodules.${k}` : schemas[k],
 	schema_defaults: (k) => table ? ubbf.schema_defaults(`softwaremodules.${k}`) : schemas[k]?.defaults,

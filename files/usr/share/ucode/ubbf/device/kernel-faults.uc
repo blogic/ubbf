@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import { log_info } from 'ubbf.utils.logging';
 import {
 	firmware_version_get, faults_state_normalise, fault_entry_should_store,
-	json_state_load, json_state_save
+	entries_remove, json_state_load, json_state_save
 } from 'ubbf.device.common';
 
 const STORAGE_PATH = '/etc/ubbf';
@@ -47,6 +47,7 @@ export function record(is_upgrade) {
 			if (!fault_entry_should_store(state, STORAGE_PATH))
 				continue;
 			push(state.faults, {
+				id: state.meta.next_id++,
 				timestamp: ts,
 				reason: f.reason ?? 'Unknown kernel fault',
 				process_name: f.process_name ?? '',
@@ -71,15 +72,10 @@ function status_handler(req) {
 }
 
 function remove_handler(req) {
-	let idx = req.args?.index;
-	if (idx == null)
-		return { error: 'missing index' };
-
 	let state = faults_load();
-	if (idx < 0 || idx >= length(state.faults))
-		return { error: 'index out of range' };
+	if (!entries_remove(state.faults, req.args?.id))
+		return { error: 'no fault with this id' };
 
-	splice(state.faults, idx, 1);
 	faults_save(state);
 	return { success: true };
 }
@@ -104,7 +100,7 @@ export function ubus_methods() {
 		},
 		kernel_faults_remove: {
 			call: remove_handler,
-			args: { index: 0 }
+			args: { id: 0 }
 		},
 		kernel_faults_remove_all: {
 			call: remove_all_handler,

@@ -7,6 +7,7 @@ import {
 	wireless_status_get,
 	ssid_ifname_get,
 	assoclist_get,
+	stations_numbered,
 	iwinfo_update,
 	phy_for_band,
 	band_to_uci,
@@ -539,16 +540,11 @@ function access_point_get(ctx) {
 	if (!iwinfo.ifaces?.[ifname])
 		return access_point_result_build(ctx.config, status, {}, 0);
 
-	let stations = assoclist_get(ifname);
 	let assoc_devices = {};
-	let instance = 1;
+	for (let n, entry in stations_numbered(ctx.instance, assoclist_get(ifname)))
+		assoc_devices[n] = station_entry_to_object(entry);
 
-	for (let mac, sta in stations) {
-		assoc_devices[sprintf('%d', instance)] = station_to_object(mac, sta);
-		instance++;
-	}
-
-	return access_point_result_build(ctx.config, status, assoc_devices, length(keys(stations)));
+	return access_point_result_build(ctx.config, status, assoc_devices, length(assoc_devices));
 }
 
 /**
@@ -570,9 +566,8 @@ function stations_to_array(stations) {
 /**
  * Converts a station entry to TR-181 object format.
  *
- * Thunk that unpacks the {mac, sta} shape produced by stations_to_array
- * back into the (mac, sta) signature that station_to_object expects, so the
- * pair can be passed as an enumerate_instances() callback.
+ * Unpacks the {mac, sta} shape of stations_numbered() and stations_to_array()
+ * into the (mac, sta) signature that station_to_object expects.
  *
  * @param {object} entry - Entry with mac and sta properties
  * @returns {object} TR-181 AssociatedDevice object
@@ -617,13 +612,16 @@ function associated_device_get(ctx) {
 	if (!iwinfo.ifaces?.[ifname])
 		return ctx.instance == null ? {} : null;
 
-	let stations = assoclist_get(ifname);
-	let entries = stations_to_array(stations);
+	let entries = stations_numbered(ctx.instances?.[0], assoclist_get(ifname));
 
-	if (ctx.instance == null)
-		return ubbf.enumerate_instances(entries, station_entry_to_object);
+	if (ctx.instance == null) {
+		let rows = {};
+		for (let n, entry in entries)
+			rows[n] = station_entry_to_object(entry);
+		return rows;
+	}
 
-	let entry = ubbf.get_by_instance(entries, ctx.instance);
+	let entry = entries[sprintf('%d', ctx.instance)];
 	if (!entry)
 		return null;
 

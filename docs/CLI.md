@@ -383,14 +383,13 @@ Before the upgrade, the device writes a backup archive to `/tmp/ubbf-backup.tgz`
 
 - `/etc/usp/bbf.json`
 - `/etc/ubbf/config.json`
-- `/etc/ubbf/security-instances.json`
 - `/etc/ubbf/ca.pem`, `/etc/ubbf/ca.key`, `/etc/ubbf/cert.pem`, `/etc/ubbf/cert.key`
 - `/etc/ubbf/firmware.json`
 - `/etc/ubbf/process-faults.json`
 - `/etc/ubbf/reboots.json`
 - `/etc/ubbf/kernel-faults.json`
 - `/etc/ubbf/webui/credentials`
-- `/etc/ubbf/certs`, `/etc/ubbf/cabundles`, `/etc/ubbf/security-aliases.json`, `/etc/ubbf/security-cabundles.json`
+- `/etc/ubbf/certs`, `/etc/ubbf/cabundles`, `/etc/ubbf/security-aliases.json`
 - `/etc/config/obuspa`
 - `/etc/usp/acs-ca.pem`
 - `/etc/config/cwmp`

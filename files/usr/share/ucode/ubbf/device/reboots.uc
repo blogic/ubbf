@@ -3,8 +3,9 @@
 import * as fs from 'fs';
 import { log_info } from 'ubbf.utils.logging';
 import {
-	firmware_version_get, json_state_load, json_state_save
+	firmware_version_get, entries_remove, json_state_load, json_state_save
 } from 'ubbf.device.common';
+import { instance_ids } from 'ubbf.utils.instance-map';
 
 const REBOOTS_PATH = '/etc/ubbf/reboots.json';
 const REBOOTS_MAX_ENTRIES = 100;
@@ -12,7 +13,9 @@ const BOOT_CAUSE_PATH = '/tmp/ubbf/boot-cause.json';
 const FIRMWARE_UPDATED_PATH = '/tmp/ubbf/firmware-updated';
 
 function reboots_load() {
-	return json_state_load(REBOOTS_PATH, []) ?? [];
+	let reboots = json_state_load(REBOOTS_PATH, []) ?? [];
+	instance_ids(reboots);
+	return reboots;
 }
 
 function reboots_save(reboots) {
@@ -82,6 +85,7 @@ export function record(cause, is_upgrade) {
 	let cause_str = cause.cause ?? 'LocalReboot';
 
 	push(reboots, {
+		id: instance_ids(reboots),
 		timestamp: time(),
 		cause: cause_str,
 		reason: cause.reason ?? 'Unknown',
@@ -102,15 +106,10 @@ function status_handler(req) {
 }
 
 function remove_handler(req) {
-	let idx = req.args?.index;
-	if (idx == null)
-		return { error: 'missing index' };
-
 	let reboots = reboots_load();
-	if (idx < 0 || idx >= length(reboots))
-		return { error: 'index out of range' };
+	if (!entries_remove(reboots, req.args?.id))
+		return { error: 'no reboot with this id' };
 
-	splice(reboots, idx, 1);
 	reboots_save(reboots);
 	return { success: true };
 }
@@ -133,7 +132,7 @@ export function ubus_methods() {
 		},
 		reboots_remove: {
 			call: remove_handler,
-			args: { index: 0 }
+			args: { id: 0 }
 		},
 		reboots_remove_all: {
 			call: remove_all_handler,

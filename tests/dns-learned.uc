@@ -1,6 +1,6 @@
 // Host test of the learned rows of Device.DNS.Client.Server and
 // Device.DNS.Relay.Forwarding in tr181/DNS.uc: stable instance numbers
-// above DNS_LEARNED_BASE, a writable Enable, read-only DNSServer and
+// after the stored rows, a writable Enable, read-only DNSServer and
 // Interface, and the render of render/templates/dns.uc. The instance map
 // lives in /tmp/ubbf, so run it in a private mount namespace; tests/ip/
 // holds a stand-in for ubus (netifd status), tests/hosts/ one for udebug:
@@ -15,6 +15,7 @@ import * as dns from 'ubbf.utils.dns';
 import { dns_relay_plan } from 'ubbf.render.ubbf_helpers';
 import { model } from 'ubbf.tr181.DNS';
 import * as dns_filter from 'ubbf.device.dns-filter';
+import { instance_pins_load } from 'ubbf.utils.instance-map';
 
 let pass = 0, fail = 0;
 
@@ -60,64 +61,68 @@ global.netifd = {
 	wan6: { proto: 'dhcpv6', 'dns-server': [ '2001:db8:100::1' ] }
 };
 
-// The volatile map starts empty, as after a reboot.
+// The map starts empty, as after a reboot; the pin of config.json gives the
+// stored learned row its number back.
+instance_pins_load({ 'Device.DNS.Client.Server': { '5': 'DHCPv4|Device.IP.Interface.1|172.16.100.1' } });
 let stored = learned('false');
-let root = root_make({ '10005': stored });
+let root = root_make({ '5': stored });
 check('after a reboot a stored learned row keeps its number',
-	fields({ '10005': server.get({ instance: 10005, config: stored, root }) }),
-	{ '10005': 'DHCPv4 172.16.100.1 Device.IP.Interface.1 false Disabled' });
-check('a new learned server takes a number after the stored ones', keys(server.get({ root })), [ '10006' ]);
+	fields({ '5': server.get({ instance: 5, config: stored, root }) }),
+	{ '5': 'DHCPv4 172.16.100.1 Device.IP.Interface.1 false Disabled' });
+check('a new learned server takes a number after the stored ones', keys(server.get({ root })), [ '6' ]);
 
-check('the learned servers are numbered above the base', fields(server.get({ root: root_make(STATIC) })), {
-	'10005': 'DHCPv4 172.16.100.1 Device.IP.Interface.1 true Enabled',
-	'10006': 'DHCPv6 2001:db8:100::1 Device.IP.Interface.1 true Enabled'
+check('the learned servers keep their numbers next to a Static row', fields(server.get({ root: root_make(STATIC) })), {
+	'5': 'DHCPv4 172.16.100.1 Device.IP.Interface.1 true Enabled',
+	'6': 'DHCPv6 2001:db8:100::1 Device.IP.Interface.1 true Enabled'
 });
 
 global.netifd.wan['dns-server'] = [];
 check('a server keeps its number when another one goes', fields(server.get({ root: root_make(STATIC) })), {
-	'10006': 'DHCPv6 2001:db8:100::1 Device.IP.Interface.1 true Enabled'
+	'6': 'DHCPv6 2001:db8:100::1 Device.IP.Interface.1 true Enabled'
 });
 check('a stored learned row whose server is gone reads Disabled',
-	server.get({ instance: 10005, config: learned('true'), root: root_make({ '10005': learned('true') }) }).Status,
+	server.get({ instance: 5, config: learned('true'), root: root_make({ '5': learned('true') }) }).Status,
 	'Disabled');
 global.netifd.wan['dns-server'] = [ '172.16.100.1' ];
 
 let row = { Enable: 'false' };
-root = root_make({ ...STATIC, '10005': row });
+root = root_make({ ...STATIC, '5': row });
 check('a write of Enable into a learned row is taken',
-	server.set({ instance: 10005, param: 'Enable', value: 'false', config: row, root }), 0);
+	server.set({ instance: 5, param: 'Enable', value: 'false', config: row, root }), 0);
 check('the first write stores the key of the learned row', row, learned('false'));
 
 check('DNSServer of a learned row is read-only',
-	server.set({ instance: 10005, param: 'DNSServer', value: '192.0.2.1', config: row, root }),
+	server.set({ instance: 5, param: 'DNSServer', value: '192.0.2.1', config: row, root }),
 	-USP_ERR_PARAM_READ_ONLY);
 check('Interface of a learned row is read-only',
-	server.set({ instance: 10005, param: 'Interface', value: '', config: row, root }),
+	server.set({ instance: 5, param: 'Interface', value: '', config: row, root }),
 	-USP_ERR_PARAM_READ_ONLY);
 check('DNSServer of a Static row stays writable',
 	server.set({ instance: 1, param: 'DNSServer', value: '192.0.2.1', config: STATIC['1'], root }), 0);
 
-check('the enumeration leaves out a stored learned row', keys(server.get({ root })), [ '10006' ]);
+check('the enumeration leaves out a stored learned row', keys(server.get({ root })), [ '6' ]);
 check('the stored Enable applies over the learned one',
-	fields({ '10005': server.get({ instance: 10005, config: row, root }) }),
-	{ '10005': 'DHCPv4 172.16.100.1 Device.IP.Interface.1 false Disabled' });
+	fields({ '5': server.get({ instance: 5, config: row, root }) }),
+	{ '5': 'DHCPv4 172.16.100.1 Device.IP.Interface.1 false Disabled' });
 check('a Static row reads its stored values',
 	fields({ '1': server.get({ instance: 1, config: STATIC['1'], root }) }),
 	{ '1': 'Static 8.8.8.8  true Enabled' });
 
-check('the learned forwarders are numbered above the base', fields(forwarding.get({ root: root_make() })), {
-	'10001': 'DHCPv4 172.16.100.1 Device.IP.Interface.1 true Enabled',
-	'10002': 'DHCPv6 2001:db8:100::1 Device.IP.Interface.1 true Enabled'
+check('the learned forwarders without stored rows start at 1', fields(forwarding.get({ root: root_make() })), {
+	'1': 'DHCPv4 172.16.100.1 Device.IP.Interface.1 true Enabled',
+	'2': 'DHCPv6 2001:db8:100::1 Device.IP.Interface.1 true Enabled'
 });
 
+// A Static forwarder that a controller adds after them takes the next
+// number of the map, 3.
 const relay = model['Device.DNS.Relay'];
-const STATIC_FWD = { '1': { Enable: 'true', DNSServer: '192.0.2.53', Interface: '', Type: 'Static' } };
+const STATIC_FWD = { '3': { Enable: 'true', DNSServer: '192.0.2.53', Interface: '', Type: 'Static' } };
 const LEARNED_FWD = { Enable: 'false', Type: 'DHCPv4', Interface: 'Device.IP.Interface.1', DNSServer: '172.16.100.1' };
 
 check('ForwardNumberOfEntries counts the Static and the learned forwarders',
 	relay.get({ config: { Forwarding: STATIC_FWD }, root: root_make() }).ForwardNumberOfEntries, '3');
 check('a stored learned forwarder is counted once',
-	relay.get({ config: { Forwarding: { ...STATIC_FWD, '10001': LEARNED_FWD } }, root: root_make() }).ForwardNumberOfEntries,
+	relay.get({ config: { Forwarding: { ...STATIC_FWD, '1': LEARNED_FWD } }, root: root_make() }).ForwardNumberOfEntries,
 	'3');
 
 function render(servers, forwardings) {
@@ -142,15 +147,15 @@ function render(servers, forwardings) {
 check('without a disabled learned server dnsmasq reads resolv.conf.auto', render({}), [
 	`set dhcp.dns_localhost.resolvfile='${dns.DNS_RESOLV_AUTO}'`
 ]);
-check('a disabled learned server makes dnsmasq read the filtered copy', render({ '10005': learned('false') }), [
+check('a disabled learned server makes dnsmasq read the filtered copy', render({ '5': learned('false') }), [
 	`set dhcp.dns_localhost.resolvfile='${dns.DNS_RESOLV_FILTERED}'`,
 	'set dhcp.dns_localhost.localuse=1'
 ]);
-check('an enabled Static server replaces the learned ones', render({ ...STATIC, '10005': learned('false') }), [
+check('an enabled Static server replaces the learned ones', render({ ...STATIC, '5': learned('false') }), [
 	"add_list dhcp.dns_localhost.server='8.8.8.8'"
 ]);
 check('a stored learned forwarder is not a relay of its own', render({}, {
-	'10001': { Enable: 'true', Type: 'DHCPv4', Interface: 'Device.IP.Interface.1', DNSServer: '172.16.100.1' }
+	'1': { Enable: 'true', Type: 'DHCPv4', Interface: 'Device.IP.Interface.1', DNSServer: '172.16.100.1' }
 }), [
 	`set dhcp.dns_localhost.resolvfile='${dns.DNS_RESOLV_AUTO}'`
 ]);

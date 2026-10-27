@@ -13,7 +13,7 @@
 
 import * as fs from 'fs';
 import * as ubbf from 'ubbf';
-import { instance_numbers, instance_key, instance_rows, instance_seed, instance_prune } from 'ubbf.utils.instance-map';
+import { instance_numbers, instance_key, instance_rows, instance_prune } from 'ubbf.utils.instance-map';
 
 let pass = 0, fail = 0;
 
@@ -143,7 +143,7 @@ const api = {
 	utils: {
 		cache: { call: (fn, ...args) => fn(...args), invalidate: () => null },
 		logging: { log_err: () => null },
-		'instance-map': { instance_numbers, instance_key, instance_rows, instance_seed, instance_prune }
+		'instance-map': { instance_numbers, instance_key, instance_rows, instance_prune }
 	},
 	schema: (key) => key,
 	schema_defaults: (key) => schemas[key]?.defaults,

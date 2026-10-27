@@ -12,6 +12,7 @@ const sta_he_caps_from_frame_body = wifi_dataelements.sta_he_caps_from_frame_bod
 const ubus_topology_get = wifi_dataelements.ubus_topology_get;
 const radio_band_priority = wifi_dataelements.radio_band_priority;
 const client_query_get = wifi_dataelements.client_query_get;
+const instance_map = ubbf_module.utils['instance-map'];
 
 const wde_lib = require('wde');
 
@@ -644,6 +645,83 @@ function counter_format(val) {
  * @param {string} bssid - BSSID of the BSS
  * @returns {function} Factory function that converts STA data to TR-181 object
  */
+// The instance map keeps a BSS by its BSSID and a STA by its MAC on their
+// numbers, so an operation on BSS.{i} or STA.{i} reaches the row a read
+// showed. The scope of a list is its radio or BSS by identity, not by the
+// path numbers: no stored row or reference names these rows.
+function bss_table(ruid) {
+	return sprintf('Device.WiFi.DataElements.Network.Device.Radio.BSS/%s', ruid);
+}
+
+function sta_table(bssid) {
+	return sprintf('Device.WiFi.DataElements.Network.Device.Radio.BSS.STA/%s', bssid);
+}
+
+function bss_key(bss) {
+	return bss?.mac_address ?? '';
+}
+
+function sta_key(sta) {
+	return sta?.mac_address ?? sta?.mac ?? '';
+}
+
+/**
+ * Numbers the items of a list by their keys; an item without a key is
+ * left out.
+ *
+ * @param {string} table - Instance map scope
+ * @param {array} items - Items of the list
+ * @param {function} key_fn - Returns the key of an item
+ * @param {function} fn - Called with an item, returns its row
+ * @returns {object} Instance number to row
+ */
+function keyed_rows(table, items, key_fn, fn) {
+	let by_key = {};
+	for (let item in items ?? []) {
+		let key = key_fn(item);
+		if (key != '' && !by_key[key])
+			by_key[key] = item;
+	}
+	return instance_map.instance_rows(table, keys(by_key), (key) => fn(by_key[key]));
+}
+
+/**
+ * Returns the item of a list with an instance number.
+ *
+ * @param {string} table - Instance map scope
+ * @param {array} items - Items of the list
+ * @param {function} key_fn - Returns the key of an item
+ * @param {*} instance - Instance number
+ * @returns {object|null} The item, null when no item has the number
+ */
+function keyed_item(table, items, key_fn, instance) {
+	let present = filter(map(items ?? [], key_fn), (key) => key != '');
+	let key = instance_map.instance_key(table, present, instance);
+	return (key == null) ? null : filter(items, (item) => key_fn(item) == key)[0];
+}
+
+/**
+ * Returns the BSS of a radio with an instance number.
+ *
+ * @param {object} radio - Radio from ap_operational_bss
+ * @param {*} instance - Instance number of BSS.{i}
+ * @returns {object|null} The BSS
+ */
+function bss_by_instance(radio, instance) {
+	return keyed_item(bss_table(radio?.radio_unique_identifier ?? ''), radio?.bss, bss_key, instance);
+}
+
+/**
+ * Returns the associated STA of a BSS with an instance number.
+ *
+ * @param {object} bss - BSS from ap_operational_bss
+ * @param {*} instance - Instance number of STA.{i}
+ * @returns {object|null} The STA
+ */
+function sta_by_instance(bss, instance) {
+	return keyed_item(sta_table(bss?.mac_address), bss?.associated_clients, sta_key, instance);
+}
+
 function sta_to_object_factory(api_data, bssid) {
 	return function(sta) {
 		let sta_mac = sta.mac_address ?? sta.mac ?? "";
@@ -754,7 +832,8 @@ function bss_to_object_factory(api_data) {
 		let backhaul_config = backhaul_idx[bssid];
 		let assoc_status = assoc_status_idx[bssid];
 		let qm_descriptors = bss_qm_descriptors_filter(api_data?.qos_management_descriptors, bssid);
-		let sta_list = api_data?.associated_clients?.[bssid] ?? [];
+		let sta_rows = keyed_rows(sta_table(bssid), api_data?.associated_clients?.[bssid],
+			sta_key, sta_to_object_factory(api_data, bssid));
 		let bss_steering = api_data.steering_stats?.bss?.[bssid] ?? {};
 
 		// An agent encodes these counters in the units it declared in its
@@ -804,8 +883,8 @@ function bss_to_object_factory(api_data) {
 			BackhaulAKMsAllowed: bh_akms.akms,
 			BackhaulSuiteSelector: bh_akms.selector,
 			BasicDataTransmitRates: "0",
-			STANumberOfEntries: sprintf('%d', length(sta_list)),
-			STA: ubbf.enumerate_instances(sta_list, sta_to_object_factory(api_data, bssid)),
+			STANumberOfEntries: sprintf('%d', length(sta_rows)),
+			STA: sta_rows,
 			QMDescriptorNumberOfEntries: sprintf('%d', length(qm_descriptors)),
 			QMDescriptor: ubbf.enumerate_instances(qm_descriptors, (qm) => ({
 				BSSID: qm.bssid ?? "",
@@ -976,7 +1055,7 @@ function radio_to_object_factory(api_data, al_mac, easymesh, device_cfg) {
 	return function(radio_bss) {
 		radio_idx++;
 		let ruid = radio_bss.radio_unique_identifier ?? "";
-		let bss_list = radio_bss.bss ?? [];
+		let bss_rows = keyed_rows(bss_table(ruid), radio_bss.bss, bss_key, bss_to_object_factory(api_data));
 		let radio_survey = api_data?.survey?.radios?.[ruid] ?? {};
 		let raw_data = api_data?.capability?.radios?.[ruid] ?? {};
 		let radio_caps = raw_data.basic_capabilities ?? {};
@@ -1047,8 +1126,8 @@ function radio_to_object_factory(api_data, al_mac, easymesh, device_cfg) {
 				OperatingClass: sprintf('%d', sta._opclass ?? 0),
 				Channel: sprintf('%d', sta.channel ?? 0)
 			})),
-			BSSNumberOfEntries: sprintf('%d', length(bss_list)),
-			BSS: ubbf.enumerate_instances(bss_list, bss_to_object_factory(api_data)),
+			BSSNumberOfEntries: sprintf('%d', length(bss_rows)),
+			BSS: bss_rows,
 			ScanResultNumberOfEntries: length(scan_results) > 0 ? "1" : "0",
 			ScanResult: scan_results_to_object(scan_results),
 			DisAllowedOpClassChannelsNumberOfEntries: sprintf('%d', length(disallowed)),
@@ -1791,3 +1870,5 @@ function device_to_object(device, api_data, is_controller, easymesh, device_cfg,
 }
 
 em.device_to_object = device_to_object;
+em.bss_by_instance = bss_by_instance;
+em.sta_by_instance = sta_by_instance;

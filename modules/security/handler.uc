@@ -22,7 +22,7 @@ const schema_defaults = ubbf_module.schema_defaults;
 const UNKNOWN_TIME = '0001-01-01T00:00:00Z';
 
 let certificates = {};
-include('./certificates.uc', { certificates });
+include('./certificates.uc', { certificates, instance_map: utils['instance-map'] });
 
 /**
  * Returns the certificate scan for the current request.

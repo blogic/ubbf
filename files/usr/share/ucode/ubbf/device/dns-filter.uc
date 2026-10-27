@@ -38,7 +38,7 @@ function disabled_servers_read() {
 
 	let result = {};
 	for (let inst, row in config?.Device?.DNS?.Client?.Server ?? {}) {
-		if (!dns_learned_row(inst) || !row?.DNSServer)
+		if (!dns_learned_row(row) || !row?.DNSServer)
 			continue;
 		if (!ubbf.to_bool(row.Enable ?? 'true'))
 			result[row.DNSServer] = true;
