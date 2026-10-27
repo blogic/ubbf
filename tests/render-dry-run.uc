@@ -1,20 +1,12 @@
 // Host test of `apply --dry-run`: generate() with dry_run set writes no file
 // and reloads no service, and the same config without it does write, which
-// shows that the config reaches each template that writes. Run from the
-// repository root with the native module built for the host:
-//   tests/render/run.sh <host build> tests/render-dry-run.uc
+// shows that the config reaches each template that writes.
 'use strict';
 
 import * as fs from 'fs';
+import { describe, it, assert, mock, beforeEach } from 'utest';
+import { state_clear } from 'test_env';
 import { generate } from 'ubbf.render.renderer';
-
-let pass = 0, fail = 0;
-
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
-}
 
 function tree(dir) {
 	let out = [];
@@ -46,25 +38,32 @@ const config = { Device: {
 	X_UBBF: { QoSify: { Enable: 'true' } }
 } };
 
-// The directories the image ships
-for (let dir in [ '/etc/dropbear', '/etc/ubbf' ])
-	fs.mkdir(dir, 0755);
-let before = written();
+const OUTPUTS = [ '/etc/dropbear/authorized_keys', '/etc/ubbf/kernel-faults.json',
+	'/tmp/ubbf/firewall-alg.json', '/tmp/ubbf/firewall-dos.nft',
+	'/tmp/ubbf/qosify.conf', '/tmp/ubbf/umdns/web.json', '/run/ubbf-logd/config.json' ];
 
-let logs = [];
-generate(config, logs, true);
-check('a dry run writes nothing', written(), before);
+describe('apply --dry-run', () => {
+	beforeEach(() => {
+		mock.global.patch('uci', { data: {} });
+		state_clear();
+		for (let path in OUTPUTS)
+			fs.unlink(path);
+		// The directories the image ships
+		for (let dir in [ '/etc/dropbear', '/etc/ubbf' ])
+			fs.mkdir(dir, 0755);
+	});
 
-generate(config, logs, false);
-let files = written();
-for (let path in [ '/etc/dropbear/authorized_keys', '/etc/ubbf/kernel-faults.json',
-		   '/tmp/ubbf/firewall-alg.json', '/tmp/ubbf/firewall-dos.nft',
-		   '/tmp/ubbf/qosify.conf', '/tmp/ubbf/umdns/web.json', '/run/ubbf-logd/config.json' ])
-	check(`an apply writes ${path}`, index(files, path) >= 0, true);
-check('only the accepted key is deployed', trim(fs.readfile('/etc/dropbear/authorized_keys')), KEY);
+	it('writes nothing in a dry run', () => {
+		let before = written();
+		generate(config, [], true);
+		assert.match(before, written());
+	});
 
-if (fail)
-	printf('render logs: %J\nfiles: %J\n', logs, files);
-
-printf('passed: %d\nfailed: %d\n', pass, fail);
-exit(fail ? 1 : 0);
+	it('writes the files of each template without dry run', () => {
+		generate(config, [], false);
+		let files = written();
+		for (let path in OUTPUTS)
+			assert.match(true, index(files, path) >= 0, `an apply writes ${path}`);
+		assert.match(KEY, trim(fs.readfile('/etc/dropbear/authorized_keys')), 'only the accepted key is deployed');
+	});
+});

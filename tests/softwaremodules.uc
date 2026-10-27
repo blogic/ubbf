@@ -1,33 +1,16 @@
 // Host test of the softwaremodules module on the native dispatcher: the
 // rows read from uxc and apk with stable instance numbers, and writes into
-// those rows, which reach uxc only when the transaction commits.
-// tests/softwaremodules/bin holds stand-ins for uxc and apk, which log each
-// call to $SM_LOG; uxc lists $SM_LIST when that file exists. The instance
-// map lives in /etc/ubbf, so run it in a private mount namespace from the
-// repository root, with the native module built for the host:
-//   unshare -rm sh -c 'mount -t tmpfs none /etc/ubbf && mount -t tmpfs none /tmp/ubbf &&
-//     PATH="$PWD/tests/softwaremodules/bin:$PATH" SM_LOG=/tmp/ubbf/sm.log
-//     SM_LIST=/tmp/ubbf/sm-list.json UBBF_BUILD_DIR=<host build>
-//     ucode -L "$PWD/tests/hosts/*.uc" -L "$PWD/files/usr/share/ucode"
-//     -L "<host build>/*.so" tests/softwaremodules.uc'
+// those rows, which reach uxc only when the transaction commits. The
+// stand-ins for uxc and apk in tests/bin log each call to $SM_LOG; uxc
+// lists $SM_LIST when that file exists.
 'use strict';
 
+import { describe, it, assert, beforeEach } from 'utest';
+import { state_clear } from 'test_env';
 import * as fs from 'fs';
 import * as uloop from 'uloop';
 import * as ubbf from 'ubbf';
 import { popen_async } from 'ubbf.utils.process';
-import { instance_numbers, instance_key, instance_rows, instance_prune } from 'ubbf';
-
-// This process numbers rows, as the agent does.
-ubbf.instance_map_own(true);
-
-let pass = 0, fail = 0;
-
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
-}
 
 const LOG = getenv('SM_LOG');
 const LIST = getenv('SM_LIST');
@@ -43,49 +26,6 @@ function registration(name) {
 		'org.openwrt.uxc': { name, package: `container-${name}`, publisher: 'example.org' } };
 }
 
-// With UBBF_BUILD_DIR the entries name the compiled table, as on a device;
-// without it they carry the schema objects.
-let schemas = {};
-include('../modules/softwaremodules/schema.uc', { schemas });
-
-let build_dir = getenv('UBBF_BUILD_DIR');
-let table = build_dir && length(ubbf.schema_tables_load(build_dir + '/schema-softwaremodules.so') ?? []);
-printf('schemas: %s\n', table ? 'compiled table' : 'objects');
-
-let commit_hook, abort_hook;
-let events = [];
-
-// obuspa provides this global; the module reports DUStateChange! with it.
-global.usp_datamodel_event = (path, args) => push(events, [ path, args.CurrentState ]);
-let applied = [];
-let cache = {};
-
-const api = {
-	ubbf: proto({
-		datetime_format: (t) => t ? sprintf('%d', t) : '0001-01-01T00:00:00Z',
-		cache_call: (fn, ...args) => fn(...args),
-		cache_invalidate: (fn) => { cache[fn] = true; }
-	}, ubbf),
-	utils: {
-		process: { popen_async }
-	},
-	schema: (k) => table ? `softwaremodules.${k}` : schemas[k],
-	schema_defaults: (k) => table ? ubbf.schema_defaults(`softwaremodules.${k}`) : schemas[k]?.defaults,
-	on_commit: (fn) => { commit_hook = fn; },
-	on_abort: (fn) => { abort_hook = fn; },
-	config_apply: (ops) => { push(applied, ...ops); return { success: true }; },
-	model: {},
-	operations: {}
-};
-include('../modules/softwaremodules/handler.uc', { ubbf_module: api });
-
-let dm = ubbf.create();
-check('model registers', dm.register(api.model), true);
-dm.load('/dev/null');
-dm.set_config({ Device: { SoftwareModules: {} } });
-dm.runtime_reload();
-fs.writefile(LOG, '');
-
 function rows(tree, table, field) {
 	let out = {};
 	let t = tree?.[table] ?? {};
@@ -94,75 +34,131 @@ function rows(tree, table, field) {
 	return out;
 }
 
-let sm = dm.get_subtree_with_state('Device.SoftwareModules');
-check('execution units, numbered in name order at first', rows(sm, 'ExecutionUnit', 'Name'), { '1': 'db', '2': 'web' });
-check('deployment units', rows(sm, 'DeploymentUnit', 'DUID'), { '1': 'container-db', '2': 'container-web' });
-check('ExecutionUnitNumberOfEntries', sm?.ExecutionUnitNumberOfEntries, '2');
+// With UBBF_BUILD_DIR the entries name the compiled table, as on a device;
+// without it they carry the schema objects.
+function schema_table() {
+	let schemas = {};
+	include('../modules/softwaremodules/schema.uc', { schemas });
 
-// A write reaches uxc only when the transaction commits.
-dm.trans_start();
-check('write into a live row', dm.params_set({ 'Device.SoftwareModules.ExecutionUnit.2.AutoStart': 'true' }), 0);
-check('nothing reaches uxc before the commit', calls_take(), []);
-dm.trans_commit();
-commit_hook();
-check('the write reaches uxc at the commit', calls_take(), [ 'uxc enable web' ]);
-check('the cache of the stack is dropped', sort(keys(cache)) != [], true);
+	let build_dir = getenv('UBBF_BUILD_DIR');
+	let table = build_dir && length(ubbf.schema_tables_load(build_dir + '/schema-softwaremodules.so') ?? []);
+	return { schemas, table };
+}
 
-dm.trans_start();
-check('write into a nested object', dm.params_set({ 'Device.SoftwareModules.ExecutionUnit.1.AutoRestart.Enable': 'true' }), 0);
-dm.trans_abort();
-abort_hook();
-commit_hook();
-check('an aborted write never reaches uxc', calls_take(), []);
+describe('softwaremodules on the native dispatcher', () => {
+	beforeEach(() => {
+		state_clear();
+		ubbf.instance_map_own(true);
+	});
 
-dm.runtime_reload();
-sm = dm.get_subtree_with_state('Device.SoftwareModules');
-check('both rows after the write', rows(sm, 'ExecutionUnit', 'Name'), { '1': 'db', '2': 'web' });
-check('the written row is stored', dm.config()?.Device?.SoftwareModules?.ExecutionUnit?.['2']?.AutoStart, 'true');
-check('the stored row shows the stack', sm?.ExecutionUnit?.['2']?.Status, 'Idle');
+	it('numbers the units stably and passes writes to uxc at the commit', () => {
+		let s = schema_table();
+		let schemas = s.schemas, table = s.table;
+		let commit_hook, abort_hook;
+		let events = [];
+		let applied = [];
+		let cache = {};
 
-dm.trans_start();
-let rc = dm.params_set({ 'Device.SoftwareModules.ExecutionUnit.7.AutoStart': 'true' });
-dm.trans_abort();
-abort_hook();
-check('write into a row that does not exist', rc < 0, true);
-check('nothing reaches uxc', calls_take(), []);
+		// obuspa provides this global; the module reports DUStateChange! with it.
+		global.usp_datamodel_event = (path, args) => push(events, [ path, args.CurrentState ]);
 
-dm.trans_start();
-check('ExecEnv Enable', dm.params_set({ 'Device.SoftwareModules.ExecEnv.1.Enable': 'false' }), 0);
-dm.trans_commit();
-commit_hook();
-check('ExecEnv Enable reaches uxc', calls_take(), [ 'uxc disable-all' ]);
+		const api = {
+			ubbf: proto({
+				datetime_format: (t) => t ? sprintf('%d', t) : '0001-01-01T00:00:00Z',
+				cache_call: (fn, ...args) => fn(...args),
+				cache_invalidate: (fn) => { cache[fn] = true; }
+			}, ubbf),
+			utils: {
+				process: { popen_async }
+			},
+			schema: (k) => table ? `softwaremodules.${k}` : schemas[k],
+			schema_defaults: (k) => table ? ubbf.schema_defaults(`softwaremodules.${k}`) : schemas[k]?.defaults,
+			on_commit: (fn) => { commit_hook = fn; },
+			on_abort: (fn) => { abort_hook = fn; },
+			config_apply: (ops) => { push(applied, ...ops); return { success: true }; },
+			model: {},
+			operations: {}
+		};
+		include('../modules/softwaremodules/handler.uc', { ubbf_module: api });
 
-// A new registration that sorts first takes a new number; the others keep theirs.
-fs.writefile(LIST, sprintf('%J', [ registration('app'), registration('db'), registration('web') ]));
-dm.runtime_reload();
-sm = dm.get_subtree_with_state('Device.SoftwareModules');
-check('numbers stay when a unit comes', rows(sm, 'ExecutionUnit', 'Name'), { '1': 'db', '2': 'web', '3': 'app' });
-check('deployment unit numbers stay', rows(sm, 'DeploymentUnit', 'DUID'),
-	{ '1': 'container-db', '2': 'container-web', '3': 'container-app' });
+		let dm = ubbf.create();
+		assert.match(true, dm.register(api.model), 'model registers');
+		dm.load('/dev/null');
+		dm.set_config({ Device: { SoftwareModules: {} } });
+		dm.runtime_reload();
+		fs.writefile(LOG, '');
 
-fs.writefile(LIST, sprintf('%J', [ registration('app'), registration('web') ]));
-dm.runtime_reload();
-sm = dm.get_subtree_with_state('Device.SoftwareModules');
-check('numbers stay when a unit goes', rows(sm, 'ExecutionUnit', 'Name'), { '2': 'web', '3': 'app' });
+		let sm = dm.get_subtree_with_state('Device.SoftwareModules');
+		assert.match({ '1': 'db', '2': 'web' }, rows(sm, 'ExecutionUnit', 'Name'), 'execution units, numbered in name order at first');
+		assert.match({ '1': 'container-db', '2': 'container-web' }, rows(sm, 'DeploymentUnit', 'DUID'), 'deployment units');
+		assert.match('2', sm?.ExecutionUnitNumberOfEntries, 'ExecutionUnitNumberOfEntries');
 
-dm.trans_start();
-check('delete of the stored row of a gone unit', !!dm.object_del('Device.SoftwareModules.ExecutionUnit.1'), true);
-dm.trans_commit();
+		// A write reaches uxc only when the transaction commits.
+		dm.trans_start();
+		assert.match(0, dm.params_set({ 'Device.SoftwareModules.ExecutionUnit.2.AutoStart': 'true' }), 'write into a live row');
+		assert.match([], calls_take(), 'nothing reaches uxc before the commit');
+		dm.trans_commit();
+		commit_hook();
+		assert.match([ 'uxc enable web' ], calls_take(), 'the write reaches uxc at the commit');
+		assert.match(true, sort(keys(cache)) != [], 'the cache of the stack is dropped');
 
-// Uninstall() deletes the stored row of a unit that goes with the package.
-fs.writefile('/etc/ubbf/config.json', sprintf('%J', { Device: { SoftwareModules: { ExecutionUnit: { '2': { AutoStart: 'true' } } } } }));
-let done;
-uloop.init();
-api.operations['Device.SoftwareModules.DeploymentUnit.{i}.Uninstall()'].handler({}, 1,
-	(inst, err) => { done = err; uloop.end(); }, [ 2 ], '');
-uloop.timer(10000, () => uloop.end());
-uloop.run();
-check('Uninstall() completes', done, 0);
-check('Uninstall() runs apk del', calls_take(), [ 'apk del container-web' ]);
-check('Uninstall() reports DUStateChange!', events, [ [ 'Device.SoftwareModules.DUStateChange!', 'Uninstalled' ] ]);
-check('Uninstall() deletes the stored row', applied, [ { op: 'del', path: 'Device.SoftwareModules.ExecutionUnit.2.' } ]);
+		dm.trans_start();
+		assert.match(0, dm.params_set({ 'Device.SoftwareModules.ExecutionUnit.1.AutoRestart.Enable': 'true' }),
+			'write into a nested object');
+		dm.trans_abort();
+		abort_hook();
+		commit_hook();
+		assert.match([], calls_take(), 'an aborted write never reaches uxc');
 
-printf('passed: %d\nfailed: %d\n', pass, fail);
-exit(fail ? 1 : 0);
+		dm.runtime_reload();
+		sm = dm.get_subtree_with_state('Device.SoftwareModules');
+		assert.match({ '1': 'db', '2': 'web' }, rows(sm, 'ExecutionUnit', 'Name'), 'both rows after the write');
+		assert.match('true', dm.config()?.Device?.SoftwareModules?.ExecutionUnit?.['2']?.AutoStart, 'the written row is stored');
+		assert.match('Idle', sm?.ExecutionUnit?.['2']?.Status, 'the stored row shows the stack');
+
+		dm.trans_start();
+		let rc = dm.params_set({ 'Device.SoftwareModules.ExecutionUnit.7.AutoStart': 'true' });
+		dm.trans_abort();
+		abort_hook();
+		assert.match(true, rc < 0, 'write into a row that does not exist');
+		assert.match([], calls_take(), 'nothing reaches uxc');
+
+		dm.trans_start();
+		assert.match(0, dm.params_set({ 'Device.SoftwareModules.ExecEnv.1.Enable': 'false' }), 'ExecEnv Enable');
+		dm.trans_commit();
+		commit_hook();
+		assert.match([ 'uxc disable-all' ], calls_take(), 'ExecEnv Enable reaches uxc');
+
+		// A new registration that sorts first takes a new number; the others
+		// keep theirs.
+		fs.writefile(LIST, sprintf('%J', [ registration('app'), registration('db'), registration('web') ]));
+		dm.runtime_reload();
+		sm = dm.get_subtree_with_state('Device.SoftwareModules');
+		assert.match({ '1': 'db', '2': 'web', '3': 'app' }, rows(sm, 'ExecutionUnit', 'Name'), 'numbers stay when a unit comes');
+		assert.match({ '1': 'container-db', '2': 'container-web', '3': 'container-app' }, rows(sm, 'DeploymentUnit', 'DUID'),
+			'deployment unit numbers stay');
+
+		fs.writefile(LIST, sprintf('%J', [ registration('app'), registration('web') ]));
+		dm.runtime_reload();
+		sm = dm.get_subtree_with_state('Device.SoftwareModules');
+		assert.match({ '2': 'web', '3': 'app' }, rows(sm, 'ExecutionUnit', 'Name'), 'numbers stay when a unit goes');
+
+		dm.trans_start();
+		assert.match(true, !!dm.object_del('Device.SoftwareModules.ExecutionUnit.1'), 'delete of the stored row of a gone unit');
+		dm.trans_commit();
+
+		// Uninstall() deletes the stored row of a unit that goes with the package.
+		fs.writefile('/etc/ubbf/config.json',
+			sprintf('%J', { Device: { SoftwareModules: { ExecutionUnit: { '2': { AutoStart: 'true' } } } } }));
+		let done;
+		uloop.init();
+		api.operations['Device.SoftwareModules.DeploymentUnit.{i}.Uninstall()'].handler({}, 1,
+			(inst, err) => { done = err; uloop.end(); }, [ 2 ], '');
+		uloop.timer(10000, () => uloop.end());
+		uloop.run();
+		assert.match(0, done, 'Uninstall() completes');
+		assert.match([ 'apk del container-web' ], calls_take(), 'Uninstall() runs apk del');
+		assert.match([ [ 'Device.SoftwareModules.DUStateChange!', 'Uninstalled' ] ], events, 'Uninstall() reports DUStateChange!');
+		assert.match([ { op: 'del', path: 'Device.SoftwareModules.ExecutionUnit.2.' } ], applied, 'Uninstall() deletes the stored row');
+	});
+});

@@ -1,32 +1,16 @@
-// Host test of the TR-181 version gate. Run from the repository root; the
-// search path has to be absolute:
-//   ucode -L "$PWD/files/usr/share/ucode" tests/dm-version.uc
+// Host test of the TR-181 version gate: the tag helpers of
+// utils/dm-version.uc, and the DeviceInfo members per version as the core
+// schema table of the host build in UBBF_BUILD_DIR serves them.
 'use strict';
 
+import { describe, it, skip, setup, assert } from 'utest';
 import { tag_minor, tag_visible, DM_VERSIONS } from 'ubbf.utils.dm-version';
 
-let pass_count = 0;
-let fail_count = 0;
+const build_dir = getenv('UBBF_BUILD_DIR');
 
-function assert_eq(name, got, expected) {
-	let got_json = sprintf('%J', got);
-	let exp_json = sprintf('%J', expected);
-
-	if (got_json == exp_json) {
-		pass_count++;
-		return;
-	}
-
-	fail_count++;
-	printf('FAIL: %s\n  expected: %s\n  got:      %s\n', name, exp_json, got_json);
-}
-
-assert_eq('tag_minor 2.20', tag_minor('2.20'), 20);
-assert_eq('tag_minor 2.9', tag_minor('2.9'), 9);
-assert_eq('tag_minor with patch', tag_minor('2.20.1'), null);
-assert_eq('tag_minor other major', tag_minor('3.1'), null);
-assert_eq('tag_minor number', tag_minor(2.2), null);
-assert_eq('tag_minor null', tag_minor(null), null);
+// The tables of the build tree are optional: without UBBF_BUILD_DIR their
+// tests are reported as skipped.
+const table_it = build_dir ? it : skip;
 
 // Each supported version against the DeviceInfo PoC tags.
 const CASES = [
@@ -38,20 +22,31 @@ const CASES = [
 	[ 'since 2.20 until 2.21', '2.20', '2.21', [ false, true, false ] ],
 ];
 
-for (let c in CASES) {
-	let got = map([ 19, 20, 21 ], (minor) => tag_visible(minor, c[1], c[2]));
-	assert_eq(`tag_visible ${c[0]}`, got, c[3]);
-}
+const MEMBERS = [
+	[ 'DeviceInfo.DeviceInfo', 'ProcessorNumberOfEntries', [ true, true, false ] ],
+	[ 'DeviceInfo.Reboots', 'CurrentBootCycle', [ false, true, true ] ],
+	[ 'DeviceInfo.MemoryStatus', 'Available', [ false, false, true ] ],
+	[ 'DeviceInfo.MemoryStatus', 'Total', [ true, true, true ] ],
+	[ 'Hosts.Hosts', 'CleanupHostsThreshold', [ false, true, true ] ],
+	[ 'IP.Interface', 'Description', [ false, false, true ] ],
+	[ 'DHCPv4.Pool_Option', 'Force', [ false, false, true ] ],
+	[ 'DHCPv4.Pool_StaticAddress', 'Status', [ false, false, true ] ],
+	[ 'DHCPv6.Pool_Option', 'Force', [ false, false, true ] ],
+	[ 'Bridging.Bridge_Port', 'STPPointToPointMode', [ false, false, true ] ],
+	[ 'Bridging.Bridge_Port', 'STPAdminEdgePort', [ false, false, true ] ],
+	[ 'Bridging.Bridge_Port', 'IGMP', [ false, false, true ] ],
+	[ 'Bridging.Bridge_Port', 'MLD', [ false, false, true ] ],
+	[ 'Routing.Router', 'ID', [ false, true, true ] ],
+	[ 'Routing.Router_IPv6Forwarding', 'SourceIPPrefix', [ false, true, true ] ],
+];
 
-assert_eq('malformed since is ignored', tag_visible(19, '2.21.0', null), true);
-assert_eq('malformed until is ignored', tag_visible(21, null, 'x'), true);
+const COMMANDS = [
+	[ 'DHCPv4.Client', 'Release()', [ false, true, true ] ],
+	[ 'DHCPv4.Client', 'Renew()', [ true, true, true ] ],
+	[ 'DHCPv6.Client', 'Release()', [ false, true, true ] ],
+	[ 'Device.Device', 'Shutdown()', [ false, false, true ] ],
+];
 
-assert_eq('supported versions', DM_VERSIONS, [ '2.19.1', '2.20.0', '2.20.1', '2.21.0' ]);
-
-// The DeviceInfo members per version, as the core table of a build tree
-// serves them. Set UBBF_BUILD_DIR to the CMake build directory of
-// src/ucode-mod-ubbf and add it to the search path:
-//   UBBF_BUILD_DIR=$B ucode -L "$PWD/files/usr/share/ucode" -L "$B/*.so" tests/dm-version.uc
 function members_at(ubbf, minor, id) {
 	ubbf.schema_version_set(minor);
 
@@ -64,56 +59,62 @@ function has(list, name) {
 	return index(list, name) >= 0;
 }
 
-function table_checks(build_dir) {
-	let ubbf = require('ubbf');
+let ubbf;
+let core_loaded;
 
-	assert_eq('core table opens', ubbf.schema_tables_load(build_dir + '/schema-core.so'), [ 'core' ]);
+// A table loads once per process, so the load happens before the tests.
+setup(() => {
+	if (!build_dir)
+		return;
 
-	const MEMBERS = [
-		[ 'DeviceInfo.DeviceInfo', 'ProcessorNumberOfEntries', [ true, true, false ] ],
-		[ 'DeviceInfo.Reboots', 'CurrentBootCycle', [ false, true, true ] ],
-		[ 'DeviceInfo.MemoryStatus', 'Available', [ false, false, true ] ],
-		[ 'DeviceInfo.MemoryStatus', 'Total', [ true, true, true ] ],
-		[ 'Hosts.Hosts', 'CleanupHostsThreshold', [ false, true, true ] ],
-		[ 'IP.Interface', 'Description', [ false, false, true ] ],
-		[ 'DHCPv4.Pool_Option', 'Force', [ false, false, true ] ],
-		[ 'DHCPv4.Pool_StaticAddress', 'Status', [ false, false, true ] ],
-		[ 'DHCPv6.Pool_Option', 'Force', [ false, false, true ] ],
-		[ 'Bridging.Bridge_Port', 'STPPointToPointMode', [ false, false, true ] ],
-		[ 'Bridging.Bridge_Port', 'STPAdminEdgePort', [ false, false, true ] ],
-		[ 'Bridging.Bridge_Port', 'IGMP', [ false, false, true ] ],
-		[ 'Bridging.Bridge_Port', 'MLD', [ false, false, true ] ],
-		[ 'Routing.Router', 'ID', [ false, true, true ] ],
-		[ 'Routing.Router_IPv6Forwarding', 'SourceIPPrefix', [ false, true, true ] ],
-	];
+	ubbf = require('ubbf');
+	core_loaded = ubbf.schema_tables_load(build_dir + '/schema-core.so');
+});
 
-	for (let m in MEMBERS) {
-		let rows = map([ 19, 20, 21 ], (minor) => members_at(ubbf, minor, m[0]));
+describe('dm-version tags', () => {
+	it('reads the minor of a 2.x tag', () => {
+		assert.match(20, tag_minor('2.20'));
+		assert.match(9, tag_minor('2.9'));
+		assert.match(null, tag_minor('2.20.1'), 'tag_minor with patch');
+		assert.match(null, tag_minor('3.1'), 'tag_minor other major');
+		assert.match(null, tag_minor(2.2), 'tag_minor number');
+		assert.match(null, tag_minor(null));
+	});
 
-		assert_eq(`${m[0]}.${m[1]} member`, map(rows, (r) => has(r.schema, m[1])), m[2]);
-		assert_eq(`${m[0]}.${m[1]} default`, map(rows, (r) => has(r.defaults, m[1])), m[2]);
-	}
+	it('shows a tagged member in the versions of its since and until', () => {
+		for (let c in CASES)
+			assert.match(c[3], map([ 19, 20, 21 ], (minor) => tag_visible(minor, c[1], c[2])), `tag_visible ${c[0]}`);
+	});
 
-	const COMMANDS = [
-		[ 'DHCPv4.Client', 'Release()', [ false, true, true ] ],
-		[ 'DHCPv4.Client', 'Renew()', [ true, true, true ] ],
-		[ 'DHCPv6.Client', 'Release()', [ false, true, true ] ],
-		[ 'Device.Device', 'Shutdown()', [ false, false, true ] ],
-	];
+	it('ignores a malformed since or until', () => {
+		assert.match(true, tag_visible(19, '2.21.0', null));
+		assert.match(true, tag_visible(21, null, 'x'));
+	});
 
-	for (let c in COMMANDS) {
-		let rows = map([ 19, 20, 21 ], (minor) => members_at(ubbf, minor, c[0]));
+	it('lists the supported versions', () => {
+		assert.match([ '2.19.1', '2.20.0', '2.20.1', '2.21.0' ], DM_VERSIONS);
+	});
+});
 
-		assert_eq(`${c[0]}.${c[1]} member`, map(rows, (r) => has(r.schema, c[1])), c[2]);
-	}
-}
+describe('dm-version schema tables', () => {
+	table_it('opens the core table', () => {
+		assert.match([ 'core' ], core_loaded);
+	});
 
-let build_dir = getenv('UBBF_BUILD_DIR');
+	table_it('serves the members and defaults per version', () => {
+		for (let m in MEMBERS) {
+			let rows = map([ 19, 20, 21 ], (minor) => members_at(ubbf, minor, m[0]));
 
-if (build_dir)
-	table_checks(build_dir);
-else
-	printf('UBBF_BUILD_DIR not set: schema table checks skipped\n');
+			assert.match(m[2], map(rows, (r) => has(r.schema, m[1])), `${m[0]}.${m[1]} member`);
+			assert.match(m[2], map(rows, (r) => has(r.defaults, m[1])), `${m[0]}.${m[1]} default`);
+		}
+	});
 
-printf('\n  passed: %d\n  failed: %d\n', pass_count, fail_count);
-exit(fail_count ? 1 : 0);
+	table_it('serves the commands per version', () => {
+		for (let c in COMMANDS) {
+			let rows = map([ 19, 20, 21 ], (minor) => members_at(ubbf, minor, c[0]));
+
+			assert.match(c[2], map(rows, (r) => has(r.schema, c[1])), `${c[0]}.${c[1]} member`);
+		}
+	});
+});

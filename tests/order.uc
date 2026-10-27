@@ -1,18 +1,9 @@
 // Host test of order_snapshot() and orders_compute() of ubbf.so, the
-// TR-181 data type Order. Run from the
-// repository root with the native module built for the host:
-//   ucode -L "$PWD/files/usr/share/ucode" -L "<host build>/*.so" tests/order.uc
+// TR-181 data type Order.
 'use strict';
 
+import { describe, it, assert } from 'utest';
 import { order_snapshot, orders_compute } from 'ubbf';
-
-let pass = 0, fail = 0;
-
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
-}
 
 function tree(orders) {
 	let rows = {};
@@ -38,31 +29,54 @@ function step(start, change) {
 	return orders(data);
 }
 
-check('a new row without Order goes last',
-	step({ '1': '1', '2': '2' }, (r) => { r['3'] = { Order: '' }; }), { '1': '1', '2': '2', '3': '3' });
-check('a new row with a taken Order moves that row and the lower ones down',
-	step({ '1': '1', '2': '2' }, (r) => { r['3'] = { Order: '1' }; }), { '1': '2', '2': '3', '3': '1' });
-check('a write of a taken Order moves that row and the lower ones down',
-	step({ '1': '1', '2': '2', '3': '3' }, (r) => { r['3'].Order = '2'; }), { '1': '1', '2': '3', '3': '2' });
-check('a write of a free Order moves nothing',
-	step({ '1': '1', '2': '2' }, (r) => { r['1'].Order = '5'; }), { '1': '5', '2': '2' });
-check('a deletion compacts the values',
-	step({ '1': '1', '2': '2', '3': '3' }, (r) => { delete r['2']; }), { '1': '1', '3': '2' });
-check('a deletion compacts after a gap',
-	step({ '1': '2', '2': '7', '3': '9' }, (r) => { delete r['1']; }), { '2': '1', '3': '2' });
-check('two new rows without Order go last in instance order',
-	step({ '1': '1' }, (r) => { r['5'] = {}; r['4'] = {}; }), { '1': '1', '4': '2', '5': '3' });
+describe('Order after a change', () => {
+	it('puts a new row without Order last', () => {
+		assert.match({ '1': '1', '2': '2', '3': '3' },
+			step({ '1': '1', '2': '2' }, (r) => { r['3'] = { Order: '' }; }));
+	});
 
-let loaded = tree({ '1': '2', '2': '2', '3': '', '4': '1' });
-orders_compute(loaded, null);
-check('a loaded tree keeps its order, moves duplicates down, numbers the rest',
-	orders(loaded), { '1': '2', '2': '3', '3': '4', '4': '1' });
+	it('moves the row with a taken Order and the lower ones down for a new row', () => {
+		assert.match({ '1': '2', '2': '3', '3': '1' },
+			step({ '1': '1', '2': '2' }, (r) => { r['3'] = { Order: '1' }; }));
+	});
 
-let nested = { Device: { Firewall: { Chain: { '1': { Rule: { '1': {}, '2': { Order: '1' } } } } } } };
-orders_compute(nested, null);
-check('a table below a row', map(values(nested.Device.Firewall.Chain['1'].Rule), (r) => r.Order), [ '2', '1' ]);
+	it('moves the row with a taken Order and the lower ones down for a write', () => {
+		assert.match({ '1': '1', '2': '3', '3': '2' },
+			step({ '1': '1', '2': '2', '3': '3' }, (r) => { r['3'].Order = '2'; }));
+	});
 
-check('nothing changes in order', orders_compute(tree({ '1': '1', '2': '2' }), null), false);
+	it('moves nothing for a write of a free Order', () => {
+		assert.match({ '1': '5', '2': '2' },
+			step({ '1': '1', '2': '2' }, (r) => { r['1'].Order = '5'; }));
+	});
 
-printf('passed: %d\nfailed: %d\n', pass, fail);
-exit(fail ? 1 : 0);
+	it('compacts the values after a deletion', () => {
+		assert.match({ '1': '1', '3': '2' },
+			step({ '1': '1', '2': '2', '3': '3' }, (r) => { delete r['2']; }));
+		assert.match({ '2': '1', '3': '2' },
+			step({ '1': '2', '2': '7', '3': '9' }, (r) => { delete r['1']; }), 'a deletion compacts after a gap');
+	});
+
+	it('puts two new rows without Order last in instance order', () => {
+		assert.match({ '1': '1', '4': '2', '5': '3' },
+			step({ '1': '1' }, (r) => { r['5'] = {}; r['4'] = {}; }));
+	});
+});
+
+describe('Order of a loaded tree', () => {
+	it('keeps its order, moves duplicates down and numbers the rest', () => {
+		let loaded = tree({ '1': '2', '2': '2', '3': '', '4': '1' });
+		orders_compute(loaded, null);
+		assert.match({ '1': '2', '2': '3', '3': '4', '4': '1' }, orders(loaded));
+	});
+
+	it('numbers a table below a row', () => {
+		let nested = { Device: { Firewall: { Chain: { '1': { Rule: { '1': {}, '2': { Order: '1' } } } } } } };
+		orders_compute(nested, null);
+		assert.match([ '2', '1' ], map(values(nested.Device.Firewall.Chain['1'].Rule), (r) => r.Order));
+	});
+
+	it('reports that nothing changes', () => {
+		assert.match(false, orders_compute(tree({ '1': '1', '2': '2' }), null));
+	});
+});

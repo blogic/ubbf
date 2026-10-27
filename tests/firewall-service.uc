@@ -1,20 +1,11 @@
 // Host test of the Protocol and DestPort render of Device.Firewall.Service
 // and Device.Firewall.Pinhole: -1 means the criterion is not used for
-// matching. Run from the repository root with the native module built for
-// the host:
-//   ucode -L "$PWD/files/usr/share/ucode" -L "<host build>/*.so" tests/firewall-service.uc
+// matching.
 'use strict';
 
+import { describe, it, assert } from 'utest';
 import * as ubbf from 'ubbf';
 import * as h from 'ubbf.render.uci_helpers';
-
-let pass = 0, fail = 0;
-
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
-}
 
 const TEMPLATES = sourcepath(0, true) + '/../files/usr/share/ucode/ubbf/render/templates/';
 
@@ -47,19 +38,35 @@ function service(row) {
 	return [ r.proto, r.dest_port ];
 }
 
-check('Service -1 matches any protocol and port', service({ Protocol: '-1', DestPort: '-1' }), [ [ 'all' ], null ]);
-check('Service protocol and port lists', service({ Protocol: '6,17', DestPort: '22,80' }),
-	[ [ 'tcp', 'udp' ], [ '22', '80' ] ]);
-check('Service -1 in a list wins', service({ Protocol: '6,-1', DestPort: '22,-1' }), [ [ 'all' ], null ]);
-check('Service without Protocol keeps the fw4 default', service({}), [ null, null ]);
-
 function pinhole(protocol) {
 	return render('firewall-pinholes.uc', 'Pinhole', { Protocol: protocol, DestIP: '2001:db8::1', DestPort: '443' }).proto;
 }
 
-check('Pinhole -1 matches any protocol', pinhole('-1'), [ 'all' ]);
-check('Pinhole protocol list', pinhole('6,17'), [ 'tcp', 'udp' ]);
-check('Pinhole single protocol', pinhole('17'), [ 'udp' ]);
+describe('Firewall.Service render', () => {
+	it('matches any protocol and port for -1', () => {
+		assert.match([ [ 'all' ], null ], service({ Protocol: '-1', DestPort: '-1' }));
+	});
 
-printf('passed: %d\nfailed: %d\n', pass, fail);
-exit(fail ? 1 : 0);
+	it('renders the protocol and port lists', () => {
+		assert.match([ [ 'tcp', 'udp' ], [ '22', '80' ] ], service({ Protocol: '6,17', DestPort: '22,80' }));
+	});
+
+	it('lets -1 in a list win', () => {
+		assert.match([ [ 'all' ], null ], service({ Protocol: '6,-1', DestPort: '22,-1' }));
+	});
+
+	it('keeps the fw4 default without Protocol', () => {
+		assert.match([ null, null ], service({}));
+	});
+});
+
+describe('Firewall.Pinhole render', () => {
+	it('matches any protocol for -1', () => {
+		assert.match([ 'all' ], pinhole('-1'));
+	});
+
+	it('renders a protocol list and a single protocol', () => {
+		assert.match([ 'tcp', 'udp' ], pinhole('6,17'));
+		assert.match([ 'udp' ], pinhole('17'));
+	});
+});

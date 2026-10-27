@@ -1,17 +1,9 @@
 // Host test of ip_interface_members() in ifstats.c of ubbf.so: the
 // netdevs behind the LowerLayers of an IP.Interface.
-//   ucode -L "<host build>/*.so" tests/ifstats-members.uc
 'use strict';
 
+import { describe, it, assert } from 'utest';
 import { ip_interface_members } from 'ubbf';
-
-let pass = 0, fail = 0;
-
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
-}
 
 const root = { Device: {
 	Ethernet: { Interface: {
@@ -32,14 +24,23 @@ function members(lower_layers) {
 	return ip_interface_members(root, { LowerLayers: lower_layers });
 }
 
-check('bridge', members('Device.Bridging.Bridge.1.Port.1'), [ 'lan1', 'lan2' ]);
-check('bridge, trailing dot', members('Device.Bridging.Bridge.1.Port.1.'), [ 'lan1', 'lan2' ]);
-check('one link', members('Device.Ethernet.Interface.3'), [ 'wan' ]);
-check('bridge and a link', members('Device.Bridging.Bridge.1.Port.1,Device.Ethernet.Interface.3'),
-	[ 'lan1', 'lan2', 'wan' ]);
-check('two links', members('Device.Ethernet.Interface.3, Device.Ethernet.Interface.4'), [ 'wan', 'lan3' ]);
-check('no lower layer', members(''), []);
-check('no root', ip_interface_members(null, { LowerLayers: 'Device.Ethernet.Interface.3' }), []);
+describe('ip_interface_members', () => {
+	it('gives the enabled ports of a bridge once each', () => {
+		assert.match([ 'lan1', 'lan2' ], members('Device.Bridging.Bridge.1.Port.1'));
+		assert.match([ 'lan1', 'lan2' ], members('Device.Bridging.Bridge.1.Port.1.'), 'trailing dot');
+	});
 
-printf('passed: %d failed: %d\n', pass, fail);
-exit(fail ? 1 : 0);
+	it('gives the netdev of a link', () => {
+		assert.match([ 'wan' ], members('Device.Ethernet.Interface.3'));
+	});
+
+	it('gives the netdevs of a list of lower layers in order', () => {
+		assert.match([ 'lan1', 'lan2', 'wan' ], members('Device.Bridging.Bridge.1.Port.1,Device.Ethernet.Interface.3'));
+		assert.match([ 'wan', 'lan3' ], members('Device.Ethernet.Interface.3, Device.Ethernet.Interface.4'));
+	});
+
+	it('gives no netdev without a lower layer or a root', () => {
+		assert.match([], members(''));
+		assert.match([], ip_interface_members(null, { LowerLayers: 'Device.Ethernet.Interface.3' }));
+	});
+});

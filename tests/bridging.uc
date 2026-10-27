@@ -1,33 +1,38 @@
 // Host test of the bridge port helpers of ubbf.so
-// (Device.Bridging.Bridge.{i}.Port.{i}.IGMP and MLD). Run from the
-// repository root with the native module built for the host:
-//   ucode -L "$PWD/files/usr/share/ucode/*.uc" -L "<host build>/*.so" tests/bridging.uc
+// (Device.Bridging.Bridge.{i}.Port.{i}.IGMP and MLD).
 'use strict';
 
+import { describe, it, assert } from 'utest';
 import { port_snooped, lower_layers_wifi } from 'ubbf';
 
-let pass = 0, fail = 0;
+describe('bridge port snooping', () => {
+	it('snoops a port without the 2.21 values or without a row', () => {
+		assert.match(true, port_snooped({ Enable: 'true' }));
+		assert.match(true, port_snooped(null));
+	});
 
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
-}
+	it('snoops a port with IGMP and MLD true', () => {
+		assert.match(true, port_snooped({ IGMP: 'true', MLD: 'true' }));
+		assert.match(true, port_snooped({ IGMP: '1', MLD: '1' }));
+	});
 
-check('row without the 2.21 values is snooped', port_snooped({ Enable: 'true' }), true);
-check('IGMP and MLD true', port_snooped({ IGMP: 'true', MLD: 'true' }), true);
-check('IGMP and MLD as 1', port_snooped({ IGMP: '1', MLD: '1' }), true);
-check('IGMP false', port_snooped({ IGMP: 'false', MLD: 'true' }), false);
-check('MLD false', port_snooped({ IGMP: 'true', MLD: 'false' }), false);
-check('both false', port_snooped({ IGMP: 'false', MLD: 'false' }), false);
-check('only MLD stored, false', port_snooped({ MLD: '0' }), false);
-check('no row', port_snooped(null), true);
+	it('does not snoop a port with IGMP or MLD false', () => {
+		assert.match(false, port_snooped({ IGMP: 'false', MLD: 'true' }));
+		assert.match(false, port_snooped({ IGMP: 'true', MLD: 'false' }));
+		assert.match(false, port_snooped({ IGMP: 'false', MLD: 'false' }));
+		assert.match(false, port_snooped({ MLD: '0' }));
+	});
+});
 
-check('one SSID', lower_layers_wifi('Device.WiFi.SSID.1'), true);
-check('two SSIDs', lower_layers_wifi('Device.WiFi.SSID.1,Device.WiFi.SSID.2'), true);
-check('Ethernet link', lower_layers_wifi('Device.Ethernet.Link.2'), false);
-check('SSID and link', lower_layers_wifi('Device.WiFi.SSID.1,Device.Ethernet.Link.2'), false);
-check('empty', lower_layers_wifi(''), false);
+describe('bridge port lower layers', () => {
+	it('is WiFi when every lower layer is an SSID', () => {
+		assert.match(true, lower_layers_wifi('Device.WiFi.SSID.1'));
+		assert.match(true, lower_layers_wifi('Device.WiFi.SSID.1,Device.WiFi.SSID.2'));
+	});
 
-printf('passed: %d\nfailed: %d\n', pass, fail);
-exit(fail ? 1 : 0);
+	it('is not WiFi with a link or without lower layers', () => {
+		assert.match(false, lower_layers_wifi('Device.Ethernet.Link.2'));
+		assert.match(false, lower_layers_wifi('Device.WiFi.SSID.1,Device.Ethernet.Link.2'));
+		assert.match(false, lower_layers_wifi(''));
+	});
+});

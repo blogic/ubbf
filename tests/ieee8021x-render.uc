@@ -3,21 +3,11 @@
 // auth on its device section. On a VLAN-aware bridge it also gets an
 // auth_vlan with a VLAN ID that no bridge uses, and a bridge-vlan section
 // without ports makes the bridge a member of that VLAN. A row that cannot
-// run leaves its port open, with auth 0. Run from
-// the repository root with the native module built for the
-// host:
-//   tests/render/run.sh <host build> tests/ieee8021x-render.uc
+// run leaves its port open, with auth 0.
 'use strict';
 
+import { describe, it, assert, mock, beforeEach } from 'utest';
 import { generate } from 'ubbf.render.renderer';
-
-let pass = 0, fail = 0;
-
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
-}
 
 function config(row, bridge) {
 	let root = { Device: {
@@ -82,21 +72,32 @@ const ROW = {
 
 const OPEN = [ "set network.@device[-1].auth='0'" ];
 
-check('an enabled authenticator closes its port', auth_lines(ROW),
-	{ auth: [ "set network.@device[-1].auth='1'" ], bridge_vlan: [], warnings: [] });
-check('on a VLAN-aware bridge the closed port has a VLAN of its own, which the bridge joins', auth_lines(ROW, BRIDGE), {
-	auth: [ "set network.@device[-1].auth='1'", "add_list network.@device[-1].auth_vlan='4093:u'" ],
-	bridge_vlan: [
-		"set network.auth_lo=bridge-vlan",
-		"set network.auth_lo.device='br-lan'",
-		"set network.auth_lo.vlan=4093"
-	],
-	warnings: []
-});
-check('a disabled authenticator states auth 0', auth_lines({ ...ROW, enable: 'false' }),
-	{ auth: OPEN, bridge_vlan: [], warnings: [] });
-check('a row that cannot run leaves its port open', auth_lines({ ...ROW, auth_server_shared_secret: '' }),
-	{ auth: OPEN, bridge_vlan: [], warnings: [ 'ieee8021x: X_UBBF_Authenticator.1: auth_server_shared_secret is empty' ] });
+describe('ieee8021x render', () => {
+	beforeEach(() => mock.global.patch('uci', { data: {} }));
 
-printf('passed: %d\nfailed: %d\n', pass, fail);
-exit(fail ? 1 : 0);
+	it('closes the port of an enabled authenticator', () => {
+		assert.match({ auth: [ "set network.@device[-1].auth='1'" ], bridge_vlan: [], warnings: [] }, auth_lines(ROW));
+	});
+
+	it('gives the closed port on a VLAN-aware bridge a VLAN of its own, which the bridge joins', () => {
+		assert.match({
+			auth: [ "set network.@device[-1].auth='1'", "add_list network.@device[-1].auth_vlan='4093:u'" ],
+			bridge_vlan: [
+				"set network.auth_lo=bridge-vlan",
+				"set network.auth_lo.device='br-lan'",
+				"set network.auth_lo.vlan=4093"
+			],
+			warnings: []
+		}, auth_lines(ROW, BRIDGE));
+	});
+
+	it('states auth 0 for a disabled authenticator', () => {
+		assert.match({ auth: OPEN, bridge_vlan: [], warnings: [] }, auth_lines({ ...ROW, enable: 'false' }));
+	});
+
+	it('leaves the port open for a row that cannot run', () => {
+		assert.match({ auth: OPEN, bridge_vlan: [],
+			warnings: [ 'ieee8021x: X_UBBF_Authenticator.1: auth_server_shared_secret is empty' ] },
+			auth_lines({ ...ROW, auth_server_shared_secret: '' }));
+	});
+});

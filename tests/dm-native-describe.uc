@@ -1,22 +1,12 @@
 // Host test of the native module loader for a module that does not answer
 // describe: the loader leaves it out and no process of it stays behind.
-// tests/dm-native/silent-host stands in for dm-host. Run from the
-// repository root:
-//   ucode -L "$PWD/files/usr/share/ucode/*.uc" -L "<build of ucode-mod-ubbf>/*.so" \
-//     -L "<dir with a udebug stub>/*.uc" tests/dm-native-describe.uc
+// tests/dm-native/silent-host stands in for dm-host.
 'use strict';
 
+import { describe, it, assert } from 'utest';
 import * as uloop from 'uloop';
 import { readfile, writefile, unlink } from 'fs';
 import { native_modules_register } from 'ubbf.utils.dm-native';
-
-let pass = 0, fail = 0;
-
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
-}
 
 function children() {
 	let self = split(readfile('/proc/self/stat'), ' ')[0];
@@ -29,25 +19,27 @@ function loop_run(ms) {
 	t.cancel();
 }
 
-uloop.init();
+describe('native module loader without describe', () => {
+	it('leaves the module out and ends its process', () => {
+		uloop.init();
 
-let module_path = sprintf('/tmp/dm-native-describe.%d.so', time());
-writefile(module_path, '');
+		let module_path = sprintf('/tmp/dm-native-describe.%d.so', time());
+		writefile(module_path, '');
 
-let model = {}, operations = {};
-let names = native_modules_register(model, operations, {
-	glob: module_path,
-	host: sourcepath(0, true) + '/dm-native/silent-host',
-	respawn_ms: 100
+		let model = {}, operations = {};
+		let names = native_modules_register(model, operations, {
+			glob: module_path,
+			host: sourcepath(0, true) + '/dm-native/silent-host',
+			respawn_ms: 100
+		});
+
+		assert.match([], names, 'not registered');
+		assert.match({}, model, 'no model entries');
+
+		// past the respawn delay and the deferred kill of the loader
+		loop_run(500);
+		assert.match([], children(), 'no process left');
+
+		unlink(module_path);
+	});
 });
-
-check('not registered', names, []);
-check('no model entries', model, {});
-
-// past the respawn delay and the deferred kill of the loader
-loop_run(500);
-check('no process left', children(), []);
-
-unlink(module_path);
-printf('passed: %d failed: %d\n', pass, fail);
-exit(fail ? 1 : 0);

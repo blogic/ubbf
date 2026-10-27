@@ -1,20 +1,13 @@
 // Host test of modules/usb/files/usr/share/ucode/ubbf/usb_allow.uc
-// (Device.USB.USBHosts.AllowAllDevices, AllowedDevice.{i}). Builds a fake
-// /sys/bus/usb/devices under /tmp, so run it with a private /tmp:
-//   unshare -rm sh -c 'mount -t tmpfs none /tmp && ucode \
-//     -L "$PWD/modules/usb/files/usr/share/ucode/*.uc" tests/usb-allow.uc'
+// (Device.USB.USBHosts.AllowAllDevices, AllowedDevice.{i}): the parse of
+// the USB descriptors, the match of AllowedDevice rules, the policy from UCI
+// and its application to a fake /sys/bus/usb/devices below /tmp.
 'use strict';
 
+import { describe, it, assert } from 'utest';
 import * as fs from 'fs';
-import { descriptors_interfaces, field_match, rule_match, device_allowed, policy_apply, policy_load } from 'ubbf.usb_allow';
-
-let pass = 0, fail = 0;
-
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
-}
+import { descriptors_interfaces, field_match, rule_match, device_allowed, policy_apply, policy_load }
+	from '../modules/usb/files/usr/share/ucode/ubbf/usb_allow.uc';
 
 // device descriptor (18 bytes), configuration (9), two interfaces (9 each)
 function descriptors(ifaces) {
@@ -25,51 +18,13 @@ function descriptors(ifaces) {
 	return raw;
 }
 
-check('interfaces from descriptors', descriptors_interfaces(descriptors([ [ 0xff, 2, 1 ], [ 8, 6, 0x50 ] ])),
-	[ 'ff:02:01', '08:06:50' ]);
-check('no descriptors', descriptors_interfaces(null), []);
-check('zero length stops', descriptors_interfaces(chr(0, 4, 1)), []);
-
-check('empty pattern', field_match('', '1234'), true);
-check('exact hex', field_match('1234', '1234'), true);
-check('short hex is the same number', field_match('12', '0012'), true);
-check('upper case', field_match('1D6B', '1d6b'), true);
-check('other value', field_match('1235', '1234'), false);
-check('wildcard prefix', field_match('1*', '1234'), true);
-check('wildcard suffix', field_match('*3', '03'), true);
-check('wildcard miss', field_match('2*', '1234'), false);
-check('not hex', field_match('zz', '1234'), false);
-
 const modem = { vendor: '1234', product: '5678', class: '00', subclass: '00', protocol: '00',
 	interfaces: [ 'ff:02:01', 'ff:02:02' ] };
-
-check('vendor and product', rule_match({ vendor: '1234', product: '5678', interfaces: [] }, modem), true);
-check('product differs', rule_match({ vendor: '1234', product: '5679', interfaces: [] }, modem), false);
-check('all interfaces match a pattern', rule_match({ interfaces: [ 'FF:02:*' ] }, modem), true);
-check('one interface left out', rule_match({ interfaces: [ 'FF:02:01' ] }, modem), false);
-check('both listed', rule_match({ interfaces: [ 'FF:02:01', 'ff:02:02' ] }, modem), true);
-check('bad item', rule_match({ interfaces: [ 'FF:02' ] }, modem), false);
-
-check('allow all', device_allowed({ allow_all: true, rules: [] }, modem), true);
-check('no rule', device_allowed({ allow_all: false, rules: [] }, modem), false);
-check('one rule matches', device_allowed({ allow_all: false, rules: [
-	{ vendor: 'abcd', interfaces: [] }, { vendor: '1234', interfaces: [] } ] }, modem), true);
 
 const hub = { vendor: '2109', product: '2822', class: '09', subclass: '00', protocol: '02',
 	interfaces: [ '09:00:01', '09:00:02' ] };
 
-check('hub without a rule', device_allowed({ allow_all: false, rules: [] }, hub), true);
-
-const cursor = { foreach: (pkg, type, cb) => {
-	cb({ '.type': 'usb', '.name': 'global', allow_all: '0' });
-	cb({ '.type': 'allow', '.name': 'cfg1', vendor: '1234', interface: 'ff:02:*' });
-} };
-check('policy from UCI', policy_load(cursor), { allow_all: false, rules: [
-	{ vendor: '1234', product: '', class: '', subclass: '', protocol: '', interfaces: [ 'ff:02:*' ] } ] });
-check('policy without config', policy_load(null), { allow_all: true, rules: [] });
-
 const root = '/tmp/usb-allow-test';
-fs.mkdir(root);
 
 function device_make(name, vendor, ifaces) {
 	let dir = `${root}/${name}`;
@@ -83,22 +38,71 @@ function device_make(name, vendor, ifaces) {
 	fs.writefile(`${dir}/authorized`, '1\n');
 }
 
-fs.mkdir(`${root}/usb1`);
-fs.writefile(`${root}/usb1/authorized_default`, '1\n');
-device_make('1-1', '1234', [ [ 0xff, 2, 1 ] ]);
-device_make('1-2', 'abcd', [ [ 8, 6, 0x50 ] ]);
-fs.mkdir(`${root}/1-1:1.0`);
+describe('USB allow list', () => {
+	it('reads the interface classes from the descriptors', () => {
+		assert.match([ 'ff:02:01', '08:06:50' ], descriptors_interfaces(descriptors([ [ 0xff, 2, 1 ], [ 8, 6, 0x50 ] ])),
+			'interfaces from descriptors');
+		assert.match([], descriptors_interfaces(null), 'no descriptors');
+		assert.match([], descriptors_interfaces(chr(0, 4, 1)), 'zero length stops');
+	});
 
-let rd = (p) => trim(fs.readfile(`${root}/${p}`));
+	it('matches a hex field against a pattern', () => {
+		assert.match(true, field_match('', '1234'), 'empty pattern');
+		assert.match(true, field_match('1234', '1234'), 'exact hex');
+		assert.match(true, field_match('12', '0012'), 'short hex is the same number');
+		assert.match(true, field_match('1D6B', '1d6b'), 'upper case');
+		assert.match(false, field_match('1235', '1234'), 'other value');
+		assert.match(true, field_match('1*', '1234'), 'wildcard prefix');
+		assert.match(true, field_match('*3', '03'), 'wildcard suffix');
+		assert.match(false, field_match('2*', '1234'), 'wildcard miss');
+		assert.match(false, field_match('zz', '1234'), 'not hex');
+	});
 
-policy_apply({ allow_all: false, rules: [ { vendor: '1234', interfaces: [] } ] }, root);
-check('root hub default off', rd('usb1/authorized_default'), '0');
-check('listed device allowed', rd('1-1/authorized'), '1');
-check('other device held back', rd('1-2/authorized'), '0');
+	it('matches a device against a rule', () => {
+		assert.match(true, rule_match({ vendor: '1234', product: '5678', interfaces: [] }, modem), 'vendor and product');
+		assert.match(false, rule_match({ vendor: '1234', product: '5679', interfaces: [] }, modem), 'product differs');
+		assert.match(true, rule_match({ interfaces: [ 'FF:02:*' ] }, modem), 'all interfaces match a pattern');
+		assert.match(false, rule_match({ interfaces: [ 'FF:02:01' ] }, modem), 'one interface left out');
+		assert.match(true, rule_match({ interfaces: [ 'FF:02:01', 'ff:02:02' ] }, modem), 'both listed');
+		assert.match(false, rule_match({ interfaces: [ 'FF:02' ] }, modem), 'bad item');
+	});
 
-policy_apply({ allow_all: true, rules: [] }, root);
-check('root hub default on', rd('usb1/authorized_default'), '1');
-check('device allowed again', rd('1-2/authorized'), '1');
+	it('allows a device by policy', () => {
+		assert.match(true, device_allowed({ allow_all: true, rules: [] }, modem), 'allow all');
+		assert.match(false, device_allowed({ allow_all: false, rules: [] }, modem), 'no rule');
+		assert.match(true, device_allowed({ allow_all: false, rules: [
+			{ vendor: 'abcd', interfaces: [] }, { vendor: '1234', interfaces: [] } ] }, modem), 'one rule matches');
+		assert.match(true, device_allowed({ allow_all: false, rules: [] }, hub), 'hub without a rule');
+	});
 
-printf('passed: %d\nfailed: %d\n', pass, fail);
-exit(fail ? 1 : 0);
+	it('loads the policy from UCI', () => {
+		const cursor = { foreach: (pkg, type, cb) => {
+			cb({ '.type': 'usb', '.name': 'global', allow_all: '0' });
+			cb({ '.type': 'allow', '.name': 'cfg1', vendor: '1234', interface: 'ff:02:*' });
+		} };
+		assert.match({ allow_all: false, rules: [
+			{ vendor: '1234', product: '', class: '', subclass: '', protocol: '', interfaces: [ 'ff:02:*' ] } ] },
+			policy_load(cursor), 'policy from UCI');
+		assert.match({ allow_all: true, rules: [] }, policy_load(null), 'policy without config');
+	});
+
+	it('applies the policy to the authorized files of sysfs', () => {
+		fs.mkdir(root);
+		fs.mkdir(`${root}/usb1`);
+		fs.writefile(`${root}/usb1/authorized_default`, '1\n');
+		device_make('1-1', '1234', [ [ 0xff, 2, 1 ] ]);
+		device_make('1-2', 'abcd', [ [ 8, 6, 0x50 ] ]);
+		fs.mkdir(`${root}/1-1:1.0`);
+
+		let rd = (p) => trim(fs.readfile(`${root}/${p}`));
+
+		policy_apply({ allow_all: false, rules: [ { vendor: '1234', interfaces: [] } ] }, root);
+		assert.match('0', rd('usb1/authorized_default'), 'root hub default off');
+		assert.match('1', rd('1-1/authorized'), 'listed device allowed');
+		assert.match('0', rd('1-2/authorized'), 'other device held back');
+
+		policy_apply({ allow_all: true, rules: [] }, root);
+		assert.match('1', rd('usb1/authorized_default'), 'root hub default on');
+		assert.match('1', rd('1-2/authorized'), 'device allowed again');
+	});
+});

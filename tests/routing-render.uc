@@ -1,20 +1,11 @@
 // Host test of the render of Device.Routing (render/templates/routing.uc):
 // a route of Router.1 goes to the main table without a table option, a
 // route of Router.2 to table 101, and a route with a source to a source
-// table with an ip rule. Run from the repository root with the native
-// module built for the host:
-//   tests/render/run.sh <host build> tests/routing-render.uc
+// table with an ip rule.
 'use strict';
 
+import { describe, it, assert, mock, beforeEach } from 'utest';
 import { generate } from 'ubbf.render.renderer';
-
-let pass = 0, fail = 0;
-
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
-}
 
 const config = { Device: {
 	IP: { Interface: { '1': { Enable: 'true', Name: 'wan', Upstream: 'true' }, '2': { Enable: 'true', Name: 'lan' } } },
@@ -48,23 +39,35 @@ function sections(uci, type) {
 	return out;
 }
 
-let logs = [];
-let res = generate(config, logs, true);
-let routes = sections(res.uci, 'route');
-let by_target = {};
-for (let r in routes)
-	by_target[r.target] = r;
+function uci_render() {
+	return generate(config, [], true).uci;
+}
 
-check('main table route has no table option', [ by_target['10.1.0.0']?.netmask, by_target['10.1.0.0']?.table ],
-	[ '255.255.0.0', null ]);
-check('second router route', by_target['10.3.0.0']?.table, '101');
-check('source route goes to a source table', by_target['10.2.0.0']?.table, '200');
+function routes_by_target() {
+	let by_target = {};
+	for (let r in sections(uci_render(), 'route'))
+		by_target[r.target] = r;
+	return by_target;
+}
 
-let rules = sections(res.uci, 'rule');
-check('rule to the source table', length(filter(rules, (r) => r.src == '192.168.1.0/24' && r.lookup == '200')), 1);
+describe('Device.Routing render', () => {
+	beforeEach(() => mock.global.patch('uci', { data: {} }));
 
-if (fail)
-	printf('uci: %s\nlogs: %J\n', res.uci, logs);
+	it('puts a route of Router.1 in the main table without a table option', () => {
+		let by_target = routes_by_target();
+		assert.match([ '255.255.0.0', null ], [ by_target['10.1.0.0']?.netmask, by_target['10.1.0.0']?.table ]);
+	});
 
-printf('passed: %d\nfailed: %d\n', pass, fail);
-exit(fail ? 1 : 0);
+	it('puts a route of Router.2 in table 101', () => {
+		assert.match('101', routes_by_target()['10.3.0.0']?.table);
+	});
+
+	it('puts a route with a source in a source table', () => {
+		assert.match('200', routes_by_target()['10.2.0.0']?.table);
+	});
+
+	it('adds an ip rule to the source table', () => {
+		let rules = sections(uci_render(), 'rule');
+		assert.match(1, length(filter(rules, (r) => r.src == '192.168.1.0/24' && r.lookup == '200')));
+	});
+});

@@ -334,7 +334,7 @@ modules/<name>/files/usr/share/ucode/ubbf/device/plugins/<plugin>.uc
 - A plugin that does not compile, or whose body or `init()` throws, is logged and left out; the daemon runs on. A method whose name `bbf-device` already has is logged and left out.
 - The daemon loads the plugins once at start. A package that is installed later takes effect when ubbf-device restarts.
 - Plugins of this repository: `ieee8021x` (`modules/ieee8021x`, runs a wired wpa_supplicant interface for each enabled `Device.IEEE8021x.Supplicant` row and carries out `StartFailurePolicy` and `AuthenticationSuccessPolicy`; runs a wired hostapd interface for each enabled `Device.IEEE8021x.X_UBBF_Authenticator` row and opens the port with `network.device set_state` while hostapd authorises a station on it), `sfp_allow` (`modules/usfpd`, blocks the SFPs that `Device.SFPs.AllowedSFPs` does not allow), `easymesh_events` (`modules/easymesh`, the umap events of `Device.WiFi.DataElements` and the methods `event_data_status` and `event_data_clear`) and `hardware` (`modules/hardware`, the button state and trigger conditions of `Device.Hardware.Buttons`, and the stored cpufreq settings; methods `button_event`, `button_simulate`, `hardware_status`).
-- Host tests: `tests/device-plugins.uc`, `tests/hardware-plugin.uc`, `tests/ieee8021x-plugin.uc`.
+- Host tests: `tests/device-plugins.uc`, `tests/sysfs/hardware-plugin.uc`, `tests/ieee8021x-plugin.uc`.
 
 ## Components
 
@@ -624,7 +624,18 @@ Combine the flags with a bitwise OR: `dm_type.BOOL | dm_type.WRITABLE`.
 
 ### Tests
 
+- [ ] A host test in `tests/` (see Host tests below) covers the handler and the render.
 - [ ] `ubus call bbf-dm names` lists the new objects and parameters.
 - [ ] Get and set work through ubus.
 - [ ] The render produces valid UCI lines.
 - [ ] The services reload as expected.
+
+## Host tests
+
+The ucode host tests in `tests/*.uc` use utest (the `ucode-utest` package). `tests/run.sh <host build of src/ucode-mod-ubbf>` runs them in one private mount namespace: the source tree is laid out below `/usr/share/ucode/ubbf`, `/etc`, `/run`, `/tmp` and `/var/log` are empty tmpfs, and the tests of `tests/sysfs/` run once more with an empty tmpfs on `/sys`. Without a bundle it also runs `src/ucode-mod-ubbf/test_ubbf_mod.uc`, the test of the native modules, with its own `utest.config.uc`: it needs the real `usb` and `users` modules, which `tests/lib/` stands in for. Extra arguments go to utest, for example `-r compact`, `-f <regex>` or a bundle such as `tests/hosts.uc`.
+
+- `utest.config.uc` mocks `ubus` and `uci`. A test steers them with `mock.global.patch()`; `tests/lib/netifd_mock.uc` gives the netifd status of a map of interfaces.
+- `tests/lib/` holds one stand-in for each module the host lacks (`iwinfo`, `nl80211`, `udebug`, `wifi.utils`, `uwsc`, `wde`, `usb`, `users`) and `state_clear()`, which empties `/tmp/ubbf` and `/etc/ubbf` for a test that needs a clean state: all files of a run share the namespace.
+- `tests/bin/` holds stand-in programs (`curl`, `resolveip`, `lldpcli`, `tc`, `apk`, `uxc`), first in PATH; `run.sh` exports the paths they log to.
+- utest shuffles the tests of a file, so a test does not depend on another; a sequence of dependent steps is one test.
+- The C code of `src/ucode-mod-ubbf` has its own cmocka tests (`ctest` in a build with `UBBF_UNIT_TESTS`).

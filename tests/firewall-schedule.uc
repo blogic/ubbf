@@ -1,25 +1,15 @@
 // Host test of the ScheduleRef render of Device.Hosts.AccessControl
 // (firewall-acl.uc) and Device.Firewall.Pinhole (firewall-pinholes.uc), with
 // and without the schedules module, and of the inline AccessControl
-// schedules. Run from the repository root with the native module built for
-// the host:
-//   ucode -L "$PWD/tests/hosts/*.uc" -L "$PWD/files/usr/share/ucode" \
-//     -L "<host build>/*.so" tests/firewall-schedule.uc
+// schedules.
 'use strict';
 
+import { describe, it, assert } from 'utest';
 import * as ubbf from 'ubbf';
 import * as h from 'ubbf.render.uci_helpers';
 import { schedule_windows } from 'ubbf';
 import { rule_window_set } from 'ubbf.render.uci_helpers';
 import { dm_visible } from 'ubbf.utils.dm-version';
-
-let pass = 0, fail = 0;
-
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
-}
 
 const TEMPLATES = sourcepath(0, true) + '/../files/usr/share/ucode/ubbf/render/templates/';
 
@@ -70,21 +60,6 @@ function pinhole(refs, installed) {
 	} } } }, installed);
 }
 
-check('a pinhole without ScheduleRef is always open', times(pinhole('', true)),
-	[ [ 'ACCEPT', null, null, null ] ]);
-check('a pinhole past midnight gets a rule per day',
-	times(pinhole('Device.Schedules.Schedule.1', true)), [
-		[ 'ACCEPT', '22:00:00', '23:59:59', 'Friday' ],
-		[ 'ACCEPT', '00:00:00', '01:59:59', 'Saturday' ]
-	]);
-check('the rules keep the pinhole options',
-	map(pinhole('Device.Schedules.Schedule.1', true), (r) => [ r.dest_ip, r.dest_port, r.proto ]),
-	[ [ '192.168.1.10', '22', [ 'tcp' ] ], [ '192.168.1.10', '22', [ 'tcp' ] ] ]);
-check('a disabled schedule leaves the pinhole unscheduled',
-	times(pinhole('Device.Schedules.Schedule.2', true)), [ [ 'ACCEPT', null, null, null ] ]);
-check('without the module ScheduleRef does nothing',
-	times(pinhole('Device.Schedules.Schedule.1', false)), [ [ 'ACCEPT', null, null, null ] ]);
-
 function acl(row, installed) {
 	return render('firewall-acl.uc', {
 		Firewall: { InterfaceSetting: { '1': { Enable: 'true', Interface: 'Device.IP.Interface.2' } } },
@@ -94,33 +69,66 @@ function acl(row, installed) {
 	}, installed);
 }
 
-check('Allow without schedules gives no rule', acl({}, true), []);
-check('Allow with ScheduleRef: an ACCEPT per window, then the block pair',
-	times(acl({ ScheduleRef: 'Device.Schedules.Schedule.3,Device.Schedules.Schedule.1' }, true)), [
-		[ 'ACCEPT', '10:00:00', '10:59:59', 'Monday' ],
-		[ 'ACCEPT', '22:00:00', '23:59:59', 'Friday' ],
-		[ 'ACCEPT', '00:00:00', '01:59:59', 'Saturday' ],
-		[ 'REJECT', null, null, null ],
-		[ 'REJECT', null, null, null ]
-	]);
-check('the ACCEPT rules are named per window',
-	map(acl({ ScheduleRef: 'Device.Schedules.Schedule.3' }, true), (r) => r.name),
-	[ 'ACL-Allow-02:00:00:00:00:01-lan-W1', 'ACL-Block-02:00:00:00:00:01-lan',
-	  'ACL-Block-Input-02:00:00:00:00:01-lan' ]);
-check('Allow without the module is not scheduled',
-	acl({ ScheduleRef: 'Device.Schedules.Schedule.1' }, false), []);
-check('Deny ignores the schedules',
-	times(acl({ AccessPolicy: 'Deny', ScheduleRef: 'Device.Schedules.Schedule.1' }, true)),
-	[ [ 'REJECT', null, null, null ], [ 'REJECT', null, null, null ] ]);
+describe('Firewall.Pinhole ScheduleRef render', () => {
+	it('keeps a pinhole without ScheduleRef always open', () => {
+		assert.match([ [ 'ACCEPT', null, null, null ] ], times(pinhole('', true)));
+	});
 
-let inline = { Schedule: { '1': { Enable: 'true', Day: 'Saturday', StartTime: '09:00', Duration: '7200' } } };
-check('an inline schedule (until 2.21), without the module',
-	times(dm_visible(null, '2.21') ? acl(inline, false) : []),
-	dm_visible(null, '2.21') ? [
-		[ 'ACCEPT', '09:00:00', '10:59:59', 'Saturday' ],
-		[ 'REJECT', null, null, null ],
-		[ 'REJECT', null, null, null ]
-	] : []);
+	it('gives a pinhole past midnight a rule per day with the pinhole options', () => {
+		assert.match([
+			[ 'ACCEPT', '22:00:00', '23:59:59', 'Friday' ],
+			[ 'ACCEPT', '00:00:00', '01:59:59', 'Saturday' ]
+		], times(pinhole('Device.Schedules.Schedule.1', true)));
+		assert.match([ [ '192.168.1.10', '22', [ 'tcp' ] ], [ '192.168.1.10', '22', [ 'tcp' ] ] ],
+			map(pinhole('Device.Schedules.Schedule.1', true), (r) => [ r.dest_ip, r.dest_port, r.proto ]),
+			'the rules keep the pinhole options');
+	});
 
-printf('passed: %d\nfailed: %d\n', pass, fail);
-exit(fail ? 1 : 0);
+	it('leaves the pinhole unscheduled for a disabled schedule or without the module', () => {
+		assert.match([ [ 'ACCEPT', null, null, null ] ], times(pinhole('Device.Schedules.Schedule.2', true)),
+			'a disabled schedule');
+		assert.match([ [ 'ACCEPT', null, null, null ] ], times(pinhole('Device.Schedules.Schedule.1', false)),
+			'without the module');
+	});
+});
+
+describe('Hosts.AccessControl ScheduleRef render', () => {
+	it('gives no rule for Allow without schedules', () => {
+		assert.match([], acl({}, true));
+	});
+
+	it('gives an ACCEPT per window and then the block pair for Allow with ScheduleRef', () => {
+		assert.match([
+			[ 'ACCEPT', '10:00:00', '10:59:59', 'Monday' ],
+			[ 'ACCEPT', '22:00:00', '23:59:59', 'Friday' ],
+			[ 'ACCEPT', '00:00:00', '01:59:59', 'Saturday' ],
+			[ 'REJECT', null, null, null ],
+			[ 'REJECT', null, null, null ]
+		], times(acl({ ScheduleRef: 'Device.Schedules.Schedule.3,Device.Schedules.Schedule.1' }, true)));
+	});
+
+	it('names the ACCEPT rules per window', () => {
+		assert.match([ 'ACL-Allow-02:00:00:00:00:01-lan-W1', 'ACL-Block-02:00:00:00:00:01-lan',
+			'ACL-Block-Input-02:00:00:00:00:01-lan' ],
+			map(acl({ ScheduleRef: 'Device.Schedules.Schedule.3' }, true), (r) => r.name));
+	});
+
+	it('does not schedule Allow without the module', () => {
+		assert.match([], acl({ ScheduleRef: 'Device.Schedules.Schedule.1' }, false));
+	});
+
+	it('ignores the schedules for Deny', () => {
+		assert.match([ [ 'REJECT', null, null, null ], [ 'REJECT', null, null, null ] ],
+			times(acl({ AccessPolicy: 'Deny', ScheduleRef: 'Device.Schedules.Schedule.1' }, true)));
+	});
+
+	it('renders an inline schedule (until 2.21) without the module', () => {
+		let inline = { Schedule: { '1': { Enable: 'true', Day: 'Saturday', StartTime: '09:00', Duration: '7200' } } };
+
+		assert.match(dm_visible(null, '2.21') ? [
+			[ 'ACCEPT', '09:00:00', '10:59:59', 'Saturday' ],
+			[ 'REJECT', null, null, null ],
+			[ 'REJECT', null, null, null ]
+		] : [], times(dm_visible(null, '2.21') ? acl(inline, false) : []));
+	});
+});

@@ -1,17 +1,9 @@
 // Host test of the StaticAddress states in dhcp.c of ubbf.so
-// (Device.DHCPv4.Server.Pool.{i}.StaticAddress.{i}.Status):
-//   ucode -L "<host build>/*.so" tests/dhcp.uc
+// (Device.DHCPv4.Server.Pool.{i}.StaticAddress.{i}.Status).
 'use strict';
 
+import { describe, it, assert } from 'utest';
 import { static_address_states } from 'ubbf';
-
-let pass = 0, fail = 0;
-
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
-}
 
 function row(enable, chaddr, yiaddr) {
 	return { Enable: enable, Chaddr: chaddr, Yiaddr: yiaddr };
@@ -38,56 +30,69 @@ function root_make(pool_enable, rows, other_rows) {
 	return { Device: { DHCPv4: { Server: { Pool: pools } } } };
 }
 
-let s = static_address_states(root_make('true', {
-	'1': row('true', '02:00:00:00:00:01', '192.168.1.10'),
-	'2': row('false', '02:00:00:00:00:02', '192.168.1.11')
-}));
-check('active row', s['1']['1'], 'Active');
-check('disabled row', s['1']['2'], 'Disabled');
+describe('DHCPv4 StaticAddress Status', () => {
+	it('is Active for an enabled row and Disabled for a disabled one', () => {
+		let s = static_address_states(root_make('true', {
+			'1': row('true', '02:00:00:00:00:01', '192.168.1.10'),
+			'2': row('false', '02:00:00:00:00:02', '192.168.1.11')
+		}));
+		assert.match('Active', s['1']['1']);
+		assert.match('Disabled', s['1']['2']);
+	});
 
-s = static_address_states(root_make('false', { '1': row('true', '02:00:00:00:00:01', '192.168.1.10') }));
-check('row of a disabled pool', s['1']['1'], 'Disabled');
+	it('is Disabled for a row of a disabled pool', () => {
+		let s = static_address_states(root_make('false', { '1': row('true', '02:00:00:00:00:01', '192.168.1.10') }));
+		assert.match('Disabled', s['1']['1']);
+	});
 
-s = static_address_states(root_make('true', {
-	'1': row('true', '02:00:00:00:00:1', '192.168.1.10'),
-	'2': row('true', '02:00:00:00:00:02', '192.168.1.300'),
-	'3': row('true', '02:00:00:00:00:03', '192.168.2.10'),
-	'4': row('true', '02:00:00:00:00:04', '192.168.1.0'),
-	'5': row('true', '02:00:00:00:00:05', '192.168.1.255'),
-	'6': row('true', '', '')
-}));
-check('short MAC', s['1']['1'], 'Error_Misconfigured');
-check('bad IPv4', s['1']['2'], 'Error_Misconfigured');
-check('outside the pool subnet', s['1']['3'], 'Error_Misconfigured');
-check('network address', s['1']['4'], 'Error_Misconfigured');
-check('broadcast address', s['1']['5'], 'Error_Misconfigured');
-check('empty row', s['1']['6'], 'Error_Misconfigured');
+	it('is Error_Misconfigured for a bad MAC or address', () => {
+		let s = static_address_states(root_make('true', {
+			'1': row('true', '02:00:00:00:00:1', '192.168.1.10'),
+			'2': row('true', '02:00:00:00:00:02', '192.168.1.300'),
+			'3': row('true', '02:00:00:00:00:03', '192.168.2.10'),
+			'4': row('true', '02:00:00:00:00:04', '192.168.1.0'),
+			'5': row('true', '02:00:00:00:00:05', '192.168.1.255'),
+			'6': row('true', '', '')
+		}));
+		assert.match('Error_Misconfigured', s['1']['1'], 'short MAC');
+		assert.match('Error_Misconfigured', s['1']['2'], 'bad IPv4');
+		assert.match('Error_Misconfigured', s['1']['3'], 'outside the pool subnet');
+		assert.match('Error_Misconfigured', s['1']['4'], 'network address');
+		assert.match('Error_Misconfigured', s['1']['5'], 'broadcast address');
+		assert.match('Error_Misconfigured', s['1']['6'], 'empty row');
+	});
 
-s = static_address_states(root_make('true', {
-	'1': row('true', '02:00:00:00:00:01', '192.168.1.10'),
-	'2': row('true', '02:00:00:00:00:02', '192.168.1.10'),
-	'3': row('true', '02:00:00:00:00:0A', '192.168.1.20'),
-	'4': row('true', '02:00:00:00:00:0a', '192.168.1.21'),
-	'5': row('false', '02:00:00:00:00:05', '192.168.1.20'),
-	'6': row('true', '02:00:00:00:00:06', '192.168.1.30')
-}));
-check('same Yiaddr, first row', s['1']['1'], 'Error_DuplicateAddress');
-check('same Yiaddr, second row', s['1']['2'], 'Error_DuplicateAddress');
-check('same Chaddr in other case, first row', s['1']['3'], 'Error_DuplicateAddress');
-check('same Chaddr in other case, second row', s['1']['4'], 'Error_DuplicateAddress');
-check('disabled row is no duplicate', s['1']['5'], 'Disabled');
-check('unrelated row stays active', s['1']['6'], 'Active');
+	it('is Error_Misconfigured for an address with leading zeros', () => {
+		let s = static_address_states(root_make('true', { '1': row('true', '02:00:00:00:00:01', '192.168.001.010') }));
+		assert.match('Error_Misconfigured', s['1']['1']);
+	});
 
-s = static_address_states(root_make('true',
-	{ '1': row('true', '02:00:00:00:00:01', '192.168.1.10') },
-	{ '1': row('true', '02:00:00:00:00:01', '10.0.0.5') }));
-check('same Chaddr in two pools, pool 1', s['1']['1'], 'Error_DuplicateAddress');
-check('same Chaddr in two pools, pool 2', s['2']['1'], 'Error_DuplicateAddress');
+	it('is Error_DuplicateAddress for enabled rows with the same Yiaddr or Chaddr', () => {
+		let s = static_address_states(root_make('true', {
+			'1': row('true', '02:00:00:00:00:01', '192.168.1.10'),
+			'2': row('true', '02:00:00:00:00:02', '192.168.1.10'),
+			'3': row('true', '02:00:00:00:00:0A', '192.168.1.20'),
+			'4': row('true', '02:00:00:00:00:0a', '192.168.1.21'),
+			'5': row('false', '02:00:00:00:00:05', '192.168.1.20'),
+			'6': row('true', '02:00:00:00:00:06', '192.168.1.30')
+		}));
+		assert.match('Error_DuplicateAddress', s['1']['1'], 'same Yiaddr, first row');
+		assert.match('Error_DuplicateAddress', s['1']['2'], 'same Yiaddr, second row');
+		assert.match('Error_DuplicateAddress', s['1']['3'], 'same Chaddr in other case, first row');
+		assert.match('Error_DuplicateAddress', s['1']['4'], 'same Chaddr in other case, second row');
+		assert.match('Disabled', s['1']['5'], 'disabled row is no duplicate');
+		assert.match('Active', s['1']['6'], 'unrelated row stays active');
+	});
 
-s = static_address_states(root_make('true', { '1': row('true', '02:00:00:00:00:01', '192.168.001.010') }));
-check('leading zeros are an error', s['1']['1'], 'Error_Misconfigured');
+	it('is Error_DuplicateAddress for the same Chaddr in two pools', () => {
+		let s = static_address_states(root_make('true',
+			{ '1': row('true', '02:00:00:00:00:01', '192.168.1.10') },
+			{ '1': row('true', '02:00:00:00:00:01', '10.0.0.5') }));
+		assert.match('Error_DuplicateAddress', s['1']['1']);
+		assert.match('Error_DuplicateAddress', s['2']['1']);
+	});
 
-check('no pools', static_address_states({}), {});
-
-printf('passed: %d\nfailed: %d\n', pass, fail);
-exit(fail ? 1 : 0);
+	it('gives no states without pools', () => {
+		assert.match({}, static_address_states({}));
+	});
+});

@@ -3,22 +3,11 @@
 // the length buckets of the driver map to the TR-181 ones, and a row that
 // the driver statistics cannot serve reports its Status. The driver
 // statistics are fixtures in the form of ubbf.ethtool_stats_get(), with the
-// receive buckets of mt7530_rmon_ranges[] in drivers/net/dsa/mt7530.c;
-// tests/hosts/ holds a stand-in for udebug. Run from the repository root
-// with the native module built for the host:
-//   ucode -L "$PWD/tests/hosts/*.uc" \
-//     -L "$PWD/files/usr/share/ucode" -L "<host build>/*.so" tests/rmon-stats.uc
+// receive buckets of mt7530_rmon_ranges[] in drivers/net/dsa/mt7530.c.
 'use strict';
 
+import { describe, it, assert } from 'utest';
 import { rmon_stats_build } from 'ubbf.tr181.Ethernet';
-
-let pass = 0, fail = 0;
-
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
-}
 
 function bucket(low, high, value) {
 	return { low, high, value };
@@ -55,26 +44,39 @@ function buckets(r) {
 		r.Packets256to511Bytes, r.Packets512to1023Bytes, r.Packets1024to1518Bytes ];
 }
 
-let full = row({ Interface: 'Device.Ethernet.Interface.1' });
-check('MAC and RMON counters', counters(full),
-	[ 'Enabled', 'lan1', '123456', '1010', '60', '40', '3', '4', '7' ]);
-check('buckets: 64 without undersize and fragments, 1024..1518 without oversize and jabbers',
-	buckets(full), [ '100', '200', '300', '150', '100', '140' ]);
+describe('RMONStats counters', () => {
+	it('takes the MAC and RMON counters and maps the length buckets', () => {
+		let full = row({ Interface: 'Device.Ethernet.Interface.1' });
+		assert.match([ 'Enabled', 'lan1', '123456', '1010', '60', '40', '3', '4', '7' ], counters(full));
+		assert.match([ '100', '200', '300', '150', '100', '140' ], buckets(full),
+			'buckets: 64 without undersize and fragments, 1024..1518 without oversize and jabbers');
+	});
 
-check('no counters from the driver', counters(row({ Interface: 'Device.Ethernet.Interface.2' })),
-	[ 'Error', 'lan2', null, null, null, null, null, null, null ]);
+	it('is Error without counters from the driver', () => {
+		assert.match([ 'Error', 'lan2', null, null, null, null, null, null, null ],
+			counters(row({ Interface: 'Device.Ethernet.Interface.2' })));
+	});
 
-let mac_only = row({ Interface: 'Device.Ethernet.Interface.3' });
-check('MAC counters only: Packets from the MAC, an unsignedInt wraps, an unsignedLong does not',
-	[ mac_only.Status, mac_only.Packets, mac_only.Bytes, mac_only.CRCErroredPackets, mac_only.Packets64Bytes ],
-	[ 'Enabled', '4294967310', '5000000000', '4', '0' ]);
+	it('takes Packets from the MAC counters alone, wrapping an unsignedInt but not an unsignedLong', () => {
+		let mac_only = row({ Interface: 'Device.Ethernet.Interface.3' });
+		assert.match([ 'Enabled', '4294967310', '5000000000', '4', '0' ],
+			[ mac_only.Status, mac_only.Packets, mac_only.Bytes, mac_only.CRCErroredPackets, mac_only.Packets64Bytes ]);
+	});
+});
 
-check('a VLAN filter', row({ Interface: 'Device.Ethernet.Interface.1', VLANID: '10' }).Status, 'Error');
-check('a queue filter', row({ Interface: 'Device.Ethernet.Interface.1', Queue: 'Device.QoS.Queue.1' }).Status, 'Error');
-check('a queue with AllQueues', row({ Interface: 'Device.Ethernet.Interface.1', Queue: 'Device.QoS.Queue.1', AllQueues: 'true' }).Status, 'Enabled');
-check('no Interface', row({ Interface: '' }).Status, 'Error_Misconfigured');
-check('an Interface without a row', row({ Interface: 'Device.Ethernet.Interface.9' }).Status, 'Error_Misconfigured');
-check('disabled', row({ Enable: 'false', Interface: 'Device.Ethernet.Interface.1' }).Status, 'Disabled');
+describe('RMONStats Status', () => {
+	it('is Error for a VLAN or queue filter, and Enabled for a queue with AllQueues', () => {
+		assert.match('Error', row({ Interface: 'Device.Ethernet.Interface.1', VLANID: '10' }).Status, 'a VLAN filter');
+		assert.match('Error', row({ Interface: 'Device.Ethernet.Interface.1', Queue: 'Device.QoS.Queue.1' }).Status, 'a queue filter');
+		assert.match('Enabled', row({ Interface: 'Device.Ethernet.Interface.1', Queue: 'Device.QoS.Queue.1', AllQueues: 'true' }).Status);
+	});
 
-printf('passed: %d\nfailed: %d\n', pass, fail);
-exit(fail ? 1 : 0);
+	it('is Error_Misconfigured without an Interface row', () => {
+		assert.match('Error_Misconfigured', row({ Interface: '' }).Status, 'no Interface');
+		assert.match('Error_Misconfigured', row({ Interface: 'Device.Ethernet.Interface.9' }).Status, 'an Interface without a row');
+	});
+
+	it('is Disabled for a disabled row', () => {
+		assert.match('Disabled', row({ Enable: 'false', Interface: 'Device.Ethernet.Interface.1' }).Status);
+	});
+});

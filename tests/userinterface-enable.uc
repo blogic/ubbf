@@ -1,20 +1,11 @@
 // Host test of Device.UserInterface.Enable: false stops the web UI, its
-// listeners and the firewall openings of every HTTPAccess row. Run from the
-// repository root with the native module built for the host:
-//   tests/render/run.sh <host build> tests/userinterface-enable.uc
+// listeners and the firewall openings of every HTTPAccess row.
 'use strict';
 
+import { describe, it, assert, mock, beforeEach } from 'utest';
 import * as ubbf from 'ubbf';
 import { generate } from 'ubbf.render.renderer';
 import * as services from 'ubbf.render.services';
-
-let pass = 0, fail = 0;
-
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
-}
 
 function config(enable) {
 	return { Device: {
@@ -34,27 +25,43 @@ function render(enable) {
 	};
 }
 
-check('enabled: service and both listeners', render('true'), { service: true, listeners: 2 });
-check('disabled: no service and no listener', render('false'), { service: false, listeners: 0 });
-
-const api = {
-	ubbf: proto({ datetime_format: (t) => t }, ubbf),
-	utils: {},
-	schema: (k) => k,
-	on_commit: () => null,
-	config_apply: () => ({ success: true }),
-	model: {},
-	operations: {}
-};
-include('/usr/share/ucode/ubbf/modules/userinterface/handler.uc', { ubbf_module: api });
-let hook = api.model['Device.UserInterface.HTTPAccess.{i}'].firewall;
-
-for (let enable in [ 'true', 'false' ]) {
-	let root = config(enable);
-	let claims = map(values(root.Device.UserInterface.HTTPAccess), (row) => hook(row, root, ''));
-	check(`UserInterface.Enable=${enable}: firewall openings`, map(claims, (c) => length(c ?? [])),
-		(enable == 'true') ? [ 1, 1 ] : [ 0, 0 ]);
+function firewall_hook() {
+	const api = {
+		ubbf: proto({ datetime_format: (t) => t }, ubbf),
+		utils: {},
+		schema: (k) => k,
+		on_commit: () => null,
+		config_apply: () => ({ success: true }),
+		model: {},
+		operations: {}
+	};
+	include('/usr/share/ucode/ubbf/modules/userinterface/handler.uc', { ubbf_module: api });
+	return api.model['Device.UserInterface.HTTPAccess.{i}'].firewall;
 }
 
-printf('passed: %d\nfailed: %d\n', pass, fail);
-exit(fail ? 1 : 0);
+function openings(enable) {
+	let hook = firewall_hook();
+	let root = config(enable);
+	let claims = map(values(root.Device.UserInterface.HTTPAccess), (row) => hook(row, root, ''));
+	return map(claims, (c) => length(c ?? []));
+}
+
+describe('Device.UserInterface.Enable', () => {
+	beforeEach(() => mock.global.patch('uci', { data: {} }));
+
+	it('true runs the service with both listeners', () => {
+		assert.match({ service: true, listeners: 2 }, render('true'));
+	});
+
+	it('false runs no service and no listener', () => {
+		assert.match({ service: false, listeners: 0 }, render('false'));
+	});
+
+	it('true opens the firewall for every HTTPAccess row', () => {
+		assert.match([ 1, 1 ], openings('true'), 'UserInterface.Enable=true: firewall openings');
+	});
+
+	it('false opens the firewall for no HTTPAccess row', () => {
+		assert.match([ 0, 0 ], openings('false'), 'UserInterface.Enable=false: firewall openings');
+	});
+});

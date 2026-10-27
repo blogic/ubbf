@@ -1,28 +1,30 @@
 // Host test of the ddns module handler: Status and LastError from the files
 // of ddns-scripts, the provider address of a named service, and the value
-// checks of the set handlers. The handler reads fixed paths, so run it in a
-// private mount namespace from the repository root:
-//   unshare -rm sh -c 'mount -t tmpfs none /run && mount -t tmpfs none /var/log &&
-//     mount -t tmpfs none /usr/share && ucode -L "$PWD/tests/hosts/*.uc" \
-//     -L "$PWD/files/usr/share/ucode/*.uc" -L "<host build>/*.so" tests/ddns.uc'
+// checks of the set handlers. /usr/share is not writable in the test
+// namespace, so the handler reads the provider files of ddns-scripts from
+// SHARE_DIR through an fs stand-in.
 'use strict';
 
+import { describe, it, assert, beforeEach } from 'utest';
 import * as ubbf from 'ubbf';
-import { mkdir, writefile, unlink } from 'fs';
 
-let pass = 0, fail = 0;
+const fs = require('fs');
 
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
+const SHARE_DIR = '/tmp/ubbf-ddns-share';
+const DIRS = [ '/run/ddns', '/var/log/ddns', SHARE_DIR, SHARE_DIR + '/default' ];
+
+function share_path(path) {
+	return replace(path, /^\/usr\/share\/ddns\//, SHARE_DIR + '/');
 }
 
-for (let d in [ '/run/ddns', '/var/log/ddns', '/usr/share/ddns', '/usr/share/ddns/default' ])
-	mkdir(d);
+const fs_share = proto({
+	glob: (pattern) => fs.glob(share_path(pattern)),
+	readfile: (path, ...rest) => fs.readfile(share_path(path), ...rest)
+}, fs);
 
-writefile('/usr/share/ddns/default/dyndns.org.json',
-	'{ "name": "dyndns.org", "ipv4": { "url": "http://[USERNAME]:[PASSWORD]@members.dyndns.org/v3/update?hostname=[DOMAIN]" } }');
+function require_share(name) {
+	return (name == 'fs') ? fs_share : require(name);
+}
 
 const api = {
 	ubbf: proto({ upstream_interface_ref: () => 'Device.IP.Interface.1' }, ubbf),
@@ -33,92 +35,170 @@ const api = {
 	model: {}
 };
 
-include('../modules/ddns/handler.uc', { ubbf_module: api });
+include('../modules/ddns/handler.uc', { ubbf_module: api, require: require_share });
 
 const m = api.model;
 const client_m = m['Device.DynamicDNS.Client.{i}'];
 const host_m = m['Device.DynamicDNS.Client.{i}.Hostname.{i}'];
 const server_m = m['Device.DynamicDNS.Server.{i}'];
 
-let client = { Enable: 'true', Server: 'Device.DynamicDNS.Server.1', IPVersion: '4',
-	Hostname: { '1': { Enable: 'true', Name: 'home.example.net' } } };
-let root = { Device: {
-	IP: { Interface: { '1': { Name: 'wan', IPv4Enable: 'true', IPv6Enable: 'false' } } },
-	DynamicDNS: {
-		Server: { '1': { Enable: 'true', ServiceName: 'dyndns.org' } },
-		Client: { '1': client }
+function dirs_reset() {
+	for (let d in reverse([ ...DIRS ])) {
+		for (let name in fs.lsdir(d) ?? [])
+			fs.unlink(`${d}/${name}`);
+		fs.rmdir(d);
 	}
-} };
+	for (let d in DIRS)
+		fs.mkdir(d);
 
-function status() {
+	fs.writefile(SHARE_DIR + '/default/dyndns.org.json',
+		'{ "name": "dyndns.org", "ipv4": { "url": "http://[USERNAME]:[PASSWORD]@members.dyndns.org/v3/update?hostname=[DOMAIN]" } }');
+}
+
+function client_new() {
+	return { Enable: 'true', Server: 'Device.DynamicDNS.Server.1', IPVersion: '4',
+		Hostname: { '1': { Enable: 'true', Name: 'home.example.net' } } };
+}
+
+function root_new(client) {
+	return { Device: {
+		IP: { Interface: { '1': { Name: 'wan', IPv4Enable: 'true', IPv6Enable: 'false' } } },
+		DynamicDNS: {
+			Server: { '1': { Enable: 'true', ServiceName: 'dyndns.org' } },
+			Client: { '1': client }
+		}
+	} };
+}
+
+function status(client, root) {
 	let row = client_m.get({ instance: 1, config: client, root });
 	return [ row.Status, row.LastError ];
 }
 
-function log(lines) {
-	writefile('/var/log/ddns/ddns_1_1.log', join('\n', lines) + '\n');
+function updater_files(lines, answer) {
+	fs.writefile('/var/log/ddns/ddns_1_1.log', join('\n', lines) + '\n');
+	fs.writefile('/run/ddns/ddns_1_1.update', '100\n');
+	if (answer)
+		fs.writefile('/run/ddns/ddns_1_1.dat', answer + '\n');
 }
 
-check('no log, no updater: Error', status(), [ 'Error', 'MISCONFIGURATION_ERROR' ]);
+const CURL_TIMEOUT = [ ' 101020 ERROR : cURL Error: \'28\'' ];
 
-log([ ' 101010  info : Starting main loop', ' 101011  info : Update successful - IP \'1.2.3.4\' send' ]);
-writefile('/run/ddns/ddns_1_1.update', '100\n');
-check('update successful: Updated', status(), [ 'Updated', 'NO_ERROR' ]);
+beforeEach(() => dirs_reset());
 
-log([ ' 101011  info : Update successful', ' 101020 ERROR : IP update not accepted by DDNS Provider' ]);
-writefile('/run/ddns/ddns_1_1.dat', 'badauth\n');
-check('badauth: AUTHENTICATION_ERROR', status(), [ 'Error', 'AUTHENTICATION_ERROR' ]);
+describe('DynamicDNS Client Status and LastError', () => {
+	it('is Error without a log and an updater', () => {
+		let client = client_new();
+		assert.match([ 'Error', 'MISCONFIGURATION_ERROR' ], status(client, root_new(client)));
+	});
 
-writefile('/run/ddns/ddns_1_1.dat', 'nohost\n');
-check('other answer: PROTOCOL_ERROR', status(), [ 'Error', 'PROTOCOL_ERROR' ]);
+	it('is Updated after a successful update', () => {
+		let client = client_new();
+		updater_files([ ' 101010  info : Starting main loop', ' 101011  info : Update successful - IP \'1.2.3.4\' send' ]);
+		assert.match([ 'Updated', 'NO_ERROR' ], status(client, root_new(client)));
+	});
 
-log([ ' 101020 ERROR : No or private or invalid IP \'172.16.100.2\' given! Please check your configuration' ]);
-check('private address: MISCONFIGURATION_ERROR', status(), [ 'Error', 'MISCONFIGURATION_ERROR' ]);
+	it('tells the error of a rejected update from the answer of the provider', () => {
+		let client = client_new();
+		let root = root_new(client);
+		let rejected = [ ' 101011  info : Update successful', ' 101020 ERROR : IP update not accepted by DDNS Provider' ];
 
-log([ ' 101020 ERROR : cURL Error: \'28\'', ' 101021  WARN : Transfer failed - retry 1/1 in 60 seconds' ]);
-check('curl timeout then retry: CONNECTION_ERROR from the newest line', status(), [ 'Error', 'CONNECTION_ERROR' ]);
+		updater_files(rejected, 'badauth');
+		assert.match([ 'Error', 'AUTHENTICATION_ERROR' ], status(client, root));
 
-log([ ' 101020 ERROR : cURL Error: \'28\'' ]);
-check('curl timeout: TIMEOUT_ERROR', status(), [ 'Error', 'TIMEOUT_ERROR' ]);
+		updater_files(rejected, 'nohost');
+		assert.match([ 'Error', 'PROTOCOL_ERROR' ], status(client, root));
+	});
 
-root.Device.DynamicDNS.Server['1'].Enable = 'false';
-check('disabled server: Error_Misconfigured', status(), [ 'Error_Misconfigured', 'MISCONFIGURATION_ERROR' ]);
-root.Device.DynamicDNS.Server['1'].Enable = 'true';
+	it('is MISCONFIGURATION_ERROR for a private address', () => {
+		let client = client_new();
+		updater_files([ ' 101020 ERROR : No or private or invalid IP \'172.16.100.2\' given! Please check your configuration' ], 'nohost');
+		assert.match([ 'Error', 'MISCONFIGURATION_ERROR' ], status(client, root_new(client)));
+	});
 
-client.IPVersion = '6';
-check('IPv6 without an address: Error_Misconfigured', status(), [ 'Error_Misconfigured', 'MISCONFIGURATION_ERROR' ]);
-client.IPVersion = '4';
+	it('takes the newest log line for a curl timeout', () => {
+		let client = client_new();
+		let root = root_new(client);
 
-client.Enable = 'false';
-check('disabled client', status(), [ 'Disabled', 'NO_ERROR' ]);
-client.Enable = 'true';
+		updater_files([ ...CURL_TIMEOUT, ' 101021  WARN : Transfer failed - retry 1/1 in 60 seconds' ], 'nohost');
+		assert.match([ 'Error', 'CONNECTION_ERROR' ], status(client, root), 'retry after a curl timeout');
 
-log([ ' 101011  info : Update successful' ]);
-let host = host_m.get({ instance: '1', config: client.Hostname['1'], parent: client, root });
-check('hostname Registered', host.Status, 'Registered');
-check('hostname LastUpdate is a time', match(host.LastUpdate, /^20[0-9]{2}-/) != null, true);
+		updater_files(CURL_TIMEOUT, 'nohost');
+		assert.match([ 'Error', 'TIMEOUT_ERROR' ], status(client, root));
+	});
 
-let server = server_m.get({ instance: 1, config: root.Device.DynamicDNS.Server['1'], root });
-check('named service reports its host', [ server.ServerAddress, server.ServerPort, server.Protocol, server.SupportedProtocols ],
-	[ 'members.dyndns.org', '443', 'HTTPS', 'HTTP,HTTPS' ]);
+	it('is Error_Misconfigured for a disabled server and for IPv6 without an address', () => {
+		let client = client_new();
+		let root = root_new(client);
+		updater_files(CURL_TIMEOUT, 'nohost');
 
-let generic = server_m.get({ instance: 2, config: { ServiceName: 'dyndns2', ServerAddress: 'ddns.example.net', ServerPort: '8443', Protocol: 'HTTP' }, root });
-check('generic service keeps its values', [ generic.ServerAddress, generic.ServerPort, generic.Protocol ], [ 'ddns.example.net', '8443', 'HTTP' ]);
+		root.Device.DynamicDNS.Server['1'].Enable = 'false';
+		assert.match([ 'Error_Misconfigured', 'MISCONFIGURATION_ERROR' ], status(client, root));
+		root.Device.DynamicDNS.Server['1'].Enable = 'true';
 
-check('supported services', m['Device.DynamicDNS'].get({ config: {} }).SupportedServices, 'dyndns.org,dyndns2');
+		client.IPVersion = '6';
+		assert.match([ 'Error_Misconfigured', 'MISCONFIGURATION_ERROR' ], status(client, root));
+	});
 
-const set = (model_entry, param, value) => model_entry.set({ param, value, instance: 1, config: {} });
-check('ServiceName from the list', set(server_m, 'ServiceName', 'dyndns2'), 0);
-check('ServiceName outside the list', set(server_m, 'ServiceName', '../x'), -USP_ERR_INVALID_VALUE);
-check('ServerAddress host name', set(server_m, 'ServerAddress', 'ddns.example.net'), 0);
-check('ServerAddress IPv6', set(server_m, 'ServerAddress', '2001:db8::1'), 0);
-check('ServerAddress with a quote', set(server_m, 'ServerAddress', "x'y"), -USP_ERR_INVALID_VALUE);
-check('ServerAddress as a URL', set(server_m, 'ServerAddress', 'http://x/'), -USP_ERR_INVALID_VALUE);
-check('Server reference', set(client_m, 'Server', 'Device.DynamicDNS.Server.3'), 0);
-check('Server reference to another table', set(client_m, 'Server', 'Device.IP.Interface.1'), -USP_ERR_INVALID_VALUE);
-check('Interface reference to another table', set(client_m, 'Interface', 'Device.DynamicDNS.Server.1'), -USP_ERR_INVALID_VALUE);
-check('Hostname wildcard', set(host_m, 'Name', '*.home.example.net'), 0);
-check('Hostname with a space', set(host_m, 'Name', 'bad name'), -USP_ERR_INVALID_VALUE);
+	it('is Disabled for a disabled client', () => {
+		let client = client_new();
+		updater_files(CURL_TIMEOUT, 'nohost');
+		client.Enable = 'false';
+		assert.match([ 'Disabled', 'NO_ERROR' ], status(client, root_new(client)));
+	});
+});
 
-printf('passed: %d\nfailed: %d\n', pass, fail);
-exit(fail ? 1 : 0);
+describe('DynamicDNS Client Hostname', () => {
+	it('is Registered with a LastUpdate after a successful update', () => {
+		let client = client_new();
+		updater_files([ ' 101011  info : Update successful' ], 'nohost');
+		let host = host_m.get({ instance: '1', config: client.Hostname['1'], parent: client, root: root_new(client) });
+		assert.match('Registered', host.Status);
+		assert.match(true, match(host.LastUpdate, /^20[0-9]{2}-/) != null);
+	});
+});
+
+describe('DynamicDNS Server', () => {
+	it('reports the host of a named service', () => {
+		let root = root_new(client_new());
+		let server = server_m.get({ instance: 1, config: root.Device.DynamicDNS.Server['1'], root });
+		assert.match([ 'members.dyndns.org', '443', 'HTTPS', 'HTTP,HTTPS' ],
+			[ server.ServerAddress, server.ServerPort, server.Protocol, server.SupportedProtocols ]);
+	});
+
+	it('keeps the values of the generic service', () => {
+		let generic = server_m.get({ instance: 2, config: { ServiceName: 'dyndns2', ServerAddress: 'ddns.example.net', ServerPort: '8443', Protocol: 'HTTP' }, root: root_new(client_new()) });
+		assert.match([ 'ddns.example.net', '8443', 'HTTP' ], [ generic.ServerAddress, generic.ServerPort, generic.Protocol ]);
+	});
+
+	it('lists the supported services', () => {
+		assert.match('dyndns.org,dyndns2', m['Device.DynamicDNS'].get({ config: {} }).SupportedServices);
+	});
+});
+
+describe('DynamicDNS value checks', () => {
+	const set = (model_entry, param, value) => model_entry.set({ param, value, instance: 1, config: {} });
+
+	it('takes a ServiceName from the list only', () => {
+		assert.match(0, set(server_m, 'ServiceName', 'dyndns2'));
+		assert.match(-USP_ERR_INVALID_VALUE, set(server_m, 'ServiceName', '../x'));
+	});
+
+	it('takes a host name or an address as ServerAddress', () => {
+		assert.match(0, set(server_m, 'ServerAddress', 'ddns.example.net'));
+		assert.match(0, set(server_m, 'ServerAddress', '2001:db8::1'));
+		assert.match(-USP_ERR_INVALID_VALUE, set(server_m, 'ServerAddress', "x'y"));
+		assert.match(-USP_ERR_INVALID_VALUE, set(server_m, 'ServerAddress', 'http://x/'));
+	});
+
+	it('takes references to the right table only', () => {
+		assert.match(0, set(client_m, 'Server', 'Device.DynamicDNS.Server.3'));
+		assert.match(-USP_ERR_INVALID_VALUE, set(client_m, 'Server', 'Device.IP.Interface.1'));
+		assert.match(-USP_ERR_INVALID_VALUE, set(client_m, 'Interface', 'Device.DynamicDNS.Server.1'));
+	});
+
+	it('takes a wildcard host name and no space', () => {
+		assert.match(0, set(host_m, 'Name', '*.home.example.net'));
+		assert.match(-USP_ERR_INVALID_VALUE, set(host_m, 'Name', 'bad name'));
+	});
+});

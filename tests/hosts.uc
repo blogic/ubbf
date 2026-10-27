@@ -1,28 +1,16 @@
 // Host test of the inactive-host cleanup in utils/hosts.uc
-// (CleanupHostsThreshold, RemoveInactiveHosts()). Run from the repository
-// root with the native module built for the host. The test writes
-// /tmp/ubbf/hosts-state.json, so run it with a private /tmp; tests/hosts/
-// holds stand-ins for the iwinfo and udebug modules:
-//   unshare -rm sh -c 'mount -t tmpfs none /tmp && ucode \
-//     -L "$PWD/tests/hosts/*.uc" -L "$PWD/files/usr/share/ucode/*.uc" \
-//     -L "<host build>/*.so" tests/hosts.uc'
-// The host build must not be below /tmp.
+// (CleanupHostsThreshold, RemoveInactiveHosts()), the numbering of the
+// hosts and the cache of hosts_build(). netifd answers no interface.
 'use strict';
 
+import { describe, it, assert, mock, beforeEach } from 'utest';
 import * as fs from 'fs';
+import { state_clear } from 'test_env';
 import { hosts_build, hosts_state_get, hosts_downstream_get, hosts_inactive_remove, hosts_numbered, host_by_instance } from 'ubbf.utils.hosts';
 import { instance_map_own } from 'ubbf';
 
 // This process numbers rows, as the agent does.
 instance_map_own(true);
-
-let pass = 0, fail = 0;
-
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
-}
 
 function away_entry(now, left_ago) {
 	return { active: false, last_change: 'x', changed: now - left_ago, seen: now - left_ago, host: { hostname: 'h' } };
@@ -43,59 +31,84 @@ function away_macs(hosts) {
 	return sort(map(filter(hosts, (h) => substr(h.mac, 0, 3) == '02:'), (h) => h.mac));
 }
 
-let state = hosts_state_get();
-state_fill(state);
+function away_numbers(numbered) {
+	let out = {};
+	for (let n, h in numbered)
+		if (substr(h.mac, 0, 3) == '02:')
+			out[h.mac] = n;
+	return out;
+}
 
-let all = hosts_downstream_get({ Device: { Hosts: { CleanupHostsThreshold: '-1' } } });
-let present = length(all) - length(away_macs(all));
-check('threshold -1 keeps every away host', length(away_macs(all)), 5);
+beforeEach(() => {
+	state_clear();
+	mock.global.patch('ubus', { data: {} });
+});
 
-let kept = hosts_downstream_get({ Device: { Hosts: { CleanupHostsThreshold: sprintf('%d', present + 2) } } });
-check('threshold keeps the two hosts that left last', away_macs(kept), [ '02:00:00:00:00:04', '02:00:00:00:00:05' ]);
-check('trimmed hosts leave the state', sort(keys(state.entries)), [ '02:00:00:00:00:04', '02:00:00:00:00:05' ]);
+describe('Hosts CleanupHostsThreshold', () => {
+	it('keeps the away hosts that left last up to the threshold', () => {
+		let state = hosts_state_get();
+		state_fill(state);
 
-state_fill(state);
-let none = hosts_downstream_get({ Device: { Hosts: { CleanupHostsThreshold: '0' } } });
-check('threshold 0 removes every away host', away_macs(none), []);
+		let all = hosts_downstream_get({ Device: { Hosts: { CleanupHostsThreshold: '-1' } } });
+		let present = length(all) - length(away_macs(all));
+		assert.match(5, length(away_macs(all)), 'threshold -1 keeps every away host');
 
-state_fill(state);
-check('no threshold parameter keeps every away host', length(away_macs(hosts_downstream_get({}))), 5);
+		let kept = hosts_downstream_get({ Device: { Hosts: { CleanupHostsThreshold: sprintf('%d', present + 2) } } });
+		assert.match([ '02:00:00:00:00:04', '02:00:00:00:00:05' ], away_macs(kept));
+		assert.match([ '02:00:00:00:00:04', '02:00:00:00:00:05' ], sort(keys(state.entries)), 'trimmed hosts leave the state');
 
-state_fill(state);
-check('MinimumInactiveTime 250 removes hosts inactive longer', hosts_inactive_remove({}, 250), 3);
-check('remaining after MinimumInactiveTime 250', sort(keys(state.entries)), [ '02:00:00:00:00:04', '02:00:00:00:00:05' ]);
+		state_fill(state);
+		let none = hosts_downstream_get({ Device: { Hosts: { CleanupHostsThreshold: '0' } } });
+		assert.match([], away_macs(none), 'threshold 0 removes every away host');
 
-state_fill(state);
-check('MinimumInactiveTime 300 is exclusive', hosts_inactive_remove({}, 300), 2);
+		state_fill(state);
+		assert.match(5, length(away_macs(hosts_downstream_get({}))), 'no threshold parameter keeps every away host');
+	});
+});
 
-state_fill(state);
-check('no MinimumInactiveTime removes all inactive hosts', hosts_inactive_remove({}, null), 5);
-check('state file written', json(fs.readfile('/tmp/ubbf/hosts-state.json')), { entries: {} });
+describe('Hosts RemoveInactiveHosts()', () => {
+	it('removes the hosts inactive longer than MinimumInactiveTime', () => {
+		let state = hosts_state_get();
+		state_fill(state);
+		assert.match(3, hosts_inactive_remove({}, 250));
+		assert.match([ '02:00:00:00:00:04', '02:00:00:00:00:05' ], sort(keys(state.entries)));
+	});
 
-// A host keeps its instance number when another one leaves (TR-369 R-ARC.8)
-state_fill(state);
-let numbered = hosts_numbered({});
-let away_numbers = {};
-for (let n, h in numbered)
-	if (substr(h.mac, 0, 3) == '02:')
-		away_numbers[h.mac] = n;
-delete state.entries['02:00:00:00:00:02'];
-let renumbered = {};
-for (let n, h in hosts_numbered({}))
-	if (substr(h.mac, 0, 3) == '02:')
-		renumbered[h.mac] = n;
-delete away_numbers['02:00:00:00:00:02'];
-check('hosts keep their numbers when one leaves', renumbered, away_numbers);
-check('host by its number', host_by_instance({}, away_numbers['02:00:00:00:00:04'])?.mac, '02:00:00:00:00:04');
+	it('does not remove a host inactive for exactly MinimumInactiveTime', () => {
+		state_fill(hosts_state_get());
+		assert.match(2, hosts_inactive_remove({}, 300));
+	});
 
-// hosts_build() caches the scan of the system, not the root of the
-// first caller
-let root_a = { Device: {} }, root_b = { Device: {} };
-let built_a = hosts_build(root_a);
-check('inventory of the second root', hosts_build(root_b).config === root_b, true);
-check('inventory of the first root again', hosts_build(root_a).config === root_a, true);
-check('same root, same inventory', hosts_build(root_a) === hosts_build(root_a), true);
-check('same scan for both roots', hosts_build(root_b).hosts === built_a.hosts, true);
+	it('removes all inactive hosts without MinimumInactiveTime and writes the state', () => {
+		state_fill(hosts_state_get());
+		assert.match(5, hosts_inactive_remove({}, null));
+		assert.match({ entries: {} }, json(fs.readfile('/tmp/ubbf/hosts-state.json')));
+	});
+});
 
-printf('passed: %d\nfailed: %d\n', pass, fail);
-exit(fail ? 1 : 0);
+describe('Hosts numbering', () => {
+	// TR-369 R-ARC.8
+	it('keeps the numbers of the other hosts when one leaves', () => {
+		let state = hosts_state_get();
+		state_fill(state);
+		let before = away_numbers(hosts_numbered({}));
+
+		delete state.entries['02:00:00:00:00:02'];
+		let after = away_numbers(hosts_numbered({}));
+		delete before['02:00:00:00:00:02'];
+
+		assert.match(before, after);
+		assert.match('02:00:00:00:00:04', host_by_instance({}, before['02:00:00:00:00:04'])?.mac);
+	});
+});
+
+describe('Hosts inventory', () => {
+	it('caches the scan of the system, not the root of the first caller', () => {
+		let root_a = { Device: {} }, root_b = { Device: {} };
+		let built_a = hosts_build(root_a);
+		assert.match(true, hosts_build(root_b).config === root_b);
+		assert.match(true, hosts_build(root_a).config === root_a);
+		assert.match(true, hosts_build(root_a) === hosts_build(root_a));
+		assert.match(true, hosts_build(root_b).hosts === built_a.hosts);
+	});
+});

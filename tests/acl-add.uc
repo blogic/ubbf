@@ -1,20 +1,9 @@
 // Host test of acl_can_add() of ubbf.so: only a write rule that grants the
-// whole instance of a table lets a web UI role create rows in it. Run from
-// the repository root with the native module built for the host;
-// tests/hosts/ holds a stand-in for udebug:
-//   ucode -L "$PWD/tests/hosts/*.uc" -L "$PWD/files/usr/share/ucode" \
-//     -L "<host build>/*.so" tests/acl-add.uc
+// whole instance of a table lets a web UI role create rows in it.
 'use strict';
 
+import { describe, it, assert } from 'utest';
 import { acl_can_add } from 'ubbf';
-
-let pass = 0, fail = 0;
-
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
-}
 
 const CASES = [
 	[ 'full grant on the rows', { 'Device.A.T.*': true }, 'Device.A.T', true ],
@@ -30,9 +19,6 @@ const CASES = [
 	[ 'no write section', null, 'Device.A.T', false ],
 ];
 
-for (let c in CASES)
-	check(c[0], acl_can_add(c[1] ? { write: c[1] } : {}, c[2]), c[3]);
-
 // The write rules of the shipped admin-user role (ubbf-feed ubbf-ui/acl):
 // its web UI adds DHCP static addresses and edits the rest.
 const ADMIN_USER = { write: {
@@ -43,10 +29,25 @@ const ADMIN_USER = { write: {
 	'Device.DHCPv4.Server.Pool.*.StaticAddress.*': true
 } };
 
-check('admin-user adds static addresses', acl_can_add(ADMIN_USER, 'Device.DHCPv4.Server.Pool.1.StaticAddress'), true);
-check('admin-user adds no SSID, interface, address or pool',
-	map([ 'Device.WiFi.SSID', 'Device.IP.Interface', 'Device.IP.Interface.1.IPv4Address', 'Device.DHCPv4.Server.Pool' ],
-		(p) => acl_can_add(ADMIN_USER, p)), [ false, false, false, false ]);
+function case_register(c) {
+	it(c[0], () => {
+		assert.match(c[3], acl_can_add(c[1] ? { write: c[1] } : {}, c[2]));
+	});
+}
 
-printf('passed: %d\nfailed: %d\n', pass, fail);
-exit(fail ? 1 : 0);
+describe('acl_can_add() write rules', () => {
+	for (let c in CASES)
+		case_register(c);
+});
+
+describe('acl_can_add() of the admin-user role', () => {
+	it('adds static addresses', () => {
+		assert.match(true, acl_can_add(ADMIN_USER, 'Device.DHCPv4.Server.Pool.1.StaticAddress'));
+	});
+
+	it('adds no SSID, interface, address or pool', () => {
+		assert.match([ false, false, false, false ],
+			map([ 'Device.WiFi.SSID', 'Device.IP.Interface', 'Device.IP.Interface.1.IPv4Address', 'Device.DHCPv4.Server.Pool' ],
+				(p) => acl_can_add(ADMIN_USER, p)));
+	});
+});

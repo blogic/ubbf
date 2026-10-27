@@ -1,20 +1,20 @@
 // Host test of the numbering of Device.IP.Interface.{i}.IPv4Address,
 // IPv6Address and IPv6Prefix in tr181/IP.uc: a stored row keeps its number
 // and its address whatever order netifd reports, and the other addresses
-// follow the stored rows. tests/ip/ holds stand-ins for ubus (netifd
-// status) and rtnl, tests/hosts/ one for udebug:
-//   ucode -L "$PWD/tests/ip/*.uc" -L "$PWD/tests/hosts/*.uc" \
-//     -L "$PWD/files/usr/share/ucode" -L "<host build>/*.so" tests/ip-addresses.uc
+// follow the stored rows. The netifd status comes from a ubus mock.
 'use strict';
 
+import { describe, it, assert, mock, beforeEach } from 'utest';
+import { state_clear } from 'test_env';
 import { model } from 'ubbf.tr181.IP';
 
-let pass = 0, fail = 0;
-
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
+// Answers network.interface.<name> status from an interface name to status
+// map.
+function netifd_set(netifd) {
+	mock.global.patch('ubus', { behavior: { call: (object, method) => {
+		let m = match(object, /^network\.interface\.(.+)$/);
+		return (m && method == 'status') ? netifd[m[1]] : null;
+	} } });
 }
 
 const iface_get = model['Device.IP.Interface.{i}'].get;
@@ -39,30 +39,12 @@ const wan = {
 	IPv6Address: { '1': { Enable: 'true', Alias: 'WanIPv6', IPAddress: '', Origin: 'DHCPv6' } }
 };
 
-global.netifd = {
-	wan: { up: true, device: 'eth1', 'ipv4-address': [ { address: '172.16.100.2', mask: 24 } ] },
-	wan6: { up: true, 'ipv6-address': [ LEASE, SLAAC ], 'ipv6-prefix': [ PD ] }
-};
-
-let r = iface_get({ config: wan, instance: 1 });
-check('WAN DHCP row takes the lease', addresses(r.IPv4Address), { '1': '172.16.100.2' });
-check('WAN DHCPv6 row takes the lease, SLAAC follows', addresses(r.IPv6Address), { '1': LEASE.address, '2': SLAAC.address });
-check('WAN count', r.IPv6AddressNumberOfEntries, '2');
-check('WAN PD prefix', addresses(r.IPv6Prefix), { '1': '2001:db8:200::/60' });
-check('per-row DHCP read', ipv4_get({ config: wan.IPv4Address['1'], parent: wan, instance: 1 }).IPAddress, '172.16.100.2');
-check('per-row DHCPv6 read', ipv6_get({ config: wan.IPv6Address['1'], parent: wan, instance: 1 }).IPAddress, LEASE.address);
-check('per-row PD read', prefix_get({ parent: wan, instance: 1 }).Prefix, '2001:db8:200::/60');
-
-global.netifd.wan6['ipv6-address'] = [ SLAAC, LEASE ];
-r = iface_get({ config: wan, instance: 1 });
-check('netifd order does not move the lease', addresses(r.IPv6Address), { '1': LEASE.address, '2': SLAAC.address });
-
-// A lease outage: the SLAAC address does not take the DHCPv6 row.
-global.netifd.wan6['ipv6-address'] = [ SLAAC ];
-r = iface_get({ config: wan, instance: 1 });
-check('without a lease the SLAAC address keeps its number', addresses(r.IPv6Address), { '2': SLAAC.address });
-check('without a lease the DHCPv6 row is Invalid',
-	ipv6_get({ config: wan.IPv6Address['1'], parent: wan, instance: 1 }).IPAddressStatus, 'Invalid');
+function wan_netifd(ipv6) {
+	return {
+		wan: { up: true, device: 'eth1', 'ipv4-address': [ { address: '172.16.100.2', mask: 24 } ] },
+		wan6: { up: true, 'ipv6-address': ipv6, 'ipv6-prefix': [ PD ] }
+	};
+}
 
 const lan = {
 	Name: 'lan', Upstream: 'false', Enable: 'true',
@@ -71,24 +53,58 @@ const lan = {
 	IPv6Prefix: { '1': { Enable: 'true', ParentPrefix: 'Device.IP.Interface.1.IPv6Prefix.1', ChildPrefixBits: '64' } }
 };
 
-global.netifd.lan = {
-	up: true, device: 'br-lan',
-	'ipv4-address': [ { address: '192.168.1.2', mask: 24 }, { address: '192.168.1.1', mask: 24 } ],
-	'ipv6-address': [ { address: '2001:db8:5:0::1', mask: 64 } ],
-	'ipv6-prefix-assignment': [ {
-		address: '2001:db8:200::', mask: 64, preferred: 1000, valid: 3000,
-		'local-address': { address: '2001:db8:200::1', mask: 64 }
-	} ]
+const lan_netifd = {
+	...wan_netifd([ LEASE, SLAAC ]),
+	lan: {
+		up: true, device: 'br-lan',
+		'ipv4-address': [ { address: '192.168.1.2', mask: 24 }, { address: '192.168.1.1', mask: 24 } ],
+		'ipv6-address': [ { address: '2001:db8:5:0::1', mask: 64 } ],
+		'ipv6-prefix-assignment': [ {
+			address: '2001:db8:200::', mask: 64, preferred: 1000, valid: 3000,
+			'local-address': { address: '2001:db8:200::1', mask: 64 }
+		} ]
+	}
 };
 
-r = iface_get({ config: lan, instance: 2 });
-check('static row keeps its address listed second', addresses(r.IPv4Address), { '1': '192.168.1.1', '2': '192.168.1.2' });
-check('static IPv6 row matches another spelling, found address follows row 2',
-	addresses(r.IPv6Address), { '2': '2001:db8:5:0::1', '3': '2001:db8:200::1' });
-check('found PD address is Child', r.IPv6Address['3'].Origin, 'Child');
-check('per-row static read', ipv4_get({ config: lan.IPv4Address['1'], parent: lan, instance: 1 }).IPAddress, '192.168.1.1');
-check('Child prefix row reads its assignment',
-	prefix_get({ config: lan.IPv6Prefix['1'], parent: lan, instance: 1 }).Prefix, '2001:db8:200::/64');
+describe('IP.Interface address numbering', () => {
+	beforeEach(() => state_clear());
 
-printf('passed: %d\nfailed: %d\n', pass, fail);
-exit(fail ? 1 : 0);
+	it('gives the WAN rows the DHCP and DHCPv6 leases', () => {
+		netifd_set(wan_netifd([ LEASE, SLAAC ]));
+
+		let r = iface_get({ config: wan, instance: 1 });
+		assert.match({ '1': '172.16.100.2' }, addresses(r.IPv4Address));
+		assert.match({ '1': LEASE.address, '2': SLAAC.address }, addresses(r.IPv6Address));
+		assert.match('2', r.IPv6AddressNumberOfEntries);
+		assert.match({ '1': '2001:db8:200::/60' }, addresses(r.IPv6Prefix));
+		assert.match('172.16.100.2', ipv4_get({ config: wan.IPv4Address['1'], parent: wan, instance: 1 }).IPAddress);
+		assert.match(LEASE.address, ipv6_get({ config: wan.IPv6Address['1'], parent: wan, instance: 1 }).IPAddress);
+		assert.match('2001:db8:200::/60', prefix_get({ parent: wan, instance: 1 }).Prefix);
+	});
+
+	it('keeps the numbers when netifd reorders or loses the lease', () => {
+		netifd_set(wan_netifd([ LEASE, SLAAC ]));
+		iface_get({ config: wan, instance: 1 });
+
+		netifd_set(wan_netifd([ SLAAC, LEASE ]));
+		let r = iface_get({ config: wan, instance: 1 });
+		assert.match({ '1': LEASE.address, '2': SLAAC.address }, addresses(r.IPv6Address), 'netifd order does not move the lease');
+
+		// A lease outage: the SLAAC address does not take the DHCPv6 row.
+		netifd_set(wan_netifd([ SLAAC ]));
+		r = iface_get({ config: wan, instance: 1 });
+		assert.match({ '2': SLAAC.address }, addresses(r.IPv6Address));
+		assert.match('Invalid', ipv6_get({ config: wan.IPv6Address['1'], parent: wan, instance: 1 }).IPAddressStatus);
+	});
+
+	it('keeps the stored LAN rows and numbers the found addresses after them', () => {
+		netifd_set(lan_netifd);
+
+		let r = iface_get({ config: lan, instance: 2 });
+		assert.match({ '1': '192.168.1.1', '2': '192.168.1.2' }, addresses(r.IPv4Address));
+		assert.match({ '2': '2001:db8:5:0::1', '3': '2001:db8:200::1' }, addresses(r.IPv6Address));
+		assert.match('Child', r.IPv6Address['3'].Origin);
+		assert.match('192.168.1.1', ipv4_get({ config: lan.IPv4Address['1'], parent: lan, instance: 1 }).IPAddress);
+		assert.match('2001:db8:200::/64', prefix_get({ config: lan.IPv6Prefix['1'], parent: lan, instance: 1 }).Prefix);
+	});
+});

@@ -1,19 +1,10 @@
 // Host test of the DHCPv4 pool split around ReservedAddresses in
 // render/templates/dhcp.uc: the segments between the reserved addresses,
 // with the work bound by the number of reservations, not the pool size.
-// Run from the repository root with the native module built for the host:
-//   tests/render/run.sh <host build> tests/dhcp-range.uc
 'use strict';
 
+import { describe, it, assert, mock, beforeEach } from 'utest';
 import { generate } from 'ubbf.render.renderer';
-
-let pass = 0, fail = 0;
-
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
-}
 
 function ranges(min, max, reserved) {
 	let config = { Device: {
@@ -31,18 +22,35 @@ function ranges(min, max, reserved) {
 	return out;
 }
 
-check('no reservation', ranges('10.0.0.100', '10.0.0.249', ''), [ 100, 150 ]);
-check('one reservation inside', ranges('10.0.0.100', '10.0.0.249', '10.0.0.150'), [ 100, 50, 151, 99 ]);
-check('duplicates and the first address', ranges('10.0.0.100', '10.0.0.249', '10.0.0.150,10.0.0.150,10.0.0.100'),
-	[ 101, 49, 151, 99 ]);
-check('the last address', ranges('10.0.0.100', '10.0.0.249', '10.0.0.249'), [ 100, 149 ]);
-check('outside the pool', ranges('10.0.0.100', '10.0.0.249', '10.0.0.50,10.0.1.1'), [ 100, 150 ]);
+describe('DHCPv4 pool split around ReservedAddresses', () => {
+	beforeEach(() => mock.global.patch('uci', { data: {} }));
 
-let t0 = clock(true);
-let big = ranges('10.0.0.1', '10.255.255.254', '10.1.2.3');
-let t1 = clock(true);
-check('a /8 pool with one reservation gives two segments', length(big), 4);
-check('a /8 pool renders in under a second', (t1[0] - t0[0]) + (t1[1] - t0[1]) / 1e9 < 1, true);
+	it('gives one segment without a reservation', () => {
+		assert.match([ 100, 150 ], ranges('10.0.0.100', '10.0.0.249', ''));
+	});
 
-printf('passed: %d\nfailed: %d\n', pass, fail);
-exit(fail ? 1 : 0);
+	it('splits the pool around a reservation inside it', () => {
+		assert.match([ 100, 50, 151, 99 ], ranges('10.0.0.100', '10.0.0.249', '10.0.0.150'));
+	});
+
+	it('ignores duplicates and skips the first address', () => {
+		assert.match([ 101, 49, 151, 99 ],
+			ranges('10.0.0.100', '10.0.0.249', '10.0.0.150,10.0.0.150,10.0.0.100'));
+	});
+
+	it('skips the last address', () => {
+		assert.match([ 100, 149 ], ranges('10.0.0.100', '10.0.0.249', '10.0.0.249'));
+	});
+
+	it('ignores reservations outside the pool', () => {
+		assert.match([ 100, 150 ], ranges('10.0.0.100', '10.0.0.249', '10.0.0.50,10.0.1.1'));
+	});
+
+	it('splits a /8 pool with one reservation in under a second', () => {
+		let t0 = clock(true);
+		let big = ranges('10.0.0.1', '10.255.255.254', '10.1.2.3');
+		let t1 = clock(true);
+		assert.match(4, length(big), 'a /8 pool with one reservation gives two segments');
+		assert.match(true, (t1[0] - t0[0]) + (t1[1] - t0[1]) / 1e9 < 1, 'a /8 pool renders in under a second');
+	});
+});

@@ -1,27 +1,12 @@
 // Host test of the phy and htmode helpers and dscp_parse() of ubbf.so
-// (wifi.c, wifi_phy.c):
-//   ucode -L "<host build>/*.so" tests/wifi-helpers.uc
+// (wifi.c, wifi_phy.c).
 'use strict';
 
+import { describe, it, assert } from 'utest';
 import {
 	clamp_htmode, standards_bandwidth_to_htmode, phy_supported_standards,
 	phy_supported_bandwidths, phy_max_bandwidth, dscp_parse
 } from 'ubbf';
-
-let pass = 0, fail = 0;
-
-function check(name, got, expected) {
-	if (sprintf('%J', got) == sprintf('%J', expected)) { pass++; return; }
-	fail++;
-	printf('FAIL %s\n  expected %J\n  got      %J\n', name, expected, got);
-}
-
-check('n at 80MHz', clamp_htmode('n', '80MHz', 'ax', '160MHz'), 'HT40');
-check('ac at 160MHz on an 80MHz radio', clamp_htmode('ac', '160MHz', 'ax', '80MHz'), 'VHT80');
-check('ax at 320MHz', standards_bandwidth_to_htmode('ax', '320MHz'), 'HE160');
-check('be at 320MHz', standards_bandwidth_to_htmode('be', '320MHz'), 'EHT320');
-check('80+80 request', clamp_htmode('ac', '80+80MHz', 'ac', '160MHz'), 'VHT160');
-check('legacy', standards_bandwidth_to_htmode('g', '20MHz'), 'NOHT');
 
 const ap_he = [ { iftypes: { ap: true }, he_cap_phy: [ 0 ] } ];
 const phy = { wiphy_bands: [
@@ -34,19 +19,47 @@ const phy = { wiphy_bands: [
 	{ iftype_data: ap_he, freqs: [ { freq: 5955 } ] }
 ] };
 
-check('2.4 GHz standards', phy_supported_standards(phy, 0), 'b,g,n,ax');
-check('5 GHz standards', phy_supported_standards(phy, 1), 'a,n,ac,ax');
-check('6 GHz standards', phy_supported_standards(phy, 3), 'ax');
-check('5 GHz bandwidths', phy_supported_bandwidths(phy, 1), '20MHz,40MHz,80MHz,160MHz');
-check('5 GHz maximum, first channel without 160MHz', phy_max_bandwidth(phy, 1), '160MHz');
-check('2.4 GHz maximum', phy_max_bandwidth(phy, 0), '40MHz');
-check('no band', phy_max_bandwidth(phy, 2), '20MHz');
+describe('htmode helpers', () => {
+	it('clamps the bandwidth to the standard and the radio', () => {
+		assert.match('HT40', clamp_htmode('n', '80MHz', 'ax', '160MHz'), 'n at 80MHz');
+		assert.match('VHT80', clamp_htmode('ac', '160MHz', 'ax', '80MHz'), 'ac at 160MHz on an 80MHz radio');
+		assert.match('VHT160', clamp_htmode('ac', '80+80MHz', 'ac', '160MHz'), '80+80 request');
+	});
 
-check('dscp name', dscp_parse('ef'), 46);
-check('dscp number', dscp_parse(' 12 '), 12);
-check('dscp trailing junk', dscp_parse('12abc'), null);
-check('dscp out of range', dscp_parse('64'), null);
-check('dscp negative', dscp_parse('-1'), null);
+	it('maps a standard and a bandwidth to an htmode', () => {
+		assert.match('HE160', standards_bandwidth_to_htmode('ax', '320MHz'), 'ax at 320MHz');
+		assert.match('EHT320', standards_bandwidth_to_htmode('be', '320MHz'), 'be at 320MHz');
+		assert.match('NOHT', standards_bandwidth_to_htmode('g', '20MHz'), 'legacy');
+	});
+});
 
-printf('passed: %d failed: %d\n', pass, fail);
-exit(fail ? 1 : 0);
+describe('phy helpers', () => {
+	it('gives the supported standards of a band', () => {
+		assert.match('b,g,n,ax', phy_supported_standards(phy, 0), '2.4 GHz');
+		assert.match('a,n,ac,ax', phy_supported_standards(phy, 1), '5 GHz');
+		assert.match('ax', phy_supported_standards(phy, 3), '6 GHz');
+	});
+
+	it('gives the supported bandwidths of a band', () => {
+		assert.match('20MHz,40MHz,80MHz,160MHz', phy_supported_bandwidths(phy, 1), '5 GHz');
+	});
+
+	it('gives the maximum bandwidth of a band', () => {
+		assert.match('160MHz', phy_max_bandwidth(phy, 1), '5 GHz, first channel without 160MHz');
+		assert.match('40MHz', phy_max_bandwidth(phy, 0), '2.4 GHz');
+		assert.match('20MHz', phy_max_bandwidth(phy, 2), 'no band');
+	});
+});
+
+describe('dscp_parse', () => {
+	it('parses a name or a number', () => {
+		assert.match(46, dscp_parse('ef'), 'name');
+		assert.match(12, dscp_parse(' 12 '), 'number');
+	});
+
+	it('rejects junk and values out of range', () => {
+		assert.match(null, dscp_parse('12abc'), 'trailing junk');
+		assert.match(null, dscp_parse('64'), 'out of range');
+		assert.match(null, dscp_parse('-1'), 'negative');
+	});
+});
