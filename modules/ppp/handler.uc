@@ -545,6 +545,28 @@ function passthrough_get(ctx) {
 }
 
 /**
+ * Set handler for Device.PPP.Interface.{i}.PPPoE.X_UBBF_Passthrough.
+ * LANInterface names the one LAN port that passes PPPoE through: an
+ * Ethernet.Interface, or a port of a bridge that is not its management
+ * port.
+ *
+ * @param {object} ctx - Set context with param, value and root
+ * @returns {number} 0, or -USP_ERR_INVALID_VALUE for another reference
+ */
+function passthrough_set(ctx) {
+	if (ctx.param != 'LANInterface' || ctx.value == '')
+		return 0;
+
+	let port = match(ctx.value, /^Device\.(Ethernet\.Interface|Bridging\.Bridge\.[0-9]+\.Port)\.[0-9]+$/) &&
+		ubbf.navigate_data(ctx.root, ubbf.path_to_parts(ctx.value));
+	if (port && !ubbf.to_bool(port.ManagementPort))
+		return 0;
+
+	ubbf.log_warn('ppp: LANInterface %s is not a LAN port', ctx.value);
+	return -USP_ERR_INVALID_VALUE;
+}
+
+/**
  * Get handler for Device.PPP.Interface.{i}.PPPoE.X_UBBF_Passthrough.Session.{i}.
  *
  * ctx.parent is the PPP interface row (MODULE-GUIDELINES.md, "Get
@@ -614,7 +636,8 @@ model['Device.PPP.Interface.{i}.PPPoE'] = {
 
 model['Device.PPP.Interface.{i}.PPPoE.X_UBBF_Passthrough'] = {
 	schema: schema('Interface_PPPoE_X_UBBF_Passthrough'),
-	get: passthrough_get
+	get: passthrough_get,
+	set: passthrough_set
 };
 
 model['Device.PPP.Interface.{i}.PPPoE.X_UBBF_Passthrough.Session'] = {};

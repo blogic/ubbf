@@ -107,10 +107,10 @@ schemas.Interface_PPPoE = {
 };
 
 // Schema for Device.PPP.Interface.{i}.PPPoE.X_UBBF_Passthrough.
-// LANInterface holds an explicit TR-181 reference (Device.Bridging.Bridge.{i}
-// or Device.IP.Interface.{i}) identifying the LAN-side bridge to relay PPPoE
-// discovery/session frames between. Empty or unresolvable -> no daemon runs,
-// no passthrough traffic.
+// LANInterface holds an explicit TR-181 reference to the one LAN port that
+// relays PPPoE discovery/session frames: Device.Ethernet.Interface.{i} or
+// a port of a bridge that is not its management port. Empty or
+// unresolvable -> no daemon runs, no passthrough traffic.
 schemas.Interface_PPPoE_X_UBBF_Passthrough = {
     path: "Device.PPP.Interface.{i}.PPPoE.X_UBBF_Passthrough.",
     schema: {

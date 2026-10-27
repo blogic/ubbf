@@ -1,33 +1,32 @@
 function render_config() {
 	/**
-	 * Resolves a LANInterface TR-181 reference to a Linux netdev name.
+	 * Resolves a LANInterface TR-181 reference to the netdev of the one
+	 * LAN port that passes PPPoE through.
 	 *
-	 * Accepts Device.Bridging.Bridge.{i} or Device.IP.Interface.{i}. Any
-	 * other shape, an unset reference, or one that fails to resolve all
-	 * the way to a netdev returns null - the caller must skip the
-	 * passthrough section. No fallback to 'br-lan' or similar guess.
+	 * Accepts Device.Ethernet.Interface.{i} or a port of a bridge,
+	 * Device.Bridging.Bridge.{i}.Port.{i}, that is not its management
+	 * port. Any other shape, an unset reference, or one that fails to
+	 * resolve to a netdev returns null - the caller must skip the
+	 * passthrough section. No fallback to the first port of a bridge.
 	 *
-	 * @param {string} ref - TR-181 path reference (e.g. Device.Bridging.Bridge.1)
-	 * @returns {string|null} Resolved netdev name, or null on any failure
+	 * @param {string} ref - TR-181 path reference (e.g. Device.Ethernet.Interface.2)
+	 * @returns {string|null} Port netdev name, or null on any failure
 	 */
 	function resolve_lan_dev(ref) {
-		if (!ref || ref == '')
+		if (match(ref ?? '', /^Device\.Ethernet\.Interface\.[0-9]+$/))
+			return lower_layer_resolve(config, ref);
+
+		if (!match(ref ?? '', /^Device\.Bridging\.Bridge\.[0-9]+\.Port\.[0-9]+$/))
 			return null;
 
-		if (match(ref, /^Device\.Bridging\.Bridge\.[0-9]+$/)) {
-			let bridge = ubbf_get(config, ref);
-			let name = bridge?.Name;
-			return (name && name != '') ? name : null;
-		}
+		// The netdev of a bridge port is the Name of its lower layer, as
+		// the bridging template adds it to the bridge; the port's own
+		// Name is a TR-181 label.
+		let port = ubbf_get(config, ref);
+		if (!port || ubbf_to_bool(port.ManagementPort))
+			return null;
 
-		if (match(ref, /^Device\.IP\.Interface\.[0-9]+$/)) {
-			let ip_iface = ubbf_get(config, ref);
-			if (!ip_iface?.LowerLayers)
-				return null;
-			return lower_layer_resolve_vlan(config, ip_iface.LowerLayers);
-		}
-
-		return null;
+		return lower_layer_resolve(config, port.LowerLayers);
 	}
 
 	/**

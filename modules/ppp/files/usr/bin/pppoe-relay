@@ -72,28 +72,6 @@ function ifindex_get(name) {
 }
 
 /**
- * Resolves a bridge name to one of its member ports. The relay attaches
- * BPF to the physical port (not the bridge) so it sees PPPoE frames
- * before VLAN-aware bridge processing applies the PVID, and so the
- * bpf_redirect on the WAN-side ingress lands on a port that egresses
- * untagged rather than going through the bridge's VLAN-filtering xmit
- * path. Returns the original name when it is not a bridge.
- *
- * @param {string} dev - netdev name (may be a bridge or a port)
- * @returns {string|null} A physical port name, or null when a bridge has
- *                        no members at all.
- */
-function port_resolve(dev) {
-	let brif = `/sys/class/net/${dev}/brif`;
-	if (!fs.access(brif))
-		return dev;
-	let entries = fs.lsdir(brif) ?? [];
-	if (length(entries) == 0)
-		return null;
-	return entries[0];
-}
-
-/**
  * Toggles IFF_PROMISC on a netdev via the ip(8) tool. The WAN ingress
  * needs promisc on so the kernel delivers PADO/PADS/PADT/session frames
  * addressed to LAN-client MACs (not the DUT's own MAC) to the rx path
@@ -251,36 +229,35 @@ function bpf_config_disable() {
  * (lan_dev, wan_dev) pair. Persists the resolved ifindices in the
  * descriptor for poll-time map reads.
  *
+ * lan_dev is the one LAN port that LANInterface names, never the bridge:
+ * on the port the relay sees PPPoE frames before VLAN-aware bridge
+ * processing applies the PVID, and the bpf_redirect on the WAN-side
+ * ingress lands on a port that egresses untagged rather than going
+ * through the bridge's VLAN-filtering xmit path.
+ *
  * @param {string} name - UCI section name
  * @param {object} cfg - UCI section content (lan_dev/wan_dev/max_sessions)
  * @returns {object|null} Attached instance descriptor, or null on failure
  */
 function instance_attach(name, cfg) {
-	let lan_port = port_resolve(cfg.lan_dev);
-	if (!lan_port) {
-		log.syslog(log.LOG_ERR,
-			'%s: %s has no member ports', name, cfg.lan_dev);
-		return null;
-	}
-
-	let lan_idx = ifindex_get(lan_port);
+	let lan_idx = ifindex_get(cfg.lan_dev);
 	let wan_idx = ifindex_get(cfg.wan_dev);
 	if (!lan_idx || !wan_idx) {
 		log.syslog(log.LOG_ERR,
 			'%s: ifindex resolve failed lan=%s wan=%s',
-			name, lan_port, cfg.wan_dev);
+			name, cfg.lan_dev, cfg.wan_dev);
 		return null;
 	}
 
 	// tc_attach() returns true, or null with bpf.error() set. It first
 	// detaches a filter that a previous daemon left at the same priority.
-	if (!prog_lan_in.tc_attach(lan_port, 'ingress', TC_PRIO_LAN)) {
+	if (!prog_lan_in.tc_attach(cfg.lan_dev, 'ingress', TC_PRIO_LAN)) {
 		log.syslog(log.LOG_ERR,
-			'%s: tc_attach lan(%s) failed: %s', name, lan_port, bpf.error());
+			'%s: tc_attach lan(%s) failed: %s', name, cfg.lan_dev, bpf.error());
 		return null;
 	}
 	if (!prog_wan_in.tc_attach(cfg.wan_dev, 'ingress', TC_PRIO_WAN)) {
-		bpf.tc_detach(lan_port, 'ingress', TC_PRIO_LAN);
+		bpf.tc_detach(cfg.lan_dev, 'ingress', TC_PRIO_LAN);
 		log.syslog(log.LOG_ERR,
 			'%s: tc_attach wan(%s) failed: %s', name, cfg.wan_dev, bpf.error());
 		return null;
@@ -290,7 +267,6 @@ function instance_attach(name, cfg) {
 
 	let inst = {
 		...cfg,
-		lan_port,
 		lan_ifindex: lan_idx,
 		wan_ifindex: wan_idx,
 		previous: {}
@@ -298,8 +274,8 @@ function instance_attach(name, cfg) {
 	bpf_config_write(inst);
 
 	log.syslog(log.LOG_NOTICE,
-		'%s: attached lan=%s(port=%s) wan=%s max=%d',
-		name, cfg.lan_dev, lan_port, cfg.wan_dev, cfg.max_sessions);
+		'%s: attached lan=%s wan=%s max=%d',
+		name, cfg.lan_dev, cfg.wan_dev, cfg.max_sessions);
 	return inst;
 }
 
@@ -311,7 +287,7 @@ function instance_attach(name, cfg) {
  */
 function instance_detach(name, inst) {
 	bpf_config_disable();
-	bpf.tc_detach(inst.lan_port ?? inst.lan_dev, 'ingress', TC_PRIO_LAN);
+	bpf.tc_detach(inst.lan_dev, 'ingress', TC_PRIO_LAN);
 	bpf.tc_detach(inst.wan_dev, 'ingress', TC_PRIO_WAN);
 	promisc_set(inst.wan_dev, false);
 	log.syslog(log.LOG_NOTICE, '%s: detached', name);
@@ -408,10 +384,7 @@ function reconcile() {
  * @returns {boolean} true when the attachment is stale
  */
 function instance_stale(inst) {
-	let lan_port = port_resolve(inst.lan_dev);
-
-	return lan_port != inst.lan_port ||
-	       ifindex_get(lan_port) != inst.lan_ifindex ||
+	return ifindex_get(inst.lan_dev) != inst.lan_ifindex ||
 	       ifindex_get(inst.wan_dev) != inst.wan_ifindex;
 }
 
