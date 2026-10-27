@@ -1,0 +1,10 @@
+# Forwards the press and release events of gpio-button-hotplug to the
+# hardware plugin of ubbf-device, for Device.Hardware.Buttons. procd runs
+# /etc/rc.button/$BUTTON itself. hotplug-call sources this file, so it must
+# not exit.
+
+case "$ACTION" in
+pressed|released)
+	ubus -t 1 call bbf-device button_event "{\"button\":\"$BUTTON\",\"action\":\"$ACTION\"}" >/dev/null 2>&1
+	;;
+esac
