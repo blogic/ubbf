@@ -284,29 +284,34 @@ describe('stable numbering of found rows', () => {
 	// Two devices, the first leaves, then another device takes its port.
 	it('keeps the USB numbers when a device leaves and numbers a new device anew', () => {
 		const uapi = handler_load('usb');
-		const ports = uapi.model['Device.USB.Port'];
+		const hosts = uapi.model['Device.USB.USBHosts.Host.{i}'];
 		const usb_ifaces = uapi.model['Device.USB.Interface.{i}'];
 
-		function port_names() {
-			let names = {};
-			for (let n, p in ports.get({}))
-				names[n] = p.Name;
-			return names;
+		function device_serials() {
+			let serials = {};
+			for (let n, d in hosts.get({ instance: 1, config: {} })?.Device ?? {})
+				serials[n] = d.SerialNumber;
+			return serials;
+		}
+
+		function number_of(serials, serial) {
+			return filter(keys(serials), (n) => serials[n] == serial);
 		}
 
 		global.usb_devices = { '1-1': { vid: 1, pid: 2, serial: 'A' }, '1-2': { vid: 3, pid: 4, serial: 'B' } };
-		let before = port_names();
+		let before = device_serials();
 		let iface_b = filter(keys(usb_ifaces.get({})), (n) => usb_ifaces.get({})[n].Name == 'usb-1-2')[0];
 
 		global.usb_devices = { '1-2': { vid: 3, pid: 4, serial: 'B' } };
-		let after = port_names();
-		assert.match(filter(keys(before), (n) => before[n] == '1-2'), filter(keys(after), (n) => after[n] == '1-2'),
-			'a USB device keeps its port number when another leaves');
+		let after = device_serials();
+		assert.match(number_of(before, 'B'), number_of(after, 'B'),
+			'a USB device keeps its number when another leaves');
 		assert.match('usb-1-2', usb_ifaces.get({ instance: iface_b })?.Name, 'a USB interface keeps its number');
 
 		global.usb_devices = { '1-1': { vid: 9, pid: 9, serial: 'C' }, '1-2': { vid: 3, pid: 4, serial: 'B' } };
-		let other = port_names();
-		assert.match(not(equals(filter(keys(before), (n) => before[n] == '1-1'))), filter(keys(other), (n) => other[n] == '1-1'),
+		let other = device_serials();
+		assert.match(1, length(number_of(other, 'C')), 'the new device has a row');
+		assert.match(not(equals(number_of(before, 'A'))), number_of(other, 'C'),
 			'another device in the same port gets a new number');
 
 		// ConfigurationNumberOfEntries counts the Configuration rows, not the

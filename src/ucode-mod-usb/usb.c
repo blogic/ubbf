@@ -15,9 +15,7 @@
 #define USB_SYSFS "/sys/bus/usb/devices"
 
 /**
- * Comparator: lexical order, but with `usb<N>` always coming before
- * non-host entries so the enumerate result keeps the order callers
- * historically expect.
+ * Comparator for qsort() over an array of strings: lexical order.
  */
 static int
 str_cmp(const void *a, const void *b)
@@ -105,6 +103,62 @@ is_interface_name(const char *s)
 	return 1;
 }
 
+static int
+is_usb_name(const char *s)
+{
+	return is_host_name(s) || is_device_name(s) || is_interface_name(s);
+}
+
+static int
+is_any_name(const char *s)
+{
+	return 1;
+}
+
+/**
+ * Lists the names in a directory that pass `keep`, sorted lexically, so
+ * that the enumerations built from them are stable. Returns NULL with a
+ * count of 0 when the directory cannot be read; free the list with
+ * names_free().
+ */
+static char **
+dir_names_sorted(const char *path, int (*keep)(const char *), size_t *count)
+{
+	DIR *d = opendir(path);
+	struct dirent *ent;
+	char **names = NULL;
+	size_t cap = 0;
+
+	*count = 0;
+	if (!d)
+		return NULL;
+
+	while ((ent = readdir(d))) {
+		if (ent->d_name[0] == '.' || !keep(ent->d_name))
+			continue;
+
+		if (*count == cap) {
+			cap = cap ? cap * 2 : 16;
+			names = xrealloc(names, cap * sizeof(*names));
+		}
+		names[(*count)++] = xstrdup(ent->d_name);
+	}
+	closedir(d);
+
+	if (names)
+		qsort(names, *count, sizeof(*names), str_cmp);
+
+	return names;
+}
+
+static void
+names_free(char **names, size_t count)
+{
+	for (size_t i = 0; i < count; i++)
+		free(names[i]);
+	free(names);
+}
+
 /**
  * Lists `/sys/bus/usb/devices` and bins entries into hosts, devices,
  * and interface aliases.
@@ -119,64 +173,28 @@ is_interface_name(const char *s)
 static uc_value_t *
 uc_ubbf_usb_enumerate(uc_vm_t *vm, size_t nargs)
 {
-	DIR *d;
-	struct dirent *ent;
 	uc_value_t *out = ucv_object_new(vm);
 	uc_value_t *hosts = ucv_array_new(vm);
 	uc_value_t *devices = ucv_array_new(vm);
 	uc_value_t *interfaces = ucv_array_new(vm);
-	const char **host_names = NULL, **dev_names = NULL, **iface_names = NULL;
-	size_t hn = 0, dn = 0, in_ = 0;
-	size_t hcap = 0, dcap = 0, icap = 0;
+	size_t count;
+	char **names = dir_names_sorted(USB_SYSFS, is_usb_name, &count);
 
 	ucv_object_add(out, "hosts", hosts);
 	ucv_object_add(out, "devices", devices);
 	ucv_object_add(out, "interfaces", interfaces);
 
-	d = opendir(USB_SYSFS);
-	if (!d)
-		return out;
+	for (size_t i = 0; i < count; i++) {
+		uc_value_t *target = devices;
 
-	while ((ent = readdir(d))) {
-		const char *name = ent->d_name;
-		if (name[0] == '.')
-			continue;
+		if (is_host_name(names[i]))
+			target = hosts;
+		else if (is_interface_name(names[i]))
+			target = interfaces;
 
-		const char ***target;
-		size_t *cnt, *cap;
-
-		if (is_host_name(name))      { target = &host_names; cnt = &hn; cap = &hcap; }
-		else if (is_interface_name(name)) { target = &iface_names; cnt = &in_; cap = &icap; }
-		else if (is_device_name(name))    { target = &dev_names; cnt = &dn; cap = &dcap; }
-		else continue;
-
-		if (*cnt == *cap) {
-			*cap = *cap ? *cap * 2 : 16;
-			*target = xrealloc(*target, *cap * sizeof(**target));
-		}
-		(*target)[(*cnt)++] = xstrdup(name);
+		ucv_array_push(target, ucv_string_new(names[i]));
 	}
-	closedir(d);
-
-	if (host_names) qsort(host_names, hn, sizeof(*host_names), str_cmp);
-	if (dev_names)  qsort(dev_names,  dn, sizeof(*dev_names),  str_cmp);
-	if (iface_names) qsort(iface_names, in_, sizeof(*iface_names), str_cmp);
-
-	for (size_t i = 0; i < hn; i++) {
-		ucv_array_push(hosts, ucv_string_new(host_names[i]));
-		free((void *)host_names[i]);
-	}
-	for (size_t i = 0; i < dn; i++) {
-		ucv_array_push(devices, ucv_string_new(dev_names[i]));
-		free((void *)dev_names[i]);
-	}
-	for (size_t i = 0; i < in_; i++) {
-		ucv_array_push(interfaces, ucv_string_new(iface_names[i]));
-		free((void *)iface_names[i]);
-	}
-	free(host_names);
-	free(dev_names);
-	free(iface_names);
+	names_free(names, count);
 
 	return out;
 }
@@ -254,8 +272,9 @@ add_str_take(uc_value_t *o, const char *key, char *val)
  *              power_runtime_status, power_control, bDeviceClass_str
  *
  * One call replaces ~15 separate `readfile_*` round-trips that the
- * ucode `host_devices_build` did per device. Returns null when the
- * device path is missing.
+ * ucode `host_devices_build` did per device. Returns null for a name
+ * that is not a host or device name, and when the device path is
+ * missing, for example after an unplug.
  *
  * @param vm     ucode VM context
  * @param nargs  number of arguments (1 expected: device sysfs name)
@@ -273,7 +292,12 @@ uc_ubbf_usb_device_info(uc_vm_t *vm, size_t nargs)
 		return NULL;
 
 	name = ucv_string_get(name_val);
+	if (!is_host_name(name) && !is_device_name(name))
+		return NULL;
+
 	snprintf(base, sizeof(base), "%s/%s", USB_SYSFS, name);
+	if (access(base, F_OK) != 0)
+		return NULL;
 
 	o = ucv_object_new(vm);
 
@@ -306,7 +330,8 @@ uc_ubbf_usb_device_info(uc_vm_t *vm, size_t nargs)
  * Reads the per-interface USB descriptor sysfs files for an interface
  * alias such as `1-2:1.0`. Returns `{ bInterfaceNumber, bInterfaceClass,
  * bInterfaceSubClass, bInterfaceProtocol }` (all integers). The class
- * fields are hex-decoded.
+ * fields are hex-decoded. Returns null for a name that is not an
+ * interface name, and when the interface path is missing.
  *
  * @param vm     ucode VM context
  * @param nargs  number of arguments (1 expected: interface sysfs name)
@@ -324,7 +349,12 @@ uc_ubbf_usb_interface_info(uc_vm_t *vm, size_t nargs)
 		return NULL;
 
 	name = ucv_string_get(name_val);
+	if (!is_interface_name(name))
+		return NULL;
+
 	snprintf(base, sizeof(base), "%s/%s", USB_SYSFS, name);
+	if (access(base, F_OK) != 0)
+		return NULL;
 
 	o = ucv_object_new(vm);
 	ucv_object_add(o, "bInterfaceNumber",
@@ -347,7 +377,8 @@ uc_ubbf_usb_interface_info(uc_vm_t *vm, size_t nargs)
  * Returns an array of `{ device, ifname, path }` objects, where
  * `device` is the sysfs name of the parent USB device, `ifname` is the
  * netdev name, and `path` is the standard `/sys/class/net/<ifname>`
- * reference.
+ * reference. The entries are sorted by interface alias, then by netdev
+ * name.
  *
  * @param vm     ucode VM context
  * @param nargs  number of arguments (none expected)
@@ -357,47 +388,35 @@ static uc_value_t *
 uc_ubbf_usb_net_interfaces(uc_vm_t *vm, size_t nargs)
 {
 	uc_value_t *out = ucv_array_new(vm);
-	DIR *d;
-	struct dirent *ent;
+	size_t alias_count;
+	char **aliases = dir_names_sorted(USB_SYSFS, is_interface_name, &alias_count);
 
-	d = opendir(USB_SYSFS);
-	if (!d)
-		return out;
+	for (size_t i = 0; i < alias_count; i++) {
+		const char *name = aliases[i];
+		char netdir[512], devname[64], path[512];
+		size_t netdev_count;
+		char **netdevs;
 
-	while ((ent = readdir(d))) {
-		const char *name = ent->d_name;
-		if (name[0] == '.' || !is_interface_name(name))
-			continue;
-
-		char netdir[512];
 		snprintf(netdir, sizeof(netdir), "%s/%s/net", USB_SYSFS, name);
-		DIR *nd = opendir(netdir);
-		if (!nd)
-			continue;
+		netdevs = dir_names_sorted(netdir, is_any_name, &netdev_count);
 
 		/* is_interface_name() guarantees a ':' within the first 63 bytes */
-		char devname[64];
 		size_t dl = strchr(name, ':') - name;
 		memcpy(devname, name, dl);
 		devname[dl] = '\0';
 
-		struct dirent *nent;
-		while ((nent = readdir(nd))) {
-			const char *ifn = nent->d_name;
-			if (ifn[0] == '.')
-				continue;
-			char path[512];
-			snprintf(path, sizeof(path), "/sys/class/net/%s", ifn);
-
+		for (size_t j = 0; j < netdev_count; j++) {
 			uc_value_t *o = ucv_object_new(vm);
+
+			snprintf(path, sizeof(path), "/sys/class/net/%s", netdevs[j]);
 			ucv_object_add(o, "device", ucv_string_new(devname));
-			ucv_object_add(o, "ifname", ucv_string_new(ifn));
+			ucv_object_add(o, "ifname", ucv_string_new(netdevs[j]));
 			ucv_object_add(o, "path", ucv_string_new(path));
 			ucv_array_push(out, o);
 		}
-		closedir(nd);
+		names_free(netdevs, netdev_count);
 	}
-	closedir(d);
+	names_free(aliases, alias_count);
 
 	return out;
 }

@@ -63,10 +63,10 @@ schemas.Host = {
     path: "Device.USB.USBHosts.Host.{i}.",
     schema: {
         "Alias": dm_type.STRING,
-        "Enable": dm_type.BOOL | dm_type.WRITABLE,
+        "Enable": dm_type.BOOL,
         "Name": dm_type.STRING,
         "Type": dm_type.STRING,
-        "PowerManagementEnable": dm_type.BOOL | dm_type.WRITABLE,
+        "PowerManagementEnable": dm_type.BOOL,
         "USBVersion": dm_type.STRING,
         "DeviceNumberOfEntries": dm_type.UINT,
         "Reset()": { type: 'sync', input: [] }

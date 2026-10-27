@@ -1337,18 +1337,14 @@ describe('usb module', () => {
 	});
 
 	it('device_info', () => {
-		let udi = usb_lib.device_info('nonexistent-usb-dev');
-
-		assert.match('object', type(udi), 'usb_device_info: returns object');
-		assert.match('', udi?.manufacturer, 'usb_device_info: defaults for missing files');
+		assert.match(null, usb_lib.device_info('nonexistent-usb-dev'), 'usb_device_info: not a USB name');
+		assert.match(null, usb_lib.device_info('99-99'), 'usb_device_info: missing device');
 		assert.match(null, usb_lib.device_info(null), 'usb_device_info: non-string');
 	});
 
 	it('interface_info', () => {
-		let uii = usb_lib.interface_info('nonexistent-iface:1.0');
-
-		assert.match('object', type(uii), 'usb_interface_info: returns object');
-		assert.match(0, uii?.bInterfaceNumber, 'usb_interface_info: bInterfaceNumber defaults');
+		assert.match(null, usb_lib.interface_info('nonexistent-iface:1.0'), 'usb_interface_info: not a USB name');
+		assert.match(null, usb_lib.interface_info('99-99:1.0'), 'usb_interface_info: missing interface');
 		assert.match(null, usb_lib.interface_info(null), 'usb_interface_info: non-string');
 	});
 
