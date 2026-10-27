@@ -28,6 +28,10 @@ function render_config() {
 				uci_set_string(output, 'network.@device[-1].enabled', dev.enabled);
 			if (dev.ipv6 != null)
 				uci_set_string(output, 'network.@device[-1].ipv6', dev.ipv6);
+			if (dev.auth != null)
+				uci_set_string(output, 'network.@device[-1].auth', dev.auth);
+			for (let vlan in dev.auth_vlan ?? [])
+				uci_list_string(output, 'network.@device[-1].auth_vlan', vlan);
 
 			for (let mapping in dev.egress_qos_mapping ?? [])
 				uci_list_string(output, 'network.@device[-1].egress_qos_mapping', mapping);

@@ -105,6 +105,10 @@ function render_config() {
 			next_dyn_vid--;
 		}
 
+		render_state.bridge_vids_used ??= {};
+		for (let vid in explicit_vids)
+			render_state.bridge_vids_used[vid] = true;
+
 		return port_vids;
 	}
 
@@ -408,6 +412,7 @@ function render_config() {
 		render_state.bridge[br_name] ??= {};
 		render_state.bridge[br_name].mgmt_vlan_section = section_name;
 		render_state.bridge[br_name].mgmt_vid = mgmt_port.vid;
+		render_state.bridge[br_name].eth_ports = eth_ports;
 
 		bridge_vlan_section_open(br_name, section_name, mgmt_port.vid);
 
