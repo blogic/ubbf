@@ -86,7 +86,7 @@ schemas.Group = {
 	},
 	defaults: {
 		"Alias": "",
-		"Enable": "true",
+		"Enable": "false",
 		"GroupID": "0",
 		"Groupname": "",
 		"RoleParticipation": "",
@@ -111,7 +111,7 @@ schemas.Role = {
 	},
 	defaults: {
 		"Alias": "",
-		"Enable": "true",
+		"Enable": "false",
 		"RoleID": "0",
 		"RoleName": "",
 		"StaticRole": "false",
@@ -141,7 +141,7 @@ schemas.SupportedShell = {
 	path: "Device.Users.SupportedShell.{i}.",
 	schema: {
 		"Alias": dm_type.STRING,
-		"Enable": dm_type.BOOL | dm_type.WRITABLE,
+		"Enable": dm_type.BOOL,
 		"Name": dm_type.STRING
 	},
 	defaults: {

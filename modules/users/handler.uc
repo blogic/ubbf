@@ -35,9 +35,6 @@ const HOME = '/var';
 const LOCKED = '!';
 const LOCAL_ACCOUNT = 'admin';
 
-const CRED_RATE_LIMIT_WINDOW = 60;
-const CRED_RATE_LIMIT_MAX = 5;
-
 let staged_passwords = {};
 
 /**
@@ -297,7 +294,7 @@ function system_user_to_object(pw, sp_map, gr, group_idx, shells) {
 
 	return {
 		Alias: sprintf('cpe-User-%s', pw.username),
-		Enable: (substr(hash, 0, 1) == LOCKED) ? 'false' : 'true',
+		Enable: (index([ LOCKED, '*' ], substr(hash, 0, 1)) >= 0) ? 'false' : 'true',
 		UserID: sprintf('%d', pw.uid),
 		Username: pw.username,
 		Password: '',
@@ -492,6 +489,23 @@ function shell_get(ctx) {
 }
 
 /**
+ * Checks a new value of a unique key against the other configured rows.
+ *
+ * @param {string} value - New value
+ * @param {string} inst - Instance number of the row
+ * @param {object} rows - Configured rows
+ * @param {string} key - Parameter name
+ * @returns {number} 0, or a negative USP error code
+ */
+function unique_check(value, inst, rows, key) {
+	for (let i, row in rows)
+		if (i != inst && row?.[key] == value)
+			return -USP_ERR_UNIQUE_KEY_CONFLICT;
+
+	return 0;
+}
+
+/**
  * Checks a new account or group name.
  *
  * A name that a system account or group already has is refused, because the
@@ -510,10 +524,8 @@ function name_check(value, inst, rows, key, owned, existing) {
 		return 0;
 	if (!name_valid(value))
 		return -USP_ERR_INVALID_VALUE;
-
-	for (let i, row in rows)
-		if (i != inst && row?.[key] == value)
-			return -USP_ERR_UNIQUE_KEY_CONFLICT;
+	if (unique_check(value, inst, rows, key))
+		return -USP_ERR_UNIQUE_KEY_CONFLICT;
 
 	if (existing && index(values(owned), value) < 0)
 		return -USP_ERR_UNIQUE_KEY_CONFLICT;
@@ -700,13 +712,20 @@ function group_set(ctx) {
  * Set handler for Device.Users.Role.{i}. The name of a static role selects
  * its access rights, so it cannot change.
  *
- * @param {object} ctx - Context with param, value and config
+ * @param {object} ctx - Context with param, value, instance, config and root
  * @returns {number} 0 on success, a negative USP error code to refuse
  */
 function role_set(ctx) {
+	let inst = sprintf('%d', ctx.instance);
+	let rows = rows_get(ctx.root?.Device?.Users?.Role);
+
 	switch (ctx.param) {
 	case 'RoleName':
-		return (ctx.config?.StaticRole == 'true') ? -USP_ERR_PARAM_READ_ONLY : 0;
+		if (ctx.config?.StaticRole == 'true')
+			return -USP_ERR_PARAM_READ_ONLY;
+		return unique_check(ctx.value, inst, rows, 'RoleName');
+	case 'RoleID':
+		return unique_check(ctx.value, inst, rows, 'RoleID');
 	case 'RequiredCapabilities':
 		return (length(refs_split(ctx.value)) > 0) ? -USP_ERR_INVALID_VALUE : 0;
 	}
@@ -920,8 +939,25 @@ function shadow_sync(state, rows, names) {
 }
 
 /**
+ * Tells whether a Group reference names an enabled group. A system group
+ * has no Enable to store and is always enabled.
+ *
+ * @param {string} ref - Reference to a Device.Users.Group row
+ * @param {object} group_rows - Configured groups
+ * @returns {boolean} True for an enabled group
+ */
+function group_enabled(ref, group_rows) {
+	let n = ref_instance(ref, 'Group');
+	if (n == null || n >= RUNTIME_BASE)
+		return true;
+
+	return group_rows[sprintf('%d', n)]?.Enable == 'true';
+}
+
+/**
  * Sets the supplementary groups of the configured accounts from their
- * GroupParticipation. Members that this module does not manage stay.
+ * GroupParticipation. A disabled group counts as absent from the list
+ * (TR-181 Group.{i}.Enable). Members that this module does not manage stay.
  *
  * @param {object} state - `{ pw, sp, gr }` entries, changed in place
  * @param {object} rows - Configured users
@@ -934,7 +970,7 @@ function members_sync(state, rows, group_rows, names) {
 	for (let inst, name in names) {
 		for (let ref in refs_split(rows[inst]?.GroupParticipation)) {
 			let group = group_name_by_ref(ref, group_rows, state.gr);
-			if (group == null)
+			if (group == null || !group_enabled(ref, group_rows))
 				continue;
 
 			wanted[group] ??= [];
@@ -1108,10 +1144,10 @@ function check_credentials_handler(input, command_key, root) {
 	if (username == '' || password == '')
 		return { Status: 'Credentials_Missing' };
 
-	if (!users.rate_limit_check(`cred:${username}`, CRED_RATE_LIMIT_MAX, CRED_RATE_LIMIT_WINDOW)) {
-		utils.logging.log_err('check_credentials: rate limited for user %s', username);
+	// TR-181 asks about access to the user interface, which only the
+	// configured accounts have; root and the other system accounts do not.
+	if (!names_index(rows_get(root?.Device?.Users?.User), 'Username')[username])
 		return { Status: 'Credentials_Bad_Requested_Username_Not_Supported' };
-	}
 
 	return { Status: users.credentials_check(username, password) };
 }
