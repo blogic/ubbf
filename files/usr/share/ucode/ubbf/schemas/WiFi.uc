@@ -386,15 +386,14 @@ export const AccessPoint_Security = {
 		"MFPConfig": "Disabled"
 	},
 	constraints: {
-		"PreSharedKey": { secured: true },
+		"PreSharedKey": { secured: true, max_length: 32 },
 		"KeyPassphrase": { secured: true, min_length: 8, max_length: 63 },
 		"SAEPassphrase": { secured: true },
 		"RadiusServerIPAddr": { max_length: 45 },
 		"SecondaryRadiusServerIPAddr": { max_length: 45 },
 		"RadiusSecret": { secured: true },
 		"SecondaryRadiusSecret": { secured: true },
-		"MFPConfig": { enum: [ "Disabled", "Optional", "Required" ] },
-		"PreSharedKey": { max_length: 32 }
+		"MFPConfig": { enum: [ "Disabled", "Optional", "Required" ] }
 	}
 };
 

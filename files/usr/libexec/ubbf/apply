@@ -99,7 +99,8 @@ for (let pkg in batch_packages(result.uci)) {
 
 writefile('/tmp/ubbf/uci.batch', result.uci);
 
-let uci_cmd = sprintf("uci -q -c %s -C '' batch < /tmp/ubbf/uci.batch", TMP_SHADOW);
+// uci batch prints the name of each section that it adds.
+let uci_cmd = sprintf("uci -q -c %s -C '' batch < /tmp/ubbf/uci.batch > /dev/null", TMP_SHADOW);
 let rc = system(uci_cmd);
 if (rc != 0) {
 	log_err('uci batch failed rc=%d', rc);

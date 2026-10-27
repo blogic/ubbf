@@ -1,6 +1,7 @@
 'use strict';
 
 import * as ubbf from 'ubbf';
+import { dns_learned_row } from 'ubbf.utils.dns';
 
 let ubbf_get = ubbf.get;
 let ubbf_to_bool = ubbf.to_bool;
@@ -239,4 +240,135 @@ export function lower_layer_resolve_vlan(config, lower_layers) {
 	return bridge?.Name ? `${bridge.Name}v${suffix}` : null;
 };
 
+/**
+ * Returns the netdev that the traffic of an IP interface uses.
+ *
+ * Over PPP that is the pppd link, which ppp.sh of netifd names
+ * `<proto>-<interface>`, so `pppoe-<Name>` for a PPP row; the Name of the
+ * row itself is the netifd interface, not a netdev.
+ *
+ * @param {object} config - Configuration data
+ * @param {object} iface - Device.IP.Interface row
+ * @returns {string|null} netdev name
+ */
+export function ip_interface_netdev(config, iface) {
+	let lower = ubbf.csv_to_list(iface?.LowerLayers ?? '')[0] ?? '';
 
+	if (match(lower, /^Device\.PPP\.Interface\.[0-9]+$/)) {
+		let ppp = ubbf_get(config, lower);
+		return ppp?.Name ? `pppoe-${ppp.Name}` : null;
+	}
+
+	return lower_layer_resolve_vlan(config, iface?.LowerLayers);
+};
+
+// The first port of the dnsmasq relay instances; the main instance keeps 53.
+const DNS_RELAY_PORT_BASE = 5301;
+
+/**
+ * Returns the dnsmasq server value of a Forwarding row: the address, bound
+ * to the netdev of Forwarding.Interface, over which TR-181 sends the query.
+ * An empty Interface leaves the choice to the routing table.
+ *
+ * @param {object} config - Configuration data
+ * @param {object} fwd - Device.DNS.Relay.Forwarding row
+ * @returns {string|null} Server value, or null for a row that cannot forward,
+ *   such as one whose Interface has no netdev
+ */
+function dns_forwarder_server(config, fwd) {
+	if (!ubbf_to_bool(fwd?.Enable) || !fwd.DNSServer)
+		return null;
+
+	if (!fwd.Interface)
+		return fwd.DNSServer;
+
+	let iface = ubbf_get(config, rtrim(fwd.Interface, '.'));
+	let netdev = iface ? ip_interface_netdev(config, iface) : null;
+	return netdev ? `${fwd.DNSServer}@${netdev}` : null;
+}
+
+/**
+ * Returns the servers of a Relay.Config row. An empty Forwarders list takes
+ * the static rows; the learned rows reach the clients through the main
+ * dnsmasq, which reads them from the resolv file of netifd.
+ *
+ * @param {object} config - Configuration data
+ * @param {array} forwardings - Device.DNS.Relay.Forwarding rows
+ * @param {object|null} cfg - Device.DNS.Relay.Config row
+ * @returns {array} Server values
+ */
+function dns_relay_servers(config, forwardings, cfg) {
+	let refs = filter(ubbf.csv_to_list(cfg?.Forwarders ?? ''),
+		(ref) => match(ref, /^Device\.DNS\.Relay\.Forwarding\.[0-9]+\.?$/));
+
+	let rows = length(refs)
+		? map(refs, (ref) => ubbf_get(config, rtrim(ref, '.')))
+		: filter(forwardings, (fwd) => !dns_learned_row(fwd['.instance']));
+
+	return uniq(filter(map(rows, (fwd) => dns_forwarder_server(config, fwd)), (s) => s != null));
+}
+
+/**
+ * Lists the Name of each downstream IP interface.
+ *
+ * @param {object} config - Configuration data
+ * @returns {array} netifd interface names
+ */
+function downstream_interfaces(config) {
+	let names = [];
+	for (let iface in ubbf.instances(config, 'Device.IP.Interface'))
+		if (iface.Name && !ubbf_to_bool(iface.Upstream))
+			push(names, iface.Name);
+	return names;
+}
+
+/**
+ * Works out the dnsmasq relay instances of Device.DNS.Relay.
+ *
+ * A Relay.Config row serves the queries that arrive on its Interface; an
+ * empty Interface serves every downstream interface that no other row
+ * names. Without Relay.Config rows, every downstream interface uses the
+ * static forwarders. An interface without a server gets no instance.
+ *
+ * @param {object} config - Configuration data
+ * @returns {object} Interface name to `{ name, port, servers, config }`,
+ *   where config is the Relay.Config row or null
+ */
+export function dns_relay_plan(config) {
+	let plan = {};
+	if (!ubbf_to_bool(ubbf_get(config, 'Device.DNS.Relay')?.Enable))
+		return plan;
+
+	let forwardings = ubbf.instances(config, 'Device.DNS.Relay.Forwarding');
+	let configs = ubbf.instances(config, 'Device.DNS.Relay.Config');
+	let wanted = {};
+
+	for (let cfg in configs) {
+		let name = cfg.Interface ? ubbf.interface_to_name(config, cfg.Interface) : null;
+		if (name && !(name in wanted))
+			wanted[name] = cfg;
+	}
+
+	for (let cfg in configs) {
+		if (cfg.Interface)
+			continue;
+		for (let name in downstream_interfaces(config))
+			if (!(name in wanted))
+				wanted[name] = cfg;
+	}
+
+	if (!length(configs))
+		for (let name in downstream_interfaces(config))
+			wanted[name] = null;
+
+	let port = DNS_RELAY_PORT_BASE;
+	for (let name, cfg in wanted) {
+		let servers = dns_relay_servers(config, forwardings, cfg);
+		if (!length(servers))
+			continue;
+
+		plan[name] = { name: `dns_relay_${name}`, port: port++, servers, config: cfg };
+	}
+
+	return plan;
+};

@@ -176,8 +176,7 @@
           "Enable": "true",
           "Alias": "WanDHCPv4Client",
           "Interface": "Device.IP.Interface.1",
-          "Status": "Enabled",
-          "Renew": "false"
+          "Status": "Enabled"
         }
       },
       "Server": {
@@ -409,16 +408,8 @@
           "1": {
             "Enable": "true",
             "Alias": "LanForwarder",
-            "DNSServer": "8.8.8.8",
-            "IngressInterface": "Device.IP.Interface.2"
+            "DNSServer": "8.8.8.8"
           }
-        },
-        "Caching": {
-          "Enable": "true",
-          "MaxEntries": "1000",
-          "MaxTTL": "86400",
-          "MinTTL": "0",
-          "NegativeTTL": "3600"
         }
       },
       "RebindProtection": {
@@ -433,7 +424,8 @@
             "Enable": "true",
             "Alias": "RouterWeb",
             "InstanceName": "Router Web Interface",
-            "ServiceName": "_http._tcp",
+            "ApplicationProtocol": "http",
+            "TransportProtocol": "TCP",
             "Port": "80",
             "TextRecord": {
               "1": {

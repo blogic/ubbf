@@ -132,49 +132,6 @@ function render_config() {
 	}
 
 	/**
-	 * Builds a set of interface names that have a DNS Relay forwarder
-	 * bound to them. dns.uc renders one dnsmasq instance named
-	 * dns_relay_<iface> per such interface. dhcp sections must declare
-	 * `option instance dns_relay_<iface>` to attach to that single
-	 * instance, otherwise dnsmasq.init copies the dhcp-range into every
-	 * dnsmasq instance and the DHCP daemons fight over UDP/67.
-	 *
-	 * @returns {object} Set keyed by interface name
-	 */
-	function relay_interfaces() {
-		let result = {};
-		let relay = ubbf_get(config, 'Device.DNS.Relay');
-		if (!ubbf_to_bool(relay?.Enable))
-			return result;
-
-		let forwardings = ubbf_instances(config, 'Device.DNS.Relay.Forwarding');
-		let ip_interfaces = ubbf_instances(config, 'Device.IP.Interface');
-
-		for (let fwd in forwardings) {
-			if (!ubbf_to_bool(fwd.Enable))
-				continue;
-			if (!fwd.DNSServer)
-				continue;
-
-			if (fwd.Interface) {
-				let iface = ubbf_get(config, fwd.Interface);
-				if (iface?.Name)
-					result[iface.Name] = true;
-			} else {
-				for (let iface in ip_interfaces) {
-					if (!iface.Name)
-						continue;
-					if (ubbf_to_bool(iface.Upstream))
-						continue;
-					result[iface.Name] = true;
-				}
-			}
-		}
-
-		return result;
-	}
-
-	/**
 	 * Finds a router advertisement setting matching an interface reference.
 	 *
 	 * @param {string} iface_ref - Interface path reference
@@ -333,7 +290,9 @@ function render_config() {
 			let v4_enabled = v4_server_enabled && v4_pool && ubbf_to_bool(v4_pool.Enable);
 			let v6_enabled = v6_server_enabled && v6_pool && ubbf_to_bool(v6_pool.Enable);
 			let ra_enabled = ra && ubbf_to_bool(ra.Enable);
-			let dnsmasq_instance = relay_ifaces[name] ? `dns_relay_${name}` : null;
+			// Without the instance option, dnsmasq.init copies the dhcp-range
+			// into every dnsmasq instance and they fight over UDP/67.
+			let dnsmasq_instance = relay_ifaces[name]?.name;
 			let v4_segments = [];
 			let v4_lease_time = null;
 			let iface_mask = iface_v4_mask(iface) ?? v4_pool?.SubnetMask;
@@ -731,13 +690,11 @@ function render_config() {
 	 * @returns {string|null}
 	 */
 	function admz_dnsmasq_instance(ip_interfaces) {
-		let relay_ifaces = relay_interfaces();
+		let relay_ifaces = dns_relay_plan(config);
 		let lan_name = admz_lan_interface_name(ip_interfaces);
 		if (!lan_name)
 			return null;
-		if (relay_ifaces[lan_name])
-			return sprintf('dns_relay_%s', lan_name);
-		return null;
+		return relay_ifaces[lan_name]?.name;
 	}
 
 	/**
@@ -1030,7 +987,7 @@ function render_config() {
 	let v4_server_enabled = !v4_server || ubbf_to_bool(v4_server.Enable);
 	let v6_server = ubbf_get(config, 'Device.DHCPv6.Server');
 	let v6_server_enabled = !v6_server || ubbf_to_bool(v6_server.Enable);
-	let relay_ifaces = relay_interfaces();
+	let relay_ifaces = dns_relay_plan(config);
 	services.set_enabled('odhcpd', true);
 
 	generate_dhcp_sections(ip_interfaces, dhcpv4_pools, dhcpv6_pools, ra_settings, v4_server_enabled, v6_server_enabled, relay_ifaces);

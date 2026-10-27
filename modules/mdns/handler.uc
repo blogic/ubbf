@@ -21,7 +21,7 @@ include('service.uc', { dnssd });
  * @returns {array} Array of service objects with TR-181 fields
  */
 function umdns_services_get() {
-	let browse = ubus?.call('umdns', 'browse', {});
+	let browse = ubus?.call('umdns', 'browse', { array: true });
 	if (!browse)
 		return [];
 
@@ -38,26 +38,15 @@ function umdns_services_get() {
 		for (let inst_name, inst in instances) {
 			let txt_records = {};
 			let txt_idx = 1;
-			if (type(inst.txt) == 'string' && inst.txt != '') {
-				let eq = index(inst.txt, '=');
-				if (eq > 0) {
-					txt_records[sprintf('%d', txt_idx)] = {
-						Key: substr(inst.txt, 0, eq),
-						Value: substr(inst.txt, eq + 1)
-					};
-					txt_idx++;
-				}
-			} else if (type(inst.txt) == 'array') {
-				for (let entry in inst.txt) {
-					let eq = index(entry, '=');
-					if (eq > 0) {
-						txt_records[sprintf('%d', txt_idx)] = {
-							Key: substr(entry, 0, eq),
-							Value: substr(entry, eq + 1)
-						};
-						txt_idx++;
-					}
-				}
+			for (let entry in inst.txt ?? []) {
+				let eq = index(entry, '=');
+				if (eq <= 0)
+					continue;
+				txt_records[sprintf('%d', txt_idx)] = {
+					Key: substr(entry, 0, eq),
+					Value: substr(entry, eq + 1)
+				};
+				txt_idx++;
 			}
 
 			push(services, {

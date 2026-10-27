@@ -3,8 +3,13 @@
 import * as fs from 'fs';
 import * as ubbf from 'ubbf';
 import { netifd_status_get } from 'ubbf.utils.netifd';
+import { instance_numbers, instance_seed } from 'ubbf.utils.instance-map';
+import { DNS_LEARNED_BASE, dns_learned_row } from 'ubbf.utils.dns';
 import { handler as nslookup_handler } from 'ubbf.tr143.NSLookup';
 import { op_trigger_set, op_overlay_get } from 'ubbf.utils.cwmp-op-trigger';
+
+const SERVER_TABLE = 'Device.DNS.Client.Server';
+const FORWARDING_TABLE = 'Device.DNS.Relay.Forwarding';
 
 /**
  * Sync operation handler for Device.DNS.Relay.Config.{i}.FlushCache().
@@ -99,7 +104,6 @@ function dns_servers_collect(result, dns_list, proto, iface_ref, ra_set) {
 		push(result, {
 			Enable: 'true',
 			Status: 'Enabled',
-			Alias: sprintf('%s-%s', proto != '' ? proto : 'learned', addr),
 			DNSServer: addr,
 			Interface: iface_ref,
 			Type: dns_type
@@ -151,157 +155,177 @@ function learned_dns_servers_get(root) {
 }
 
 /**
- * Get handler for Device.DNS.Client.Server.
+ * Returns the stable key of a learned row: its source and its address.
  *
- * Produces dynamic server instances from netifd-learned DNS addresses
- * (DHCPv4 / DHCPv6 / merged-RA). Static instances persisted under the
- * same container are hydrated separately by the framework through the
- * Device.DNS.Client.Server.{i} pattern, so this handler only returns
- * the dynamic tail and never overwrites a static entry. Instance
- * numbers start above the highest static key in ctx.config.
- *
- * @param {object} ctx - Context with config (Server subtree) and root
- * @returns {object} Instance-keyed object with learned entries only
+ * @param {object} row - Row with Type, Interface and DNSServer
+ * @returns {string} The key
  */
-function dns_client_server_get(ctx) {
-	let config = ctx.config ?? {};
-	let max_static = 0;
-	for (let k in keys(config)) {
-		if (!ubbf.is_instance_key(k))
-			continue;
-		let n = +k;
-		if (n > max_static)
-			max_static = n;
-	}
+function learned_key(row) {
+	return join('|', [ row.Type, row.Interface, row.DNSServer ]);
+}
 
-	let dynamic = learned_dns_servers_get(ctx.root);
+/**
+ * Numbers the learned rows of a table. A stored row of a learned server
+ * keeps its number, also after a reboot clears the volatile map.
+ *
+ * @param {string} table - Table path
+ * @param {array} rows - Learned rows
+ * @param {object} stored - Stored rows of the table by instance
+ * @returns {object} Instance number to learned row
+ */
+function learned_rows_number(table, rows, stored) {
+	let seed = {};
+	for (let inst, row in stored ?? {}) {
+		let n = ubbf.to_int(inst);
+		if (dns_learned_row(n) && row?.Type)
+			seed[learned_key(row)] = n - DNS_LEARNED_BASE;
+	}
+	instance_seed(table, seed, true);
+
+	let numbers = instance_numbers(table, map(rows, learned_key), true);
 	let result = {};
-	let next = max_static + 1;
-	for (let srv in dynamic) {
-		result[sprintf('%d', next)] = srv;
-		next++;
+	for (let row in rows) {
+		let inst = sprintf('%d', DNS_LEARNED_BASE + numbers[learned_key(row)]);
+		result[inst] = { ...row, Alias: `cpe-${inst}` };
 	}
 	return result;
 }
 
 /**
- * Get handler for Device.DNS.Client.
+ * Builds the get handler of a table that holds the rows a controller adds
+ * and the rows the CPE learns (runtime_instances, writable_rows).
  *
- * @param {object} ctx - Context with config
- * @returns {object} DNS client properties with instance counts
+ * TR-181 makes Enable writable on every row and DNSServer and Interface
+ * on the Static rows only. A learned row is stored once a controller
+ * writes it, and the stored Enable then applies over the learned one.
+ * A stored row whose server is no longer learned reads Disabled.
+ *
+ * @param {string} table - Table path
+ * @param {function} stored_get - Returns the stored rows from ctx.root
+ * @param {function} learned_get - Returns the learned rows from ctx.root
+ * @returns {function} The get handler
  */
-function dns_client_get(ctx) {
-	let static_count = ubbf.instance_count(ctx.config?.Server);
-	let learned_count = length(learned_dns_servers_get(ctx.root));
-	return {
-		...ubbf.ctx_config(ctx),
-		ServerNumberOfEntries: sprintf('%d', static_count + learned_count)
+function learned_table_get(table, stored_get, learned_get) {
+	return function(ctx) {
+		let stored = stored_get(ctx.root);
+		let rows = learned_rows_number(table, learned_get(ctx.root), stored);
+
+		for (let n, row in rows)
+			row.Status = ubbf.to_bool(row.Enable) ? 'Enabled' : 'Disabled';
+
+		if (ctx.instance == null) {
+			for (let n in keys(rows))
+				if (stored?.[n])
+					delete rows[n];
+			return rows;
+		}
+
+		let live = rows[sprintf('%d', ctx.instance)];
+
+		if (!ctx.config)
+			return live;
+
+		let row = live ? { ...live, Enable: ctx.config.Enable ?? live.Enable } : ubbf.ctx_config(ctx);
+		let present = live || !dns_learned_row(ctx.instance);
+
+		row.Status = (present && ubbf.to_bool(row.Enable)) ? 'Enabled' : 'Disabled';
+		return row;
 	};
 }
 
 /**
- * Enumerates non-upstream Device.IP.Interface instances paired with
- * the TR-181 interface reference.
+ * Builds the set handler of a table with learned rows. The first write
+ * into a learned row stores its Type, Interface and DNSServer, so the
+ * render and a later boot can match the stored row to its server.
  *
- * @param {object} root - Runtime data model tree
- * @returns {array} Array of { ref, ipv6 } pairs
+ * @param {string} table - Table path
+ * @param {function} stored_get - Returns the stored rows from ctx.root
+ * @param {function} learned_get - Returns the learned rows from ctx.root
+ * @returns {function} The set handler
  */
-function downstream_interfaces_get(root) {
-	let interfaces = root?.Device?.IP?.Interface ?? {};
-	let out = [];
-	for (let inst_key, iface in interfaces) {
-		if (!ubbf.is_instance_key(inst_key))
-			continue;
-		if (ubbf.to_bool(iface?.Upstream))
-			continue;
-		push(out, {
-			ref: sprintf('Device.IP.Interface.%d', +inst_key),
-			ipv6: ubbf.to_bool(iface?.IPv6Enable)
-		});
-	}
-	return out;
+function learned_table_set(table, stored_get, learned_get) {
+	return function(ctx) {
+		if (!dns_learned_row(ctx.instance))
+			return 0;
+
+		if (ctx.param == 'DNSServer' || ctx.param == 'Interface')
+			return -USP_ERR_PARAM_READ_ONLY;
+
+		if (ctx.config.Type)
+			return 0;
+
+		let rows = learned_rows_number(table, learned_get(ctx.root), stored_get(ctx.root));
+		let live = rows[sprintf('%d', ctx.instance)];
+		if (!live)
+			return 0;
+
+		ctx.config.Type = live.Type;
+		ctx.config.Interface = live.Interface;
+		ctx.config.DNSServer = live.DNSServer;
+		return 0;
+	};
 }
 
 /**
- * Get handler for Device.DNS.Relay.Forwarding.
+ * Returns the stored rows of Device.DNS.Client.Server.
  *
- * TR-181 semantics for Forwarding.Interface name the DOWNSTREAM
- * listener the relay binds to (mirrored by collect_relay_interfaces
- * in render/templates/dns.uc and dns_relay_collect in firewall-nat.uc).
- * DNS.Client.Server.Interface, by contrast, names the upstream source.
- *
- * For every learned upstream DNS server (via learned_dns_servers_get)
- * and every non-upstream IP.Interface, emit one Forwarding instance
- * with DNSServer=<upstream address>, Interface=<downstream ref> and
- * the learned Type. IPv6 forwarders are skipped on downstreams that
- * have IPv6Enable=false (e.g. Guest on the default initial.json).
- *
- * Static Forwarding entries are hydrated by the Forwarding.{i}
- * framework path; this handler only returns the dynamic tail.
- *
- * @param {object} ctx - Context with config (Forwarding subtree) and root
- * @returns {object} Instance-keyed object with learned entries only
+ * @param {object} root - Configuration tree
+ * @returns {object|null} Rows by instance
  */
-function dns_relay_forwarding_get(ctx) {
-	let config = ctx.config ?? {};
-	let max_static = 0;
-	for (let k in keys(config)) {
-		if (!ubbf.is_instance_key(k))
-			continue;
-		let n = +k;
-		if (n > max_static)
-			max_static = n;
-	}
+function stored_servers_get(root) {
+	return root?.Device?.DNS?.Client?.Server;
+}
 
-	let upstream_servers = learned_dns_servers_get(ctx.root);
-	let downstreams = downstream_interfaces_get(ctx.root);
+/**
+ * Builds the learned rows of Device.DNS.Relay.Forwarding: one for each
+ * learned server. TR-181 names in Forwarding.Interface the IP interface
+ * over which the query is sent, which for a learned row is the interface
+ * that DHCP, IPCP or an RA configured it on.
+ *
+ * @param {object} root - Runtime data model tree
+ * @returns {array} Learned forwarders
+ */
+function learned_forwarders_get(root) {
+	return map(learned_dns_servers_get(root), (srv) => ({
+		Enable: 'true',
+		DNSServer: srv.DNSServer,
+		Interface: srv.Interface,
+		Type: srv.Type
+	}));
+}
 
-	let result = {};
-	let next = max_static + 1;
-	for (let srv in upstream_servers) {
-		let is_ipv6 = (srv.Type == 'DHCPv6' || srv.Type == 'RouterAdvertisement');
-		for (let down in downstreams) {
-			if (is_ipv6 && !down.ipv6)
-				continue;
-			result[sprintf('%d', next)] = {
-				Enable: 'true',
-				Status: 'Enabled',
-				Alias: sprintf('%s-%s', srv.Type, down.ref),
-				DNSServer: srv.DNSServer,
-				Interface: down.ref,
-				Type: srv.Type
-			};
-			next++;
-		}
-	}
-	return result;
+/**
+ * Returns the stored rows of Device.DNS.Relay.Forwarding.
+ *
+ * @param {object} root - Configuration tree
+ * @returns {object|null} Rows by instance
+ */
+function stored_forwarders_get(root) {
+	return root?.Device?.DNS?.Relay?.Forwarding;
 }
 
 /**
  * Get handler for Device.DNS.Relay.
  *
+ * The core recounts a table from its name, but TR-181 names the count of
+ * Forwarding ForwardNumberOfEntries, so the handler counts it.
+ *
  * @param {object} ctx - Context with config
  * @returns {object} DNS relay properties with instance counts
  */
 function dns_relay_get(ctx) {
-	let static_forwarding = ubbf.instance_count(ctx.config?.Forwarding);
-	let upstream_servers = learned_dns_servers_get(ctx.root);
-	let downstreams = downstream_interfaces_get(ctx.root);
+	let stored = ctx.config?.Forwarding ?? {};
+	let learned = learned_rows_number(FORWARDING_TABLE, learned_forwarders_get(ctx.root), stored);
+	let count = ubbf.instance_count(stored);
 
-	let learned_count = 0;
-	for (let srv in upstream_servers) {
-		let is_ipv6 = (srv.Type == 'DHCPv6' || srv.Type == 'RouterAdvertisement');
-		for (let down in downstreams) {
-			if (is_ipv6 && !down.ipv6)
-				continue;
-			learned_count++;
-		}
-	}
+	for (let n in keys(learned))
+		if (!stored[n])
+			count++;
 
 	return {
 		...ubbf.ctx_config(ctx),
 		ConfigNumberOfEntries: sprintf('%d', ubbf.instance_count(ctx.config?.Config)),
-		ForwardNumberOfEntries: sprintf('%d', static_forwarding + learned_count)
+		ForwardNumberOfEntries: sprintf('%d', count)
 	};
 }
 
@@ -353,17 +377,18 @@ export const model = {
 
 	'Device.DNS.Client': {
 		schema: 'DNS.Client',
-		get: dns_client_get,
 		enable_status_derive: true
 	},
 
 	'Device.DNS.Client.Server': {
-		get: dns_client_server_get
 	},
 
 	'Device.DNS.Client.Server.{i}': {
 		schema: 'DNS.Client_Server',
-		enable_status_derive: true
+		get: learned_table_get(SERVER_TABLE, stored_servers_get, learned_dns_servers_get),
+		set: learned_table_set(SERVER_TABLE, stored_servers_get, learned_dns_servers_get),
+		runtime_instances: true,
+		writable_rows: true
 	},
 
 	'Device.DNS.Relay': {
@@ -377,12 +402,14 @@ export const model = {
 	},
 
 	'Device.DNS.Relay.Forwarding': {
-		get: dns_relay_forwarding_get
 	},
 
 	'Device.DNS.Relay.Forwarding.{i}': {
 		schema: 'DNS.Relay_Forwarding',
-		enable_status_derive: true
+		get: learned_table_get(FORWARDING_TABLE, stored_forwarders_get, learned_forwarders_get),
+		set: learned_table_set(FORWARDING_TABLE, stored_forwarders_get, learned_forwarders_get),
+		runtime_instances: true,
+		writable_rows: true
 	},
 
 	'Device.DNS.Relay.Config': {

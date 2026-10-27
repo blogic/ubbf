@@ -246,6 +246,11 @@ function render_config() {
 	// ratelimit daemon as well, so it runs whenever there is WiFi.
 	services.set_enabled('ratelimit', length(ubbf_instances(config, 'Device.WiFi.SSID')) > 0);
 
+	uci_named_section(output, 'firewall.bbf_qos', 'include');
+	uci_set_string(output, 'firewall.bbf_qos.type', 'script');
+	uci_set_string(output, 'firewall.bbf_qos.path', '/usr/share/ubbf/bbf-qos.fw4');
+	uci_set_boolean(output, 'firewall.bbf_qos.fw4_compatible', true);
+
 	if (!ubbf_get(config, 'Device.QoS'))
 		return;
 

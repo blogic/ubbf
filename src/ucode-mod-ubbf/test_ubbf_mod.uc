@@ -866,6 +866,15 @@ assert_eq('shell_escape: null', ubbf.shell_escape(null), "''");
 let ts = ubbf.iso8601_format(0);
 assert_eq('iso8601_format: epoch', ts, '1970-01-01T00:00:00Z');
 
+let lt = localtime(86400);
+let lt_offset = timegm(lt) - 86400;
+let lt_abs = (lt_offset < 0) ? -lt_offset : lt_offset;
+assert_eq('iso8601_local_format: local time with its offset', ubbf.iso8601_local_format(86400),
+	sprintf('%04d-%02d-%02dT%02d:%02d:%02d%s%02d:%02d', lt.year, lt.mon, lt.mday, lt.hour, lt.min, lt.sec,
+		lt_offset < 0 ? '-' : '+', lt_abs / 3600, (lt_abs % 3600) / 60));
+assert_eq('iso8601_local_format: now has an offset',
+	match(ubbf.iso8601_local_format(), /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[+-][0-9]{2}:[0-9]{2}$/) != null, true);
+
 let ts_usec = ubbf.iso8601_format_usec(0, 123456);
 assert_eq('iso8601_format_usec: epoch with usec',
 	ts_usec, '1970-01-01T00:00:00.123456Z');
@@ -1870,11 +1879,11 @@ assert_eq('writable_rows: both rows after the writes',
 /* The same rules compiled into a schema table, when a build tree is given. */
 let rules_build_dir = getenv('UBBF_BUILD_DIR');
 
-if (rules_build_dir && length(ubbf.schema_tables_load(rules_build_dir + '/schema-umdns.so') ?? [])) {
+if (rules_build_dir && length(ubbf.schema_tables_load(rules_build_dir + '/schema-mdns.so') ?? [])) {
 	let dm_table = ubbf.create();
 	dm_table.register({
-		'Device.DNS.SD.Advertise.{i}': { schema: 'umdns.SD_Advertise' },
-		'Device.DNS.SD.Service.{i}': { schema: 'umdns.SD_Service' }
+		'Device.DNS.SD.Advertise.{i}': { schema: 'mdns.SD_Advertise' },
+		'Device.DNS.SD.Service.{i}': { schema: 'mdns.SD_Service' }
 	});
 	dm_table.load('/dev/null');
 	dm_table.set_config({ Device: { DNS: { SD: { Advertise: { '1': {} } } } } });
@@ -1898,14 +1907,14 @@ if (rules_build_dir && length(ubbf.schema_tables_load(rules_build_dir + '/schema
 	dm_table.trans_abort();
 
 	assert_eq('schema_param_info: table rule facts',
-		  ubbf.schema_param_info('umdns.SD_Advertise', 'TransportProtocol'),
+		  ubbf.schema_param_info('mdns.SD_Advertise', 'TransportProtocol'),
 		  { enum: [ 'TCP', 'UDP' ], writable: true, type: 'DM_STRING' });
 	assert_eq('schema_param_info: table max',
-		  ubbf.schema_param_info('umdns.SD_Advertise', 'Port'),
+		  ubbf.schema_param_info('mdns.SD_Advertise', 'Port'),
 		  { max: 65535, writable: true, type: 'DM_UINT' });
-	assert_false('schema_entry_addable: table', ubbf.schema_entry_addable({ schema: 'umdns.SD_Service' }));
+	assert_false('schema_entry_addable: table', ubbf.schema_entry_addable({ schema: 'mdns.SD_Service' }));
 	assert_true('schema_entry_addable: entry wins',
-		    ubbf.schema_entry_addable({ schema: 'umdns.SD_Service', addable: true }));
+		    ubbf.schema_entry_addable({ schema: 'mdns.SD_Service', addable: true }));
 }
 else
 	printf('UBBF_BUILD_DIR not set: schema table rule checks skipped\n');

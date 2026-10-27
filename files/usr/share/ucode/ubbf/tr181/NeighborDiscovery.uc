@@ -3,8 +3,15 @@
 import * as fs from 'fs';
 import { netifd_status_get } from 'ubbf.utils.netifd';
 import { log_err } from 'ubbf.utils.logging';
-import { NDP_SHARED } from 'ubbf.utils.ndp';
 import * as ubbf from 'ubbf';
+
+// The parameters of NeighborDiscovery.InterfaceSetting.{i} that TR-181 2.21
+// deprecates for the same ones in InterfaceSetting.{i}.NDP; both name one
+// setting, so a write to either name stores the value under both.
+const NDP_SHARED = [
+	'DADTransmits', 'RetransTimer', 'RtrSolicitationInterval',
+	'MaxRtrSolicitations', 'NUDEnable', 'RSEnable'
+];
 
 /**
  * Resolves an interface reference to its underlying network device name.

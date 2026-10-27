@@ -94,7 +94,7 @@ If an operation fails, `bbf-dm` aborts the transaction and the configuration doe
 | `max_instances` | The object has the maximum number of instances |
 | `unknown_op` | The `op` field of a batch operation is not `set`, `add` or `del` |
 | `busy` | An operation that runs in the background holds the transaction |
-| `apply_failed` | The commit did not apply the configuration to the system |
+| `apply_failed` | The commit did not apply the configuration to the system, and the agent restored the configuration from before the transaction |
 
 ### set
 

@@ -70,8 +70,14 @@ function render_config() {
 
 		let servers = ubbf_instances(config, 'Device.DNS.Client.Server');
 		let has_static = false;
+		let learned_disabled = false;
 
 		for (let srv in servers) {
+			if (dns_learned_row(srv['.instance'])) {
+				if (!ubbf_to_bool(srv.Enable))
+					learned_disabled = true;
+				continue;
+			}
 			if (!ubbf_to_bool(srv.Enable))
 				continue;
 			if (srv.Type == 'Static' && srv.DNSServer) {
@@ -80,91 +86,27 @@ function render_config() {
 			}
 		}
 
-		if (!has_static)
-			uci_set_string(output, 'dhcp.dns_localhost.resolvfile',
-				'/tmp/resolv.conf.d/resolv.conf.auto');
+		if (has_static)
+			return;
 
-		return;
-	}
-
-	/**
-	 * Collects DNS relay forwarders grouped by downstream interface.
-	 *
-	 * @param {object} relay - DNS relay data model object
-	 * @returns {object} Map of interface name to {servers[]}
-	 */
-	function collect_relay_interfaces(relay) {
-		let by_iface = {};
-
-		if (!ubbf_to_bool(relay?.Enable))
-			return by_iface;
-
-		let forwardings = ubbf_instances(config, 'Device.DNS.Relay.Forwarding');
-		let ip_interfaces = ubbf_instances(config, 'Device.IP.Interface');
-
-		for (let fwd in forwardings) {
-			if (!ubbf_to_bool(fwd.Enable))
-				continue;
-			if (!fwd.DNSServer)
-				continue;
-
-			let iface_names = [];
-
-			if (fwd.Interface && fwd.Interface != '') {
-				let name = interface_to_name(config, fwd.Interface);
-				if (name)
-					push(iface_names, name);
-			} else {
-				for (let iface in ip_interfaces) {
-					if (!iface.Name)
-						continue;
-					if (ubbf_to_bool(iface.Upstream))
-						continue;
-					push(iface_names, iface.Name);
-				}
-			}
-
-			for (let name in iface_names) {
-				if (!(name in by_iface))
-					by_iface[name] = { servers: [] };
-
-				if (index(by_iface[name].servers, fwd.DNSServer) < 0)
-					push(by_iface[name].servers, fwd.DNSServer);
-			}
+		if (!learned_disabled) {
+			uci_set_string(output, 'dhcp.dns_localhost.resolvfile', DNS_RESOLV_AUTO);
+			return;
 		}
 
-		return by_iface;
-	}
-
-	/**
-	 * Builds a map of interface names to dnsmasq relay instance info.
-	 *
-	 * @param {object} by_iface - Map of interface name to relay config
-	 * @returns {object} Map of interface name to {name, port}
-	 */
-	function build_instance_map(by_iface) {
-		let instance_map = {};
-		let port = 5301;
-
-		for (let iface in by_iface) {
-			instance_map[iface] = { name: `dns_relay_${iface}`, port };
-			port++;
-		}
-
-		return instance_map;
+		// ubbf-device writes the filtered copy (device/dns-filter.uc); the
+		// dnsmasq init script turns localuse off for any other resolvfile.
+		uci_set_string(output, 'dhcp.dns_localhost.resolvfile', DNS_RESOLV_FILTERED);
+		uci_set_boolean(output, 'dhcp.dns_localhost.localuse', true);
 	}
 
 	/**
 	 * Generates UCI dnsmasq sections for DNS relay instances.
 	 *
-	 * @param {object} by_iface - Map of interface name to relay config
-	 * @param {object} instance_map - Map of interface name to instance info
-	 * @returns {string} UCI batch output for DNS relay instances
+	 * @param {object} relay_plan - Plan of dns_relay_plan()
 	 */
-	function generate_dns_relays(by_iface, instance_map) {
-
-		for (let iface, data in by_iface) {
-			let inst = instance_map[iface];
+	function generate_dns_relays(relay_plan) {
+		for (let iface, inst in relay_plan) {
 			let inst_name = inst.name;
 
 			uci_named_section(output, `dhcp.${inst_name}`, 'dnsmasq');
@@ -175,46 +117,32 @@ function render_config() {
 			uci_set_boolean(output, `dhcp.${inst_name}.localservice`, true);
 			uci_set_boolean(output, `dhcp.${inst_name}.noresolv`, true);
 
-			for (let server in data.servers)
+			for (let server in inst.servers)
 				uci_list_string(output, `dhcp.${inst_name}.server`, server);
 		}
-
-		return;
 	}
 
 	/**
-	 * Applies cache settings from Relay.Config instances to relay instances.
+	 * Applies the cache settings of the Relay.Config row of each relay
+	 * instance.
 	 *
-	 * @param {object} instance_map - Map of interface name to instance info
-	 * @returns {string} UCI batch output for caching settings
+	 * @param {object} relay_plan - Plan of dns_relay_plan()
 	 */
-	function apply_caching(instance_map) {
-		let configs = ubbf_instances(config, 'Device.DNS.Relay.Config');
-		if (!configs || !length(configs))
-			return;
+	function apply_caching(relay_plan) {
+		for (let iface, inst in relay_plan) {
+			let cfg = inst.config;
+			if (!cfg)
+				continue;
 
-
-		for (let cfg in configs) {
-			let iface_name = cfg.Interface
-				? interface_to_name(config, cfg.Interface) : null;
-
-			for (let iface, inst in instance_map) {
-				if (iface_name && iface_name != iface)
-					continue;
-
-				let inst_name = inst.name;
-
-				let entries = ubbf_to_int(cfg.X_UBBF_CacheEntries);
-				if (entries != null)
-					uci_set_number(output, `dhcp.${inst_name}.cachesize`, entries);
-				if (ubbf_to_int(cfg.X_UBBF_CacheMaxTTL))
-					uci_set_number(output, `dhcp.${inst_name}.max_cache_ttl`, cfg.X_UBBF_CacheMaxTTL);
-				if (ubbf_to_int(cfg.X_UBBF_CacheMinTTL))
-					uci_set_number(output, `dhcp.${inst_name}.min_cache_ttl`, cfg.X_UBBF_CacheMinTTL);
-			}
+			let inst_name = inst.name;
+			let entries = ubbf_to_int(cfg.X_UBBF_CacheEntries);
+			if (entries != null)
+				uci_set_number(output, `dhcp.${inst_name}.cachesize`, entries);
+			if (ubbf_to_int(cfg.X_UBBF_CacheMaxTTL))
+				uci_set_number(output, `dhcp.${inst_name}.max_cache_ttl`, cfg.X_UBBF_CacheMaxTTL);
+			if (ubbf_to_int(cfg.X_UBBF_CacheMinTTL))
+				uci_set_number(output, `dhcp.${inst_name}.min_cache_ttl`, cfg.X_UBBF_CacheMinTTL);
 		}
-
-		return;
 	}
 
 	/**
@@ -347,14 +275,13 @@ function render_config() {
 	let relay = ubbf_get(config, 'Device.DNS.Relay');
 	let rebind = ubbf_get(config, 'Device.DNS.RebindProtection');
 
-	let by_iface = collect_relay_interfaces(relay);
-	let instance_map = build_instance_map(by_iface);
+	let instance_map = dns_relay_plan(config);
 
 	services.set_enabled('dnsmasq',
 		ubbf_to_bool(client?.Enable) || ubbf_to_bool(relay?.Enable));
 
 	generate_dns_localhost(client);
-	generate_dns_relays(by_iface, instance_map);
+	generate_dns_relays(instance_map);
 	apply_caching(instance_map);
 	apply_rebind_protection(rebind, instance_map);
 	apply_local_domain(instance_map);

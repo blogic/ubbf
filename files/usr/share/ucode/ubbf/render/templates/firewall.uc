@@ -1,5 +1,6 @@
 function render_config() {
 const DOS_NFT_PATH = '/tmp/ubbf/firewall-dos.nft';
+const SSHGUARD_FW4_INCLUDE = '/usr/share/ubbf/sshguard.fw4';
 
 /**
  * Resolves the currently active Firewall Level.
@@ -200,27 +201,6 @@ function generate_zones() {
 }
 
 /**
- * Returns the netdev that the traffic of an upstream IP interface enters.
- *
- * Over PPP that is the pppd link, which ppp.sh of netifd names
- * `<proto>-<interface>`, so `pppoe-<Name>` for a PPP row; the Name of the
- * row itself is the netifd interface, not a netdev.
- *
- * @param {object} iface_ref - Device.IP.Interface row
- * @returns {string|null} netdev name
- */
-function upstream_netdev(iface_ref) {
-	let lower = csv_to_list(iface_ref?.LowerLayers ?? '')[0] ?? '';
-
-	if (match(lower, /^Device\.PPP\.Interface\.[0-9]+$/)) {
-		let ppp = ubbf_get(config, lower);
-		return ppp?.Name ? `pppoe-${ppp.Name}` : null;
-	}
-
-	return lower_layer_resolve_vlan(config, iface_ref?.LowerLayers);
-}
-
-/**
  * Generates static per-zone rules (IGMP, MLD, ICMPv6) and conditional ping rules.
  */
 function generate_per_zone_rules() {
@@ -247,7 +227,7 @@ function generate_per_zone_rules() {
 		let suppress_ping = is_upstream && !respond_to_ping;
 
 		if (is_upstream) {
-			let dev = upstream_netdev(iface_ref);
+			let dev = ip_interface_netdev(config, iface_ref);
 			if (dev)
 				push(upstream_devices, dev);
 		}
@@ -368,6 +348,13 @@ services.set_enabled('firewall', firewall_enabled);
 
 if (!firewall_enabled)
 	return;
+
+// The stop before a start of the firewall deletes the sshguard table, and
+// fw4 loads it again empty from /usr/share/nftables.d.
+uci_named_section(output, 'firewall.sshguard', 'include');
+uci_set_string(output, 'firewall.sshguard.type', 'script');
+uci_set_string(output, 'firewall.sshguard.path', SSHGUARD_FW4_INCLUDE);
+uci_set_boolean(output, 'firewall.sshguard.fw4_compatible', true);
 
 // Pre-flag ADMZ activity for firewall-dmz.uc which precedes
 // firewall-admz.uc in the include order. The flag matches the same

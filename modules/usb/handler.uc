@@ -262,13 +262,6 @@ function device_configurations_build(dev, usb, info) {
 }
 
 /**
- * Builds device instances for a USB host.
- *
- * @param {string} host - USB host name
- * @param {object} usb - USB enumeration data
- * @returns {object} Keyed device instances
- */
-/**
  * Maps a device to the visible device states of USB 2.0 table 9-1. sysfs
  * shows a device that has an address: Suspended while runtime PM suspends
  * it, Configured once it has a configuration, else Address (for example a
@@ -284,6 +277,13 @@ function device_state_get(info) {
 	return (info.bConfigurationValue > 0) ? 'Configured' : 'Address';
 }
 
+/**
+ * Builds device instances for a USB host.
+ *
+ * @param {string} host - USB host name
+ * @param {object} usb - USB enumeration data
+ * @returns {object} Keyed device instances
+ */
 function host_devices_build(host, usb) {
 	let devs = host_devices(host, usb);
 	let numbers = instance_map.instance_numbers(host_device_table(host), map(devs, device_key), true);

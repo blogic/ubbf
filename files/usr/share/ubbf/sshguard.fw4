@@ -1,0 +1,2 @@
+# fw4 sources a script include, so the ucode script runs from here.
+/usr/libexec/ubbf/sshguard-restore

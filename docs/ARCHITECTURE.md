@@ -54,7 +54,7 @@ modules/                  # Domains packaged separately as ubbf-mod-<name>
 ├── qosify/               # Device.X_UBBF.QoSify (docs/modules/qosify.md)
 │   └── files/            # Tree installed at /: the qosify shadow file
 ├── multicast/            # Device.X_UBBF.MulticastProxy, omcproxy (docs/modules/multicast.md)
-├── umdns/                # Device.DNS.SD
+├── mdns/                 # Device.DNS.SD
 ├── testbed/              # Device.X_UBBF.Testbed and the test harness RPC service
 ├── location/             # Device.DeviceInfo.Location: controller row, GPS row from ucode-gps
 ├── cellular/             # Device.Cellular, from the ModemManager rpcd plugin
@@ -129,7 +129,7 @@ The helpers are in `/usr/libexec/ubbf/`. The table lists the main helpers.
 
 | Script | Description |
 |---|---|
-| `ubbf-device` | Device daemon: lifecycle operations (reboot, factory reset, upgrade) and the scheduled apply |
+| `ubbf-device` | Device daemon (ubus `bbf-device`): lifecycle operations (reboot, factory reset, upgrade), the scheduled apply, the fault and reboot records, and the system events. Modules add plugins, see "ubbf-device plugins" |
 | `ubbf-apply` | Applies the configuration at boot |
 | `ubbf-udpecho` | UDP echo server for TR-143 |
 
@@ -200,7 +200,7 @@ model['Device.LLDP'] = { schema: schema('LLDP'), get: lldp_get };
 - `schema_defaults(key)`: the defaults of that schema, for a get handler that merges them
 - `model` and `operations`: empty objects for the module to fill
 - `members`: an empty object for the commands and events that the module adds to a core object. See "Commands on a core parent".
-- `on_commit(cb)` and `on_abort(cb)`: register a callback for each persist of the configuration and for each abandoned transaction. The commit hooks also run once after the configuration loads at start-up. A set handler can stage a side effect, and the commit hook applies it. `modules/users` writes the accounts this way.
+- `on_commit(cb)` and `on_abort(cb)`: register a callback for each persist of the configuration and for each abandoned transaction. A transaction whose apply fails is abandoned: `commit_rollback()` in `datamodel.uc` restores the configuration from before the transaction and runs the abort hooks. The commit hooks also run once after the configuration loads at start-up. A set handler can stage a side effect, and the commit hook applies it. `modules/users` writes the accounts this way.
 - `on_precommit(cb)`: registers a check that runs before a transaction commits. A check that returns a string refuses the commit, which then fails and is aborted. A commit hook cannot fail the commit, so a module whose commit hook could not carry out the change checks first. `modules/users` checks that `/etc` has room for the account files.
 - `config_apply(operations, done)`: applies `{ op, path, value? }` entries in one transaction, the same as a write from a controller. It is for a change that the agent makes itself, for example when a timer expires. While a USP transaction is open, the write waits at the write gate: the call returns null and `done` gets the outcome later. Do not call it from a commit hook; start a timer instead. `modules/userinterface` disables an `HTTPAccess` row this way when its `AutoDisableDuration` runs out.
 
@@ -273,8 +273,8 @@ Such a package often has no file in `/etc/config` at all, for example `bbf-qos`.
 ### Packaging
 
 - Each `Package/ubbf-mod-<name>` installs the `.uc` files to `/usr/share/ucode/ubbf/modules/<name>/`, and the schema table `schema-<name>.so` to `/usr/lib/ubbf/` when the build made one. The base package installs `schema-core.so`.
-- Each package declares the daemon it needs: `+lldpd`, `+ds-lite`, `+usfpd`, `+qosify`, `+omcproxy`, `+umdns`, `+ucode-gps`, `+ddns-scripts`. `testbed`, `usb`, `users`, `leds` and `wol` need no daemon. `cellular` pulls ModemManager, its rpcd plugin and the USB modem drivers. `pcp` and `bulkdata` ship their own daemon in `files/` and declare what it uses: `+libpcpnatpmp` with the ucode modules `uloop`, `ubus`, `socket` and `fs`, and `+mosquitto-client-ssl` with `+ucode-mod-zlib`. The base build compiles `pcp.so` and `openssl.so` whether their packages are selected or not, so the feed lists `libpcpnatpmp` and `openssl` in `PKG_BUILD_DEPENDS`. `pty` ships the remote PTY agent `upty` in `files/` and pulls `+uwsc`. `userinterface` pulls the web UI `+ubbf-ui`, and `+ubbf-mod-security` for `certificates.uc`, which resolves its `Certificate` and `CABundle` references. `qos` ships `bbf-qos-apply` with its init script and pulls `+ratelimit`, `+tc` and `+nftables`; see `docs/modules/qos.md`. `syslog` ships the init script of `ubbf-logd`, which starts the daemon in a ujail with only `CAP_NET_BIND_SERVICE` (`files/etc/capabilities/ubbf-logd.json`), installs the binary through `install-extra`, and pulls `+ubbf-mod-security` (see below). `ppp` ships `pppoe-relay` with its init script, installs its BPF object through `install-extra`, and pulls `+ucode-mod-bpf`, `+ucode-mod-struct` and `+kmod-sched-bpf`; see `docs/modules/ppp.md`. `packetcapture` pulls `+tcpdump`. `tr471` pulls `+udpst`. `hosts` pulls `+nlbwmon` for the WAN counters of each host. `lldp` and `upnp` also pull `+ubbf-mod-hosts`, because they refer to rows of `Device.Hosts.Host`. `lldp` also needs the lldpd init script of `ubbf-openwrt`, which runs lldpd on the member ports of the LAN bridge instead of the bridge itself; see `docs/modules/lldp.md`. `easymesh` pulls `+umap-controller` and `+umap-agent`, and with them umapd. `softwaremodules` pulls the container stack, `+uxc`, `+uvol`, `+kmod-fs-ext4`, `+block-mount` and `+kmod-veth`, which the base package pulled before; see `docs/SOFTWARE-MODULES.md`.
-- `utils/wifi-dataelements.uc` stays in the base package, because the `wifi-events` subsystem of `ubbf-device` imports it. The `easymesh` handler gets it as `utils['wifi-dataelements']`. Without the module, `wifi.uc` still reads `X_UBBF_EasyMesh.Agent.Enable` from the configuration and then renders no SSIDs, as for an agent; `default_config` writes that value only in the `agent` preset.
+- Each package declares the daemon it needs: `+lldpd`, `+ds-lite`, `+usfpd`, `+qosify`, `+omcproxy`, `+ucode-mdns`, `+ucode-gps`, `+ddns-scripts`. `testbed`, `usb`, `users`, `leds` and `wol` need no daemon. `cellular` pulls ModemManager, its rpcd plugin and the USB modem drivers. `pcp` and `bulkdata` ship their own daemon in `files/` and declare what it uses: `+libpcpnatpmp` with the ucode modules `uloop`, `ubus`, `socket` and `fs`, and `+mosquitto-client-ssl` with `+ucode-mod-zlib`. The base build compiles `pcp.so` and `openssl.so` whether their packages are selected or not, so the feed lists `libpcpnatpmp` and `openssl` in `PKG_BUILD_DEPENDS`. `pty` ships the remote PTY agent `upty` in `files/` and pulls `+uwsc`. `userinterface` pulls the web UI `+ubbf-ui`, and `+ubbf-mod-security` for `certificates.uc`, which resolves its `Certificate` and `CABundle` references. `qos` ships `bbf-qos-apply` with its init script and pulls `+ratelimit`, `+tc` and `+nftables`; see `docs/modules/qos.md`. `syslog` ships the init script of `ubbf-logd`, which starts the daemon in a ujail with only `CAP_NET_BIND_SERVICE` (`files/etc/capabilities/ubbf-logd.json`), installs the binary through `install-extra`, and pulls `+ubbf-mod-security` (see below). `ppp` ships `pppoe-relay` with its init script, installs its BPF object through `install-extra`, and pulls `+ucode-mod-bpf`, `+ucode-mod-struct` and `+kmod-sched-bpf`; see `docs/modules/ppp.md`. `packetcapture` pulls `+tcpdump`. `tr471` pulls `+udpst`. `hosts` pulls `+nlbwmon` for the WAN counters of each host. `lldp` and `upnp` also pull `+ubbf-mod-hosts`, because they refer to rows of `Device.Hosts.Host`. `lldp` also needs the lldpd init script of `ubbf-openwrt`, which runs lldpd on the member ports of the LAN bridge instead of the bridge itself; see `docs/modules/lldp.md`. `easymesh` pulls `+umap-controller` and `+umap-agent`, and with them umapd. `softwaremodules` pulls the container stack, `+uxc`, `+uvol`, `+kmod-fs-ext4`, `+block-mount` and `+kmod-veth`, which the base package pulled before; see `docs/SOFTWARE-MODULES.md`.
+- `utils/wifi-dataelements.uc` stays in the base package, because `datamodel.uc` gives it to the `easymesh` handler as `utils['wifi-dataelements']`. The `easymesh_events` plugin of ubbf-device imports it. Without the module, `wifi.uc` still reads `X_UBBF_EasyMesh.Agent.Enable` from the configuration and then renders no SSIDs, as for an agent; `default_config` writes that value only in the `agent` preset.
 - `Device.Ethernet.WoLSupported` stays in the core schema, like `IPLayerCapacitySupported`. `ethernet_get()` in `tr181/Ethernet.uc` reports `true` when the handler of the `wol` module registered. `external_modules_register()` records the name of each module that registered in `modules_registered` (`utils/modules.uc`), which a core handler can read. The module sends the magic packet with `send()` of its native `wol` module.
 - The package dependency replaces the runtime probe that `optional_modules` in `datamodel.uc` does for in-tree domains: if the module is installed, its daemon is installed too.
 - Files that a module needs outside its own directory, for example a shadow file or a `uci-defaults` script, go in `modules/<name>/files/`, as a tree rooted at `/`. The package installs this tree unchanged.
@@ -309,6 +309,21 @@ The data model handlers of a module can be C instead of `handler.uc`. Such a mod
 - Schema keys resolve through `module_api_build()`, as for a ucode module: the table name when `schema-<name>.so` is open, else the object from `schema.uc`.
 - The feed installs `/usr/lib/ubbf/dm/<name>.so` with the `ubbf-mod-<name>` package (`BuildModule`). `dm-host` is in the base package.
 - A channel request that arrives after its channel was lost crashed the ucode `ubus` module; the device needs ucode patch 220 of ubbf-openwrt.
+
+### ubbf-device plugins
+
+A module can add a part to the daemon `ubbf-device`, for work that needs a process that runs all the time: system events, timers, state that a request cannot hold. The plugin is a normal ucode module, so the rules for `handler.uc` do not apply to it: it imports `ubbf.*` like the in-tree parts in `device/`.
+
+```
+modules/<name>/files/usr/share/ucode/ubbf/device/plugins/<plugin>.uc
+```
+
+- `plugins_load()` in `device/plugin-loader.uc` loads each file of `/usr/share/ucode/ubbf/device/plugins/` with `import('ubbf.device.plugins.<plugin>')`. `import()` takes a module name, not a path, and a name allows only letters, digits and `_` (`uc_require_path()` in ucode `lib.c`). A file with another name is logged and skipped, so the file names use `_`, not `-`.
+- A plugin exports any of `init()`, `ubus_methods()` and `subscribe()`. The daemon calls `init()` after the in-tree parts, adds the methods to the `bbf-device` object, and calls `subscribe()` after the publish.
+- A plugin that does not compile, or whose body or `init()` throws, is logged and left out; the daemon runs on. A method whose name `bbf-device` already has is logged and left out.
+- The daemon loads the plugins once at start. A package that is installed later takes effect when ubbf-device restarts.
+- Plugins of this repository: `sfp_allow` (`modules/usfpd`, blocks the SFPs that `Device.SFPs.AllowedSFPs` does not allow) and `easymesh_events` (`modules/easymesh`, the umap events of `Device.WiFi.DataElements` and the methods `event_data_status` and `event_data_clear`).
+- Host test: `tests/device-plugins.uc`.
 
 ## Components
 

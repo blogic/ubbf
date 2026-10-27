@@ -25,6 +25,7 @@ schemas.HTTPAccess = {
 	schema: {
 		"Enable": dm_type.BOOL | dm_type.WRITABLE,
 		"Alias": dm_type.STRING | dm_type.WRITABLE,
+		"Order": dm_type.UINT | dm_type.WRITABLE,
 		"Status": dm_type.STRING,
 		"AccessType": dm_type.STRING | dm_type.WRITABLE,
 		"AllowedRoles": dm_type.STRING | dm_type.WRITABLE,
@@ -57,6 +58,7 @@ schemas.HTTPAccess = {
 	defaults: {
 		"Enable": "true",
 		"Alias": "",
+		"Order": "0",
 		"Status": "Down",
 		"AccessType": "LocalAccess",
 		"AllowedRoles": "",
@@ -77,6 +79,7 @@ schemas.HTTPAccess = {
 	},
 	constraints: {
 		"Alias": { max_length: 64 },
+		"Order": { min: 1 },
 		"AccessType": { enum: [ "RemoteAccess", "LocalAccess" ] },
 		"AllowedRoles": { list: true, max_length: 256 },
 		"Interface": { max_length: 256 },

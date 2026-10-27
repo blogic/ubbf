@@ -7,32 +7,6 @@ const ZERO_DIR = {
 	packets: 0, bytes: 0, unicast: 0, multicast: 0, broadcast: 0
 };
 
-/**
- * Returns a fresh TR-181 Stats object with every field set to '0'.
- *
- * @returns {object}
- */
-function stats_zero() {
-	return {
-		BytesSent: '0',
-		BytesReceived: '0',
-		PacketsSent: '0',
-		PacketsReceived: '0',
-		ErrorsSent: '0',
-		ErrorsReceived: '0',
-		UnicastPacketsSent: '0',
-		UnicastPacketsReceived: '0',
-		DiscardPacketsSent: '0',
-		DiscardPacketsReceived: '0',
-		MulticastPacketsSent: '0',
-		MulticastPacketsReceived: '0',
-		BroadcastPacketsSent: '0',
-		BroadcastPacketsReceived: '0',
-		Collisions: '0',
-		UnknownProtoPacketsReceived: '0'
-	};
-}
-
 function totals_zero() {
 	return {
 		rx_bytes: 0, rx_packets: 0, rx_unicast: 0, rx_multicast: 0, rx_broadcast: 0,
@@ -60,26 +34,41 @@ function totals_accumulate(totals, ifname) {
 	totals.tx_broadcast += tx.broadcast ?? 0;
 }
 
+// The counters that every TR-181 Stats object declares. Errors and discards
+// are not in udevstats and stay at '0'.
+function totals_to_basic_stats(totals) {
+	return {
+		BytesSent: sprintf('%d', totals.tx_bytes),
+		BytesReceived: sprintf('%d', totals.rx_bytes),
+		PacketsSent: sprintf('%d', totals.tx_packets),
+		PacketsReceived: sprintf('%d', totals.rx_packets),
+		ErrorsSent: '0',
+		ErrorsReceived: '0',
+		DiscardPacketsSent: '0',
+		DiscardPacketsReceived: '0'
+	};
+}
+
+// The basic counters plus the packet types that the Stats objects of the
+// interface tables declare. Only Ethernet.Interface.Stats adds Collisions.
 function totals_to_stats(totals) {
-	let result = stats_zero();
-	result.BytesSent                = sprintf('%d', totals.tx_bytes);
-	result.BytesReceived            = sprintf('%d', totals.rx_bytes);
-	result.PacketsSent              = sprintf('%d', totals.tx_packets);
-	result.PacketsReceived          = sprintf('%d', totals.rx_packets);
-	result.UnicastPacketsSent       = sprintf('%d', totals.tx_unicast);
-	result.UnicastPacketsReceived   = sprintf('%d', totals.rx_unicast);
-	result.MulticastPacketsSent     = sprintf('%d', totals.tx_multicast);
-	result.MulticastPacketsReceived = sprintf('%d', totals.rx_multicast);
-	result.BroadcastPacketsSent     = sprintf('%d', totals.tx_broadcast);
-	result.BroadcastPacketsReceived = sprintf('%d', totals.rx_broadcast);
-	return result;
+	return {
+		...totals_to_basic_stats(totals),
+		UnicastPacketsSent: sprintf('%d', totals.tx_unicast),
+		UnicastPacketsReceived: sprintf('%d', totals.rx_unicast),
+		MulticastPacketsSent: sprintf('%d', totals.tx_multicast),
+		MulticastPacketsReceived: sprintf('%d', totals.rx_multicast),
+		BroadcastPacketsSent: sprintf('%d', totals.tx_broadcast),
+		BroadcastPacketsReceived: sprintf('%d', totals.rx_broadcast),
+		UnknownProtoPacketsReceived: '0'
+	};
 }
 
 /**
- * Returns a TR-181-shaped Stats object for a kernel netdev. Counters not
- * exposed by udevstats (errors, discards, collisions, UnknownProto) stay
- * at '0'. Every call issues a fresh ubus request so consecutive reads
- * across bbf-cli invocations see live counter values.
+ * Returns a TR-181-shaped Stats object for a kernel netdev, with the
+ * counters of an interface table such as Ethernet.Link or IP.Interface.
+ * Every call issues a fresh ubus request so consecutive reads across
+ * bbf-cli invocations see live counter values.
  *
  * @param {string} ifname - kernel netdev name
  * @returns {object}
@@ -88,6 +77,20 @@ export function ifstats_get(ifname) {
 	let totals = totals_zero();
 	totals_accumulate(totals, ifname);
 	return totals_to_stats(totals);
+};
+
+/**
+ * Returns the basic counters (bytes, packets, errors, discards) of a kernel
+ * netdev, for a Stats object without packet types, such as WiFi.Radio or
+ * Optical.Interface.
+ *
+ * @param {string} ifname - kernel netdev name
+ * @returns {object}
+ */
+export function ifstats_basic_get(ifname) {
+	let totals = totals_zero();
+	totals_accumulate(totals, ifname);
+	return totals_to_basic_stats(totals);
 };
 
 /**

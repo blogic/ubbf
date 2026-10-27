@@ -192,11 +192,11 @@ function cac_capability_to_object(cac_caps) {
  * Converts spatial reuse data to TR-181 SpatialReuse object format.
  *
  * @param {object} sr - Spatial reuse data from get_agent radios[ruid].spatial_reuse
- * @returns {object|null} TR-181 formatted SpatialReuse object or null
+ * @returns {object} TR-181 formatted SpatialReuse object, empty without data
  */
 function spatial_reuse_to_object(sr) {
 	if (!sr)
-		return null;
+		return {};
 
 	return {
 		BSSColor: sprintf('%d', sr.bss_color ?? 0),

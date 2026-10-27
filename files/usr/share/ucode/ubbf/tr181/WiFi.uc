@@ -21,7 +21,7 @@ import {
 import { log_info, log_debug, log_err } from 'ubbf.utils.logging';
 import { popen_async } from 'ubbf.utils.process';
 import { last_change_get } from 'ubbf.utils.netdev_change';
-import { ifstats_get, ifstats_reset } from 'ubbf.utils.ifstats';
+import { ifstats_get, ifstats_basic_get, ifstats_reset } from 'ubbf.utils.ifstats';
 import * as ubbf from 'ubbf';
 
 /**
@@ -255,7 +255,7 @@ function radio_stats_get(ctx) {
 	if (!ifname)
 		return null;
 
-	let stats = ifstats_get(ifname);
+	let stats = ifstats_basic_get(ifname);
 
 	let noise = '0';
 	iwinfo_update();

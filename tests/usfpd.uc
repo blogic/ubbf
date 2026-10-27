@@ -33,7 +33,7 @@ const api = {
 		netdev_change: { last_change_get: (netdev) => (netdev == 'eth2') ? '42' : '0' },
 		helpers: { upstream_interface_ref: (root) => root?.Device?.IP?.Interface ? 'Device.IP.Interface.1' : null },
 		netifd: { netifd_status_get: (name) => (name == 'wan') ? { device: 'eth2' } : null },
-		ifstats: { ifstats_get: () => ({}), ifstats_reset: () => reset_ok },
+		ifstats: { ifstats_get: () => ({}), ifstats_basic_get: () => ({}), ifstats_reset: () => reset_ok },
 		logging: { log_warn: () => null },
 		sfp
 	},

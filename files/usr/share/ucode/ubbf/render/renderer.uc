@@ -32,7 +32,9 @@ import * as ubbf from 'ubbf';
 
 import {
 	vlan_termination_bridge_resolve,
-	lower_layer_resolve_vlan
+	lower_layer_resolve_vlan,
+	ip_interface_netdev,
+	dns_relay_plan
 } from 'ubbf.render.ubbf_helpers';
 
 import * as services from 'ubbf.render.services';
@@ -57,6 +59,7 @@ import {
 	firewall_set_resolve
 } from 'ubbf.utils.firewall';
 import * as ssh_keys from 'ubbf.utils.ssh_keys';
+import { dns_learned_row, DNS_RESOLV_AUTO, DNS_RESOLV_FILTERED } from 'ubbf.utils.dns';
 
 /**
  * Generates UCI configuration from UBBF data model.
@@ -111,6 +114,8 @@ export function generate(config, logs, dry_run) {
 		lower_layer_resolve: ubbf.lower_layer_resolve,
 		vlan_termination_bridge_resolve,
 		lower_layer_resolve_vlan,
+		ip_interface_netdev,
+		dns_relay_plan,
 		csv_to_list: ubbf.csv_to_list,
 
 		services,
@@ -147,6 +152,9 @@ export function generate(config, logs, dry_run) {
 		chain_rules_ordered,
 		chain_rule_set_matches,
 		firewall_set_resolve,
+		dns_learned_row,
+		DNS_RESOLV_AUTO,
+		DNS_RESOLV_FILTERED,
 
 		warn: (fmt, ...args) => push(logs, { level: 'warning', msg: sprintf(fmt, ...args) }),
 		error: (fmt, ...args) => push(logs, { level: 'error', msg: sprintf(fmt, ...args) }),

@@ -14,7 +14,11 @@ import * as wifi_events from 'ubbf.device.wifi-events';
 import * as sshguard from 'ubbf.device.sshguard';
 import * as cwmp_ops from 'ubbf.device.cwmp-ops';
 import * as route_mirror from 'ubbf.device.route-mirror';
-import * as sfp_allow from 'ubbf.device.sfp-allow';
+import * as dns_filter from 'ubbf.device.dns-filter';
+import {
+	PLUGIN_DIR, PLUGIN_PREFIX, plugins_load, plugins_init, plugins_methods,
+	plugins_subscribe
+} from 'ubbf.device.plugin-loader';
 
 log_init('ubbf-device');
 uloop.init();
@@ -25,7 +29,9 @@ thermal.init();
 sshguard.init();
 cwmp_ops.init();
 route_mirror.init();
-sfp_allow.init();
+dns_filter.init();
+
+let plugins = plugins_init(plugins_load(PLUGIN_DIR, PLUGIN_PREFIX));
 
 let boot_cause = reboots.boot_cause_read();
 let is_upgrade = reboots.upgrade_detected(boot_cause);
@@ -35,7 +41,7 @@ reboots.record(boot_cause, is_upgrade);
 reboots.firmware_update_mark(is_upgrade);
 reboots.boot_cause_clear();
 
-ubus.publish('bbf-device', {
+ubus.publish('bbf-device', plugins_methods(plugins, {
 	...lifecycle.ubus_methods(),
 	...thermal.ubus_methods(),
 	...process_faults.ubus_methods(),
@@ -45,9 +51,10 @@ ubus.publish('bbf-device', {
 	...wifi_events.ubus_methods(),
 	...sshguard.ubus_methods(),
 	...cwmp_ops.ubus_methods()
-});
+}));
 
 process_faults.subscribe();
 wifi_events.subscribe();
+plugins_subscribe(plugins);
 
 uloop.run();

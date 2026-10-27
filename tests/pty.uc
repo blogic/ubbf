@@ -1,8 +1,8 @@
 // Host test of the upty agent: the input checks, the window size check and a
 // real shell on a PTY (input queue, SIGPIPE, teardown of background jobs).
-// Run from the repository root with a host ucode that carries the
-// uloop.process() setup callback (ubbf-openwrt ucode patch 111) and host
-// builds of uwsc and uci:
+// Run from the repository root with a host ucode whose uloop.process() takes
+// a function as the executable (OpenWrt ucode patch 101) and host builds of
+// uwsc and uci:
 //   ucode -L "$PWD/modules/pty/files/usr/share/ucode/*.uc" \
 //     -L "<uwsc build>/*.so" -L "<ucode build>/*.so" tests/pty.uc
 'use strict';

@@ -1,0 +1,6 @@
+#!/usr/bin/ucode --
+'use strict';
+
+import { bans_restore } from 'ubbf.device.sshguard';
+
+bans_restore();

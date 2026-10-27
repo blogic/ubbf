@@ -34,6 +34,41 @@ uc_ubbf_iso8601_format(uc_vm_t *vm, size_t nargs)
 }
 
 /**
+ * Formats a Unix timestamp as ISO 8601 in the local time zone with its
+ * offset from UTC, for parameters that TR-181 defines in local time
+ * (TR-069 A.2, dateTime: such a value carries the offset).
+ *
+ * Falls back to the current time when the argument is not an integer.
+ *
+ * @param vm     ucode VM context
+ * @param nargs  number of arguments (0-1 expected: optional timestamp)
+ * @return       string in `YYYY-MM-DDTHH:MM:SS+hh:mm` form
+ */
+uc_value_t *
+uc_ubbf_iso8601_local_format(uc_vm_t *vm, size_t nargs)
+{
+	uc_value_t *ts_val = uc_fn_arg(0);
+	time_t ts;
+	struct tm tm;
+	long offset;
+	char buf[80];
+
+	if (ucv_type(ts_val) == UC_INTEGER)
+		ts = (time_t)ucv_int64_get(ts_val);
+	else
+		ts = time(NULL);
+
+	localtime_r(&ts, &tm);
+	offset = tm.tm_gmtoff;
+	snprintf(buf, sizeof(buf), "%04d-%02d-%02dT%02d:%02d:%02d%c%02ld:%02ld",
+		 tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
+		 tm.tm_hour, tm.tm_min, tm.tm_sec,
+		 offset < 0 ? '-' : '+', labs(offset) / 3600, (labs(offset) % 3600) / 60);
+
+	return ucv_string_new(buf);
+}
+
+/**
  * Casts a numeric ucode value to int64, truncating doubles.
  * Non-numeric values yield 0.
  *

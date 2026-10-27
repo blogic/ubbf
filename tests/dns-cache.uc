@@ -4,11 +4,14 @@
 // getter of Device.DNS.Relay.Config.{i} in tr181/DNS.uc reads them back
 // in the TR-181 units. Run from the repository root with the native
 // module built for the host:
-//   ucode -L "$PWD/files/usr/share/ucode" -L "<host build>/*.so" tests/dns-cache.uc
+//   ucode -L "$PWD/tests/hosts/*.uc" -L "$PWD/files/usr/share/ucode" \
+//     -L "<host build>/*.so" tests/dns-cache.uc
 'use strict';
 
 import * as ubbf from 'ubbf';
 import * as h from 'ubbf.render.uci_helpers';
+import * as dns from 'ubbf.utils.dns';
+import { dns_relay_plan } from 'ubbf.render.ubbf_helpers';
 import { model } from 'ubbf.tr181.DNS';
 
 let pass = 0, fail = 0;
@@ -32,10 +35,11 @@ function render(relay_config) {
 	} };
 	let output = [];
 
-	include(TEMPLATE, { ...h, output, config, ubbf,
+	include(TEMPLATE, { ...h, ...dns, output, config, ubbf,
 		ubbf_get: ubbf.get, ubbf_instances: ubbf.instances, ubbf_to_bool: ubbf.to_bool,
 		ubbf_to_int: ubbf.to_int, csv_to_list: ubbf.csv_to_list,
-		interface_to_name: ubbf.interface_to_name, services: { set_enabled: () => null } });
+		interface_to_name: ubbf.interface_to_name, dns_relay_plan,
+		services: { set_enabled: () => null } });
 
 	return filter(output, (l) => match(l, /cache/));
 }

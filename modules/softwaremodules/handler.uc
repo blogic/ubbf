@@ -36,8 +36,6 @@ const UUID_NAMESPACE_DNS = '6ba7b8109dad11d180b400c04fd430c8';
 const TAG_PREFIX = 'openwrt.req:';
 const CPU_PERIOD_DEFAULT = 100000;
 
-const FAULT_REQUEST_DENIED = 7002;
-const FAULT_INVALID_ARGUMENTS = 7004;
 const FAULT_UNKNOWN_EE = 7223;
 const FAULT_INVALID_DU_STATE = 7229;
 
@@ -1530,7 +1528,7 @@ function du_op_settings(op, with_autorestart) {
 
 	steps_run(steps, (results, failed) => {
 		if (failed)
-			du_op_fail(op, FAULT_INVALID_ARGUMENTS, result_message(failed));
+			du_op_fail(op, USP_ERR_INVALID_ARGUMENTS, result_message(failed));
 		else
 			du_op_done(op);
 	});
@@ -1552,7 +1550,7 @@ function install_du(input, instance, complete, command_key, root) {
 	let op = { operation: 'Install', pkg: url?.pkg ?? '', input: input ?? {}, instance, complete, start: time() };
 
 	if (!url) {
-		du_op_fail(op, FAULT_INVALID_ARGUMENTS, 'URL must be apk://<package>[=<version>]');
+		du_op_fail(op, USP_ERR_INVALID_ARGUMENTS, 'URL must be apk://<package>[=<version>]');
 		return;
 	}
 	if (ee != '' && ee != EE_REF) {
@@ -1560,7 +1558,7 @@ function install_du(input, instance, complete, command_key, root) {
 		return;
 	}
 	if (containers_disabled(view_get())) {
-		du_op_fail(op, FAULT_REQUEST_DENIED, 'the execution environment is disabled');
+		du_op_fail(op, USP_ERR_REQUEST_DENIED, 'the execution environment is disabled');
 		return;
 	}
 	if (pending[url.pkg]) {
@@ -1570,20 +1568,20 @@ function install_du(input, instance, complete, command_key, root) {
 
 	let req = request_build(op.input, root);
 	if (req.error) {
-		du_op_fail(op, FAULT_INVALID_ARGUMENTS, req.error);
+		du_op_fail(op, USP_ERR_INVALID_ARGUMENTS, req.error);
 		return;
 	}
 
 	pending[url.pkg] = 'Installing';
 	request_check(url.pkg, req, (fault) => {
 		if (fault) {
-			du_op_fail(op, FAULT_INVALID_ARGUMENTS, fault);
+			du_op_fail(op, USP_ERR_INVALID_ARGUMENTS, fault);
 			return;
 		}
 
 		steps_run([ [ 'apk', 'add', url.spec ] ], (results, failed) => {
 			if (failed)
-				du_op_fail(op, FAULT_REQUEST_DENIED, result_message(failed));
+				du_op_fail(op, USP_ERR_REQUEST_DENIED, result_message(failed));
 			else
 				du_op_settings(op, true);
 		});
@@ -1709,7 +1707,7 @@ function uninstall_du(input, instance, complete, instances, command_key) {
 	pending[du.pkg] = 'Uninstalling';
 	steps_run([ [ 'apk', 'del', du.pkg ] ], (results, failed) => {
 		if (failed) {
-			du_op_fail(op, FAULT_REQUEST_DENIED, result_message(failed));
+			du_op_fail(op, USP_ERR_REQUEST_DENIED, result_message(failed));
 			return;
 		}
 
@@ -1718,7 +1716,7 @@ function uninstall_du(input, instance, complete, instances, command_key) {
 		eu_rows_forget(du);
 		du_state_change_emit({
 			operation: 'Uninstall', state: 'Uninstalled', uuid: du.uuid, version: du.version,
-			start: op.start, fault_code: fault ? FAULT_REQUEST_DENIED : 0, fault_string: fault
+			start: op.start, fault_code: fault ? USP_ERR_REQUEST_DENIED : 0, fault_string: fault
 		});
 		complete(instance, fault ? USP_ERR_COMMAND_FAILURE : 0, fault, {});
 	});
@@ -1766,7 +1764,7 @@ function update_du(input, instance, complete, instances, command_key, root) {
 	let retain = ubbf.to_bool(input?.RetainData);
 
 	if (!url || url.pkg != du.pkg) {
-		du_op_fail(op, FAULT_INVALID_ARGUMENTS, 'URL must be apk://' + du.pkg + '[=<version>]');
+		du_op_fail(op, USP_ERR_INVALID_ARGUMENTS, 'URL must be apk://' + du.pkg + '[=<version>]');
 		return;
 	}
 	if (pending[du.pkg]) {
@@ -1776,7 +1774,7 @@ function update_du(input, instance, complete, instances, command_key, root) {
 
 	let req = request_build(op.input, root);
 	if (req.error) {
-		du_op_fail(op, FAULT_INVALID_ARGUMENTS, req.error);
+		du_op_fail(op, USP_ERR_INVALID_ARGUMENTS, req.error);
 		return;
 	}
 
@@ -1792,19 +1790,19 @@ function update_du(input, instance, complete, instances, command_key, root) {
 	pending[du.pkg] = 'Updating';
 	request_check(url.pkg, req, (fault) => {
 		if (fault) {
-			du_op_fail(op, FAULT_INVALID_ARGUMENTS, fault);
+			du_op_fail(op, USP_ERR_INVALID_ARGUMENTS, fault);
 			return;
 		}
 
 		steps_run(steps, (results, failed) => {
 			if (failed) {
-				du_op_fail(op, FAULT_REQUEST_DENIED, result_message(failed));
+				du_op_fail(op, USP_ERR_REQUEST_DENIED, result_message(failed));
 				return;
 			}
 
 			let purge = left ? leftovers_remove(left) : null;
 			if (purge) {
-				du_op_fail(op, FAULT_REQUEST_DENIED, purge);
+				du_op_fail(op, USP_ERR_REQUEST_DENIED, purge);
 				return;
 			}
 
@@ -1814,7 +1812,7 @@ function update_du(input, instance, complete, instances, command_key, root) {
 
 			steps_run(restart, (results, failed) => {
 				if (failed)
-					du_op_fail(op, FAULT_REQUEST_DENIED, result_message(failed));
+					du_op_fail(op, USP_ERR_REQUEST_DENIED, result_message(failed));
 				else
 					du_op_settings(op, false);
 			});

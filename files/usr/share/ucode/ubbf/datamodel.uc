@@ -22,7 +22,7 @@ import {
 	hosts_numbered, host_by_instance,
 	hosts_state_get, host_active_track, hosts_state_flush, hosts_inactive_remove
 } from 'ubbf.utils.hosts';
-import { ifstats_get, ifstats_reset } from 'ubbf.utils.ifstats';
+import { ifstats_get, ifstats_basic_get, ifstats_reset } from 'ubbf.utils.ifstats';
 import { instance_numbers, instance_key, instance_rows, instance_seed, instance_prune } from 'ubbf.utils.instance-map';
 import { SUPPORTED_SFP_TYPES, sfp_type_resolve, sfp_allowed } from 'ubbf.utils.sfp';
 import { link_local_addresses_get } from 'ubbf.utils.ipv6';
@@ -345,7 +345,7 @@ function module_api_build(name) {
 				hosts_build, hosts_downstream_get, hosts_numbered, host_by_instance,
 				hosts_state_get, host_active_track, hosts_state_flush, hosts_inactive_remove
 			},
-			ifstats: { ifstats_get, ifstats_reset },
+			ifstats: { ifstats_get, ifstats_basic_get, ifstats_reset },
 			'instance-map': { instance_numbers, instance_key, instance_rows, instance_seed, instance_prune },
 			sfp: { SUPPORTED_SFP_TYPES, sfp_type_resolve, sfp_allowed },
 			ipv6: { link_local_addresses_get },
@@ -708,6 +708,8 @@ function operations_drop(patterns) {
  * object the version does not have loses its operations too, and so does a
  * command member the version hides, since no mode may act on data the
  * version hides.
+ *
+ * @returns {array} Patterns of the dropped entries
  */
 function model_filter() {
 	if (DM_VERSION_ERROR)
@@ -741,9 +743,11 @@ function model_filter() {
 			entry_project(entry);
 
 	operations_version_drop(declared);
+
+	return [ ...drop, ...hidden ];
 }
 
-model_filter();
+const model_dropped = model_filter();
 
 const operation_patterns = {};
 for (let pattern in all_operations) {
@@ -764,6 +768,7 @@ let pending_ops = {};
 let op_counter = 0;
 let in_transaction = false;
 let orders_before;
+let config_before;
 let apply_pending = false;
 
 // A USP transaction spans several calls from obuspa, and the event loop runs
@@ -774,6 +779,7 @@ const write_gate = write_gate_create(() => in_transaction,
 
 dm.register(full_model);
 dm.register_operations(all_operations);
+dm.register_hidden(model_dropped);
 
 InterfaceStack.bind_dm(dm);
 
@@ -880,7 +886,8 @@ export function trans_start() {
 
 	log_info('transaction: start');
 	in_transaction = true;
-	orders_before = order_snapshot(dm.config());
+	config_before = dm.config();
+	orders_before = order_snapshot(config_before);
 	return dm.trans_start();
 };
 
@@ -895,6 +902,7 @@ export function trans_start() {
 export function trans_abort() {
 	log_info('transaction: abort');
 	in_transaction = false;
+	config_before = null;
 	write_gate.release();
 	let rc = dm.trans_abort();
 	hooks_run(abort_hooks, 'abort hook');
@@ -902,11 +910,47 @@ export function trans_abort() {
 };
 
 /**
+ * Makes the live tree the stored configuration again.
+ */
+function config_stored_load() {
+	if (dm.load(CONFIG_PATH))
+		dm.set_digest(digest.sha256(sprintf('%.J\n', dm.config())));
+}
+
+/**
+ * Undoes a commit whose apply failed, so that the controller's error holds:
+ * the live tree and config.json go back to the configuration before the
+ * transaction, and the abort hooks drop what the set handlers staged. The
+ * apply stops at its dry run when it fails, so the system still runs that
+ * configuration. When config.json cannot be written back, the stored config
+ * stays live and the next commit applies it again.
+ *
+ * @param {object|null} previous - The live config at trans_start()
+ * @param {boolean} persisted - True when the commit wrote config.json
+ */
+function commit_rollback(previous, persisted) {
+	if (persisted && previous) {
+		log_err('transaction: restoring the config from before the transaction');
+		dm.set_config(previous);
+		if (config_persist() == null) {
+			config_stored_load();
+			apply_pending = true;
+		}
+	}
+	else {
+		apply_pending = true;
+	}
+
+	hooks_run(abort_hooks, 'abort hook');
+}
+
+/**
  * Commits the current configuration transaction.
  *
  * Promotes the workspace to live config, recomputes derived `Name` properties,
  * runs firewall reconciliation, persists the config to disk and triggers a
- * `bbf-device.apply` ubus call when the persisted content changed.
+ * `bbf-device.apply` ubus call when the persisted content changed. When the
+ * apply fails, commit_rollback() restores the previous config.
  *
  * @returns {number} 1 when applied successfully,
  *                   0 when committed with no persisted change,
@@ -929,6 +973,9 @@ export function trans_commit() {
 		}
 	}
 
+	let previous = config_before;
+	config_before = null;
+
 	let rc = dm.trans_commit();
 	if (rc <= 0)
 		return rc;
@@ -946,8 +993,8 @@ export function trans_commit() {
 	// change would be gone after a restart.
 	if (persisted == null) {
 		log_err('transaction: commit not persisted, restoring the stored config');
-		if (dm.load(CONFIG_PATH))
-			dm.set_digest(digest.sha256(sprintf('%.J\n', dm.config())));
+		config_stored_load();
+		hooks_run(abort_hooks, 'abort hook');
 		return -1;
 	}
 
@@ -956,13 +1003,14 @@ export function trans_commit() {
 	if (persisted || apply_pending) {
 		log_info('transaction: commit - applying config');
 		let result = ubus?.call('bbf-device', 'apply', { apply: true });
-		apply_pending = !result?.success;
-		if (apply_pending) {
+		if (!result?.success) {
 			log_err('transaction: apply failed: %s', result?.error ?? 'unknown error');
 			for (let entry in (result?.logs ?? []))
 				log_err('  [%s] %s', entry.level, entry.msg);
+			commit_rollback(previous, persisted);
 			return -1;
 		}
+		apply_pending = false;
 		persisted = true;
 	}
 	else {
@@ -1714,26 +1762,6 @@ export function names_list(path, next_level) {
 };
 
 /**
- * Applies a list of set/add/del operations as one transaction.
- *
- * Every operation is evaluated and given a result before the outcome is
- * decided, because a caller reporting faults to its own protocol needs all of
- * them: TR-069 A.3.2.1 requires SetParameterValuesFault to name every
- * parameter that failed, not just the first. The transaction is aborted after
- * the loop when any operation failed, so the set still applies atomically.
- *
- * `dm.params_set` is called one path at a time: it reports only the first
- * error across a whole object, which cannot be attributed to an operation.
- *
- * Reasons are protocol-neutral; each front end maps them to its own
- * vocabulary: `value_required`, `unknown`, `readonly`, `invalid_path`,
- * `rejected`, `max_instances`, `not_found`, `unknown_op`, `apply_failed`.
- *
- * @param {array} operations - `[{ op, path, value? }]`
- * @returns {object} `{ success, digest, results }`, each result carrying
- *                   `{ op, path, instance?, success, reason? }`
- */
-/**
  * Offers a delete to the table handler before the configuration is touched.
  *
  * A table flagged `runtime_instances` shows rows the CPE maintains itself
@@ -1804,6 +1832,26 @@ export function runtime_row_exists(param_path) {
 	return length(dm.get_subtree_with_state(object_path) ?? {}) > 0;
 };
 
+/**
+ * Applies a list of set/add/del operations as one transaction.
+ *
+ * Every operation is evaluated and given a result before the outcome is
+ * decided, because a caller reporting faults to its own protocol needs all of
+ * them: TR-069 A.3.2.1 requires SetParameterValuesFault to name every
+ * parameter that failed, not just the first. The transaction is aborted after
+ * the loop when any operation failed, so the set still applies atomically.
+ *
+ * `dm.params_set` is called one path at a time: it reports only the first
+ * error across a whole object, which cannot be attributed to an operation.
+ *
+ * Reasons are protocol-neutral; each front end maps them to its own
+ * vocabulary: `value_required`, `unknown`, `readonly`, `invalid_path`,
+ * `rejected`, `max_instances`, `not_found`, `unknown_op`, `apply_failed`.
+ *
+ * @param {array} operations - `[{ op, path, value? }]`
+ * @returns {object} `{ success, digest, results }`, each result carrying
+ *                   `{ op, path, instance?, success, reason? }`
+ */
 function operations_run(operations) {
 	trans_start();
 

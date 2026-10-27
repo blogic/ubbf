@@ -8,6 +8,7 @@ import * as fs from 'fs';
 
 const ROOT_HUB = regexp('^usb[0-9]+$');
 const DEVICE = regexp('^[0-9]+-[0-9.]+$');
+const HUB_CLASS = 0x09;
 
 /**
  * Reads the policy from the UCI package ubbf_usb.
@@ -146,7 +147,7 @@ export function rule_match(rule, id) {
 };
 
 /**
- * Reports whether the policy allows a device.
+ * Reports whether the policy allows a device. A hub is always allowed.
  *
  * @param {object} policy - Policy of policy_load()
  * @param {object} id - Identity of device_identity()
@@ -154,6 +155,13 @@ export function rule_match(rule, id) {
  */
 export function device_allowed(policy, id) {
 	if (policy.allow_all)
+		return true;
+
+	// TR-181 holds back every unlisted device, but a held-back hub takes
+	// all devices below it away, and boards such as the BPI-R4 wire every
+	// port through an on-board hub. A hub has no function of its own; the
+	// policy still applies to each device below it.
+	if (hex(id.class) == HUB_CLASS)
 		return true;
 
 	return length(filter(policy.rules, (r) => rule_match(r, id))) > 0;

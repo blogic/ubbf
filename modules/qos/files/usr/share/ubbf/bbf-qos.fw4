@@ -1,0 +1,7 @@
+# fw4 sources a script include after each start and reload. A stop of the
+# firewall deletes the QoS tables with every other nft table. The status
+# file exists once bbf-qos-apply ran since boot, so the include does not
+# run it before the init script at boot.
+if [ -e /tmp/ubbf/qos-status.json ] && ! nft list table inet bbf_qos >/dev/null 2>&1; then
+	/usr/sbin/bbf-qos-apply
+fi

@@ -55,6 +55,11 @@ check('no rule', device_allowed({ allow_all: false, rules: [] }, modem), false);
 check('one rule matches', device_allowed({ allow_all: false, rules: [
 	{ vendor: 'abcd', interfaces: [] }, { vendor: '1234', interfaces: [] } ] }, modem), true);
 
+const hub = { vendor: '2109', product: '2822', class: '09', subclass: '00', protocol: '02',
+	interfaces: [ '09:00:01', '09:00:02' ] };
+
+check('hub without a rule', device_allowed({ allow_all: false, rules: [] }, hub), true);
+
 const cursor = { foreach: (pkg, type, cb) => {
 	cb({ '.type': 'usb', '.name': 'global', allow_all: '0' });
 	cb({ '.type': 'allow', '.name': 'cfg1', vendor: '1234', interface: 'ff:02:*' });

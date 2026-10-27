@@ -23,6 +23,7 @@ enum {
 	DM_SLOT_HOOKS,
 	DM_SLOT_RUNTIME,
 	DM_SLOT_HASH,
+	DM_SLOT_HIDDEN,
 	DM_SLOT_MAX
 };
 
@@ -114,6 +115,40 @@ uc_dm_register_operations(uc_vm_t *vm, size_t nargs)
 		return ucv_boolean_new(false);
 
 	ucv_resource_value_set(dm->res_obj, DM_SLOT_OPERATIONS, ucv_get(ops));
+
+	return ucv_boolean_new(true);
+}
+
+/**
+ * Stores the patterns that the model leaves out for the active protocol or
+ * TR-181 version. A get handler that returns a child object below one of
+ * them loses it without a log entry, since the omission is intended.
+ *
+ * @param vm     ucode VM context
+ * @param nargs  number of arguments (1 expected: array of patterns)
+ * @return       boolean true on success, false on bad arguments
+ */
+static uc_value_t *
+uc_dm_register_hidden(uc_vm_t *vm, size_t nargs)
+{
+	ubbf_dm_t *dm = uc_fn_thisval("ubbf.dm");
+	uc_value_t *patterns = uc_fn_arg(0);
+	uc_value_t *hidden;
+
+	if (!dm || ucv_type(patterns) != UC_ARRAY)
+		return ucv_boolean_new(false);
+
+	hidden = ucv_object_new(vm);
+
+	for (size_t i = 0; i < ucv_array_length(patterns); i++) {
+		uc_value_t *pattern = ucv_array_get(patterns, i);
+
+		if (ucv_type(pattern) == UC_STRING)
+			ucv_object_add(hidden, ucv_string_get(pattern),
+				       ucv_boolean_new(true));
+	}
+
+	ucv_resource_value_set(dm->res_obj, DM_SLOT_HIDDEN, hidden);
 
 	return ucv_boolean_new(true);
 }
@@ -2303,8 +2338,39 @@ undeclared_log(uc_vm_t *vm, const char *pattern, const char *key,
 	free(id);
 }
 
-static void rows_project(uc_vm_t *vm, uc_value_t *model, const char *pattern,
+static void rows_project(uc_vm_t *vm, ubbf_dm_t *dm, const char *pattern,
 			 uc_value_t *entry, uc_value_t *rows);
+
+/**
+ * Reports whether the model leaves out a child object on purpose, for the
+ * active protocol or TR-181 version.
+ *
+ * @param dm       datamodel instance
+ * @param pattern  pattern of the parent entry
+ * @param key      key of the child object
+ * @return         true when `uc_dm_register_hidden()` named its pattern
+ */
+static bool
+child_hidden(ubbf_dm_t *dm, const char *pattern, const char *key)
+{
+	uc_value_t *hidden = ucv_resource_value_get(dm->res_obj, DM_SLOT_HIDDEN);
+	char *table, *object;
+	bool found;
+
+	if (!hidden)
+		return false;
+
+	xasprintf(&table, "%s.%s.{i}", pattern, key);
+	xasprintf(&object, "%s.%s", pattern, key);
+
+	found = ucv_object_get(hidden, table, NULL) ||
+		ucv_object_get(hidden, object, NULL);
+
+	free(table);
+	free(object);
+
+	return found;
+}
 
 /**
  * Removes from a get handler result what the model does not have: a
@@ -2317,18 +2383,20 @@ static void rows_project(uc_vm_t *vm, uc_value_t *model, const char *pattern,
  * `.instance` that child handlers read from their parent.
  *
  * Each removed key is logged once per pattern, except a member that the
- * protocol or the version hides in a table schema.
+ * protocol or the version hides in a table schema, and a child object that
+ * the model leaves out for the protocol or the version.
  *
  * @param vm       ucode VM context
- * @param model    registered model object
+ * @param dm       datamodel instance
  * @param pattern  pattern of the model entry
  * @param entry    model entry
  * @param result   handler result for one object
  */
 static void
-result_project(uc_vm_t *vm, uc_value_t *model, const char *pattern,
+result_project(uc_vm_t *vm, ubbf_dm_t *dm, const char *pattern,
 	       uc_value_t *entry, uc_value_t *result)
 {
+	uc_value_t *model = ucv_resource_value_get(dm->res_obj, DM_SLOT_MODEL);
 	uc_value_t *params, *children, *child;
 	char child_pattern[512];
 	uint32_t type;
@@ -2355,9 +2423,9 @@ result_project(uc_vm_t *vm, uc_value_t *model, const char *pattern,
 		if (!child)
 			ucv_array_push(children, ucv_string_new(key));
 		else if (table)
-			rows_project(vm, model, child_pattern, child, val);
+			rows_project(vm, dm, child_pattern, child, val);
 		else
-			result_project(vm, model, child_pattern, child, val);
+			result_project(vm, dm, child_pattern, child, val);
 	}
 
 	for (size_t i = 0; i < ucv_array_length(params); i++) {
@@ -2373,9 +2441,11 @@ result_project(uc_vm_t *vm, uc_value_t *model, const char *pattern,
 	for (size_t i = 0; i < ucv_array_length(children); i++) {
 		uc_value_t *name = ucv_array_get(children, i);
 
+		if (!child_hidden(dm, pattern, ucv_string_get(name)))
+			undeclared_log(vm, pattern, ucv_string_get(name),
+				       "the model does not register");
+
 		ucv_object_delete(result, ucv_string_get(name));
-		undeclared_log(vm, pattern, ucv_string_get(name),
-			       "the model does not register");
 	}
 
 	ucv_put(params);
@@ -2386,18 +2456,18 @@ result_project(uc_vm_t *vm, uc_value_t *model, const char *pattern,
  * Applies `result_project()` to each row of an enumerate-mode result.
  *
  * @param vm       ucode VM context
- * @param model    registered model object
+ * @param dm       datamodel instance
  * @param pattern  pattern of the model entry
  * @param entry    model entry
  * @param rows     handler result, one key per row
  */
 static void
-rows_project(uc_vm_t *vm, uc_value_t *model, const char *pattern,
+rows_project(uc_vm_t *vm, ubbf_dm_t *dm, const char *pattern,
 	     uc_value_t *entry, uc_value_t *rows)
 {
 	ucv_object_foreach(rows, key, row) {
 		(void)key;
-		result_project(vm, model, pattern, entry, row);
+		result_project(vm, dm, pattern, entry, row);
 	}
 }
 
@@ -2576,33 +2646,6 @@ model_order_build(uc_value_t *model, size_t *count)
 }
 
 /**
- * Returns a subtree augmented with values produced by registered get handlers.
- *
- * Walks the model and, for every entry whose pattern matches under the base
- * path, hydrates each existing instance via its `get` handler and merges the
- * result back into the subtree. Patterns with no existing instances also
- * trigger runtime discovery so dynamic tables (e.g. ARP-derived hosts) are
- * populated, and the row count of such a table is written onto its parent's
- * `<Table>NumberOfEntries` after the walk when the parent schema declares it.
- *
- * Shared between `uc_dm_get_subtree_with_state` (called from ucode as
- * `dm.get_subtree_with_state`) and `uc_dm_params_get` (called per-leaf by
- * obuspa via the `params_get` USP callback). Keeping a single implementation
- * makes sure the two entry points always agree about which handlers fire,
- * which ancestor synthesised data is visible, and how schema defaults merge
- * into the response.
- *
- * @param vm         ucode VM context
- * @param dm         pointer to the ubbf data-model registration
- * @param path       TR-181 base path (no trailing dot required)
- * @param anc_cache  optional object memoising ancestor get-handler results
- *                   by ancestor instance path; pass the same object across
- *                   the dispatch_subtree calls of one params_get batch so a
- *                   shared ancestor handler runs once instead of per leaf.
- *                   Pass NULL for a standalone single-subtree dispatch.
- * @return           hydrated subtree object, possibly empty on bad input
- */
-/**
  * Collects the paths of an object below rows that are in a response tree.
  *
  * The rows of a table that the CPE maintains are not in the stored tree; a
@@ -2673,6 +2716,33 @@ base_node_get(uc_vm_t *vm, uc_value_t *base, char **parts, int cnt,
 	return cur;
 }
 
+/**
+ * Returns a subtree augmented with values produced by registered get handlers.
+ *
+ * Walks the model and, for every entry whose pattern matches under the base
+ * path, hydrates each existing instance via its `get` handler and merges the
+ * result back into the subtree. Patterns with no existing instances also
+ * trigger runtime discovery so dynamic tables (e.g. ARP-derived hosts) are
+ * populated, and the row count of such a table is written onto its parent's
+ * `<Table>NumberOfEntries` after the walk when the parent schema declares it.
+ *
+ * Shared between `uc_dm_get_subtree_with_state` (called from ucode as
+ * `dm.get_subtree_with_state`) and `uc_dm_params_get` (called per-leaf by
+ * obuspa via the `params_get` USP callback). Keeping a single implementation
+ * makes sure the two entry points always agree about which handlers fire,
+ * which ancestor synthesised data is visible, and how schema defaults merge
+ * into the response.
+ *
+ * @param vm         ucode VM context
+ * @param dm         pointer to the ubbf data-model registration
+ * @param path       TR-181 base path (no trailing dot required)
+ * @param anc_cache  optional object memoising ancestor get-handler results
+ *                   by ancestor instance path; pass the same object across
+ *                   the dispatch_subtree calls of one params_get batch so a
+ *                   shared ancestor handler runs once instead of per leaf.
+ *                   Pass NULL for a standalone single-subtree dispatch.
+ * @return           hydrated subtree object, possibly empty on bad input
+ */
 static uc_value_t *
 dispatch_subtree(uc_vm_t *vm, ubbf_dm_t *dm, const char *path,
 		 uc_value_t *anc_cache)
@@ -3019,7 +3089,7 @@ dispatch_subtree(uc_vm_t *vm, ubbf_dm_t *dm, const char *path,
 				if (has_flag)
 					status_overlay(vm, &result, merged);
 				ucv_put(merged);
-				result_project(vm, model, pattern, entry, result);
+				result_project(vm, dm, pattern, entry, result);
 				if (result) {
 					uc_value_t *cur = base_node_get(vm, base, ip_parts,
 									ip_cnt, base_cnt);
@@ -3135,7 +3205,7 @@ dispatch_subtree(uc_vm_t *vm, ubbf_dm_t *dm, const char *path,
 				if (has_flag)
 					status_overlay(vm, &result, merged);
 				ucv_put(merged);
-				result_project(vm, model, pattern, entry, result);
+				result_project(vm, dm, pattern, entry, result);
 				if (result) {
 					ucv_object_foreach(result, rk, rv)
 						ucv_object_add(base, rk, ucv_get(rv));
@@ -3189,7 +3259,7 @@ dispatch_subtree(uc_vm_t *vm, ubbf_dm_t *dm, const char *path,
 					for (int i = base_cnt; i < pp_cnt; i++)
 						ucv_array_push(rel, ucv_string_new(pp_parts[i]));
 
-					rows_project(vm, model, pattern, entry, result);
+					rows_project(vm, dm, pattern, entry, result);
 					merge_runtime_instances_c(vm, base, rel, result);
 					entries_count_record(vm, pending, model, pat_parts, last_i,
 							     pp_parts, pp_cnt, base_cnt, result);
@@ -3213,7 +3283,7 @@ dispatch_subtree(uc_vm_t *vm, ubbf_dm_t *dm, const char *path,
 					if (result) {
 						int container_idx = last_i - 1;
 
-						rows_project(vm, model, pattern, entry, result);
+						rows_project(vm, dm, pattern, entry, result);
 						if (container_idx >= 0) {
 							uc_value_t *rel = ucv_array_new(vm);
 							for (int i = base_cnt; i <= container_idx; i++)
@@ -3799,6 +3869,7 @@ uc_dm_get_subtree(uc_vm_t *vm, size_t nargs)
 static const uc_function_list_t dm_methods[] = {
 	{ "register",                    uc_dm_register },
 	{ "register_operations",         uc_dm_register_operations },
+	{ "register_hidden",             uc_dm_register_hidden },
 	{ "set_hooks",                   uc_dm_set_hooks },
 	{ "load",                        uc_dm_load },
 	{ "config",                      uc_dm_config },

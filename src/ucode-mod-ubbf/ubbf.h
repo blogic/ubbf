@@ -71,6 +71,7 @@ uc_value_t *uc_ubbf_netmask_to_cidr(uc_vm_t *vm, size_t nargs);
 uc_value_t *uc_ubbf_shell_escape(uc_vm_t *vm, size_t nargs);
 uc_value_t *uc_ubbf_iso8601_format(uc_vm_t *vm, size_t nargs);
 uc_value_t *uc_ubbf_iso8601_format_usec(uc_vm_t *vm, size_t nargs);
+uc_value_t *uc_ubbf_iso8601_local_format(uc_vm_t *vm, size_t nargs);
 uc_value_t *uc_ubbf_ctx_config(uc_vm_t *vm, size_t nargs);
 uc_value_t *uc_ubbf_alias_from_mac(uc_vm_t *vm, size_t nargs);
 uc_value_t *uc_ubbf_alias_from_name(uc_vm_t *vm, size_t nargs);

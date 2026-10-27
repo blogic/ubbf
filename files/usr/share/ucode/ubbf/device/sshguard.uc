@@ -8,7 +8,7 @@ import { dm_visible } from 'ubbf.utils.dm-version';
 
 const STATE_PATH = '/tmp/ubbf/ip-block-list.json';
 const CONFIG_PATH = '/etc/ubbf/config.json';
-const NFT_FILE = '/usr/share/ubbf/sshguard.nft';
+const NFT_FILE = '/usr/share/nftables.d/ruleset-post/ubbf-sshguard.nft';
 const TABLE_NAME = 'inet ubbf-sshguard';
 
 const DEFAULT_THRESHOLD = 3;
@@ -102,16 +102,6 @@ function ip_canonical(ip) {
 	return arrtoip(bytes);
 }
 
-function nft_table_install() {
-	let rc = system(sprintf('nft list table %s >/dev/null 2>&1', TABLE_NAME));
-	if (rc == 0)
-		return;
-
-	rc = system(sprintf('nft -f %s', NFT_FILE));
-	if (rc != 0)
-		log_err('sshguard: failed to install %s (nft rc=%d)', NFT_FILE, rc);
-}
-
 function nft_block(ip, family, seconds) {
 	let set = (family == 'v4') ? 'blocklist_v4' : 'blocklist_v6';
 	let timeout = seconds ? sprintf(' timeout %ds', seconds) : '';
@@ -125,6 +115,43 @@ function nft_block(ip, family, seconds) {
 function nft_flush_sets() {
 	system(sprintf('nft flush set %s blocklist_v4 >/dev/null 2>&1', TABLE_NAME));
 	system(sprintf('nft flush set %s blocklist_v6 >/dev/null 2>&1', TABLE_NAME));
+}
+
+/**
+ * Adds the bans that have not ended to the nft sets.
+ */
+function bans_replay() {
+	let now = time();
+
+	for (let entry in entries) {
+		if (!entry.blocked)
+			continue;
+		if (entry.blocked_until && now >= entry.blocked_until)
+			continue;
+
+		let family = ip_family(entry.ip);
+		if (family)
+			nft_block(entry.ip, family, entry.blocked_until ? entry.blocked_until - now : null);
+	}
+}
+
+/**
+ * Loads the nft table when it is missing, with the bans that have not
+ * ended. A stop of the firewall deletes every nft table, and the
+ * firewall stays stopped while Device.Firewall.Enable is false.
+ */
+function nft_table_install() {
+	let rc = system(sprintf('nft list table %s >/dev/null 2>&1', TABLE_NAME));
+	if (rc == 0)
+		return;
+
+	rc = system(sprintf('nft -f %s', NFT_FILE));
+	if (rc != 0) {
+		log_err('sshguard: failed to install %s (nft rc=%d)', NFT_FILE, rc);
+		return;
+	}
+
+	bans_replay();
 }
 
 function entry_find(ip) {
@@ -170,6 +197,7 @@ function auth_event_handler(req) {
 		ip, reason, user, entry.fail_count);
 
 	if (!entry.blocked && ban_time !== 0 && entry.fail_count >= threshold) {
+		nft_table_install();
 		entry.blocked = true;
 		entry.blocked_at = now;
 		entry.blocked_until = ban_time ? now + ban_time : null;
@@ -195,6 +223,15 @@ function sshguard_reset_handler(req) {
 function digest_listener(type, data) {
 	config_load();
 }
+
+/**
+ * Adds the stored bans to the nft sets. fw4 runs it after each start and
+ * reload, when a stop before the start emptied the sets.
+ */
+export function bans_restore() {
+	state_load();
+	bans_replay();
+};
 
 /**
  * Loads persisted state, installs the nft scaffold, and subscribes to

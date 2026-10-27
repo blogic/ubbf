@@ -49,8 +49,6 @@ const ERR_PEM_FORMAT = 7265;
 const ERR_DISK_SPACE = 7266;
 const ERR_DUPLICATE_BUNDLE = 7267;
 const ERR_IDENTITY_CONFLICT = 7270;
-const ERR_COMMAND_FAILURE = 7022;
-const ERR_INVALID_ARGS = 7027;
 
 /**
  * Parses the PEM files of a source directory. Symbolic links are skipped:
@@ -470,7 +468,7 @@ function certificate_add(input) {
 	if (input?.BundleFormat != 'PEM')
 		return { error: ERR_BUNDLE_FORMAT };
 	if (!match(name ?? '', NAME_PATTERN) || (alias != null && alias != '' && !match(alias, ALIAS_PATTERN)))
-		return { error: ERR_INVALID_ARGS };
+		return { error: USP_ERR_INVALID_COMMAND_ARGS };
 
 	let data = bundle_decode(input?.Bundle);
 	if (!data)
@@ -483,9 +481,9 @@ function certificate_add(input) {
 		if (entry.path == path)
 			continue;
 		if (certificate_name(entry) == name)
-			return { error: ERR_COMMAND_FAILURE };
+			return { error: USP_ERR_COMMAND_FAILURE };
 		if (alias && certificate_alias(entry) == alias)
-			return { error: ERR_INVALID_ARGS };
+			return { error: USP_ERR_INVALID_COMMAND_ARGS };
 	}
 
 	fs.mkdir(CERTS_DIR, 0700);
@@ -528,7 +526,7 @@ function certificate_add(input) {
 function certificate_delete(instance) {
 	let cert = certificate_find(certs_scan_live(), instance);
 	if (!cert?.added || !fs.unlink(cert.path))
-		return ERR_COMMAND_FAILURE;
+		return USP_ERR_COMMAND_FAILURE;
 
 	let aliases = map_load(ALIASES_PATH);
 	if (cert.key in aliases) {
@@ -578,7 +576,7 @@ function cabundle_write(hex, path) {
 function cabundle_add(input) {
 	let name = input?.Name;
 	if (!match(name ?? '', NAME_PATTERN))
-		return { error: ERR_INVALID_ARGS };
+		return { error: USP_ERR_INVALID_COMMAND_ARGS };
 
 	for (let bundle in certs_scan_live().bundles)
 		if (bundle.name == name)
@@ -611,7 +609,7 @@ function cabundle_add(input) {
 function cabundle_update(instance, input) {
 	let bundle = cabundle_find(certs_scan_live(), instance);
 	if (!bundle?.added)
-		return { error: ERR_COMMAND_FAILURE };
+		return { error: USP_ERR_COMMAND_FAILURE };
 
 	return cabundle_write(input?.Bundle, bundle.file);
 }
@@ -627,12 +625,12 @@ function cabundle_update(instance, input) {
 function cabundle_delete(instance) {
 	let bundle = cabundle_find(certs_scan_live(), instance);
 	if (!bundle?.added)
-		return ERR_COMMAND_FAILURE;
+		return USP_ERR_COMMAND_FAILURE;
 
 	for (let name in fs.lsdir(bundle.path) ?? [])
 		fs.unlink(`${bundle.path}/${name}`);
 	if (!fs.rmdir(bundle.path))
-		return ERR_COMMAND_FAILURE;
+		return USP_ERR_COMMAND_FAILURE;
 
 	let lock = fs.open(INSTANCES_LOCK, 'w');
 	lock?.lock('x');

@@ -59,7 +59,10 @@ function interface_stats_get(ctx) {
 	if (!parent?.Name)
 		return null;
 
-	return ifstats_get(parent.Name);
+	return {
+		...ifstats_get(parent.Name),
+		Collisions: '0'
+	};
 }
 
 /**

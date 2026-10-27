@@ -239,6 +239,9 @@ schemas.ExecEnv = {
         "InitialExecutionUnitRunLevel": { min: -1, max: 65535 },
         "Signers": { list: true }
     },
+    until: {
+        "ProcessorRefList": "2.21"
+    },
     addable: false
 };
 

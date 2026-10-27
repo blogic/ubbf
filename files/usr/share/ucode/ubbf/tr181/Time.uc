@@ -24,7 +24,7 @@ function time_get(ctx) {
 	return {
 		...ubbf.ctx_config(ctx),
 		Status: status,
-		CurrentLocalTime: ubbf.iso8601_format(),
+		CurrentLocalTime: ubbf.iso8601_local_format(),
 		ClientNumberOfEntries: sprintf('%d', ubbf.instance_count(ctx.config?.Client)),
 		ServerNumberOfEntries: sprintf('%d', ubbf.instance_count(ctx.config?.Server))
 	};

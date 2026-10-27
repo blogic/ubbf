@@ -112,7 +112,7 @@ function client_get(ctx) {
 	let iface = iface_ref ? ubbf.navigate_data(ctx.root, ubbf.path_to_parts(iface_ref)) : null;
 	let iface_name = iface?.Name;
 
-	let server_entry = null;
+	let server_entry = {};
 
 	if (iface_name) {
 		// netifd splits IPv4/IPv6 leases across paired interfaces named '<iface>' and '<iface>6'

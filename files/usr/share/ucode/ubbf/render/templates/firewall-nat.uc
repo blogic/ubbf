@@ -1,63 +1,11 @@
 function render_config() {
 /**
- * Collects DNS relay interfaces, mirroring the grouping logic in dns.uc.
- * Port assignments must match dns.uc exactly.
- *
- * @returns {object} Map of interface name to {port}
- */
-function dns_relay_collect() {
-	let relay = ubbf_get(config, 'Device.DNS.Relay');
-	if (!relay || !ubbf_to_bool(relay.Enable))
-		return {};
-
-	let forwardings = ubbf_instances(config, 'Device.DNS.Relay.Forwarding');
-	if (!forwardings || !length(forwardings))
-		return {};
-
-	let ip_interfaces = ubbf_instances(config, 'Device.IP.Interface');
-	let by_iface = {};
-
-	for (let fwd in forwardings) {
-		if (!ubbf_to_bool(fwd.Enable))
-			continue;
-		if (!fwd.DNSServer)
-			continue;
-
-		if (fwd.Interface && fwd.Interface != '') {
-			let name = interface_to_name(config, fwd.Interface);
-			if (name)
-				by_iface[name] = true;
-		} else {
-			for (let iface in ip_interfaces) {
-				if (!iface.Name)
-					continue;
-				if (ubbf_to_bool(iface.Upstream))
-					continue;
-				by_iface[iface.Name] = true;
-			}
-		}
-	}
-
-	let result = {};
-	let port = 5301;
-
-	for (let iface in by_iface) {
-		result[iface] = { port };
-		port++;
-	}
-
-	return result;
-}
-
-/**
- * Generates UCI DNS relay redirect entries from Device.DNS.Relay.Forwarding.
+ * Generates UCI DNS relay redirect entries from Device.DNS.Relay.
  *
  * @returns {string} UCI batch output for DNS redirects and allow rules
  */
 function generate_dns_redirects() {
-	let by_iface = dns_relay_collect();
-
-	for (let iface, data in by_iface) {
+	for (let iface, data in dns_relay_plan(config)) {
 		let redir_name = `dns_redir_${iface}`;
 		let rule_name = `dns_allow_${iface}`;
 

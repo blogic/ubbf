@@ -1,0 +1,22 @@
+# fw4 loads this file at each start and reload, and ubbf-device loads it
+# when the table is missing. A second load keeps the elements of the sets;
+# the flush keeps one copy of each rule.
+table inet ubbf-sshguard {
+	set blocklist_v4 {
+		type ipv4_addr
+		flags timeout
+	}
+
+	set blocklist_v6 {
+		type ipv6_addr
+		flags timeout
+	}
+
+	chain input {
+		type filter hook input priority -250; policy accept;
+	}
+}
+
+flush chain inet ubbf-sshguard input
+add rule inet ubbf-sshguard input ip saddr @blocklist_v4 drop
+add rule inet ubbf-sshguard input ip6 saddr @blocklist_v6 drop

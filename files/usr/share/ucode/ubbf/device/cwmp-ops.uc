@@ -3,13 +3,6 @@
 import * as fs from 'fs';
 import * as ubus from 'ubus';
 import { log_info, log_err } from 'ubbf.utils.logging';
-
-// The operation handlers reference obuspa-injected globals; under
-// ubbf-device nothing injects them, so provide the ones the handlers
-// use (USP error codes per TR-369 annex) before any handler runs.
-global.USP_ERR_INVALID_ARGUMENTS ??= 7004;
-global.USP_ERR_COMMAND_FAILURE ??= 7022;
-
 import { handler as ping_handler } from 'ubbf.tr143.Ping';
 import { handler as traceroute_handler } from 'ubbf.tr143.TraceRoute';
 import { handler as udpecho_handler } from 'ubbf.tr143.UDPEcho';

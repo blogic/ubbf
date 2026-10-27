@@ -1,9 +1,10 @@
 // PTY allocation and shell spawning for the uPTY agent.
 //
 // ucode's io module supplies the PTY primitives (ptmx, grantpt, unlockpt,
-// ptsname, TIOCSWINSZ via ioctl), and uloop.process()'s setup callback runs in
-// the child between fork() and exec(), which is where the slave becomes the
-// child's stdio. setsid(2) and TIOCSCTTY are the one part neither can express,
+// ptsname, TIOCSWINSZ via ioctl), and a function as uloop.process()'s
+// executable runs in the child between fork() and exec(), which is where the
+// slave becomes the child's stdio. setsid(2) and TIOCSCTTY are the one part
+// neither can express,
 // so the child execs setsid(1), which does both before exec'ing the shell.
 // setsid(1) and kill(1) are busybox applets.
 
@@ -200,11 +201,13 @@ export function spawn(opts) {
 		handle_update();
 	}
 
-	function child_setup() {
+	// Without the slave the shell would run on the agent's stdio; null
+	// makes the child exit with 255 instead.
+	function child_setup(args) {
 		let slave = io.open(pts, io.O_RDWR);
 
 		if (!slave)
-			return;
+			return null;
 
 		slave.dup2(0);
 		slave.dup2(1);
@@ -215,6 +218,8 @@ export function spawn(opts) {
 		// uloop ignores SIGPIPE, and an ignored signal stays ignored
 		// across exec, which would break `cmd | head` in the shell
 		signal('PIPE', 'default');
+
+		return [ SETSID, ...args ];
 	}
 
 	// setsid(1) -c performs setsid() plus TIOCSCTTY on its stdin before
@@ -222,13 +227,12 @@ export function spawn(opts) {
 	// job control. child_setup() has already made the slave that stdin.
 	// The child of uloop.process() is no process group leader, so setsid(1)
 	// does not fork and the shell PID is the session ID.
-	proc = uloop.process(SETSID, [ '-c', opts.shell, ...opts.args ], opts.env,
+	proc = uloop.process(child_setup, [ '-c', opts.shell, ...opts.args ], opts.env,
 		(code) => {
 			pause();
 			proc = null;
 			opts.on_exit(code);
-		},
-		child_setup);
+		});
 
 	if (!proc) {
 		log_err('cannot spawn %s: %s', opts.shell, uloop.error());

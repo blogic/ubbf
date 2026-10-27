@@ -203,6 +203,7 @@ static const uc_function_list_t module_fns[] = {
 	{ "shell_escape",                uc_ubbf_shell_escape },
 	{ "iso8601_format",              uc_ubbf_iso8601_format },
 	{ "iso8601_format_usec",         uc_ubbf_iso8601_format_usec },
+	{ "iso8601_local_format",        uc_ubbf_iso8601_local_format },
 	{ "readfile_trim",               uc_ubbf_readfile_trim },
 	{ "readfile_int",                uc_ubbf_readfile_int },
 	{ "uptime_read",                 uc_ubbf_uptime_read },

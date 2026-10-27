@@ -596,7 +596,7 @@ function interface_stats_get(ctx) {
 		return null;
 
 	let netdev = optical_status_get(name)?.Name ?? name;
-	return utils.ifstats.ifstats_get(netdev);
+	return utils.ifstats.ifstats_basic_get(netdev);
 }
 
 /**

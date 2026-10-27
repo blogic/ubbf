@@ -76,11 +76,16 @@ function port_get(ctx) {
 
 	let netdev = port_netdev_resolve(ctx.config, ctx.root);
 
+	// ctx.config carries the schema defaults, false for a row that a
+	// controller adds. A stored row without the key is snooped, as
+	// port_snooped() renders it.
+	let stored = ctx.parent?.Port?.[ctx.instance] ?? {};
+
 	return {
 		...ubbf.schema_defaults('Bridging.Bridge_Port'),
-		IGMP: 'true',
-		MLD: 'true',
 		...ctx.config,
+		IGMP: stored.IGMP ?? 'true',
+		MLD: stored.MLD ?? 'true',
 		Status: ifop_status_derive(ctx.config.Enable, ctx.config.Name,
 		                           ctx.config.LowerLayers, ctx.root),
 		LastChange: last_change_get(netdev)
