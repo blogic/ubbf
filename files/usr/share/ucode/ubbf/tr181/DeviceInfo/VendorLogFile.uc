@@ -1,9 +1,9 @@
 'use strict';
 
 import * as fs from 'fs';
-import { transfer_complete } from 'ubbf.utils.helpers';
-import { curl_upload, curl_insecure_allowed, CURL_TRANSFER_TIMEOUT_S } from 'ubbf.utils.curl';
-import { log_info, log_debug, log_err } from 'ubbf.utils.logging';
+import { transfer_complete } from 'ubbf';
+import { curl_upload, curl_insecure_allowed, CURL_TRANSFER_TIMEOUT_S } from 'ubbf';
+import { log_info, log_debug, log_err } from 'ubbf';
 import { task_run, TASK_MARGIN_S } from 'ubbf.utils.process';
 import * as ubbf from 'ubbf';
 

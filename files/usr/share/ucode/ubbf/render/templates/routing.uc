@@ -1,8 +1,4 @@
 function render_config() {
-	// Router.1 is the main table, which a route reaches without a table
-	// option.
-	const MAIN_TABLE = 254;
-
 	/**
 	 * Generates a UCI network route section.
 	 *
@@ -37,6 +33,8 @@ function render_config() {
 		if (metric != null && metric >= 0)
 			uci_set_number(output, `network.@${section}[-1].metric`, metric);
 
+		// Router.1 is the main table, which a route reaches without a
+		// table option
 		if (table != MAIN_TABLE)
 			uci_set_number(output, `network.@${section}[-1].table`, table);
 

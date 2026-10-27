@@ -1,11 +1,12 @@
 'use strict';
 
 import * as ubbf from 'ubbf';
-import { ifop_status_derive, bridge_status_derive } from 'ubbf.utils.status';
+import { ifop_status_derive, bridge_status_derive } from 'ubbf';
+import { ssid_ifname_get } from 'ubbf.utils.wifi';
 import { last_change_get } from 'ubbf.utils.netdev_change';
 import { ifstats_get, ifstats_reset } from 'ubbf.utils.ifstats';
-import { lower_layers_wifi } from 'ubbf.utils.helpers';
-import { log_err } from 'ubbf.utils.logging';
+import { lower_layers_wifi } from 'ubbf';
+import { log_err } from 'ubbf';
 
 /**
  * Get handler for Device.Bridging.Bridge.{i}.
@@ -87,7 +88,7 @@ function port_get(ctx) {
 		IGMP: stored.IGMP ?? 'true',
 		MLD: stored.MLD ?? 'true',
 		Status: ifop_status_derive(ctx.config.Enable, ctx.config.Name,
-		                           ctx.config.LowerLayers, ctx.root),
+		                           ctx.config.LowerLayers, ctx.root, ssid_ifname_get),
 		LastChange: last_change_get(netdev)
 	};
 }

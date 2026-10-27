@@ -9,7 +9,6 @@ const schema = ubbf_module.schema;
 const on_commit = ubbf_module.on_commit;
 const on_abort = ubbf_module.on_abort;
 const config_apply = ubbf_module.config_apply;
-const instance_map = utils['instance-map'];
 
 const fs = require('fs');
 const ubus = require('ubus');
@@ -72,7 +71,7 @@ let staged = [];
  * @returns {object} Output in `data` and the exit code in `exitcode`
  */
 function command_run(parts, merge_stderr) {
-	let cmd = utils.process.cmd_build(parts) + (merge_stderr ? ' 2>&1' : ' 2>/dev/null');
+	let cmd = ubbf.cmd_build(parts) + (merge_stderr ? ' 2>&1' : ' 2>/dev/null');
 	let pipe = fs.popen(cmd, 'r');
 	if (!pipe)
 		return { data: '', exitcode: -1 };
@@ -97,7 +96,7 @@ function command_json(parts) {
 	try {
 		return json(result.data);
 	} catch (e) {
-		utils.logging.log_err('softwaremodules: %s printed no JSON', parts[0]);
+		ubbf.log_err('softwaremodules: %s printed no JSON', parts[0]);
 		return null;
 	}
 }
@@ -292,7 +291,7 @@ function uvol_call(method, args) {
  * @returns {number|null} Bytes
  */
 function uvol_bytes(method) {
-	return utils.cache.call(uvol_call, method, {})?.bytes;
+	return ubbf.cache_call(uvol_call, method, {})?.bytes;
 }
 
 /**
@@ -341,9 +340,9 @@ function du_name(pkg, info) {
  * @returns {object} Rows in `eus` and `dus`, in instance order
  */
 function view_build() {
-	let containers = sort(utils.cache.call(containers_fetch),
+	let containers = sort(ubbf.cache_call(containers_fetch),
 		(a, b) => (a.id < b.id) ? -1 : ((a.id > b.id) ? 1 : 0));
-	let packages = utils.cache.call(packages_fetch);
+	let packages = ubbf.cache_call(packages_fetch);
 	let dus_by_pkg = {};
 	let eus = [];
 
@@ -365,12 +364,12 @@ function view_build() {
 	for (let pkg in packages)
 		dus_by_pkg[pkg] ??= { pkg, name: du_name(pkg, null), eus: [] };
 
-	let eu_numbers = instance_map.instance_numbers(EU_TABLE, map(eus, (eu) => eu.name));
+	let eu_numbers = ubbf.instance_numbers(EU_TABLE, map(eus, (eu) => eu.name));
 	for (let eu in eus)
 		eu.index = eu_numbers[eu.name];
 
 	let pkgs = sort(keys(dus_by_pkg));
-	let du_numbers = instance_map.instance_numbers(DU_TABLE, pkgs);
+	let du_numbers = ubbf.instance_numbers(DU_TABLE, pkgs);
 	let dus = [];
 	for (let pkg in pkgs) {
 		let du = dus_by_pkg[pkg];
@@ -394,7 +393,7 @@ function view_build() {
  * @returns {object} Rows in `eus` and `dus`
  */
 function view_get() {
-	return utils.cache.call(view_build);
+	return ubbf.cache_call(view_build);
 }
 
 /**
@@ -666,7 +665,7 @@ function appdata_rows(view) {
 		push(rows, ...eu_volumes(eu));
 
 	let key = (row) => `${row.eu.name}/${row.name}`;
-	let numbers = instance_map.instance_numbers(APPDATA_TABLE, map(rows, key));
+	let numbers = ubbf.instance_numbers(APPDATA_TABLE, map(rows, key));
 	for (let row in rows)
 		row.index = numbers[key(row)];
 
@@ -1005,7 +1004,7 @@ function execenv_to_object(root) {
 		CurrentRunLevel: '-1',
 		InitialExecutionUnitRunLevel: '-1',
 		Vendor: 'openwrt.org',
-		Version: utils.cache.call(uxc_version_fetch),
+		Version: ubbf.cache_call(uxc_version_fetch),
 		ParentExecEnv: '',
 		AllocatedDiskSpace: sprintf('%d', kib(uvol_bytes('total'))),
 		AllocatedMemory: '-1',
@@ -1020,7 +1019,7 @@ function execenv_to_object(root) {
 		ApplicationDataNumberOfEntries: sprintf('%d', length(appdata)),
 		RestartReason: ee_restart.reason,
 		RestartCount: sprintf('%d', ee_restart.count),
-		LastRestarted: utils.helpers.datetime_format(ee_restart.time),
+		LastRestarted: ubbf.datetime_format(ee_restart.time),
 		Signers: '',
 		AvailableRoles: '',
 		AvailableAccessInterfaces: join(',', ip_interface_names(root)),
@@ -1039,7 +1038,7 @@ function execenvclass_to_object() {
 		Alias: 'cpe-uxc',
 		Name: 'uxc',
 		Vendor: 'openwrt.org',
-		Version: utils.cache.call(uxc_version_fetch),
+		Version: ubbf.cache_call(uxc_version_fetch),
 		DeploymentUnitRef: '',
 		CapabilityNumberOfEntries: '1',
 		Capability: {
@@ -1153,7 +1152,7 @@ function uxc_apply(parts) {
 	if (result.exitcode == 0)
 		return 0;
 
-	utils.logging.log_err('softwaremodules: %s: %s', join(' ', parts), result_message(result));
+	ubbf.log_err('softwaremodules: %s: %s', join(' ', parts), result_message(result));
 	return -1;
 }
 
@@ -1183,8 +1182,8 @@ function staged_apply() {
 	if (!length(list))
 		return;
 
-	utils.cache.invalidate(containers_fetch);
-	utils.cache.invalidate(view_build);
+	ubbf.cache_invalidate(containers_fetch);
+	ubbf.cache_invalidate(view_build);
 }
 
 /**
@@ -1275,8 +1274,8 @@ function du_state_change_emit(ev) {
 		CurrentState: ev.state,
 		Resolved: ev.du ? du_to_object(ev.du).Resolved : 'false',
 		ExecutionUnitRefList: ev.du ? join(',', map(ev.du.eus, eu_ref)) : '',
-		StartTime: utils.helpers.datetime_format(ev.start),
-		CompleteTime: utils.helpers.datetime_format(time()),
+		StartTime: ubbf.datetime_format(ev.start),
+		CompleteTime: ubbf.datetime_format(time()),
 		OperationPerformed: ev.operation,
 		'Fault.FaultCode': sprintf('%d', ev.fault_code ?? 0),
 		'Fault.FaultString': ev.fault_string ?? ''
@@ -1484,7 +1483,7 @@ function request_check(pkg, req, done) {
  */
 function du_op_fail(op, fault_code, fault_string) {
 	delete pending[op.pkg];
-	utils.logging.log_err('softwaremodules: %s %s: %s', op.operation, op.pkg, fault_string);
+	ubbf.log_err('softwaremodules: %s %s: %s', op.operation, op.pkg, fault_string);
 	du_state_change_emit({
 		operation: op.operation, state: 'Failed', uuid: op.uuid, version: op.version,
 		du: op.du, start: op.start, fault_code, fault_string
@@ -1671,7 +1670,7 @@ function eu_rows_forget(du) {
 
 	let report = (result) => {
 		if (!result?.success)
-			utils.logging.log_err('softwaremodules: failed to delete the stored rows of %s', du.pkg);
+			ubbf.log_err('softwaremodules: failed to delete the stored rows of %s', du.pkg);
 	};
 	let result = config_apply(ops, report);
 	if (result)
@@ -1829,7 +1828,7 @@ function update_du(input, instance, complete, instances, command_key, root) {
  */
 function lifecycle_done(results, failed) {
 	if (failed)
-		utils.logging.log_err('softwaremodules: %s: %s', join(' ', failed.command), result_message(failed));
+		ubbf.log_err('softwaremodules: %s: %s', join(' ', failed.command), result_message(failed));
 }
 
 /**
@@ -1934,7 +1933,7 @@ function execenv_restart(input, instance, complete, instances, command_key) {
 
 		ee_restart = { count: ee_restart.count + 1, reason: input?.Reason ?? '', time: time() };
 		usp_datamodel_event(EE_REF + '.Restarted!', {
-			RestartTime: utils.helpers.datetime_format(ee_restart.time),
+			RestartTime: ubbf.datetime_format(ee_restart.time),
 			RestartReason: ee_restart.reason
 		});
 		complete(instance, 0, null, {});

@@ -2,12 +2,11 @@
 
 import * as uloop from 'uloop';
 import * as fs from 'fs';
-import { transfer_complete } from 'ubbf.utils.helpers';
+import { transfer_complete } from 'ubbf';
 import {
 	curl_upload, curl_download, curl_insecure_allowed, CURL_TRANSFER_TIMEOUT_S
-} from 'ubbf.utils.curl';
-import { config_restore, config_validate } from 'ubbf.utils.config';
-import { log_err } from 'ubbf.utils.logging';
+} from 'ubbf';
+import { log_err, config_restore, config_validate } from 'ubbf';
 import { task_run, TASK_MARGIN_S } from 'ubbf.utils.process';
 import * as ubbf from 'ubbf';
 

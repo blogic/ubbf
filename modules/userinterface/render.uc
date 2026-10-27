@@ -1,5 +1,5 @@
 let certificates = {};
-include('../security/certificates.uc', { certificates, instance_map: instance_map_readonly });
+include('../security/certificates.uc', { certificates });
 
 /**
  * Resolves the Certificate and CABundle references of an HTTPAccess row.

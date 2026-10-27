@@ -7,8 +7,6 @@
 
 import * as ubbf from 'ubbf';
 import { access, readfile, writefile, unlink } from 'fs';
-import { datetime_format, text_clamp } from 'ubbf.utils.helpers';
-import { ethernet_interface_path } from 'ubbf.utils.path';
 
 const SAMPLE_PATH = '/tmp/ubbf-lldp-test-sample.json';
 
@@ -29,11 +27,8 @@ function assert_eq(name, got, expected) {
 }
 
 const api = {
-	ubbf,
+	ubbf: proto({ cache_call: (fn, ...args) => fn(...args) }, ubbf),
 	utils: {
-		cache: { call: (fn, ...args) => fn(...args) },
-		helpers: { datetime_format, text_clamp },
-		path: { ethernet_interface_path },
 		hosts: { host_path_by_mac: (root, mac) => mac ? `HOST(${mac})` : '' }
 	},
 	schema: (k) => k,

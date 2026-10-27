@@ -2,14 +2,13 @@
 
 import * as fs from 'fs';
 import * as ubus from 'ubus';
-import { log_info, log_err } from 'ubbf.utils.logging';
+import { log_info, log_err, cwmp_mode } from 'ubbf';
 import { handler as ping_handler } from 'ubbf.tr143.Ping';
 import { handler as traceroute_handler } from 'ubbf.tr143.TraceRoute';
 import { handler as udpecho_handler } from 'ubbf.tr143.UDPEcho';
 import { handler as serverselection_handler } from 'ubbf.tr143.ServerSelection';
 import { handler as nslookup_handler } from 'ubbf.tr143.NSLookup';
 import { OP_DIR, overlay_path, overlay_read, overlay_write } from 'ubbf.utils.cwmp-op-trigger';
-import { CWMP_MODE } from 'ubbf.utils.protocol';
 
 const CONFIG_PATH = '/etc/ubbf/config.json';
 const CWMP_EVENT = '8 DIAGNOSTICS COMPLETE';
@@ -107,7 +106,7 @@ function op_complete(path, entry, err, msg, output, id) {
  * @returns {object} Status object or error
  */
 function op_request_handler(req) {
-	if (!CWMP_MODE)
+	if (!cwmp_mode())
 		return { error: 'cwmp-ops runner only serves CWMP mode' };
 
 	let path = req.args?.path ?? '';
@@ -153,7 +152,7 @@ function op_request_handler(req) {
  * operation does not survive a reboot).
  */
 export function init() {
-	if (!CWMP_MODE)
+	if (!cwmp_mode())
 		return;
 
 	if (!fs.stat(OP_DIR))

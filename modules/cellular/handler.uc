@@ -51,7 +51,7 @@ function modems_fetch() {
  * @returns {array} Modem objects in dump order
  */
 function modems_get() {
-	return utils.cache.call(modems_fetch);
+	return ubbf.cache_call(modems_fetch);
 }
 
 /**
@@ -63,7 +63,6 @@ function modems_get() {
 // Interface rows follow the modems ModemManager reports; the instance map
 // keeps each modem, by its device path, on its number.
 const CELLULAR_TABLE = 'Device.Cellular.Interface';
-const instance_map = utils['instance-map'];
 
 function modem_key(modem) {
 	return modem?.generic?.device ?? '';
@@ -75,7 +74,7 @@ function modem_keys(modems) {
 
 function modem_by_instance(instance) {
 	let modems = modems_get();
-	let key = instance_map.instance_key(CELLULAR_TABLE, modem_keys(modems), instance);
+	let key = ubbf.instance_key(CELLULAR_TABLE, modem_keys(modems), instance);
 	return (key == null) ? null : filter(modems, (m) => modem_key(m) == key)[0];
 }
 
@@ -219,7 +218,7 @@ function interface_row(modem, stored) {
 function interface_stamp(root, instance) {
 	let modem = modem_by_instance(instance);
 	if (!modem?.generic?.device) {
-		utils.logging.log_warn('cellular: modem %d not present, device path not recorded', instance);
+		ubbf.log_warn('cellular: modem %d not present, device path not recorded', instance);
 		return;
 	}
 
@@ -263,7 +262,7 @@ function interface_get(ctx) {
 	if (ctx.instance == null) {
 		let modems = modems_get();
 		let stored_rows = ctx.root?.Device?.Cellular?.Interface ?? {};
-		return instance_map.instance_rows(CELLULAR_TABLE, modem_keys(modems), (key, n) =>
+		return ubbf.instance_rows(CELLULAR_TABLE, modem_keys(modems), (key, n) =>
 			interface_row(filter(modems, (m) => modem_key(m) == key)[0], stored_rows[sprintf('%d', n)] ?? {}));
 	}
 

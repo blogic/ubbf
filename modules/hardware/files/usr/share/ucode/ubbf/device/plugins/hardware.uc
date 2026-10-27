@@ -9,7 +9,7 @@
 import * as fs from 'fs';
 import * as ubus from 'ubus';
 import * as uloop from 'uloop';
-import { log_info, log_err } from 'ubbf.utils.logging';
+import { log_info, log_err } from 'ubbf';
 import { dm_event_send } from 'ubbf.utils.events';
 import { dm_visible } from 'ubbf.utils.dm-version';
 

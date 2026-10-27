@@ -2,8 +2,8 @@
 /* Copyright (C) 2026 John Crispin <john@phrozen.org> */
 
 #include "ubbf.h"
+#include "bindings.h"
 
-#include <ctype.h>
 #include <dirent.h>
 #include <limits.h>
 #include <unistd.h>
@@ -72,7 +72,7 @@ uc_ubbf_readfile_int(uc_vm_t *vm, size_t nargs)
 		return ucv_int64_new(def_int);
 
 	val = strtoll(content, &endp, 10);
-	if (*endp != '\0')
+	if (!*content || *endp != '\0')
 		val = def_int;
 	free(content);
 
@@ -126,24 +126,6 @@ operstate_map(const char *state)
 }
 
 /**
- * Converts a Linux operstate string to its TR-181 Status equivalent.
- *
- * @param vm     ucode VM context
- * @param nargs  number of arguments (1 expected: operstate string)
- * @return       TR-181 Status string, `Error` for non-string or unknown input
- */
-uc_value_t *
-uc_ubbf_operstate_to_status(uc_vm_t *vm, size_t nargs)
-{
-	uc_value_t *val = uc_fn_arg(0);
-
-	if (ucv_type(val) != UC_STRING)
-		return ucv_string_new("Error");
-
-	return ucv_string_new(operstate_map(ucv_string_get(val)));
-}
-
-/**
  * Reads a `/sys/class/net/<ifname>/<file>` attribute, with fallback default.
  *
  * @param ifname interface name
@@ -161,22 +143,6 @@ netdev_read(const char *ifname, const char *file, const char *def)
 	content = sysfs_read_file(path);
 
 	return content ? content : xstrdup(def ? def : "");
-}
-
-/**
- * Uppercases an ASCII string in place.
- *
- * Bytes outside the lowercase ASCII range are left unchanged. Multi-byte
- * UTF-8 sequences are not interpreted.
- *
- * @param s  null-terminated string to modify
- */
-void
-str_to_upper(char *s)
-{
-	for (; *s; s++)
-		if (*s >= 'a' && *s <= 'z')
-			*s -= 32;
 }
 
 /**
@@ -281,55 +247,6 @@ uc_ubbf_ethernet_properties_get(uc_vm_t *vm, size_t nargs)
 /* ---- host discovery ---------------------------------------------------- */
 
 /**
- * Captures the full standard output of an external command into a heap buffer.
- *
- * Spawns `cmd` via `popen("r")`, growing the buffer in 4 KiB blocks. The
- * caller owns the returned pointer and must `free()` it.
- *
- * @param cmd  shell command line to execute
- * @return     newly allocated NUL-terminated output string, or NULL on a
- *             popen or allocation failure
- */
-static char *
-popen_read(const char *cmd)
-{
-	FILE *fp;
-	char *buf;
-	size_t alloc = 4096, used = 0;
-	size_t n;
-
-	fp = popen(cmd, "r");
-	if (!fp)
-		return NULL;
-
-	buf = malloc(alloc);
-	if (!buf) {
-		pclose(fp);
-		return NULL;
-	}
-
-	while ((n = fread(buf + used, 1, alloc - used - 1, fp)) > 0) {
-		used += n;
-		if (used + 1 >= alloc) {
-			char *grown = realloc(buf, alloc * 2);
-
-			if (!grown) {
-				free(buf);
-				pclose(fp);
-				return NULL;
-			}
-			buf = grown;
-			alloc *= 2;
-		}
-	}
-
-	pclose(fp);
-	buf[used] = '\0';
-
-	return buf;
-}
-
-/**
  * Parses `/proc/net/arp` into an array of host entries.
  *
  * Skips the header line, the all-zero MAC and entries without the
@@ -358,8 +275,8 @@ uc_ubbf_arp_parse(uc_vm_t *vm, size_t nargs)
 
 	while (fgets(line, sizeof(line), fp)) {
 		char ip[64] = "", hw[8] = "", flags_str[8] = "", mac[20] = "", mask[8] = "", dev[64] = "";
+		uc_value_t *entry;
 		unsigned long flags;
-		char mac_upper[20];
 
 		if (header) {
 			header = false;
@@ -373,13 +290,11 @@ uc_ubbf_arp_parse(uc_vm_t *vm, size_t nargs)
 		if (strcmp(mac, "00:00:00:00:00:00") == 0 || !(flags & 0x02))
 			continue;
 
-		strncpy(mac_upper, mac, sizeof(mac_upper) - 1);
-		mac_upper[sizeof(mac_upper) - 1] = '\0';
-		str_to_upper(mac_upper);
+		str_to_upper(mac);
 
-		uc_value_t *entry = ucv_object_new(vm);
+		entry = ucv_object_new(vm);
 		ucv_object_add(entry, "ip", ucv_string_new(ip));
-		ucv_object_add(entry, "mac", ucv_string_new(mac_upper));
+		ucv_object_add(entry, "mac", ucv_string_new(mac));
 		ucv_object_add(entry, "device", ucv_string_new(dev));
 		ucv_object_add(entry, "active", ucv_boolean_new(true));
 		ucv_array_push(arr, entry);
@@ -387,169 +302,6 @@ uc_ubbf_arp_parse(uc_vm_t *vm, size_t nargs)
 
 	fclose(fp);
 	return arr;
-}
-
-/**
- * Returns the bridge forwarding-database as a MAC-to-device map.
- *
- * Spawns `bridge fdb show`. Permanent entries and IPv4/IPv6 multicast
- * MACs (`01:00:5e:*`, `33:33:*`) are skipped.
- *
- * @param vm     ucode VM context
- * @param nargs  number of arguments (none expected)
- * @return       object keyed by uppercase MAC mapping to bridge port name
- */
-uc_value_t *
-uc_ubbf_bridge_fdb_parse(uc_vm_t *vm, size_t nargs)
-{
-	char *output, *line, *saveptr;
-	uc_value_t *obj;
-
-	output = popen_read("bridge fdb show");
-	if (!output)
-		return ucv_object_new(vm);
-
-	obj = ucv_object_new(vm);
-
-	for (line = strtok_r(output, "\n", &saveptr); line;
-	     line = strtok_r(NULL, "\n", &saveptr)) {
-
-		char mac[20], kw[16], dev[64];
-		char mac_upper[20];
-
-		if (sscanf(line, "%19s %15s %63s", mac, kw, dev) < 3)
-			continue;
-
-		if (strcmp(kw, "dev") != 0)
-			continue;
-
-		if (strstr(line, "permanent"))
-			continue;
-
-		if (strncasecmp(mac, "01:00:5e", 8) == 0 ||
-		    strncasecmp(mac, "33:33", 5) == 0)
-			continue;
-
-		strncpy(mac_upper, mac, sizeof(mac_upper) - 1);
-		mac_upper[sizeof(mac_upper) - 1] = '\0';
-		str_to_upper(mac_upper);
-
-		ucv_object_add(obj, mac_upper, ucv_string_new(dev));
-	}
-
-	free(output);
-	return obj;
-}
-
-/* fe80::/10: the first group is fe80 to febf. */
-static bool
-ipv6_is_link_local(const char *addr)
-{
-	if (strncasecmp(addr, "fe", 2) || !isxdigit((unsigned char)addr[3]))
-		return false;
-
-	return strchr("89abAB", addr[2]) != NULL;
-}
-
-/**
- * Returns the IPv6 neighbour table as a MAC-to-address-list map.
- *
- * Spawns `ip -6 neigh show`. Entries in `FAILED` or `INCOMPLETE` state,
- * link-local addresses, and entries with the all-zero MAC, are skipped.
- * Duplicate addresses are coalesced.
- *
- * @param vm     ucode VM context
- * @param nargs  number of arguments (none expected)
- * @return       object keyed by uppercase MAC mapping to array of IPv6 strings
- */
-uc_value_t *
-uc_ubbf_ipv6_neigh_parse(uc_vm_t *vm, size_t nargs)
-{
-	char *output, *line, *saveptr;
-	uc_value_t *obj;
-
-	output = popen_read("ip -6 neigh show");
-	if (!output)
-		return ucv_object_new(vm);
-
-	obj = ucv_object_new(vm);
-
-	for (line = strtok_r(output, "\n", &saveptr); line;
-	     line = strtok_r(NULL, "\n", &saveptr)) {
-
-		char *parts[16];
-		int cnt = 0;
-		char *tmp = xstrdup(line), *tok, *sv2;
-
-		for (tok = strtok_r(tmp, " \t", &sv2); tok && cnt < 16;
-		     tok = strtok_r(NULL, " \t", &sv2))
-			parts[cnt++] = tok;
-
-		if (cnt < 5) {
-			free(tmp);
-			continue;
-		}
-
-		char *state = parts[cnt - 1];
-		if (strcmp(state, "FAILED") == 0 || strcmp(state, "INCOMPLETE") == 0) {
-			free(tmp);
-			continue;
-		}
-
-		char *addr = parts[0];
-		int lladdr_idx = -1;
-
-		/* A link-local address says nothing about the IPv6 connectivity
-		 * of a host, and every IPv6 host has one. */
-		if (ipv6_is_link_local(addr)) {
-			free(tmp);
-			continue;
-		}
-		for (int i = 0; i < cnt; i++) {
-			if (strcmp(parts[i], "lladdr") == 0) {
-				lladdr_idx = i;
-				break;
-			}
-		}
-
-		if (lladdr_idx < 0 || lladdr_idx + 1 >= cnt) {
-			free(tmp);
-			continue;
-		}
-
-		char mac_upper[20];
-		strncpy(mac_upper, parts[lladdr_idx + 1], sizeof(mac_upper) - 1);
-		mac_upper[sizeof(mac_upper) - 1] = '\0';
-		str_to_upper(mac_upper);
-
-		if (strcmp(mac_upper, "00:00:00:00:00:00") == 0) {
-			free(tmp);
-			continue;
-		}
-
-		uc_value_t *arr = ucv_object_get(obj, mac_upper, NULL);
-		if (!arr) {
-			arr = ucv_array_new(vm);
-			ucv_object_add(obj, mac_upper, arr);
-		}
-
-		bool found = false;
-		for (size_t i = 0; i < ucv_array_length(arr); i++) {
-			uc_value_t *ev = ucv_array_get(arr, i);
-			if (ucv_type(ev) == UC_STRING && strcmp(ucv_string_get(ev), addr) == 0) {
-				found = true;
-				break;
-			}
-		}
-
-		if (!found)
-			ucv_array_push(arr, ucv_string_new(addr));
-
-		free(tmp);
-	}
-
-	free(output);
-	return obj;
 }
 
 static bool
@@ -811,38 +563,10 @@ uc_ubbf_layer3_interface_find(uc_vm_t *vm, size_t nargs)
 
 			if (!aip || !amask) continue;
 
-			if (!is_v6) {
-				unsigned int a1[4], a2[4];
-				uint32_t ip_int, net_int, mask_bits;
-				int prefix = (int)ucv_int64_get(amask);
+			if (ucv_type(aip) != UC_STRING || ucv_type(amask) != UC_INTEGER)
+				continue;
 
-				if (sscanf(ip_addr, "%u.%u.%u.%u", &a1[0], &a1[1], &a1[2], &a1[3]) != 4)
-					continue;
-				if (sscanf(ucv_string_get(aip), "%u.%u.%u.%u", &a2[0], &a2[1], &a2[2], &a2[3]) != 4)
-					continue;
-
-				ip_int = (a1[0]<<24)|(a1[1]<<16)|(a1[2]<<8)|a1[3];
-				net_int = (a2[0]<<24)|(a2[1]<<16)|(a2[2]<<8)|a2[3];
-				mask_bits = prefix > 0 ? (0xFFFFFFFFU << (32 - prefix)) : 0;
-				match = ((ip_int & mask_bits) == (net_int & mask_bits));
-			} else {
-				char ea[33], eb[33];
-				int prefix = (int)ucv_int64_get(amask);
-				int hex_chars = prefix / 4;
-
-				ipv6_expand_to_buf(ip_addr, ea);
-				ipv6_expand_to_buf(ucv_string_get(aip), eb);
-
-				match = (memcmp(ea, eb, hex_chars) == 0);
-				if (match && (prefix % 4) != 0) {
-					char ha[2] = { ea[hex_chars], '\0' };
-					char hb[2] = { eb[hex_chars], '\0' };
-					unsigned int va = (unsigned int)strtoul(ha, NULL, 16);
-					unsigned int vb = (unsigned int)strtoul(hb, NULL, 16);
-					unsigned int m = (0xfU << (4 - (prefix % 4))) & 0xfU;
-					match = ((va & m) == (vb & m));
-				}
-			}
+			match = ip_prefix_match(ip_addr, ucv_string_get(aip), (int)ucv_int64_get(amask));
 
 			if (!match) continue;
 
@@ -857,15 +581,16 @@ uc_ubbf_layer3_interface_find(uc_vm_t *vm, size_t nargs)
 					continue;
 
 				uc_value_t *upstream = ucv_object_get(iface, "Upstream", NULL);
-				char path_buf[64];
-				snprintf(path_buf, sizeof(path_buf), "Device.IP.Interface.%s", inst_key);
+				char *path;
+
+				xasprintf(&path, "Device.IP.Interface.%s", inst_key);
 
 				ucv_put(empty);
 				uc_value_t *result = ucv_object_new(vm);
-				ucv_object_add(result, "path", ucv_string_new(path_buf));
+				ucv_object_add(result, "path", ucv_string_new(path));
+				free(path);
 				ucv_object_add(result, "upstream",
-					       ucv_boolean_new(upstream && ucv_type(upstream) == UC_STRING &&
-							       strcmp(ucv_string_get(upstream), "true") == 0));
+					       ucv_boolean_new(value_to_bool(upstream)));
 				return result;
 			}
 		}

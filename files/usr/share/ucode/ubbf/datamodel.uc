@@ -1,53 +1,31 @@
 'use strict';
 
 import { writefile, readfile, dirname, stat, mkdir, lsdir } from 'fs';
-import * as digest from 'digest';
 import * as ubus from 'ubus';
 import * as uloop from 'uloop';
-import * as schema_utils from 'ubbf.utils.schema';
-import { acl_role_load, acl_filter_tree } from 'ubbf.acl';
-import { log_debug, log_info, log_notice, log_warn, log_err, log_exception } from 'ubbf.utils.logging';
-import { firewall_reconcile } from 'ubbf.utils.firewall-reconcile';
-import { order_snapshot, orders_compute } from 'ubbf.utils.order';
-import { firewall_rules_expired, firewall_expiry_next } from 'ubbf.utils.firewall-expiry';
-import { call as cache_call, invalidate as cache_invalidate } from 'ubbf.utils.cache';
-import { curl_upload, curl_insecure_allowed, CURL_TRANSFER_TIMEOUT_S } from 'ubbf.utils.curl';
-import { deviceinfo_get } from 'ubbf.utils.deviceinfo';
-import { dhcp_option_value, hex_to_printable } from 'ubbf.utils.dhcp';
-import { datetime_format, text_clamp, upstream_interface_ref } from 'ubbf.utils.helpers';
+import { acl_role_load, acl_filter_tree } from 'ubbf';
+import { log_info, log_warn, log_err, log_exception } from 'ubbf';
+import { firewall_reconcile, firewall_rules_expired, firewall_expiry_next } from 'ubbf';
+import { order_snapshot, orders_compute } from 'ubbf';
 import { last_change_get } from 'ubbf.utils.netdev_change';
-import { ethtool_properties_get } from 'ubbf.utils.ethtool';
 import {
 	host_path_by_mac, host_path_by_ip, hosts_build, hosts_downstream_get,
 	hosts_numbered, host_by_instance,
-	hosts_state_get, host_active_track, hosts_state_flush, hosts_inactive_remove
+	hosts_state_get, hosts_inactive_remove
 } from 'ubbf.utils.hosts';
 import { ifstats_get, ifstats_basic_get, ifstats_reset } from 'ubbf.utils.ifstats';
-import {
-	instance_numbers, instance_key, instance_rows, instance_prune, instance_floor,
-	instance_next, instance_table_known, instance_lookup, instance_items, instance_retire,
-	instance_pins, instance_pins_load
-} from 'ubbf.utils.instance-map';
-import { SUPPORTED_SFP_TYPES, sfp_type_resolve, sfp_allowed } from 'ubbf.utils.sfp';
-import { link_local_addresses_get } from 'ubbf.utils.ipv6';
 import { netifd_status_get } from 'ubbf.utils.netifd';
-import { interface_resolve, ethernet_interface_path } from 'ubbf.utils.path';
-import { cmd_build, popen_async, task_run, TASK_MARGIN_S } from 'ubbf.utils.process';
-import { ACTIVE_PROTOCOL } from 'ubbf.utils.protocol';
+import { interface_resolve } from 'ubbf.utils.path';
+import { popen_async, task_run, TASK_MARGIN_S } from 'ubbf.utils.process';
 import { DM_MINOR, DM_VERSION_ERROR, dm_visible, tag_minor } from 'ubbf.utils.dm-version';
 import { op_trigger_flush, op_trigger_drop } from 'ubbf.utils.cwmp-op-trigger';
-import { config_restore_hook_set } from 'ubbf.utils.config';
-import { write_gate_create } from 'ubbf.utils.write-gate';
 import { modules_registered } from 'ubbf.utils.modules';
 import { native_modules_register, native_modules_notify } from 'ubbf.utils.dm-native';
+import { schedule_refs_check, schedule_refs_prune } from 'ubbf';
 import {
-	schedule_ref_set, schedule_refs_prune, schedule_state, start_time_valid, week_seconds
-} from 'ubbf.utils.schedule';
-import {
-	ht_caps_encode, vht_caps_encode, sta_he_caps_from_frame_body,
 	client_query_get, ubus_topology_get, local_device_get, local_api_data_get,
 	device_api_data_get, steering_stats_get, steering_history_get,
-	topology_devices_get, radio_band_priority
+	topology_devices_get
 } from 'ubbf.utils.wifi-dataelements';
 import { lower_layer_resolve_vlan } from 'ubbf.render.ubbf_helpers';
 import * as ubbf from 'ubbf';
@@ -338,39 +316,22 @@ function module_api_build(name) {
 	return {
 		ubbf,
 		utils: {
-			cache: { call: cache_call, invalidate: cache_invalidate },
-			curl: { curl_upload, curl_insecure_allowed, CURL_TRANSFER_TIMEOUT_S },
-			deviceinfo: { deviceinfo_get },
-			dhcp: { dhcp_option_value, hex_to_printable },
-			helpers: { datetime_format, text_clamp, upstream_interface_ref },
 			'dm-version': { dm_visible },
-			ethtool: { ethtool_properties_get },
 			netdev_change: { last_change_get },
 			hosts: {
 				host_path_by_mac: host_reference_get,
 				host_path_by_ip: host_ip_reference_get,
 				hosts_build, hosts_downstream_get, hosts_numbered, host_by_instance,
-				hosts_state_get, host_active_track, hosts_state_flush, hosts_inactive_remove
+				hosts_state_get, hosts_inactive_remove
 			},
 			ifstats: { ifstats_get, ifstats_basic_get, ifstats_reset },
-			'instance-map': {
-				instance_numbers, instance_key, instance_rows, instance_prune, instance_floor,
-				instance_lookup, instance_items, instance_retire
-			},
-			sfp: { SUPPORTED_SFP_TYPES, sfp_type_resolve, sfp_allowed },
-			ipv6: { link_local_addresses_get },
-			logging: { log_debug, log_info, log_notice, log_warn, log_err, log_exception },
 			netifd: { netifd_status_get },
-			path: { interface_resolve, ethernet_interface_path, path_kind: (p) => model_path_known(p) },
-			process: { cmd_build, popen_async, task_run, TASK_MARGIN_S },
-			protocol: { ACTIVE_PROTOCOL },
-			schedule: { schedule_state, start_time_valid, week_seconds },
+			path: { interface_resolve, path_kind: (p) => model_path_known(p) },
+			process: { popen_async, task_run, TASK_MARGIN_S },
 			'wifi-dataelements': {
-				ht_caps_encode, vht_caps_encode,
-				sta_he_caps_from_frame_body, client_query_get, ubus_topology_get,
+				client_query_get, ubus_topology_get,
 				local_device_get, local_api_data_get, device_api_data_get,
-				steering_stats_get, steering_history_get, topology_devices_get,
-				radio_band_priority
+				steering_stats_get, steering_history_get, topology_devices_get
 			},
 			ubbf_helpers: { lower_layer_resolve_vlan },
 		},
@@ -511,7 +472,7 @@ function member_protocol_ok(value) {
 		return true;
 
 	let proto = value.protocol ?? 'usp';
-	return proto == 'both' || proto == ACTIVE_PROTOCOL;
+	return proto == 'both' || proto == ubbf.active_protocol();
 }
 
 /**
@@ -730,7 +691,7 @@ function model_filter() {
 	let hidden = [];
 
 	for (let path, entry in full_model) {
-		if (entry.protocol && entry.protocol != ACTIVE_PROTOCOL)
+		if (entry.protocol && entry.protocol != ubbf.active_protocol())
 			push(drop, path);
 		else if (!entry_version_ok(path, entry))
 			push(hidden, path);
@@ -742,7 +703,7 @@ function model_filter() {
 	operations_drop(hidden);
 
 	// Entries naming a table schema are projected inside ubbf.so.
-	ubbf.schema_protocol_set(ACTIVE_PROTOCOL);
+	ubbf.schema_protocol_set(ubbf.active_protocol());
 	let declared = filter(keys(all_operations), operation_member);
 	ubbf.schema_version_set(DM_MINOR);
 
@@ -761,6 +722,19 @@ function model_filter() {
 const model_dropped = model_filter();
 
 /**
+ * Returns a set handler that checks ScheduleRef and passes every other
+ * parameter to the set handler of the model entry.
+ *
+ * @param {function|null} set - Set handler of the entry
+ * @returns {function} Set handler
+ */
+function schedule_ref_set(set) {
+	return (ctx) => (ctx.param == 'ScheduleRef')
+		? schedule_refs_check(ctx.value, ctx.root, !!modules_registered.schedules)
+		: (set ? set(ctx) : 0);
+}
+
+/**
  * Gives every object with a ScheduleRef parameter a check of that
  * parameter. TR-181 makes ScheduleRef a strong reference to
  * Device.Schedules.Schedule, a table of the schedules module: without the
@@ -769,7 +743,7 @@ const model_dropped = model_filter();
 function schedule_ref_checks_install() {
 	for (let pattern, entry in full_model)
 		if (schema_members(entry)?.ScheduleRef != null)
-			entry.set = schedule_ref_set(entry.set, () => !!modules_registered.schedules);
+			entry.set = schedule_ref_set(entry.set);
 }
 
 schedule_ref_checks_install();
@@ -788,6 +762,10 @@ for (let pattern in all_operations) {
 }
 
 export let dm = ubbf.create();
+
+// The agent gives the instance numbers; the render and ubbf-device only
+// read them.
+ubbf.instance_map_own(true);
 model_path_known = (p) => dm.path_known(p) ?? 0;
 let pending_ops = {};
 let op_counter = 0;
@@ -799,8 +777,8 @@ let apply_pending = false;
 // A USP transaction spans several calls from obuspa, and the event loop runs
 // between them. dm holds one workspace, so every other writer waits at this
 // gate until that transaction ends.
-const write_gate = write_gate_create(() => in_transaction,
-	(fn) => uloop.timer(0, fn), log_exception);
+const write_gate = ubbf.write_gate_create(() => in_transaction,
+	(gate) => uloop.timer(0, () => gate.drain()), log_exception);
 
 dm.register(full_model);
 dm.register_operations(all_operations);
@@ -812,135 +790,20 @@ on_commit(() => native_modules_notify('commit', dm.config()));
 on_abort(() => native_modules_notify('abort', dm.config()));
 
 /**
- * Populates `Name` properties on instances using model-defined name handlers.
- *
- * Iterates the full model and runs each entry's `name(inst, data)` handler for
- * every instance that matches the entry's pattern. Uses a fixed-point loop so
- * a name handler that depends on a sibling instance's freshly computed name
- * eventually sees it; the loop terminates when a full pass produces no
- * changes.
- *
- * @param {object} data - The data tree to populate names on (mutated in place)
- */
-function names_compute(data) {
-	let changed = true;
-	while (changed) {
-		changed = false;
-		for (let pattern in full_model) {
-			let entry = full_model[pattern];
-			if (!entry.name)
-				continue;
-
-			let pattern_parts = split(pattern, '.');
-			let instance_paths = ubbf.collect_instances_for_pattern(
-				pattern_parts, data, 0, '');
-
-			for (let inst_path in instance_paths) {
-				let inst = ubbf.navigate_data(data, split(inst_path, '.'));
-				if (!inst || inst.Name)
-					continue;
-
-				let computed = entry.name(inst, data);
-				if (computed) {
-					inst.Name = computed;
-					changed = true;
-				}
-			}
-		}
-	}
-}
-
-/**
- * Serialises a configuration with the `_instances` section, which pins the
- * instance numbers of the runtime rows that it stores or names
- * (`instance_pins()` in utils/instance-map.uc). The live tree does not
- * hold the section.
- *
- * @param {object} config - Configuration tree
- * @param {object} [pins] - Pins to write, else computed from the map
- * @returns {string} The file content
- */
-function config_content(config, pins) {
-	pins ??= instance_pins(config);
-	return sprintf('%.J\n', length(pins) ? { ...config, _instances: pins } : config);
-}
-
-/**
- * Takes the `_instances` section out of a configuration and seeds the
- * instance map with its pins.
- *
- * @param {object} config - Configuration tree, changed in place
- * @returns {object|null} The pins, or null when the tree had none
- */
-function config_pins_take(config) {
-	let pins = config?._instances;
-	if (pins == null)
-		return null;
-
-	delete config._instances;
-	instance_pins_load(pins);
-	return pins;
-}
-
-/**
- * Loads config.json into the live tree and sets the digest of what was
- * read, so that config_persist() writes again only when the content
- * changes; a pin that no row needs any more counts as a change.
- *
- * @returns {boolean} True when the config was loaded
- */
-function config_load() {
-	if (!dm.load(CONFIG_PATH))
-		return false;
-
-	let config = dm.config();
-	let pins = config_pins_take(config);
-	if (pins != null)
-		dm.runtime_reload();
-
-	dm.set_digest(digest.sha256(config_content(config, pins ?? {})));
-	return true;
-}
-
-/**
- * Serialises the current configuration to disk.
- *
- * Always writes the runtime cache at `RUNTIME_DIR/config.json`. Writes the
- * persistent config at `CONFIG_PATH` only when the SHA-256 digest differs from
- * the previously stored digest. On a successful persistent write, updates the
- * stored digest and reloads the runtime tree.
+ * Writes the live config (dm.config_persist()) and announces a new digest
+ * on ubus when the persistent file changed.
  *
  * @returns {boolean|null} `true` when persistent config was rewritten,
  *                         `false` when content was unchanged,
  *                         `null` when the persistent write failed
  */
 function config_persist() {
-	let config = dm.config();
-	let content = config_content(config);
-	ubbf.write_file_atomic(RUNTIME_DIR + '/config.json', content, CONFIG_MODE);
+	let persisted = dm.config_persist(CONFIG_PATH, RUNTIME_DIR + '/config.json', CONFIG_MODE);
 
-	let new_hash = digest.sha256(content);
-	let old_hash = dm.digest();
+	if (persisted)
+		ubus?.event('bbf-dm.digest', { digest: dm.digest() });
 
-	if (new_hash == old_hash)
-		return false;
-
-	// Atomic write (writes to <path>.tmp, fsyncs, renames). Plain
-	// writefile here would open(O_TRUNC) and only then write; if this
-	// process is killed in that window the on-disk config.json ends up
-	// empty and obuspa crash-loops on next start, at the
-	// `die('config.json is required')` of the startup load.
-	if (!ubbf.write_file_atomic(CONFIG_PATH, content, CONFIG_MODE)) {
-		log_err('config_persist: failed to write %s', CONFIG_PATH);
-		return null;
-	}
-
-	dm.set_digest(new_hash);
-	dm.runtime_reload();
-
-	ubus?.event('bbf-dm.digest', { digest: new_hash });
-
-	return true;
+	return persisted;
 }
 
 /**
@@ -1002,7 +865,7 @@ function commit_rollback(previous, persisted) {
 		log_err('transaction: restoring the config from before the transaction');
 		dm.set_config(previous);
 		if (config_persist() == null) {
-			config_load();
+			dm.config_load(CONFIG_PATH);
 			apply_pending = true;
 		}
 	}
@@ -1050,7 +913,7 @@ export function trans_commit() {
 		return rc;
 
 	orders_compute(dm.config(), orders_before);
-	names_compute(dm.config());
+	dm.names_compute();
 	firewall_reconcile(full_model, dm.config());
 	schedule_refs_prune(dm.config());
 
@@ -1063,7 +926,7 @@ export function trans_commit() {
 	// change would be gone after a restart.
 	if (persisted == null) {
 		log_err('transaction: commit not persisted, restoring the stored config');
-		config_load();
+		dm.config_load(CONFIG_PATH);
 		hooks_run(abort_hooks, 'abort hook');
 		return -1;
 	}
@@ -1105,11 +968,11 @@ export function trans_commit() {
  */
 function config_replace(config) {
 	let before = order_snapshot(dm.config());
-	config_pins_take(config);
+	ubbf.config_pins_take(config);
 	dm.set_config(config);
 
 	orders_compute(dm.config(), before);
-	names_compute(dm.config());
+	dm.names_compute();
 	firewall_reconcile(full_model, dm.config());
 	schedule_refs_prune(dm.config());
 
@@ -1211,7 +1074,7 @@ function config_restore(file_path, done) {
 	return write_gate.write(() => config_replace_or_rollback(file.config), done);
 }
 
-config_restore_hook_set(config_restore);
+ubbf.config_restore_hook_set(config_restore);
 
 /**
  * Finds an operation handler for a given path.
@@ -1571,35 +1434,21 @@ export function list_operations() {
 
 
 /**
- * Describes one member of the schema of a model entry.
- *
- * @param {object} entry - Model entry
- * @param {string} pattern - Object pattern of the entry
- * @param {string} name - Member name
- * @returns {object|null} Facts as `schema_utils.param_info()` returns them
- */
-function entry_param_info(entry, pattern, name) {
-	return (type(entry?.schema) == 'string')
-		? ubbf.schema_param_info(entry.schema, name)
-		: schema_utils.param_info(entry, name);
-}
-
-/**
  * Describes one parameter of an object pattern, or a command or an event
  * that a module adds to it.
  *
  * @param {string} pattern - Object pattern, a key of the model
  * @param {string} name - Parameter name
- * @returns {object|null} Facts as `schema_utils.param_info()` returns them
+ * @returns {object|null} Facts as `ubbf.schema_param_info()` returns them
  */
 function pattern_param_info(pattern, name) {
-	let info = entry_param_info(full_model[pattern], pattern, name);
+	let info = ubbf.schema_param_info(full_model[pattern]?.schema, name);
 
 	if (info)
 		return info;
 
 	for (let extension in (member_extensions[pattern] ?? [])) {
-		info = entry_param_info(extension, pattern, name);
+		info = ubbf.schema_param_info(extension?.schema, name);
 		if (info?.command)
 			return info;
 	}
@@ -1613,10 +1462,10 @@ function pattern_param_info(pattern, name) {
  * Built on request rather than kept, because the core reads it once at start
  * and a copy held for the life of the agent costs memory.
  *
- * @returns {object} `{ objects, events }` as `schema_utils.extract()` returns
+ * @returns {object} `{ objects, events }` as `ubbf.schema_extract()` returns
  */
 export function schema_build() {
-	return schema_utils.extract(full_model, entry_members);
+	return ubbf.schema_extract(full_model, entry_members);
 };
 
 /**
@@ -1695,54 +1544,6 @@ export function object_writable(path) {
 };
 
 /**
- * Flattens a resolved subtree into leaf paths. Keys beginning with a dot are
- * the tree's own metadata, not parameters.
- *
- * @param {object} node - Subtree node
- * @param {string} prefix - Path prefix including the trailing dot
- * @param {object} out - Destination for `<path>: <value>` entries
- */
-function tree_leaves(node, prefix, out) {
-	for (let key, val in node) {
-		if (substr(key, 0, 1) == '.')
-			continue;
-		let full = prefix + key;
-		if (type(val) == 'object')
-			tree_leaves(val, full + '.', out);
-		else
-			out[full] = val;
-	}
-}
-
-/**
- * Expands a `*` instance wildcard into one path per row of the object
- * before it. A later wildcard expands within each row.
- *
- * @param {string} path - Path that may carry `*` instance segments
- * @returns {array} Paths without wildcards; empty when the object has no rows
- */
-export function wildcard_expand(path) {
-	let star = index(path, '*');
-	if (star < 0)
-		return [ path ];
-
-	let prefix = substr(path, 0, star);
-	let rest = substr(path, star + 1);
-	let subtree = dm.get_subtree_with_state(prefix);
-	if (type(subtree) != 'object')
-		return [];
-
-	let out = [];
-	for (let key in keys(subtree)) {
-		if (!is_instance(key))
-			continue;
-		push(out, ...wildcard_expand(prefix + key + rest));
-	}
-
-	return out;
-};
-
-/**
  * Expands leaf and partial paths into their leaf values.
  *
  * @param {array} paths - Leaf paths, partial paths with a trailing dot, or
@@ -1756,7 +1557,7 @@ export function paths_expand(paths) {
 	let expanded = [];
 
 	for (let p in paths)
-		push(expanded, ...wildcard_expand(p));
+		push(expanded, ...dm.wildcard_expand(p));
 
 	for (let p in expanded) {
 		if (substr(p, -1) == '.') {
@@ -1772,7 +1573,7 @@ export function paths_expand(paths) {
 				push(unknown, p);
 				continue;
 			}
-			tree_leaves(subtree, p, leaves);
+			ubbf.tree_leaves(subtree, p, leaves);
 			continue;
 		}
 		leaves[p] = null;
@@ -1878,31 +1679,6 @@ function runtime_del(path) {
 }
 
 /**
- * Gives the number of a row that a controller adds to a table whose
- * runtime rows the instance map numbers, so that a row the CPE finds later
- * never gets it.
- *
- * @param {string} table - Table path with the numbers of its parent rows
- * @param {number} floor - One above the highest stored row
- * @returns {number|null} The number, or null for a table the map does not
- *                        number
- */
-function add_number(table, floor) {
-	return instance_table_known(table) ? instance_next(table, floor) : null;
-}
-
-/**
- * Adds an instance to a table of the configuration.
- *
- * @param {string} path - Object path of the table
- * @returns {number} The new instance number, or 0 when the path is invalid
- *                   or the table is full
- */
-export function object_add(path) {
-	return dm.object_add(path, add_number);
-};
-
-/**
  * Deletes an instance: through the table handler's `del` hook when it takes
  * the row, else from the configuration.
  *
@@ -1991,7 +1767,7 @@ function operations_run(operations) {
 				result.success = false;
 				result.reason = 'invalid_path';
 			} else {
-				let instance = object_add(op.path);
+				let instance = dm.object_add(op.path);
 				if (!instance) {
 					result.success = false;
 					result.reason = 'max_instances';
@@ -2100,7 +1876,7 @@ export function config_write(job, done) {
  * @returns {boolean} True when the config was loaded
  */
 export function config_reload() {
-	if (!config_load())
+	if (!dm.config_load(CONFIG_PATH))
 		return false;
 	commit_hooks_run();
 	return true;
@@ -2146,11 +1922,7 @@ export function get_webui_data(path, role) {
 if (!stat(RUNTIME_DIR))
 	mkdir(RUNTIME_DIR);
 
-// config_load() sets the baseline over the canonical serialisation, matching
-// config_persist()'s comparison; hashing the raw file bytes instead makes
-// every load look changed and forces a persist + apply per DM load (one per
-// CWMP session).
-if (!config_load())
+if (!dm.config_load(CONFIG_PATH))
 	die('config.json is required');
 
 /**
@@ -2175,7 +1947,7 @@ function extract_callbacks(model) {
 writefile(RUNTIME_DIR + '/callbacks.json', sprintf('%.J\n', extract_callbacks(full_model)));
 
 orders_compute(dm.config(), null);
-names_compute(dm.config());
+dm.names_compute();
 firewall_reconcile(full_model, dm.config());
 schedule_refs_prune(dm.config());
 

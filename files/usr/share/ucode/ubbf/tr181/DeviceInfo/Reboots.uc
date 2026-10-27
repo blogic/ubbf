@@ -2,10 +2,10 @@
 
 import * as fs from 'fs';
 import * as ubus from 'ubus';
-import { datetime_format } from 'ubbf.utils.helpers';
+import { datetime_format } from 'ubbf';
 import * as ubbf from 'ubbf';
 import { entries_find, json_state_load } from 'ubbf.device.common';
-import { instance_ids, instance_id_rows } from 'ubbf.utils.instance-map';
+import { instance_ids, instance_id_rows } from 'ubbf';
 
 const REBOOTS_PATH = '/etc/ubbf/reboots.json';
 const BOOT_CYCLE_PATH = '/tmp/ubbf/boot-cycle';

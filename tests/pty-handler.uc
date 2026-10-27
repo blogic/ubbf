@@ -26,7 +26,7 @@ function assert_eq(name, got, expected) {
 
 let api = {
 	ubbf,
-	utils: { logging: { log_warn: () => null } },
+	utils: {},
 	schema: (k) => k,
 	model: {},
 	operations: {}

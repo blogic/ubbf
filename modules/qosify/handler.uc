@@ -6,8 +6,8 @@
 
 const ubbf = ubbf_module.ubbf;
 const model = ubbf_module.model;
-const cache_call = ubbf_module.utils.cache.call;
-const log_warn = ubbf_module.utils.logging.log_warn;
+const cache_call = ubbf_module.ubbf.cache_call;
+const log_warn = ubbf_module.ubbf.log_warn;
 
 const ubus = require('ubus');
 

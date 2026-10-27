@@ -4,10 +4,10 @@ import * as fs from 'fs';
 import * as rtnl from 'rtnl';
 import * as ubus from 'ubus';
 import * as uloop from 'uloop';
-import { log_err } from 'ubbf.utils.logging';
+import { log_err } from 'ubbf';
 import {
 	MAIN_TABLE, SOURCE_TABLE_BASE, SOURCE_TABLE_MAX, source_table_contents
-} from 'ubbf.utils.routing';
+} from 'ubbf';
 
 const CONFIG_PATH = '/etc/ubbf/config.json';
 const SYNC_DELAY = 250;

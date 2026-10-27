@@ -3,8 +3,8 @@
 import * as ubus from 'ubus';
 import * as ubbf from 'ubbf';
 import { readfile } from 'fs';
-import { log_warn } from 'ubbf.utils.logging';
-import { instance_ids } from 'ubbf.utils.instance-map';
+import { log_warn } from 'ubbf';
+import { instance_ids } from 'ubbf';
 
 const DEFAULT_MAX_ENTRIES = 100;
 

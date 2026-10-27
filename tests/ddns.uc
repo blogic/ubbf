@@ -9,7 +9,6 @@
 
 import * as ubbf from 'ubbf';
 import { mkdir, writefile, unlink } from 'fs';
-import { datetime_format } from 'ubbf.utils.helpers';
 
 let pass = 0, fail = 0;
 
@@ -26,11 +25,9 @@ writefile('/usr/share/ddns/default/dyndns.org.json',
 	'{ "name": "dyndns.org", "ipv4": { "url": "http://[USERNAME]:[PASSWORD]@members.dyndns.org/v3/update?hostname=[DOMAIN]" } }');
 
 const api = {
-	ubbf,
+	ubbf: proto({ upstream_interface_ref: () => 'Device.IP.Interface.1' }, ubbf),
 	utils: {
-		'dm-version': { dm_visible: () => true },
-		helpers: { datetime_format, upstream_interface_ref: () => 'Device.IP.Interface.1' },
-		logging: { log_warn: () => null }
+		'dm-version': { dm_visible: () => true }
 	},
 	schema: (k) => k,
 	model: {}

@@ -12,8 +12,7 @@ import * as fs from 'fs';
 import * as ubus from 'ubus';
 import * as uloop from 'uloop';
 import * as ubbf from 'ubbf';
-import { log_info, log_err } from 'ubbf.utils.logging';
-import { instance_map_readonly } from 'ubbf.utils.instance-map';
+import { log_info, log_err } from 'ubbf';
 
 const CONFIG_PATH = '/etc/ubbf/config.json';
 const MODULES_DIR = '/usr/share/ucode/ubbf/modules';
@@ -26,7 +25,7 @@ const AUTHENTICATOR_SUFFIX = '.hostapd';
 const STATION_GONE = [ 'disassoc', 'deauth', 'local-deauth', 'inactive-deauth' ];
 
 let certificates = {};
-include(`${MODULES_DIR}/security/certificates.uc`, { certificates, instance_map: instance_map_readonly });
+include(`${MODULES_DIR}/security/certificates.uc`, { certificates });
 
 let ieee8021x = {};
 include(`${MODULES_DIR}/ieee8021x/shared.uc`, { ieee8021x, certificates });

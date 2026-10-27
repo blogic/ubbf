@@ -9,9 +9,7 @@
 
 import * as ubbf from 'ubbf';
 import { AccessControl } from 'ubbf.schemas.Hosts';
-import {
-	schedule_state, start_time_valid, week_seconds, schedule_ref_set, schedule_refs_prune
-} from 'ubbf.utils.schedule';
+import { schedule_refs_check, schedule_refs_prune } from 'ubbf';
 
 let pass = 0, fail = 0;
 
@@ -32,7 +30,6 @@ printf('schemas: %s\n', table ? 'compiled table' : 'objects');
 
 const api = {
 	ubbf,
-	utils: { schedule: { schedule_state, start_time_valid, week_seconds } },
 	schema: (k) => table ? `schedules.${k}` : schemas[k],
 	schema_defaults: (k) => table ? ubbf.schema_defaults(`schedules.${k}`) : schemas[k]?.defaults,
 	model: {},
@@ -46,7 +43,8 @@ api.model['Device.Hosts'] = {};
 api.model['Device.Hosts.AccessControl'] = {};
 api.model['Device.Hosts.AccessControl.{i}'] = {
 	schema: AccessControl,
-	set: schedule_ref_set(null, () => installed)
+	// the ScheduleRef check that datamodel.uc installs on such an entry
+	set: (ctx) => (ctx.param == 'ScheduleRef') ? schedule_refs_check(ctx.value, ctx.root, installed) : 0
 };
 
 let dm = ubbf.create();

@@ -1,7 +1,7 @@
 'use strict';
 
 import * as ubus from 'ubus';
-import { call as cache_call } from 'ubbf.utils.cache';
+import { cache_call } from 'ubbf';
 
 /**
  * Fetches the per-netdev "seconds since last operstate change" table

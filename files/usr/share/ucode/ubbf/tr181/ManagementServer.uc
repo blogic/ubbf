@@ -5,8 +5,8 @@ import * as ubus from 'ubus';
 import { readfile } from 'fs';
 import * as ubbf from 'ubbf';
 import { cr_url_compose } from 'ubbf.utils.cr_url';
-import { log_err } from 'ubbf.utils.logging';
-import { datetime_format } from 'ubbf.utils.helpers';
+import { log_err } from 'ubbf';
+import { datetime_format } from 'ubbf';
 
 const CWMP_STATE_PATH = '/etc/ubbf/cwmp-state.json';
 

@@ -12,15 +12,13 @@ const model = ubbf_module.model;
 const operations = ubbf_module.operations;
 const schema = ubbf_module.schema;
 const schema_defaults = ubbf_module.schema_defaults;
-const cache_call = ubbf_module.utils.cache.call;
-const cache_invalidate = ubbf_module.utils.cache.invalidate;
-const logging = ubbf_module.utils.logging;
-const instance_map = ubbf_module.utils['instance-map'];
+const cache_call = ubbf_module.ubbf.cache_call;
+const cache_invalidate = ubbf_module.ubbf.cache_invalidate;
 
 const ubus = require('ubus');
 
 let certificates = {};
-include('../security/certificates.uc', { certificates, instance_map });
+include('../security/certificates.uc', { certificates });
 
 let ieee8021x = {};
 include('shared.uc', { ieee8021x, certificates });
@@ -311,7 +309,7 @@ function clients_get(instance, netdev) {
 	let clients = netdev ? cache_call(hostapd_clients_fetch, netdev) : {};
 	let table = sprintf('Device.IEEE8021x.X_UBBF_Authenticator.%d.client', instance);
 
-	return instance_map.instance_rows(table, sort(keys(clients)), (mac) => ({
+	return ubbf.instance_rows(table, sort(keys(clients)), (mac) => ({
 		mac_address: uc(mac),
 		authorized: clients[mac]?.authorized ? 'true' : 'false'
 	}), true);
@@ -409,7 +407,7 @@ function eaptls_set(ctx) {
 function command_netdev(root, instances) {
 	let state = supplicant_state(root, supplicant_row(root, instances?.[0]));
 	if (!state.eapol) {
-		logging.log_err('IEEE8021x Supplicant.%d: no supplicant runs', instances?.[0]);
+		ubbf.log_err('IEEE8021x Supplicant.%d: no supplicant runs', instances?.[0]);
 		return null;
 	}
 

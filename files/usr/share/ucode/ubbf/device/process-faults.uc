@@ -1,7 +1,7 @@
 'use strict';
 
 import * as ubus from 'ubus';
-import { log_info } from 'ubbf.utils.logging';
+import { log_info } from 'ubbf';
 import {
 	firmware_version_get, faults_state_normalise, fault_entry_should_store,
 	entries_remove, json_state_load, json_state_save

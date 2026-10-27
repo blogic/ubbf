@@ -43,7 +43,7 @@ function render_config() {
 		for (let inst, key_data in auth_keys) {
 			if (!key_data.Key || key_data.Key == '')
 				continue;
-			if (!ssh_keys.key_acceptable(key_data.Key, accepted, min_rsa_bits)) {
+			if (!key_acceptable(key_data.Key, accepted, min_rsa_bits)) {
 				warn('ssh: not deploying AuthorizedKey %s: malformed, or not an accepted type or size', inst);
 				continue;
 			}

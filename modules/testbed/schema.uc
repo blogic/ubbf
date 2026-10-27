@@ -6,7 +6,7 @@
 // datamodel.uc and by schema-gen.uc; there is nothing to export from an
 // included file, so each definition is added to that object.
 
-// No defaults: dm.c merges them into the config the get handler reads, so a
+// No defaults: dm_get.c merges them into the config the get handler reads, so a
 // default Slot would hide the factory slot (factory.uc). The handler returns
 // 0 where neither is present.
 schemas.Testbed = {

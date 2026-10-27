@@ -17,7 +17,7 @@ const ddns = {};
 include(sourcepath(0, true) + '/common.uc', {
 	ubbf,
 	dm_visible: utils['dm-version'].dm_visible,
-	upstream_interface_ref: utils.helpers.upstream_interface_ref,
+	upstream_interface_ref: ubbf.upstream_interface_ref,
 	ddns
 });
 
@@ -168,7 +168,7 @@ function server_set(ctx) {
 	if (ok)
 		return 0;
 
-	utils.logging.log_warn('DynamicDNS.Server.%s.%s: value refused', ctx.instance, ctx.param);
+	ubbf.log_warn('DynamicDNS.Server.%s.%s: value refused', ctx.instance, ctx.param);
 	return -USP_ERR_INVALID_VALUE;
 }
 
@@ -355,7 +355,7 @@ function hostname_get(ctx) {
 	let client = ctx.parent ?? {};
 
 	if (!ubbf.to_bool(row.Enable) || !ubbf.to_bool(client.Enable))
-		return { ...row, Status: 'Disabled', LastUpdate: utils.helpers.datetime_format(0) };
+		return { ...row, Status: 'Disabled', LastUpdate: ubbf.datetime_format(0) };
 
 	let client_instance = client_instance_of(ctx.root, client);
 	let sections = client_sections(ctx.root, client, client_instance)[ctx.instance] ?? [];
@@ -375,7 +375,7 @@ function hostname_get(ctx) {
 	let uptime = uptime_get();
 	let last = (updated != null && uptime != null) ? time() - (uptime - updated) : 0;
 
-	return { ...row, Status: status, LastUpdate: utils.helpers.datetime_format(last) };
+	return { ...row, Status: status, LastUpdate: ubbf.datetime_format(last) };
 }
 
 /**

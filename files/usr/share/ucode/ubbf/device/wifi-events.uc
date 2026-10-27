@@ -3,7 +3,7 @@
 import * as ubus from 'ubus';
 import * as ubbf from 'ubbf';
 import { md5 } from 'digest';
-import { log_info } from 'ubbf.utils.logging';
+import { log_info } from 'ubbf';
 
 const CHANNEL_HISTORY_BUFFER_MAX = 64;
 // hostapd fires the CSA within a few seconds of a radar trigger; widen if

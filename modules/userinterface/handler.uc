@@ -9,9 +9,7 @@ const model = ubbf_module.model;
 const operations = ubbf_module.operations;
 const on_commit = ubbf_module.on_commit;
 const config_apply = ubbf_module.config_apply;
-const datetime_format = ubbf_module.utils.helpers.datetime_format;
-const logging = ubbf_module.utils.logging;
-const instance_map = ubbf_module.utils['instance-map'];
+const datetime_format = ubbf_module.ubbf.datetime_format;
 
 const fs = require('fs');
 const ubus = require('ubus');
@@ -20,7 +18,7 @@ const uloop = require('uloop');
 const schema = ubbf_module.schema;
 
 let certificates = {};
-include('../security/certificates.uc', { certificates, instance_map });
+include('../security/certificates.uc', { certificates });
 
 const CONFIG_PATH = '/etc/ubbf/config.json';
 
@@ -207,9 +205,9 @@ function sessions_numbered(row) {
 	for (let s in sessions)
 		by_id[s.id] = s;
 
-	instance_map.instance_prune(table, ids);
+	ubbf.instance_prune(table, ids);
 
-	return instance_map.instance_rows(table, ids, (id) => by_id[id]);
+	return ubbf.instance_rows(table, ids, (id) => by_id[id]);
 }
 
 /**
@@ -297,7 +295,7 @@ function timeout_parse(value) {
  * @returns {number|null} code
  */
 function websession_refuse(instances, reason, code) {
-	logging.log_err('userinterface: HTTPAccess.%s.CreateWebSession(): %s', instances[0], reason);
+	ubbf.log_err('userinterface: HTTPAccess.%s.CreateWebSession(): %s', instances[0], reason);
 	return code;
 }
 
@@ -384,7 +382,7 @@ function session_delete(input, command_key, instances, root) {
 		fs.unlink(`${WEBSESSIONS_DIR}/${session.id}.json`);
 
 	if (!ubus.event('ubbf-ui.session-delete', { id: session.id }))
-		logging.log_err('userinterface: failed to send the delete of session %s', session.id);
+		ubbf.log_err('userinterface: failed to send the delete of session %s', session.id);
 
 	return {};
 }
@@ -471,9 +469,9 @@ function row_expire(alias) {
 		let path = `Device.UserInterface.HTTPAccess.${inst}.Enable`;
 		let report = (result) => {
 			if (result?.success)
-				logging.log_info('userinterface: %s disabled, AutoDisableDuration ran out', path);
+				ubbf.log_info('userinterface: %s disabled, AutoDisableDuration ran out', path);
 			else
-				logging.log_err('userinterface: failed to disable %s', path);
+				ubbf.log_err('userinterface: failed to disable %s', path);
 		};
 		let result = config_apply([ { op: 'set', path, value: 'false' } ], report);
 		if (result)
@@ -500,7 +498,7 @@ function expiry_timer_add(alias, deadline) {
 		try {
 			row_expire(alias);
 		} catch (e) {
-			logging.log_exception('userinterface: expiry', e);
+			ubbf.log_exception('userinterface: expiry', e);
 		}
 	});
 }
@@ -534,7 +532,7 @@ function websessions_prune(record) {
 		if (entry.alias in record)
 			continue;
 		if (!fs.unlink(`${WEBSESSIONS_DIR}/${entry.id}.json`))
-			logging.log_err('userinterface: failed to remove web session %s', entry.id);
+			ubbf.log_err('userinterface: failed to remove web session %s', entry.id);
 	}
 }
 
@@ -562,7 +560,7 @@ function activation_sync() {
 	if (sprintf('%J', record) != sprintf('%J', prev)) {
 		fs.mkdir(ACTIVATION_DIR, 0755);
 		if (!fs.writefile(ACTIVATION_PATH, sprintf('%.J\n', record)))
-			logging.log_err('userinterface: failed to write %s', ACTIVATION_PATH);
+			ubbf.log_err('userinterface: failed to write %s', ACTIVATION_PATH);
 	}
 
 	expiry_arm(record);

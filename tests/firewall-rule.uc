@@ -1,7 +1,7 @@
 // Host test of Device.Firewall.Chain.{i}.Rule.{i}: the render of the
 // *Exclude flags, the interface excludes and ExpiryDate in
 // render/templates/firewall-chains.uc, and the refusal of what fw4 cannot
-// express (utils/firewall.uc chain_rule_unsupported(), the Rule handler in
+// express (chain_rule_unsupported() of ubbf.so, the Rule handler in
 // tr181/Firewall.uc). Run from the repository root with the native module
 // built for the host; tests/hosts/ holds stand-ins for iwinfo and udebug:
 //   ucode -L "$PWD/tests/hosts/*.uc" -L "$PWD/files/usr/share/ucode" \
@@ -10,9 +10,10 @@
 
 import * as ubbf from 'ubbf';
 import * as h from 'ubbf.render.uci_helpers';
-import { chain_rule_unsupported, chain_rules_ordered, chain_rule_set_matches, firewall_set_resolve } from 'ubbf.utils.firewall';
-import { firewall_reconcile } from 'ubbf.utils.firewall-reconcile';
-import { firewall_rules_expired, firewall_expiry_next } from 'ubbf.utils.firewall-expiry';
+import {
+	chain_rule_unsupported, chain_rules_ordered, chain_rule_set_matches, firewall_set_resolve,
+	firewall_reconcile, firewall_rules_expired, firewall_expiry_next
+} from 'ubbf';
 import { model } from 'ubbf.tr181.Firewall';
 
 global.USP_ERR_INVALID_VALUE = 7012;

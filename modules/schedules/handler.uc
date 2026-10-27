@@ -6,10 +6,9 @@
 //
 // The core handles ScheduleRef of every object: the check on a write, the
 // removal of references to a deleted row, and the rules in the firewall
-// templates (utils/schedule.uc). This module provides the table.
+// templates (schedule.c of ubbf.so). This module provides the table.
 
 const ubbf = ubbf_module.ubbf;
-const utils = ubbf_module.utils;
 const model = ubbf_module.model;
 const schema = ubbf_module.schema;
 const schema_defaults = ubbf_module.schema_defaults;
@@ -50,8 +49,8 @@ function schedule_get(ctx) {
 		return null;
 
 	let row = { ...schema_defaults('Schedule'), ...ctx.config };
-	let state = utils.schedule.schedule_state(row, stack_enabled(ctx.root),
-		utils.schedule.week_seconds(localtime(time())));
+	let state = ubbf.schedule_state(row, stack_enabled(ctx.root),
+		ubbf.week_seconds(localtime(time())));
 
 	return { ...row, Status: state.status, TimeLeft: sprintf('%d', state.time_left) };
 }
@@ -64,7 +63,7 @@ function schedule_get(ctx) {
  * @returns {number} 0, or -USP_ERR_INVALID_VALUE to refuse
  */
 function schedule_set(ctx) {
-	if (ctx.param == 'StartTime' && !utils.schedule.start_time_valid(ctx.value))
+	if (ctx.param == 'StartTime' && !ubbf.start_time_valid(ctx.value))
 		return -USP_ERR_INVALID_VALUE;
 
 	return 0;

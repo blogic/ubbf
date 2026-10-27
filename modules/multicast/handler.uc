@@ -39,7 +39,7 @@ function service_running_fetch(name) {
  * @returns {boolean} True while the daemon runs
  */
 function backend_running() {
-	return utils.cache.call(service_running_fetch, 'omcproxy');
+	return ubbf.cache_call(service_running_fetch, 'omcproxy');
 }
 
 /**
@@ -79,7 +79,7 @@ function mdb_fetch() {
  * @returns {array} MDB entries of the group
  */
 function group_clients_get(group) {
-	return filter(utils.cache.call(mdb_fetch),
+	return filter(ubbf.cache_call(mdb_fetch),
 		(e) => e.grp == group && e.port != e.dev);
 }
 

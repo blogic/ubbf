@@ -2,42 +2,124 @@
 /* Copyright (C) 2026 John Crispin <john@phrozen.org> */
 
 #include "ubbf.h"
+#include "bindings.h"
 
 /**
  * Splits a dotted path in place into segment pointers.
  *
- * Trims leading and trailing dots, then replaces each interior `.` with a
- * NUL terminator and stores a pointer to each resulting segment in `parts`.
- * The input buffer is modified in place; segment pointers remain valid only
- * for the lifetime of `buf`.
+ * By default one leading and one trailing dot are dropped, so
+ * `Device.IP.` and `.Device.IP` give the segments of `Device.IP`. A path
+ * that is empty after that has no segments. An empty segment, as in
+ * `Device..IP` or `Device.IP..`, makes the path invalid.
+ *
+ * With `PATH_SPLIT_KEEP_EMPTY` every dot separates two segments and empty
+ * segments stay, as with the ucode `split(path, ".")`: `Device.` gives
+ * `Device` and an empty segment, and an empty path one empty segment.
+ *
+ * A path with more segments than `max_parts` is invalid in both modes.
+ * After an invalid path, `buf` and `parts` hold partial results.
  *
  * @param buf        mutable path buffer (modified in place)
- * @param parts      output array of segment pointers
- * @param max_parts  capacity of `parts`; surplus segments are dropped
- * @return           number of segments written into `parts`
+ * @param parts      output array of segment pointers into `buf`
+ * @param max_parts  capacity of `parts`
+ * @param flags      0 or `PATH_SPLIT_KEEP_EMPTY`
+ * @return           number of segments, or -1 when the path is invalid
  */
 int
-path_split(char *buf, char **parts, int max_parts)
+path_split(char *buf, char **parts, int max_parts, unsigned int flags)
 {
+	bool keep_empty = flags & PATH_SPLIT_KEEP_EMPTY;
+	char *p = buf, *next;
 	int count = 0;
-	char *p, *next;
+	size_t len;
 
-	while (*buf == '.')
-		buf++;
+	if (!keep_empty) {
+		if (*p == '.')
+			p++;
 
-	char *end = buf + strlen(buf) - 1;
-	while (end > buf && *end == '.')
-		*end-- = '\0';
+		len = strlen(p);
+		if (len && p[len - 1] == '.')
+			p[len - 1] = '\0';
 
-	for (p = buf; count < max_parts && p && *p; count++) {
+		if (!*p)
+			return 0;
+	}
+
+	for (; p; p = next) {
 		next = strchr(p, '.');
 		if (next)
 			*next++ = '\0';
-		parts[count] = p;
-		p = next;
+
+		if ((!*p && !keep_empty) || count >= max_parts)
+			return -1;
+
+		parts[count++] = p;
 	}
 
 	return count;
+}
+
+/**
+ * Joins the segments `parts[from]` to `parts[to - 1]` with dots.
+ *
+ * @param parts  segments
+ * @param from   index of the first segment
+ * @param to     index after the last segment
+ * @return       new string that the caller frees; empty when `from >= to`
+ */
+char *
+path_join(char **parts, int from, int to)
+{
+	size_t len = 0, n;
+	char *path, *p;
+
+	for (int i = from; i < to; i++)
+		len += strlen(parts[i]) + 1;
+
+	path = p = xalloc(len + 1);
+
+	for (int i = from; i < to; i++) {
+		if (i > from)
+			*p++ = '.';
+
+		n = strlen(parts[i]);
+		memcpy(p, parts[i], n);
+		p += n;
+	}
+
+	return path;
+}
+
+/**
+ * Splits a dotted path with `path_split()` into an array of strings.
+ *
+ * @param vm    ucode VM context
+ * @param path  dotted path
+ * @return      new array of the segments, or NULL when the path is invalid
+ */
+uc_value_t *
+path_parts_new(uc_vm_t *vm, const char *path)
+{
+	char *buf = xstrdup(path), **parts;
+	uc_value_t *arr = NULL;
+	int max = 1, cnt;
+
+	for (const char *p = path; *p; p++)
+		max += (*p == '.');
+
+	parts = xcalloc(max, sizeof(*parts));
+	cnt = path_split(buf, parts, max, 0);
+
+	if (cnt >= 0) {
+		arr = ucv_array_new(vm);
+		for (int i = 0; i < cnt; i++)
+			ucv_array_push(arr, ucv_string_new(parts[i]));
+	}
+
+	free(parts);
+	free(buf);
+
+	return arr;
 }
 
 /**
@@ -168,49 +250,26 @@ path_resolve_aliases(uc_value_t *config, char **parts, int cnt,
 }
 
 /**
- * Splits a dotted TR-181 path string into an array of segment strings.
- *
- * Leading and trailing dots are trimmed before splitting; an empty result
- * is returned for empty or all-dot input.
+ * Splits a dotted TR-181 path string into an array of segment strings,
+ * with the rules of `path_split()`.
  *
  * @param vm     ucode VM context
  * @param nargs  number of arguments (1 expected: the path string)
- * @return       array of segment strings, or empty array on bad input
+ * @return       array of segment strings, or empty array on bad input or
+ *               an invalid path
  */
 uc_value_t *
 uc_ubbf_path_to_parts(uc_vm_t *vm, size_t nargs)
 {
 	uc_value_t *path_val = uc_fn_arg(0);
-	const char *path, *p, *end;
 	uc_value_t *arr;
-	size_t len;
 
 	if (ucv_type(path_val) != UC_STRING)
 		return ucv_array_new(vm);
 
-	path = ucv_string_get(path_val);
-	len = ucv_string_length(path_val);
+	arr = path_parts_new(vm, ucv_string_get(path_val));
 
-	while (len > 0 && path[0] == '.')
-		path++, len--;
-	while (len > 0 && path[len - 1] == '.')
-		len--;
-
-	if (len == 0)
-		return ucv_array_new(vm);
-
-	end = path + len;
-	arr = ucv_array_new(vm);
-
-	for (p = path; p < end; ) {
-		const char *dot = memchr(p, '.', end - p);
-		size_t part_len = dot ? (size_t)(dot - p) : (size_t)(end - p);
-
-		ucv_array_push(arr, ucv_string_new_length(p, part_len));
-		p += part_len + 1;
-	}
-
-	return arr;
+	return arr ? arr : ucv_array_new(vm);
 }
 
 /**
@@ -255,11 +314,53 @@ uc_ubbf_navigate(uc_vm_t *vm, size_t nargs)
 }
 
 /**
+ * Compares the first `cnt` segments of a pattern with the segments of a
+ * path. A `{i}` takes any segment; with `numeric` set only a decimal
+ * number, as strtoll() reads it.
+ *
+ * @param pattern  pattern segments, at least `cnt`
+ * @param parts    path segments, at least `cnt`
+ * @param cnt      number of segments to compare
+ * @param numeric  whether a `{i}` takes only a number
+ * @param inst     receives the number at the last `{i}`, 0 without one;
+ *                 may be NULL
+ * @return         true when every segment agrees
+ */
+bool
+pattern_parts_match(char **pattern, char **parts, int cnt, bool numeric,
+		    int64_t *inst)
+{
+	int64_t num = 0;
+	char *endp;
+
+	for (int i = 0; i < cnt; i++) {
+		if (strcmp(pattern[i], "{i}")) {
+			if (strcmp(pattern[i], parts[i]))
+				return false;
+			continue;
+		}
+
+		if (!numeric)
+			continue;
+
+		num = strtoll(parts[i], &endp, 10);
+		if (*endp || endp == parts[i])
+			return false;
+	}
+
+	if (inst)
+		*inst = num;
+
+	return true;
+}
+
+/**
  * Tests whether a TR-181 pattern can match the given prefix path.
  *
  * Returns true when the pattern is at least as deep as the path and every
  * non-`{i}` pattern segment equals the corresponding path segment. The
- * special inputs empty path and `Device` always match.
+ * special inputs empty path and `Device` always match; an invalid path or
+ * pattern (see `path_split()`) matches nothing.
  *
  * @param vm     ucode VM context
  * @param nargs  number of arguments (2 expected: pattern, path)
@@ -272,10 +373,10 @@ uc_ubbf_pattern_matches_path(uc_vm_t *vm, size_t nargs)
 	uc_value_t *path_val = uc_fn_arg(1);
 	const char *pat_str, *path_str;
 	char *pat_buf, *path_buf;
-	char *pat_parts[64], *path_parts[64];
+	char *pat_parts[PATH_PARTS_MAX], *path_parts[PATH_PARTS_MAX];
 	int pat_cnt = 0, path_cnt = 0;
 	size_t path_len;
-	int i;
+	bool match;
 
 	if (ucv_type(pattern_val) != UC_STRING || ucv_type(path_val) != UC_STRING)
 		return ucv_boolean_new(false);
@@ -291,28 +392,14 @@ uc_ubbf_pattern_matches_path(uc_vm_t *vm, size_t nargs)
 	pat_buf = xstrdup(pat_str);
 	path_buf = xstrdup(path_str);
 
-	pat_cnt = path_split(pat_buf, pat_parts, 64);
-	path_cnt = path_split(path_buf, path_parts, 64);
-
-	if (pat_cnt < path_cnt) {
-		free(pat_buf);
-		free(path_buf);
-		return ucv_boolean_new(false);
-	}
-
-	for (i = 0; i < path_cnt; i++) {
-		if (strcmp(pat_parts[i], "{i}") == 0)
-			continue;
-		if (strcmp(pat_parts[i], path_parts[i]) != 0) {
-			free(pat_buf);
-			free(path_buf);
-			return ucv_boolean_new(false);
-		}
-	}
+	pat_cnt = path_split(pat_buf, pat_parts, PATH_PARTS_MAX, 0);
+	path_cnt = path_split(path_buf, path_parts, PATH_PARTS_MAX, 0);
+	match = path_cnt >= 0 && pat_cnt >= path_cnt &&
+		pattern_parts_match(pat_parts, path_parts, path_cnt, false, NULL);
 
 	free(pat_buf);
 	free(path_buf);
-	return ucv_boolean_new(true);
+	return ucv_boolean_new(match);
 }
 
 /**
@@ -331,35 +418,44 @@ uc_ubbf_tr181_ref_parse(uc_vm_t *vm, size_t nargs)
 {
 	uc_value_t *path_val = uc_fn_arg(0);
 	uc_value_t *prefix_val = uc_fn_arg(1);
-	const char *path, *prefix;
-	size_t plen, prelen;
-	char *endp;
-	long long inst;
+	int64_t inst;
 
 	if (ucv_type(path_val) != UC_STRING || ucv_type(prefix_val) != UC_STRING)
 		return NULL;
 
-	path = ucv_string_get(path_val);
-	prefix = ucv_string_get(prefix_val);
-	plen = ucv_string_length(path_val);
-	prelen = ucv_string_length(prefix_val);
+	inst = tr181_ref_instance(ucv_string_get(path_val), ucv_string_get(prefix_val));
 
-	if (plen < prelen + 2)
-		return NULL;
-	if (strncmp(path, prefix, prelen) != 0)
-		return NULL;
-	if (path[prelen] != '.')
-		return NULL;
+	return inst > 0 ? ucv_int64_new(inst) : NULL;
+}
 
-	inst = strtoll(path + prelen + 1, &endp, 10);
-	if (endp == path + prelen + 1)
-		return NULL;
-	if (*endp != '\0' && !(*endp == '.' && endp[1] == '\0'))
-		return NULL;
-	if (inst < 1)
-		return NULL;
+/**
+ * C API of tr181_ref_parse(): the instance number of a reference
+ * `<prefix>.<n>` or `<prefix>.<n>.`.
+ *
+ * @param path    the reference
+ * @param prefix  table path without the trailing dot
+ * @return        the instance number, or -1 when the reference is not one
+ *                to a row of the table
+ */
+int64_t
+tr181_ref_instance(const char *path, const char *prefix)
+{
+	size_t prelen = strlen(prefix), len;
+	const char *num;
+	char key[24];
 
-	return ucv_int64_new(inst);
+	if (strncmp(path, prefix, prelen) != 0 || path[prelen] != '.')
+		return -1;
+
+	num = path + prelen + 1;
+	len = strcspn(num, ".");
+	if (len >= sizeof(key) || (num[len] == '.' && num[len + 1] != '\0'))
+		return -1;
+
+	memcpy(key, num, len);
+	key[len] = '\0';
+
+	return key_is_instance(key) ? strtoll(key, NULL, 10) : -1;
 }
 
 /**

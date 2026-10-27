@@ -17,7 +17,6 @@ const uci = require('uci');
 const users = require('users');
 
 const schema = ubbf_module.schema;
-const instance_map = utils['instance-map'];
 
 // The accounts this module manages are rows of the configuration, and the
 // commit hook writes them to /etc/passwd, /etc/shadow and /etc/group. Every
@@ -252,7 +251,7 @@ function group_name_by_ref(ref, group_rows, gr) {
 		return name_valid(name) ? name : null;
 	}
 
-	let entry = entry_find(gr, 'groupname', instance_map.instance_lookup(GROUP_TABLE, n));
+	let entry = entry_find(gr, 'groupname', ubbf.instance_lookup(GROUP_TABLE, n));
 	if (!entry || names_index(group_rows, 'Groupname')[entry.groupname])
 		return null;
 
@@ -354,7 +353,7 @@ function system_group_numbers(root, gr) {
 	let group_idx = names_index(rows_get(stored), 'Groupname');
 	let names = map(filter(gr, (g) => !group_idx[g.groupname]), (g) => g.groupname);
 
-	return instance_map.instance_numbers(GROUP_TABLE, names, instance_map.instance_floor(stored));
+	return ubbf.instance_numbers(GROUP_TABLE, names, ubbf.instance_floor(stored));
 }
 
 /**
@@ -371,8 +370,8 @@ function system_users_get(root) {
 	let group_numbers = system_group_numbers(root, gr);
 	let shells = users.shells_get();
 	let accounts = filter(users.passwd_get_all() ?? [], (pw) => !user_idx[pw.username]);
-	let numbers = instance_map.instance_numbers(USER_TABLE, map(accounts, (pw) => pw.username),
-		instance_map.instance_floor(stored));
+	let numbers = ubbf.instance_numbers(USER_TABLE, map(accounts, (pw) => pw.username),
+		ubbf.instance_floor(stored));
 	let sp_map = {};
 	let rows = {};
 
@@ -629,7 +628,7 @@ function password_stage(ctx, inst) {
 	let empty = ctx.value == null || ctx.value == '';
 	let hash = (empty && !password_optional(ctx.root, inst)) ? LOCKED : users.password_hash(ctx.value ?? '');
 	if (!hash) {
-		utils.logging.log_err('users: password hashing failed for User.%s', inst);
+		ubbf.log_err('users: password hashing failed for User.%s', inst);
 		return -USP_ERR_INTERNAL_ERROR;
 	}
 
@@ -760,7 +759,7 @@ function role_set(ctx) {
  */
 function system_row_del(ctx) {
 	let table = (index(ctx.path, GROUP_TABLE + '.') == 0) ? GROUP_TABLE : USER_TABLE;
-	return (instance_map.instance_lookup(table, ctx.instance) != null) ? -USP_ERR_OBJECT_NOT_DELETABLE : null;
+	return (ubbf.instance_lookup(table, ctx.instance) != null) ? -USP_ERR_OBJECT_NOT_DELETABLE : null;
 }
 
 /**
@@ -799,7 +798,7 @@ function groups_sync(state, rows, owned) {
 			entry = entry_find(state.gr, 'groupname', name);
 
 		if (entry && !renamed && index(values(owned), name) < 0) {
-			utils.logging.log_err('users: group %s exists already, Group.%s not applied', name, inst);
+			ubbf.log_err('users: group %s exists already, Group.%s not applied', name, inst);
 			continue;
 		}
 
@@ -900,7 +899,7 @@ function users_sync(state, rows, owned) {
 
 		let pw = entry_find(state.pw, 'username', name);
 		if (pw && !renamed && index(values(owned), name) < 0) {
-			utils.logging.log_err('users: account %s exists already, User.%s not applied', name, inst);
+			ubbf.log_err('users: account %s exists already, User.%s not applied', name, inst);
 			continue;
 		}
 
@@ -972,7 +971,7 @@ function group_enabled(ref, group_rows) {
 
 	let row = group_rows[sprintf('%d', n)];
 	if (!row)
-		return instance_map.instance_lookup(GROUP_TABLE, n) != null;
+		return ubbf.instance_lookup(GROUP_TABLE, n) != null;
 
 	return row.Enable == 'true';
 }
@@ -1053,7 +1052,7 @@ function root_sync(state) {
 
 	let fresh = users.password_hash(password);
 	if (!fresh) {
-		utils.logging.log_err('users: password hashing failed for root');
+		ubbf.log_err('users: password hashing failed for root');
 		return;
 	}
 
@@ -1116,7 +1115,7 @@ function accounts_sync() {
 		shadow: entries_changed(state.sp, before.sp)
 	};
 	if ((changed.group || changed.passwd || changed.shadow) && !users.accounts_set(changed)) {
-		utils.logging.log_err('users: failed to write the account files, they are unchanged');
+		ubbf.log_err('users: failed to write the account files, they are unchanged');
 		return;
 	}
 

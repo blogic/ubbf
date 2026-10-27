@@ -1,4 +1,4 @@
-// Host test of utils/instance-map.uc and the stable numbering of
+// Host test of the instance map of ubbf.so (map.c) and the stable numbering of
 // Device.Optical, Cellular and USB tables (TR-369 R-ARC.8). The map
 // lives in /tmp/ubbf, and the test checks that /etc/ubbf holds none, so
 // run it in a private mount namespace; tests/instance-map/ holds
@@ -11,11 +11,29 @@
 'use strict';
 
 import * as fs from 'fs';
+import * as ubbf from 'ubbf';
 import {
-	instance_numbers, instance_key, instance_rows, instance_prune, instance_next,
-	instance_table_known, instance_floor, instance_pins, instance_pins_load, instance_lookup,
-	instance_retire, instance_numbers_known, instance_map_readonly, instance_stack, instance_number
-} from 'ubbf.utils.instance-map';
+	instance_numbers, instance_key, instance_rows, instance_prune, instance_floor,
+	instance_lookup, instance_retire, instance_numbers_known, instance_stack, instance_number,
+	instance_map_own, config_pins_take
+} from 'ubbf';
+
+// config.json brings its pins to the map as the agent loads or replaces it.
+function pins_load(pins) {
+	config_pins_take({ _instances: pins });
+}
+
+// The pins that config.json gets for a tree, as the agent persists it.
+function pins_of(root) {
+	let d = ubbf.create();
+
+	d.set_config(json(sprintf('%J', root)));
+	d.config_persist('/tmp/ubbf/pins.json', '/tmp/ubbf/pins-runtime.json', 0600);
+	return json(fs.readfile('/tmp/ubbf/pins.json'))._instances ?? {};
+}
+
+// This process numbers rows, as the agent does.
+instance_map_own(true);
 
 let pass = 0, fail = 0;
 
@@ -57,10 +75,6 @@ check('prune of an unknown table writes nothing', json(fs.readfile('/tmp/ubbf/in
 check('floor of a stored table', instance_floor({ '1': {}, '3': {}, Alias: 'x' }), 4);
 check('floor of an empty table', instance_floor(null), 1);
 check('a found row follows the stored rows', instance_numbers('F', [ 'x' ], 4), { x: 4 });
-check('a known table', [ instance_table_known('F'), instance_table_known('G') ], [ true, false ]);
-check('an add takes the next number', instance_next('F', 4), 5);
-check('a found row after an add', instance_numbers('F', [ 'x', 'y' ], 4), { x: 4, y: 6 });
-check('an add above a higher floor', instance_next('F', 9), 9);
 
 // Stored rows keep their numbers and take the items they claim; the other
 // items follow the highest stored row in their order.
@@ -81,17 +95,17 @@ let pconfig = { Device: {
 	P: { Row: { '2': { Enable: 'false' } } },
 	Q: { Ref: 'Device.P.Row.3.Name,Device.P.Row.2.Sub.1', Text: 'Device.P.Row.9' }
 } };
-check('pins of stored and named rows', instance_pins(pconfig),
+check('pins of stored and named rows', pins_of(pconfig),
 	{ 'Device.P.Row': { '2': 'k2', '3': 'k3' }, 'Device.P.Row.2.Sub': { '1': 's1' } });
-check('no pins without mapped rows', instance_pins({ Device: { Q: { Ref: 'Device.Z.1' } } }), {});
+check('no pins without mapped rows', pins_of({ Device: { Q: { Ref: 'Device.Z.1' } } }), {});
 
 // A table that the map does not hold stands for one after a reboot.
-instance_pins_load({ 'Device.R.Row': { '2': 'k2', '3': 'k3' } });
+pins_load({ 'Device.R.Row': { '2': 'k2', '3': 'k3' } });
 check('a pinned key keeps its number after a reboot', instance_numbers('Device.R.Row', [ 'k3', 'k9' ]), { k3: 3, k9: 4 });
 check('a pinned key that is absent keeps its number reserved', instance_numbers('Device.R.Row', [ 'k2' ]), { k2: 2 });
-instance_pins_load({ 'Device.R.Row': { '4': 'k5' } });
+pins_load({ 'Device.R.Row': { '4': 'k5' } });
 check('a pin yields to a key that holds its number', instance_numbers('Device.R.Row', [ 'k5' ]), { k5: 5 });
-instance_pins_load({ 'Device.R.Row': { '7': 'k3' } });
+pins_load({ 'Device.R.Row': { '7': 'k3' } });
 check('a pin moves its key to the pinned number', instance_numbers('Device.R.Row', [ 'k3' ]), { k3: 7 });
 
 // A row gone for good keeps its number under a key no row has.
@@ -102,9 +116,12 @@ check('the retired number stays taken', instance_lookup('Device.B.Bundle', 3), '
 
 // Another process only reads the numbers, and sees what the agent writes.
 check('known numbers only', instance_numbers_known('Device.B.Bundle', [ 'lab', 'new' ]), { lab: 4 });
-check('read-only numbering numbers nothing',
-	[ instance_map_readonly.instance_numbers('Device.B.Bundle', [ 'new' ]), instance_lookup('Device.B.Bundle', 5) ],
-	[ {}, null ]);
+instance_map_own(false);
+check('another process numbers nothing',
+	[ instance_numbers('Device.B.Bundle', [ 'lab', 'new' ]), instance_lookup('Device.B.Bundle', 5),
+	  instance_retire('Device.B.Bundle', 'lab'), instance_lookup('Device.B.Bundle', 4) ],
+	[ { lab: 4 }, null, null, 'lab' ]);
+instance_map_own(true);
 let file = json(fs.readfile('/tmp/ubbf/instance-map.json'));
 file['Device.W.Row'] = { next: 3, keys: { w: { n: 2 } } };
 fs.writefile('/tmp/ubbf/instance-map.json', sprintf('%J', file));
@@ -140,15 +157,12 @@ fs.unlink('/etc/ubbf/config.json');
 // Device.Optical.Interface: two optical cages, a setting on cage A, then
 // cage A loses its optical SFP.
 const api = {
-	ubbf: require('ubbf'),
+	ubbf: proto({ cache_call: (fn, ...args) => fn(...args), ethtool_properties_get: () => ({}),
+		upstream_interface_ref: () => null,
+		sfp_type_resolve: (sfps, ident, type) => type, sfp_allowed: () => true }, require('ubbf')),
 	utils: {
-		cache: { call: (fn, ...args) => fn(...args) },
-		'instance-map': { instance_numbers, instance_key, instance_rows },
 		'dm-version': { dm_visible: () => true },
-		ethtool: { ethtool_properties_get: () => ({}) },
-		netdev_change: { last_change_get: () => '0' },
-		helpers: { upstream_interface_ref: () => null },
-		sfp: { sfp_type_resolve: (sfps, ident, type) => type, sfp_allowed: () => true }
+		netdev_change: { last_change_get: () => '0' }
 	},
 	schema: (k) => k,
 	model: {},
@@ -197,10 +211,10 @@ check('row 1 has its setting', crows['1'].Enable, 'false');
 global.mm_modems = [ { generic: { device: '/sys/devB' } } ];
 check('a leaving modem does not shift the other', keys(cellular.get({ root: croot })), [ '2' ]);
 
-let cpins = instance_pins(croot);
+let cpins = pins_of(croot);
 check('the stored row pins its modem', cpins['Device.Cellular.Interface'], { '1': '/sys/devA' });
 fs.unlink('/tmp/ubbf/instance-map.json');
-instance_pins_load(cpins);
+pins_load(cpins);
 global.mm_modems = [ { generic: { device: '/sys/devB' } }, { generic: { device: '/sys/devA' } } ];
 crows = cellular.get({ root: croot });
 check('the pinned modem keeps row 1 after a reboot', [ crows['1'].X_UBBF_Device, crows['2'].X_UBBF_Device ], [ '/sys/devA', '/sys/devB' ]);

@@ -16,7 +16,9 @@
 
 import * as fs from 'fs';
 import * as ubbf from 'ubbf';
-import * as instance_map from 'ubbf.utils.instance-map';
+
+// This process numbers rows, as the agent does.
+ubbf.instance_map_own(true);
 
 let pass = 0, fail = 0;
 
@@ -37,12 +39,8 @@ system('OPENSSL_CONF=/dev/null openssl req -x509 -newkey ec -pkeyopt ec_paramgen
 let applied = [];
 
 const api = {
-	ubbf,
-	utils: {
-		cache: { call: (fn, ...args) => fn(...args), invalidate: () => null },
-		logging: { log_warn: () => null },
-		'instance-map': instance_map
-	},
+	ubbf: proto({ cache_call: (fn, ...args) => fn(...args), cache_invalidate: () => null }, ubbf),
+	utils: {},
 	schema: (k) => k,
 	schema_defaults: () => ({}),
 	config_apply: (ops) => { push(applied, ...ops); return { success: true }; },

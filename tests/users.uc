@@ -8,7 +8,10 @@
 //     -L "$PWD/files/usr/share/ucode" -L "<host build>/*.so" tests/users.uc'
 'use strict';
 
-import { instance_numbers, instance_lookup, instance_floor } from 'ubbf.utils.instance-map';
+import * as ubbf_lib from 'ubbf';
+
+// This process numbers rows, as the agent does.
+ubbf_lib.instance_map_own(true);
 
 let pass = 0, fail = 0;
 
@@ -22,8 +25,8 @@ let precommit;
 let etc_avail_kib = 1024;
 
 const api = {
-	ubbf: { statvfs_info: () => ({ avail_kib: etc_avail_kib }), to_bool: (v) => v === true || v == 'true' || v == '1' },
-	utils: { 'instance-map': { instance_numbers, instance_lookup, instance_floor } },
+	ubbf: proto({ statvfs_info: () => ({ avail_kib: etc_avail_kib }), to_bool: (v) => v === true || v == 'true' || v == '1' }, ubbf_lib),
+	utils: {},
 	schema: (k) => k,
 	on_commit: () => null,
 	on_precommit: (cb) => { precommit = cb; },

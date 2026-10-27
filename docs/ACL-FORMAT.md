@@ -38,7 +38,7 @@ Each role has one ACL file:
 
 The `ubbf-ui` package installs the files: `operator.json` and `guest.json` always, and `admin.json` of the web UI variant of the image (the user UI or the lab UI).
 
-`acl_role_load()` in `acl.uc` accepts only a RoleName of lower-case letters, digits, `_` and `-`, at most 32 characters, because the name becomes part of the path. `webui_acl_get()` in `datamodel.uc` also requires an enabled `Device.Users.Role` row with that RoleName. A disabled role, an unknown role and a role without a file give `ACL_NOT_FOUND`.
+`acl_role_load()` of `ubbf.so` (`acl.c`) accepts only a RoleName of lower-case letters, digits, `_` and `-`, at most 32 characters, because the name becomes part of the path. `webui_acl_get()` in `datamodel.uc` also requires an enabled `Device.Users.Role` row with that RoleName. A disabled role, an unknown role and a role without a file give `ACL_NOT_FOUND`.
 
 The daemon that publishes `bbf-dm` keeps each ACL in a cache after the first successful load. Nothing clears this cache. If you change a file, you must restart that daemon.
 

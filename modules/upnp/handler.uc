@@ -18,7 +18,7 @@ const IP_INTERFACE_RE = regexp('^Device\\.IP\\.Interface\\.[0-9]+$');
 // TR-181 has no size on the URL data type; TR-106 gives URL 2048.
 const URL_MAX = 2048;
 
-const clamp = utils.helpers.text_clamp;
+const clamp = ubbf.text_clamp;
 
 /**
  * Fetches one discovery table from upnpd.
@@ -37,7 +37,7 @@ function discovery_table_fetch(table) {
  * @returns {array} Rows
  */
 function table_get(table) {
-	return utils.cache.call(discovery_table_fetch, table);
+	return ubbf.cache_call(discovery_table_fetch, table);
 }
 
 /**
@@ -56,7 +56,7 @@ function discovery_counts_fetch() {
  * @returns {string} Count
  */
 function table_count(table) {
-	return sprintf('%d', utils.cache.call(discovery_counts_fetch)?.[table] ?? 0);
+	return sprintf('%d', ubbf.cache_call(discovery_counts_fetch)?.[table] ?? 0);
 }
 
 /**
@@ -154,7 +154,7 @@ function discovery_row_to_object(row, ctx, defaults) {
 		Location: clamp(row.location, URL_MAX),
 		Server: clamp(row.server, 256),
 		Host: host_ref(ctx, row),
-		LastUpdate: utils.helpers.datetime_format(row.last_update)
+		LastUpdate: ubbf.datetime_format(row.last_update)
 	};
 }
 

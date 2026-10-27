@@ -8,7 +8,7 @@
 //     -L "<host build>/*.so" tests/wifi-key.uc
 'use strict';
 
-import { wpa_psk } from 'ubbf.utils.wifi';
+import { wpa_psk } from 'ubbf';
 import { model } from 'ubbf.tr181.WiFi';
 
 global.USP_ERR_INVALID_VALUE = 7012;

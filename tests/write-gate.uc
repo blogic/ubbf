@@ -1,9 +1,10 @@
-// Host test of the write gate. Run from the repository root; the search path
-// has to be absolute:
-//   ucode -L "$PWD/files/usr/share/ucode" tests/write-gate.uc
+// Host test of the write gate. Run from the repository root with the native
+// module built for the host; the search path has to be absolute:
+//   ucode -L "$PWD/files/usr/share/ucode" -L "<host build>/*.so" tests/write-gate.uc
 'use strict';
 
-import { write_gate_create, write_reply } from 'ubbf.utils.write-gate';
+import { write_gate_create } from 'ubbf';
+import { write_reply } from 'ubbf.utils.write-gate';
 
 let pass_count = 0;
 let fail_count = 0;
@@ -25,7 +26,7 @@ function fixture() {
 	let t = { busy: false, scheduled: [], errors: [], log: [] };
 
 	t.gate = write_gate_create(() => t.busy,
-		(fn) => push(t.scheduled, fn),
+		(gate) => push(t.scheduled, () => gate.drain()),
 		(what, e) => push(t.errors, what));
 
 	t.job = (name) => () => {
@@ -92,7 +93,7 @@ function test_queue_runs_in_order() {
 	t.run_scheduled();
 	assert_eq('order: jobs ran in arrival order', t.log, [ 'a', 'b', 'c' ]);
 	assert_eq('order: done in arrival order', done, [ 'a', 'b', 'c' ]);
-	assert_eq('order: queue empty', length(t.gate.queue), 0);
+	assert_eq('order: queue empty', t.gate.write(t.job('d'), () => null)?.name, 'd');
 }
 
 function test_release_after_abort_and_commit() {
@@ -131,7 +132,7 @@ function test_drain_stops_when_held_again() {
 	t.run_scheduled();
 
 	assert_eq('held: drain stopped after the job took the gate', t.log, [ 'a' ]);
-	assert_eq('held: second write still queued', length(t.gate.queue), 1);
+	assert_eq('held: second write still queued', done, [ 'a' ]);
 
 	t.busy = false;
 	t.gate.release();
@@ -159,7 +160,7 @@ function test_failing_write_does_not_block_others() {
 	assert_eq('fail: other results delivered', [ done[1].name, done[2].name ], [ 'b', 'd' ]);
 	assert_eq('fail: both exceptions reported', t.errors,
 		[ 'queued write', 'queued write reply' ]);
-	assert_eq('fail: queue empty', length(t.gate.queue), 0);
+	assert_eq('fail: queue empty', t.gate.write(t.job('e'), () => null)?.name, 'e');
 }
 
 function test_write_inside_queued_write_runs_at_once() {

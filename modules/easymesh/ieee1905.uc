@@ -6,7 +6,7 @@
 const ubbf = ubbf_module.ubbf;
 const model = ubbf_module.model;
 const schema = ubbf_module.schema;
-const cache_call = ubbf_module.utils.cache.call;
+const cache_call = ubbf_module.ubbf.cache_call;
 
 const ubus = require('ubus');
 

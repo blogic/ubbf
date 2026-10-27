@@ -2,14 +2,15 @@
 
 import * as fs from 'fs';
 import * as ubus from 'ubus';
-import { log_err, log_exception } from 'ubbf.utils.logging';
+import { log_err, log_exception } from 'ubbf';
 import * as ubbf from 'ubbf';
 import { netifd_status_get } from 'ubbf.utils.netifd';
 import { last_change_get } from 'ubbf.utils.netdev_change';
-import { prefix_length_nibble_check } from 'ubbf.utils.dhcp';
-import { ifstats_get, ifstats_aggregate, ifstats_reset, ip_interface_members } from 'ubbf.utils.ifstats';
-import { link_local_addresses_get, ipv6_prefix_rows } from 'ubbf.utils.ipv6';
-import { instance_stack } from 'ubbf.utils.instance-map';
+import { ifstats_get, ifstats_aggregate, ifstats_reset } from 'ubbf.utils.ifstats';
+import { ip_interface_members, prefix_length_nibble_check } from 'ubbf';
+import { ipv6_prefix_rows } from 'ubbf.utils.ipv6';
+import { link_local_addresses_get } from 'ubbf';
+import { instance_stack } from 'ubbf';
 
 /**
  * Brings an IPv6 address or prefix to one spelling, so that a stored value

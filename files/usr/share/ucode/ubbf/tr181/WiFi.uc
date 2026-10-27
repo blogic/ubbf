@@ -3,13 +3,18 @@
 import * as ubus from 'ubus';
 import * as iwinfo from 'iwinfo';
 import {
-	channel_width_to_bandwidth,
 	wireless_status_get,
 	ssid_ifname_get,
 	assoclist_get,
 	stations_numbered,
 	iwinfo_update,
-	phy_for_band,
+	phy_for_band
+} from 'ubbf.utils.wifi';
+import {
+	log_info,
+	log_debug,
+	log_err,
+	channel_width_to_bandwidth,
 	band_to_uci,
 	phy_supported_bands,
 	phy_supported_standards,
@@ -18,8 +23,7 @@ import {
 	phy_max_ssids,
 	phy_max_bitrate,
 	wpa_psk
-} from 'ubbf.utils.wifi';
-import { log_info, log_debug, log_err } from 'ubbf.utils.logging';
+} from 'ubbf';
 import { popen_async } from 'ubbf.utils.process';
 import { last_change_get } from 'ubbf.utils.netdev_change';
 import { ifstats_get, ifstats_basic_get, ifstats_reset } from 'ubbf.utils.ifstats';

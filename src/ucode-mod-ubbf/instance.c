@@ -1,17 +1,20 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 /* Copyright (C) 2026 John Crispin <john@phrozen.org> */
 
+#include <inttypes.h>
 #include <limits.h>
 
 #include "ubbf.h"
+#include "bindings.h"
 
 /* ---- instance utilities ------------------------------------------------ */
 
 /**
  * Reports whether a key string is a valid TR-181 instance number.
  *
- * Instance numbers are positive base-10 integers that fit an int, with no
- * surrounding whitespace, sign or fractional part.
+ * Instance numbers are positive base-10 integers that fit an int, in
+ * canonical form: no leading zero, no surrounding whitespace, sign or
+ * fractional part.
  *
  * @param key  key string to test (may be NULL)
  * @return     true when the key is a valid instance identifier
@@ -23,7 +26,7 @@ key_is_instance(const char *key)
 	long val;
 
 	/* strtol() accepts leading whitespace and a sign */
-	if (!key || *key < '0' || *key > '9')
+	if (!key || *key < '1' || *key > '9')
 		return false;
 
 	errno = 0;
@@ -63,7 +66,7 @@ uc_ubbf_is_instance_key(uc_vm_t *vm, size_t nargs)
  * @return     number of instance-numbered children
  */
 int
-count_instance_keys(uc_value_t *obj)
+instance_keys_count(uc_value_t *obj)
 {
 	int count = 0;
 
@@ -89,7 +92,7 @@ count_instance_keys(uc_value_t *obj)
 uc_value_t *
 uc_ubbf_count_instances(uc_vm_t *vm, size_t nargs)
 {
-	return ucv_int64_new(count_instance_keys(uc_fn_arg(0)));
+	return ucv_int64_new(instance_keys_count(uc_fn_arg(0)));
 }
 
 /**
@@ -105,19 +108,33 @@ uc_ubbf_count_instances(uc_vm_t *vm, size_t nargs)
 uc_value_t *
 uc_ubbf_find_next_instance(uc_vm_t *vm, size_t nargs)
 {
-	uc_value_t *obj = uc_fn_arg(0);
+	return ucv_int64_new(instance_next_free(uc_fn_arg(0)));
+}
+
+/**
+ * The lowest positive instance number that a container does not hold as
+ * a key; a key with a null value counts as held.
+ *
+ * @param obj  container object; anything else gives 1
+ * @return     next free instance number
+ */
+int64_t
+instance_next_free(uc_value_t *obj)
+{
 	char key_buf[24];
-	long expected;
+	int64_t expected;
+	bool found;
 
 	if (ucv_type(obj) != UC_OBJECT)
-		return ucv_int64_new(1);
+		return 1;
 
 	/* generated keys are canonical decimal, so a direct lookup per
 	 * candidate finds the lowest gap without a bounded scan buffer */
 	for (expected = 1;; expected++) {
-		snprintf(key_buf, sizeof(key_buf), "%ld", expected);
-		if (!ucv_object_get(obj, key_buf, NULL))
-			return ucv_int64_new(expected);
+		snprintf(key_buf, sizeof(key_buf), "%" PRId64, expected);
+		ucv_object_get(obj, key_buf, &found);
+		if (!found)
+			return expected;
 	}
 }
 
@@ -131,8 +148,7 @@ uc_ubbf_find_next_instance(uc_vm_t *vm, size_t nargs)
  * descends into object children regardless of whether the immediate child is
  * instance-keyed: nested `{i}` tables under intermediate non-`{i}` containers
  * (e.g. `Device.LLDP.Discovery.Device.{i}.DeviceInformation.VendorSpecific.{i}`)
- * are only reachable that way. Built paths use a 1024-byte stack buffer;
- * truncation is currently silent.
+ * are only reachable that way.
  *
  * @param vm_arr    output array that receives instance path strings
  * @param base_path path prefix prepended to each emitted key
@@ -140,25 +156,84 @@ uc_ubbf_find_next_instance(uc_vm_t *vm, size_t nargs)
  * @param vm        ucode VM context
  */
 void
-do_find_nested_instances(uc_value_t *vm_arr, const char *base_path,
-			 uc_value_t *data, uc_vm_t *vm)
+nested_instances_find(uc_value_t *vm_arr, const char *base_path,
+		      uc_value_t *data, uc_vm_t *vm)
 {
+	char *path;
+
 	if (ucv_type(data) != UC_OBJECT)
 		return;
 
 	ucv_object_foreach(data, key, child) {
-		char path_buf[1024];
-
 		if (ucv_type(child) != UC_OBJECT)
 			continue;
 
-		snprintf(path_buf, sizeof(path_buf), "%s.%s", base_path, key);
+		xasprintf(&path, "%s.%s", base_path, key);
 
 		if (key_is_instance(key))
-			ucv_array_push(vm_arr, ucv_string_new(path_buf));
+			ucv_array_push(vm_arr, ucv_string_new(path));
 
-		do_find_nested_instances(vm_arr, path_buf, child, vm);
+		nested_instances_find(vm_arr, path, child, vm);
+		free(path);
 	}
+}
+
+/**
+ * Joins a path prefix and one segment; the prefix may be empty.
+ *
+ * @param prefix   path so far
+ * @param segment  segment to append
+ * @return         new string that the caller frees
+ */
+static char *
+path_child_new(const char *prefix, const char *segment)
+{
+	char *path;
+
+	if (*prefix)
+		xasprintf(&path, "%s.%s", prefix, segment);
+	else
+		path = xstrdup(segment);
+
+	return path;
+}
+
+/**
+ * Pushes the path of a singleton object that the data tree lacks: the
+ * pattern segments from `parts_idx` on, appended to `current_path`. A
+ * pattern that still has a `{i}` there names no single object, and
+ * nothing is pushed.
+ *
+ * @param result        output array
+ * @param pattern_parts pattern segments as a string array
+ * @param parts_idx     index of the first missing segment
+ * @param current_path  path prefix accumulated so far
+ */
+static void
+singleton_path_push(uc_value_t *result, uc_value_t *pattern_parts,
+		    size_t parts_idx, const char *current_path)
+{
+	size_t plen = ucv_array_length(pattern_parts);
+	char *path = xstrdup(current_path), *next;
+	uc_value_t *rp;
+
+	for (size_t i = parts_idx; i < plen; i++) {
+		rp = ucv_array_get(pattern_parts, i);
+		if (ucv_type(rp) != UC_STRING)
+			continue;
+
+		if (!strcmp(ucv_string_get(rp), "{i}")) {
+			free(path);
+			return;
+		}
+
+		next = path_child_new(path, ucv_string_get(rp));
+		free(path);
+		path = next;
+	}
+
+	ucv_array_push(result, ucv_string_new(path));
+	free(path);
 }
 
 /**
@@ -172,9 +247,6 @@ do_find_nested_instances(uc_value_t *vm_arr, const char *base_path,
  * `current_path`) is still emitted so callers can hydrate the entry from
  * schema defaults later.
  *
- * Path strings are built into a 512-byte stack buffer; truncation is
- * silent.
- *
  * @param result        output array that receives matching path strings
  * @param pattern_parts pattern segments as a string array
  * @param data          current data subtree being walked
@@ -183,14 +255,14 @@ do_find_nested_instances(uc_value_t *vm_arr, const char *base_path,
  * @param vm            ucode VM context
  */
 void
-do_collect_instances(uc_value_t *result, uc_value_t *pattern_parts,
-		     uc_value_t *data, size_t parts_idx,
-		     const char *current_path, uc_vm_t *vm)
+instances_collect(uc_value_t *result, uc_value_t *pattern_parts,
+		  uc_value_t *data, size_t parts_idx,
+		  const char *current_path, uc_vm_t *vm)
 {
 	size_t plen = ucv_array_length(pattern_parts);
-	char child_path[512];
-	uc_value_t *part_val;
+	uc_value_t *part_val, *child;
 	const char *part;
+	char *child_path;
 
 	if (parts_idx >= plen) {
 		ucv_array_push(result, ucv_string_new(current_path));
@@ -206,100 +278,28 @@ do_collect_instances(uc_value_t *result, uc_value_t *pattern_parts,
 		if (ucv_type(data) != UC_OBJECT)
 			return;
 
-		ucv_object_foreach(data, key, child) {
+		ucv_object_foreach(data, key, inst) {
 			if (!key_is_instance(key))
 				continue;
 
-			if (current_path[0])
-				snprintf(child_path, sizeof(child_path), "%s.%s",
-					 current_path, key);
-			else
-				snprintf(child_path, sizeof(child_path), "%s", key);
-
-			do_collect_instances(result, pattern_parts, child,
-					    parts_idx + 1, child_path, vm);
+			child_path = path_child_new(current_path, key);
+			instances_collect(result, pattern_parts, inst,
+					  parts_idx + 1, child_path, vm);
+			free(child_path);
 		}
 		return;
 	}
 
-	if (ucv_type(data) != UC_OBJECT) {
-		/* check if remaining pattern has more instances */
-		bool has_more = false;
-
-		for (size_t i = parts_idx; i < plen; i++) {
-			uc_value_t *p = ucv_array_get(pattern_parts, i);
-			if (ucv_type(p) == UC_STRING && strcmp(ucv_string_get(p), "{i}") == 0) {
-				has_more = true;
-				break;
-			}
-		}
-
-		if (!has_more) {
-			char singleton_path[512];
-			size_t off = 0;
-
-			if (current_path[0])
-				off = snprintf(singleton_path, sizeof(singleton_path),
-					       "%s", current_path);
-
-			for (size_t i = parts_idx; i < plen && off < sizeof(singleton_path) - 1; i++) {
-				uc_value_t *rp = ucv_array_get(pattern_parts, i);
-				const char *rs = ucv_string_get(rp);
-
-				if (rs)
-					off += snprintf(singleton_path + off,
-							sizeof(singleton_path) - off,
-							"%s%s", off > 0 ? "." : "", rs);
-			}
-
-			ucv_array_push(result, ucv_string_new(singleton_path));
-		}
-		return;
-	}
-
-	uc_value_t *child = ucv_object_get(data, part, NULL);
-
+	child = ucv_type(data) == UC_OBJECT ? ucv_object_get(data, part, NULL) : NULL;
 	if (!child) {
-		bool has_more = false;
-
-		for (size_t i = parts_idx; i < plen; i++) {
-			uc_value_t *p = ucv_array_get(pattern_parts, i);
-			if (ucv_type(p) == UC_STRING && strcmp(ucv_string_get(p), "{i}") == 0) {
-				has_more = true;
-				break;
-			}
-		}
-
-		if (!has_more) {
-			char singleton_path[512];
-			size_t off = 0;
-
-			if (current_path[0])
-				off = snprintf(singleton_path, sizeof(singleton_path),
-					       "%s", current_path);
-
-			for (size_t i = parts_idx; i < plen && off < sizeof(singleton_path) - 1; i++) {
-				uc_value_t *rp = ucv_array_get(pattern_parts, i);
-				const char *rs = ucv_string_get(rp);
-
-				if (rs)
-					off += snprintf(singleton_path + off,
-							sizeof(singleton_path) - off,
-							"%s%s", off > 0 ? "." : "", rs);
-			}
-
-			ucv_array_push(result, ucv_string_new(singleton_path));
-		}
+		singleton_path_push(result, pattern_parts, parts_idx, current_path);
 		return;
 	}
 
-	if (current_path[0])
-		snprintf(child_path, sizeof(child_path), "%s.%s", current_path, part);
-	else
-		snprintf(child_path, sizeof(child_path), "%s", part);
-
-	do_collect_instances(result, pattern_parts, child,
-			     parts_idx + 1, child_path, vm);
+	child_path = path_child_new(current_path, part);
+	instances_collect(result, pattern_parts, child,
+			  parts_idx + 1, child_path, vm);
+	free(child_path);
 }
 
 /**
@@ -328,9 +328,31 @@ uc_ubbf_collect_instances_for_pattern(uc_vm_t *vm, size_t nargs)
 	current_path = (ucv_type(path_val) == UC_STRING) ? ucv_string_get(path_val) : "";
 
 	result = ucv_array_new(vm);
-	do_collect_instances(result, pattern_parts, data, idx, current_path, vm);
+	instances_collect(result, pattern_parts, data, idx, current_path, vm);
 
 	return result;
+}
+
+/**
+ * Sets `<table>NumberOfEntries` of a parent object to the number of
+ * instance keys of the rows object, as a string.
+ *
+ * @param parent  object that holds the table; nothing happens for NULL
+ * @param table   table name
+ * @param rows    rows object of the table
+ */
+void
+entries_count_set(uc_value_t *parent, const char *table, uc_value_t *rows)
+{
+	char *key, count[16];
+
+	if (ucv_type(parent) != UC_OBJECT)
+		return;
+
+	xasprintf(&key, "%sNumberOfEntries", table);
+	snprintf(count, sizeof(count), "%d", instance_keys_count(rows));
+	ucv_object_add(parent, key, ucv_string_new(count));
+	free(key);
 }
 
 /**
@@ -350,22 +372,12 @@ uc_ubbf_entries_count_update(uc_vm_t *vm, size_t nargs)
 	uc_value_t *parent = uc_fn_arg(0);
 	uc_value_t *table_name_val = uc_fn_arg(1);
 	uc_value_t *container = uc_fn_arg(2);
-	const char *table_name;
-	char key_buf[128];
-	char val_buf[16];
-	int count;
 
 	if (ucv_type(parent) != UC_OBJECT ||
 	    ucv_type(table_name_val) != UC_STRING)
 		return NULL;
 
-	table_name = ucv_string_get(table_name_val);
-	count = count_instance_keys(container);
-
-	snprintf(key_buf, sizeof(key_buf), "%sNumberOfEntries", table_name);
-
-	snprintf(val_buf, sizeof(val_buf), "%d", count);
-	ucv_object_add(parent, key_buf, ucv_string_new(val_buf));
+	entries_count_set(parent, ucv_string_get(table_name_val), container);
 
 	return ucv_boolean_new(true);
 }
@@ -376,8 +388,8 @@ uc_ubbf_entries_count_update(uc_vm_t *vm, size_t nargs)
  * Builds a TR-181-style instance object by mapping over an array.
  *
  * For each item in `items`, calls `converter(item, index)` and stores the
- * result under the 1-based instance key. Items whose converter throws are
- * skipped silently.
+ * result under the 1-based instance key. An item whose converter throws
+ * is skipped; the exception is logged.
  *
  * @param vm     ucode VM context
  * @param nargs  number of arguments (2 expected: items array, converter fn)
@@ -401,19 +413,16 @@ uc_ubbf_enumerate_instances(uc_vm_t *vm, size_t nargs)
 	len = ucv_array_length(items);
 
 	for (size_t i = 0; i < len; i++) {
-		uc_value_t *item = ucv_array_get(items, i);
+		uc_value_t *index = ucv_int64_new(i);
+		uc_value_t *converted = callback_invoke(vm, converter, 2, ucv_array_get(items, i), index);
 		char key[24];
 
-		uc_vm_stack_push(vm, ucv_get(converter));
-		uc_vm_stack_push(vm, ucv_get(item));
-		uc_vm_stack_push(vm, ucv_int64_new(i));
+		ucv_put(index);
+		if (exception_log_clear(vm, "enumerate_instances converter"))
+			continue;
 
-		if (uc_vm_call(vm, false, 2) == EXCEPTION_NONE) {
-			uc_value_t *converted = uc_vm_stack_pop(vm);
-
-			snprintf(key, sizeof(key), "%zu", i + 1);
-			ucv_object_add(result, key, converted);
-		}
+		snprintf(key, sizeof(key), "%zu", i + 1);
+		ucv_object_add(result, key, converted);
 	}
 
 	return result;

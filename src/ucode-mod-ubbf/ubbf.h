@@ -37,120 +37,96 @@ struct constval {
 
 extern const struct constval dm_type_vals[];
 extern const size_t dm_type_vals_count;
+extern const struct constval routing_vals[];
+extern const size_t routing_vals_count;
+extern const struct constval curl_vals[];
+extern const size_t curl_vals_count;
 
-int path_split(char *buf, char **parts, int max_parts);
-bool path_resolve_aliases(uc_value_t *config, char **parts, int cnt,
-			  char *slot_buf, size_t slot_stride, int slot_max);
+/* Capacity of the segment arrays that path_split() fills. */
+#define PATH_PARTS_MAX		64
+#define PATH_SPLIT_KEEP_EMPTY	0x1
 
-bool key_is_instance(const char *key);
-int count_instance_keys(uc_value_t *obj);
-void do_find_nested_instances(uc_value_t *arr, const char *base_path,
-			      uc_value_t *data, uc_vm_t *vm);
-void do_collect_instances(uc_value_t *result, uc_value_t *pattern_parts,
-			  uc_value_t *data, size_t parts_idx,
-			  const char *current_path, uc_vm_t *vm);
+/* atomic.c */
+bool file_write_atomic(const char *path, const char *content, size_t len, mode_t mode);
+bool tmpfile_create(const char *prefix, const char *ext, char *path, size_t len);
 
-uc_value_t *deep_clone_value(uc_vm_t *vm, uc_value_t *val);
-uc_value_t *navigate_by_path(uc_vm_t *vm, uc_value_t *data, const char *path);
+/* coerce.c */
+bool value_to_bool(uc_value_t *val);
+bool value_to_int(uc_value_t *val, int64_t *out);
+bool loose_equal(uc_value_t *a, uc_value_t *b);
+bool value_is(uc_value_t *val, const char *s);
+bool value_loose_is(uc_value_t *val, const char *s);
+bool value_int_cut(uc_value_t *val, int64_t *out);
+uc_value_t *csv_list_new(uc_vm_t *vm, const char *csv, const char *filter_str);
 
-char *netdev_read(const char *ifname, const char *file, const char *def);
-const char *operstate_map(const char *state);
-void str_to_upper(char *s);
+/* config.c */
+uc_value_t *config_pins_take(uc_vm_t *vm, uc_value_t *config);
+char *config_content(uc_vm_t *vm, uc_value_t *config, uc_value_t *pins);
+uc_value_t *sha256_new(const char *s);
 
-/* utils.c */
-uc_value_t *uc_ubbf_path_to_parts(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_navigate(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_pattern_matches_path(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_to_bool(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_to_int(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_csv_to_list(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_ip_to_int(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_int_to_ip(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_cidr_to_netmask(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_netmask_to_cidr(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_shell_escape(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_iso8601_format(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_iso8601_format_usec(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_iso8601_local_format(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_ctx_config(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_alias_from_mac(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_alias_from_name(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_enumerate_instances(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_get_by_instance(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_name_sanitise(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_uci_value_sanitise(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_mac_is_valid(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_transfer_url_validate(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_mac_normalise(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_mac_from_duid(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_tr181_ref_parse(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_port_range_format(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_protocol_to_uci(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_freq_to_channel(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_antenna_count(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_ipv6_lifetime_status(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_tmpfile_name(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_write_file_atomic(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_counter_bump(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_arch_get(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_apk_version(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_statvfs_info(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_du_kib(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_ipv4_addr_to_object(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_ipv6_addr_to_object(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_ipv6_prefix_to_object(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_txpower_pct_to_dbm(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_wifi_operating_standard(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_cpu_stats(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_process_count(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_process_info(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_module_spawn(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_module_kill(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_leases_parse(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_curl_w_metrics_parse(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_ping_output_parse(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_traceroute_output_parse(uc_vm_t *vm, size_t nargs);
+/* diag.c */
+uc_value_t *curl_metrics_new(uc_vm_t *vm, uc_value_t *data);
 
-/* tree.c */
-uc_value_t *uc_ubbf_navigate_or_create(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_get(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_instances(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_enabled(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_interface_to_name(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_lower_layer_resolve(uc_vm_t *vm, size_t nargs);
+/* dhcp.c */
+uc_value_t *leases_new(uc_vm_t *vm);
+
+/* inet.c */
+bool ipv4_parse(const char *s, uint32_t *out);
+bool ip_prefix_match(const char *a, const char *b, int prefix);
 
 /* instance.c */
-uc_value_t *uc_ubbf_is_instance_key(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_count_instances(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_find_next_instance(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_collect_instances_for_pattern(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_entries_count_update(uc_vm_t *vm, size_t nargs);
+bool key_is_instance(const char *key);
+int64_t instance_next_free(uc_value_t *obj);
+int instance_keys_count(uc_value_t *obj);
+void entries_count_set(uc_value_t *parent, const char *table, uc_value_t *rows);
+void nested_instances_find(uc_value_t *arr, const char *base_path,
+			   uc_value_t *data, uc_vm_t *vm);
+void instances_collect(uc_value_t *result, uc_value_t *pattern_parts,
+		       uc_value_t *data, size_t parts_idx,
+		       const char *current_path, uc_vm_t *vm);
 
-/* sysfs.c */
-uc_value_t *uc_ubbf_readfile_trim(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_readfile_int(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_uptime_read(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_operstate_to_status(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_link_properties_get(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_ethernet_properties_get(uc_vm_t *vm, size_t nargs);
+/* log.c */
+void ubbf_log_init(const char *ident);
+void ubbf_log(int priority, const char *fmt, ...) __attribute__((format(printf, 2, 3)));
+void exception_log(uc_vm_t *vm, const char *where, uc_value_t *e);
+bool exception_log_clear(uc_vm_t *vm, const char *where);
 
-/* sysfs.c -- host discovery */
-uc_value_t *uc_ubbf_arp_parse(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_bridge_fdb_parse(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_ipv6_neigh_parse(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_hosts_merge(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_layer3_interface_find(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_host_primary_ip(uc_vm_t *vm, size_t nargs);
+/* mac.c */
+bool duid_mac_get(const char *s, size_t len, char mac[18]);
 
-void ipv6_expand_to_buf(const char *addr, char *result);
+/* map.c */
+int64_t instance_map_add_number(uc_vm_t *vm, const char *table, int64_t floor);
+uc_value_t *instance_pins_new(uc_vm_t *vm, uc_value_t *config);
+void instance_pins_seed(uc_vm_t *vm, uc_value_t *pins);
 
-/* dm.c */
-uc_value_t *uc_ubbf_create(uc_vm_t *vm, size_t nargs);
+/* netlink.c */
+struct nl_sock;
+struct nl_msg;
+bool nl_request_run(struct nl_sock *sock, struct nl_msg *msg,
+		    int (*valid)(struct nl_msg *, void *), void *ctx);
 
-void dm_register_type(uc_vm_t *vm);
+/* path.c */
+int path_split(char *buf, char **parts, int max_parts, unsigned int flags);
+char *path_join(char **parts, int from, int to);
+bool pattern_parts_match(char **pattern, char **parts, int cnt, bool numeric,
+			 int64_t *inst);
+uc_value_t *path_parts_new(uc_vm_t *vm, const char *path);
+bool path_resolve_aliases(uc_value_t *config, char **parts, int cnt,
+			  char *slot_buf, size_t slot_stride, int slot_max);
+int64_t tr181_ref_instance(const char *path, const char *prefix);
+
+/* proc.c */
+char *spawn_output(char *const argv[], int *status);
+
+/* protocol.c */
+bool ubbf_cwmp_mode(void);
+
+/* rtnl.c */
+uc_value_t *ra_prefixes_new(uc_vm_t *vm, uc_value_t *dev);
 
 /* schema.c */
 uc_value_t *schema_entry_defaults(uc_vm_t *vm, uc_value_t *entry);
+uc_value_t *schema_defaults_new(uc_vm_t *vm, const char *name);
 uc_value_t *schema_entry_default(uc_vm_t *vm, uc_value_t *entry, const char *name);
 bool schema_entry_member(uc_value_t *entry, const char *name, uint32_t *type);
 bool schema_entry_hidden(uc_value_t *entry, const char *name);
@@ -160,13 +136,50 @@ bool schema_entry_value_ok(uc_vm_t *vm, uc_value_t *entry, const char *name,
 bool schema_entry_addable(uc_value_t *entry);
 bool schema_entry_max_instances(uc_value_t *entry, int64_t *max);
 
-uc_value_t *uc_ubbf_schema_get(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_schema_defaults(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_schema_param_info(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_schema_entry_addable(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_schema_protocol_set(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_schema_version_set(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_schema_tables(uc_vm_t *vm, size_t nargs);
-uc_value_t *uc_ubbf_schema_tables_load(uc_vm_t *vm, size_t nargs);
+/* string.c */
+void str_to_upper(char *s);
+void shell_quote_append(uc_vm_t *vm, uc_stringbuf_t *sb, uc_value_t *val);
+
+/* sys.c */
+uc_value_t *deviceinfo_value(uc_vm_t *vm);
+
+/* sysfs.c */
+char *netdev_read(const char *ifname, const char *file, const char *def);
+const char *operstate_map(const char *state);
+
+/* time.c */
+uc_value_t *unix_to_datetime_new(uc_value_t *ts);
+bool datetime_utc_format(time_t t, int64_t usec, char *buf, size_t len);
+bool datetime_parse(const char *s, int64_t *out);
+
+/* tree.c */
+uc_value_t *value_deep_clone(uc_vm_t *vm, uc_value_t *val);
+uc_value_t *json_file_load(uc_vm_t *vm, const char *path);
+uc_value_t *json_file_load_object(uc_vm_t *vm, const char *path);
+void file_id(const char *path, char *buf, size_t len);
+uc_value_t *navigate_by_path(uc_vm_t *vm, uc_value_t *data, const char *path);
+uc_value_t *tree_node_get(uc_value_t *root, char **parts, int cnt);
+uc_value_t *object_child_make(uc_vm_t *vm, uc_value_t *node, const char *key);
+uc_value_t *tree_node_make(uc_vm_t *vm, uc_value_t *root, char **parts, int cnt);
+uc_value_t *interface_name_get(uc_vm_t *vm, uc_value_t *config, uc_value_t *ref);
+uc_value_t *lower_layer_name_get(uc_vm_t *vm, uc_value_t *config, const char *layers);
+struct numkeys {
+	size_t count;
+	struct numkey { const char *name; int64_t n; } *list;
+};
+void numkeys_sorted(uc_value_t *table, struct numkeys *out);
+
+/* vm.c */
+uc_value_t *callback_call(uc_vm_t *vm, uc_value_t *this, uc_value_t *fn, size_t nargs,
+			  uc_value_t **args);
+uc_value_t *callback_invoke(uc_vm_t *vm, uc_value_t *fn, size_t nargs, ...);
+uc_value_t *registry_get(uc_vm_t *vm, const char *key, uc_type_t type);
+
+/* wifi.c */
+#define WIFI_BANDWIDTHS 5
+extern const char *const wifi_bandwidths[WIFI_BANDWIDTHS];
+int64_t wifi_freq_channel(uc_value_t *val);
+int wifi_antenna_count(uc_value_t *val);
+const char *wifi_standard_highest(uc_vm_t *vm, uc_value_t *standards);
 
 #endif /* UBBF_H */

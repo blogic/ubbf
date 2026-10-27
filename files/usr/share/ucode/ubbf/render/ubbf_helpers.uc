@@ -1,7 +1,7 @@
 'use strict';
 
 import * as ubbf from 'ubbf';
-import { dns_learned_row } from 'ubbf.utils.dns';
+import { dns_learned_row } from 'ubbf';
 
 let ubbf_get = ubbf.get;
 let ubbf_to_bool = ubbf.to_bool;

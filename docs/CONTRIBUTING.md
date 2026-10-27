@@ -29,6 +29,7 @@ Some domains are packaged separately as `ubbf-mod-<name>`. Their source is in `m
 - The schemas in `schemas/` are maintained by hand, although their headers say that a generator made them. Do not run the generator. See "TR-181 Schema Files" in `README.md`.
 - At runtime, ubbf writes `/tmp/ubbf/uci.batch`.
 - Each function must have a JSDoc comment.
+- The C module `src/ucode-mod-ubbf` has cmocka unit tests in `src/ucode-mod-ubbf/tests/`, built only on the host: `cmake -DUBBF_UNIT_TESTS=ON src/ucode-mod-ubbf && make && ctest` in a build directory (needs libucode, libubox, libnl-tiny, libmd, cmocka, json-c and the host ucode, which compiles the schema tables; `-DUBBF_SCHEMA_TABLE=OFF` builds without the tables and leaves out `test_schema`; a host without a libnl-tiny package builds it from the OpenWrt source into a prefix and passes `-DCMAKE_PREFIX_PATH=<prefix>`). The OpenWrt build leaves `UBBF_UNIT_TESTS` off. Each `test_<name>.c` is one test program, registered with `ubbf_unit_test(<name>)` in `tests/CMakeLists.txt`; `ubbf_unit_test(<name> ISOLATED)` runs it through `tests/run-isolated.sh` in private mount and network namespaces, for code that writes `/tmp/ubbf`, reads `/etc/ubbf` or reads the kernel network state that the test sets up; `tests/harness.h` gives a ucode VM per test group (`vm_setup()`), calls a `uc_ubbf_*` binding or a resource method the way a script does (`vm_call()`, `vm_method()`), and builds test data from JSON (`vm_json()`). Code does not change for a test: a function that a test can reach is tested directly, a `static` one through the function that calls it (for example `numbered_inst()` through `dm.object_add()`).
 
 ## Code patterns
 
@@ -101,7 +102,7 @@ ubbf_instances(config, 'Device.WiFi.Radio')  // All instances
 ### Extend the ubus API
 
 1. Add the method to `ubus-object.uc`, with a JSDoc comment on its handler.
-2. If the web UI needs access, add the ACL rules in `acl.uc`.
+2. If the web UI needs access, add the rules to the role ACL files, see `ACL-FORMAT.md`; `acl.c` in `ubbf.so` checks them.
 
 ## Documentation
 

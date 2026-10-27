@@ -283,13 +283,13 @@ function capture_run(args, cmd, files, command_key) {
 	if (count == null)
 		return { error: sprintf('tcpdump wrote no capture: %s', trim(fs.readfile(files.err) ?? '')) };
 
-	let opts = { timeout: utils.curl.CURL_TRANSFER_TIMEOUT_S, command_key };
+	let opts = { timeout: ubbf.CURL_TRANSFER_TIMEOUT_S, command_key };
 	if (args.username != '')
 		opts = { ...opts, username: args.username, password: args.password };
-	if (utils.curl.curl_insecure_allowed())
+	if (ubbf.curl_insecure_allowed())
 		opts.insecure = true;
 
-	let result = utils.curl.curl_upload(args.file_target, files.pcap, opts);
+	let result = ubbf.curl_upload(args.file_target, files.pcap, opts);
 	if (!result.success)
 		return { error: 'Failed to upload capture file' };
 
@@ -354,7 +354,7 @@ function packetcapture_handler(input, instance, complete, command_key, root) {
 			files_remove();
 
 			if (result.error) {
-				utils.logging.log_warn('Device.PacketCaptureDiagnostics: %s', result.error);
+				ubbf.log_warn('Device.PacketCaptureDiagnostics: %s', result.error);
 				complete(instance, USP_ERR_COMMAND_FAILURE, result.error, {});
 				return;
 			}
@@ -367,7 +367,7 @@ function packetcapture_handler(input, instance, complete, command_key, root) {
 				'PacketCaptureResult.1.Count': sprintf('%d', result.count)
 			});
 		},
-		{ timeout: args.duration + utils.curl.CURL_TRANSFER_TIMEOUT_S + utils.process.TASK_MARGIN_S }
+		{ timeout: args.duration + ubbf.CURL_TRANSFER_TIMEOUT_S + utils.process.TASK_MARGIN_S }
 	);
 }
 

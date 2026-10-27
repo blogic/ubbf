@@ -2,9 +2,8 @@
 
 import * as fs from 'fs';
 import * as uloop from 'uloop';
-import { cmd_build } from 'ubbf.utils.process';
-import { log_info, log_warn, log_err } from 'ubbf.utils.logging';
-import { config_path_check } from 'ubbf.utils.validate';
+import { cmd_build } from 'ubbf';
+import { log_info, log_warn, log_err, config_path_check } from 'ubbf';
 
 const CONFIG_PATH = '/etc/ubbf/config.json';
 const SHUTDOWN_PATH = '/etc/ubbf/shutdown.json';

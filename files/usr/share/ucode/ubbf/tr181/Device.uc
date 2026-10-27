@@ -1,7 +1,7 @@
 'use strict';
 
 import * as ubus from 'ubus';
-import { log_warn } from 'ubbf.utils.logging';
+import { log_warn } from 'ubbf';
 import { interfacestack_count } from 'ubbf.tr181.InterfaceStack';
 import { DM_VERSION } from 'ubbf.utils.dm-version';
 import * as ubbf from 'ubbf';

@@ -7,7 +7,7 @@
 const ubbf = ubbf_module.ubbf;
 const model = ubbf_module.model;
 const schema = ubbf_module.schema;
-const log_err = ubbf_module.utils.logging.log_err;
+const log_err = ubbf_module.ubbf.log_err;
 const wifi_dataelements = ubbf_module.utils['wifi-dataelements'];
 const ubus_topology_get = wifi_dataelements.ubus_topology_get;
 const local_device_get = wifi_dataelements.local_device_get;
@@ -16,13 +16,12 @@ const device_api_data_get = wifi_dataelements.device_api_data_get;
 const steering_stats_get = wifi_dataelements.steering_stats_get;
 const steering_history_get = wifi_dataelements.steering_history_get;
 const topology_devices_get = wifi_dataelements.topology_devices_get;
-const radio_band_priority = wifi_dataelements.radio_band_priority;
+const radio_band_priority = ubbf_module.ubbf.radio_band_priority;
 const device_to_object = em.device_to_object;
 const al_index_map = em.al_index_map;
 const ap_by_ssid_ref_find = em.ap_by_ssid_ref_find;
 const easymesh_ssid_rows = em.easymesh_ssid_rows;
 const easymesh_model = em.easymesh_model;
-const instance_numbers = ubbf_module.utils['instance-map'].instance_numbers;
 
 const ubus = require('ubus');
 
@@ -56,7 +55,7 @@ function devices_get(root) {
  */
 function devices_numbered(root) {
 	let devices = devices_get(root);
-	let numbers = instance_numbers(DEVICE_TABLE, map(devices, (d) => d.al_address));
+	let numbers = ubbf.instance_numbers(DEVICE_TABLE, map(devices, (d) => d.al_address));
 	let rows = {};
 	for (let d in devices)
 		rows[sprintf('%d', numbers[d.al_address])] = d;

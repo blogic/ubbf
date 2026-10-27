@@ -3,10 +3,9 @@
 
 import * as uci from 'uci';
 import * as fs from 'fs';
-import { to_int } from 'ubbf';
-import { cmd_build } from 'ubbf.utils.process';
+import { to_int, cmd_build } from 'ubbf';
 import { device_from_name } from 'ubbf.utils.path';
-import { log_init, log_info, log_warn, log_debug } from 'ubbf.utils.logging';
+import { log_init, log_info, log_warn, log_debug } from 'ubbf';
 
 log_init('bbf-qos');
 

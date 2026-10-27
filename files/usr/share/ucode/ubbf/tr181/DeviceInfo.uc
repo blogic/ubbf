@@ -1,7 +1,7 @@
 'use strict';
 
 import * as fs from 'fs';
-import { deviceinfo_get as deviceinfo_read } from 'ubbf.utils.deviceinfo';
+import { deviceinfo_get as deviceinfo_read } from 'ubbf';
 import * as MemoryStatus from 'ubbf.tr181.DeviceInfo.MemoryStatus';
 import * as ProcessStatus from 'ubbf.tr181.DeviceInfo.ProcessStatus';
 import * as Processor from 'ubbf.tr181.DeviceInfo.Processor';

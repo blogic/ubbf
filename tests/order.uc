@@ -1,9 +1,10 @@
-// Host test of utils/order.uc, the TR-181 data type Order. Run from the
+// Host test of order_snapshot() and orders_compute() of ubbf.so, the
+// TR-181 data type Order. Run from the
 // repository root with the native module built for the host:
 //   ucode -L "$PWD/files/usr/share/ucode" -L "<host build>/*.so" tests/order.uc
 'use strict';
 
-import { order_snapshot, orders_compute } from 'ubbf.utils.order';
+import { order_snapshot, orders_compute } from 'ubbf';
 
 let pass = 0, fail = 0;
 

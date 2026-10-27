@@ -7,7 +7,6 @@
 const ubbf = ubbf_module.ubbf;
 const model = ubbf_module.model;
 const operations = ubbf_module.operations;
-const logging = ubbf_module.utils.logging;
 
 const ubus = require('ubus');
 
@@ -71,7 +70,7 @@ function start_session_handler(input, command_key, root) {
 
 	if (input?.AllowInsecure != null) {
 		if (index(BOOLEAN_VALUES, lc(`${input.AllowInsecure}`)) < 0) {
-			logging.log_warn('upty: StartSession() AllowInsecure is not a boolean');
+			ubbf.log_warn('upty: StartSession() AllowInsecure is not a boolean');
 			return -USP_ERR_INVALID_COMMAND_ARGS;
 		}
 		args.allow_insecure = ubbf.to_bool(input.AllowInsecure);
@@ -86,7 +85,7 @@ function start_session_handler(input, command_key, root) {
 		return { Status: 'Error', Message: 'upty agent not reachable: ' + (ubus.error() ?? 'unknown error') };
 
 	if (result.invalid) {
-		logging.log_warn('upty: StartSession() refused: %s', result.error);
+		ubbf.log_warn('upty: StartSession() refused: %s', result.error);
 		return -USP_ERR_INVALID_COMMAND_ARGS;
 	}
 

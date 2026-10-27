@@ -1,10 +1,10 @@
 'use strict';
 
 import { popen_async } from 'ubbf.utils.process';
-import { curl_exit_to_status } from 'ubbf.utils.curl';
+import { curl_exit_to_status } from 'ubbf';
 import { interface_resolve } from 'ubbf.utils.path';
 import * as ubbf from 'ubbf';
-import { log_info, log_debug } from 'ubbf.utils.logging';
+import { log_info, log_debug } from 'ubbf';
 
 /**
  * Async handler for Device.IP.Diagnostics.DownloadDiagnostics operation.

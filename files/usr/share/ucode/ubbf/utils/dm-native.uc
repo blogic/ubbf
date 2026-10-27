@@ -9,7 +9,7 @@ import * as ubus from 'ubus';
 import * as uloop from 'uloop';
 import * as ubbf from 'ubbf';
 import { glob } from 'fs';
-import { log_info, log_warn, log_err } from 'ubbf.utils.logging';
+import { log_info, log_warn, log_err } from 'ubbf';
 
 const DM_HOST = '/usr/libexec/ubbf/dm-host';
 const MODULES_GLOB = '/usr/lib/ubbf/dm/*.so';

@@ -12,11 +12,10 @@ const ubus = require('ubus');
 const uci = require('uci');
 
 const schema = ubbf_module.schema;
-const instance_map = utils['instance-map'];
 
 const GPS = 'gps';
 const CRS_WGS84_2D = 'urn:ogc:def:crs:EPSG::4326';
-const PROTOCOL = uc(utils.protocol.ACTIVE_PROTOCOL);
+const PROTOCOL = uc(ubbf.active_protocol());
 
 // The instance map numbers the GPS row after the stored rows.
 const LOCATION_TABLE = 'Device.DeviceInfo.Location';
@@ -39,7 +38,7 @@ function gps_info_fetch() {
  * @returns {object|null} `gps info` reply, null when the daemon is absent
  */
 function gps_info_get() {
-	return utils.cache.call(gps_info_fetch);
+	return ubbf.cache_call(gps_info_fetch);
 }
 
 /**
@@ -71,8 +70,8 @@ function acquired_time_get(info) {
 	if (info.date != null && info.time != null)
 		return sprintf('%sT%sZ', info.date, info.time);
 	if (info.age != null)
-		return utils.helpers.datetime_format(time() - info.age);
-	return utils.helpers.datetime_format(0);
+		return ubbf.datetime_format(time() - info.age);
+	return ubbf.datetime_format(0);
 }
 
 /**
@@ -97,7 +96,7 @@ function xml_escape(value) {
  * @returns {string} `mac:` URI, empty when the identity file lacks either half
  */
 function device_uri_get() {
-	let info = utils.deviceinfo.deviceinfo_get();
+	let info = ubbf.deviceinfo_get();
 	if (!info.ManufacturerOUI || !info.SerialNumber)
 		return '';
 	return 'mac:' + lc(info.ManufacturerOUI + info.SerialNumber);
@@ -119,7 +118,7 @@ function pidf_lo_build(info, acquired) {
 	let uri = device_uri_get();
 	if (!uri) {
 		if (!identity_warned)
-			utils.logging.log_warn('location: no device identity for the PIDF-LO entity');
+			ubbf.log_warn('location: no device identity for the PIDF-LO entity');
 		identity_warned = true;
 		return '';
 	}
@@ -207,8 +206,8 @@ function location_get(ctx) {
 	if (!info)
 		return ctx.instance ? null : {};
 
-	let n = instance_map.instance_numbers(LOCATION_TABLE, [ GPS_KEY ],
-		instance_map.instance_floor(ctx.root?.Device?.DeviceInfo?.Location))[GPS_KEY];
+	let n = ubbf.instance_numbers(LOCATION_TABLE, [ GPS_KEY ],
+		ubbf.instance_floor(ctx.root?.Device?.DeviceInfo?.Location))[GPS_KEY];
 
 	if (ctx.instance)
 		return (ctx.instance == n) ? location_to_object(info) : null;
@@ -227,7 +226,7 @@ function location_set(ctx) {
 	if (ctx.param != 'DataObject' || !ctx.config)
 		return 0;
 
-	ctx.config.AcquiredTime = utils.helpers.datetime_format(time());
+	ctx.config.AcquiredTime = ubbf.datetime_format(time());
 	ctx.config.ExternalSource = controller_id_get();
 	return 0;
 }
@@ -240,7 +239,7 @@ function location_set(ctx) {
  * @returns {number|null} Refusal for the GPS row
  */
 function location_del(ctx) {
-	return (instance_map.instance_lookup(LOCATION_TABLE, ctx.instance) == GPS_KEY) ? -USP_ERR_OBJECT_NOT_DELETABLE : null;
+	return (ubbf.instance_lookup(LOCATION_TABLE, ctx.instance) == GPS_KEY) ? -USP_ERR_OBJECT_NOT_DELETABLE : null;
 }
 
 model['Device.DeviceInfo.Location'] = {};

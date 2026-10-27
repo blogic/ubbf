@@ -9,8 +9,8 @@
 
 import * as ubbf from 'ubbf';
 import * as h from 'ubbf.render.uci_helpers';
-import { schedule_windows } from 'ubbf.utils.schedule';
-import { rule_window_set } from 'ubbf.utils.firewall';
+import { schedule_windows } from 'ubbf';
+import { rule_window_set } from 'ubbf.render.uci_helpers';
 import { dm_visible } from 'ubbf.utils.dm-version';
 
 let pass = 0, fail = 0;

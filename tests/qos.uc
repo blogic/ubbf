@@ -11,7 +11,6 @@
 
 import * as ubbf from 'ubbf';
 import { writefile } from 'fs';
-import { cmd_build } from 'ubbf.utils.process';
 
 let pass_count = 0;
 let fail_count = 0;
@@ -30,12 +29,9 @@ function assert_eq(name, got, expected) {
 }
 
 const api = {
-	ubbf,
+	ubbf: proto({ cache_call: (fn, ...args) => fn(...args) }, ubbf),
 	utils: {
-		cache: { call: (fn, ...args) => fn(...args) },
-		logging: { log_err: () => null, log_exception: () => null },
-		netifd: { netifd_status_get: (name) => (name == 'lan') ? { l3_device: 'br-lan' } : null },
-		process: { cmd_build }
+		netifd: { netifd_status_get: (name) => (name == 'lan') ? { l3_device: 'br-lan' } : null }
 	},
 	schema: (k) => k,
 	model: {}

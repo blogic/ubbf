@@ -15,8 +15,11 @@
 import * as fs from 'fs';
 import * as uloop from 'uloop';
 import * as ubbf from 'ubbf';
-import { cmd_build, popen_async } from 'ubbf.utils.process';
-import { instance_numbers, instance_key, instance_rows, instance_prune } from 'ubbf.utils.instance-map';
+import { popen_async } from 'ubbf.utils.process';
+import { instance_numbers, instance_key, instance_rows, instance_prune } from 'ubbf';
+
+// This process numbers rows, as the agent does.
+ubbf.instance_map_own(true);
 
 let pass = 0, fail = 0;
 
@@ -58,16 +61,13 @@ let applied = [];
 let cache = {};
 
 const api = {
-	ubbf,
+	ubbf: proto({
+		datetime_format: (t) => t ? sprintf('%d', t) : '0001-01-01T00:00:00Z',
+		cache_call: (fn, ...args) => fn(...args),
+		cache_invalidate: (fn) => { cache[fn] = true; }
+	}, ubbf),
 	utils: {
-		cache: {
-			call: (fn, ...args) => fn(...args),
-			invalidate: (fn) => { cache[fn] = true; }
-		},
-		helpers: { datetime_format: (t) => t ? sprintf('%d', t) : '0001-01-01T00:00:00Z' },
-		logging: { log_err: () => null, log_info: () => null, log_warn: () => null },
-		process: { cmd_build, popen_async },
-		'instance-map': { instance_numbers, instance_key, instance_rows, instance_prune }
+		process: { popen_async }
 	},
 	schema: (k) => table ? `softwaremodules.${k}` : schemas[k],
 	schema_defaults: (k) => table ? ubbf.schema_defaults(`softwaremodules.${k}`) : schemas[k]?.defaults,

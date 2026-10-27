@@ -9,8 +9,7 @@ const model = ubbf_module.model;
 const on_commit = ubbf_module.on_commit;
 const on_abort = ubbf_module.on_abort;
 const config_apply = ubbf_module.config_apply;
-const cache_call = ubbf_module.utils.cache.call;
-const logging = ubbf_module.utils.logging;
+const cache_call = ubbf_module.ubbf.cache_call;
 
 const fs = require('fs');
 const uloop = require('uloop');
@@ -284,9 +283,9 @@ function mapping_set(ctx) {
 function lease_expire(path) {
 	let report = (result) => {
 		if (result?.success)
-			logging.log_info('pcp: %s deleted, its Lifetime ran out', path);
+			ubbf.log_info('pcp: %s deleted, its Lifetime ran out', path);
 		else
-			logging.log_err('pcp: failed to delete %s', path);
+			ubbf.log_err('pcp: failed to delete %s', path);
 	};
 	let result = config_apply([ { op: 'del', path } ], report);
 	if (result)
@@ -305,7 +304,7 @@ function lease_timer_add(path, delay) {
 		try {
 			lease_expire(path);
 		} catch (e) {
-			logging.log_exception('pcp: lease', e);
+			ubbf.log_exception('pcp: lease', e);
 		}
 	});
 }
@@ -367,7 +366,7 @@ function leases_sync() {
 	if (sprintf('%J', leases) != sprintf('%J', prev)) {
 		fs.mkdir(LEASE_DIR, 0755);
 		if (!fs.writefile(LEASE_PATH, sprintf('%J\n', leases)))
-			logging.log_err('pcp: failed to write %s', LEASE_PATH);
+			ubbf.log_err('pcp: failed to write %s', LEASE_PATH);
 	}
 
 	for (let path, timer in lease_timers)

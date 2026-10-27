@@ -9,9 +9,8 @@
 import * as fs from 'fs';
 import * as ubus from 'ubus';
 import * as uloop from 'uloop';
-import { log_info, log_err } from 'ubbf.utils.logging';
+import { log_info, log_err, sfp_type_resolve, sfp_allowed } from 'ubbf';
 import { dm_visible } from 'ubbf.utils.dm-version';
-import { sfp_type_resolve, sfp_allowed } from 'ubbf.utils.sfp';
 
 const CONFIG_PATH = '/etc/ubbf/config.json';
 const USFPD = 'usfpd';

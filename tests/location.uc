@@ -9,8 +9,11 @@
 'use strict';
 
 import * as ubbf from 'ubbf';
-import { datetime_format } from 'ubbf.utils.helpers';
-import { instance_numbers, instance_lookup, instance_floor } from 'ubbf.utils.instance-map';
+import { datetime_format } from 'ubbf';
+import { instance_numbers, instance_lookup, instance_floor } from 'ubbf';
+
+// This process numbers rows, as the agent does.
+ubbf.instance_map_own(true);
 
 let pass_count = 0;
 let fail_count = 0;
@@ -48,15 +51,9 @@ let identity = { ManufacturerOUI: '2005B6', SerialNumber: 'FF8618' };
  */
 function handler_load(protocol) {
 	let api = {
-		ubbf,
-		utils: {
-			cache: { call: (fn, ...args) => fn(...args) },
-			helpers: { datetime_format },
-			deviceinfo: { deviceinfo_get: () => identity },
-			logging: { log_warn: () => null },
-			protocol: { ACTIVE_PROTOCOL: protocol },
-			'instance-map': { instance_numbers, instance_lookup, instance_floor }
-		},
+		ubbf: proto({ cache_call: (fn, ...args) => fn(...args), active_protocol: () => protocol,
+			deviceinfo_get: () => identity }, ubbf),
+		utils: {},
 		schema: (k) => k,
 		model: {}
 	};

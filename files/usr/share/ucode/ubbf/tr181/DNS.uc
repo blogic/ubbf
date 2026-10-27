@@ -3,8 +3,8 @@
 import * as fs from 'fs';
 import * as ubbf from 'ubbf';
 import { netifd_status_get } from 'ubbf.utils.netifd';
-import { instance_numbers, instance_floor, instance_lookup } from 'ubbf.utils.instance-map';
-import { dns_learned_row } from 'ubbf.utils.dns';
+import { instance_numbers, instance_floor, instance_lookup } from 'ubbf';
+import { dns_learned_row } from 'ubbf';
 import { handler as nslookup_handler } from 'ubbf.tr143.NSLookup';
 import { op_trigger_set, op_overlay_get } from 'ubbf.utils.cwmp-op-trigger';
 

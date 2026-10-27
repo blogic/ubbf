@@ -5,16 +5,13 @@ import {
 	dm, trans_start, trans_commit, trans_abort,
 	apply_config, get_webui_data, webui_acl_get,
 	start_operation, list_operations, operation_defer,
-	operations_apply, config_write, paths_expand, wildcard_expand, names_list,
+	operations_apply, config_write, paths_expand, names_list,
 	param_schema
 } from 'ubbf.datamodel';
-import { ACTIVE_PROTOCOL } from 'ubbf.utils.protocol';
-import { acl_can_write, acl_can_add, acl_can_diagnose } from 'ubbf.acl';
+import { acl_can_write, acl_can_add, acl_can_diagnose } from 'ubbf';
 // Its top level does no I/O, so loading it under USP is inert.
 import { methods as cwmp_methods, init as cwmp_init } from 'ubbf.cwmp-dm';
-import { log_exception } from 'ubbf.utils.logging';
-import { config_path_check } from 'ubbf.utils.validate';
-import { config_restore } from 'ubbf.utils.config';
+import { log_exception, cwmp_mode, config_path_check, config_restore } from 'ubbf';
 import { write_reply } from 'ubbf.utils.write-gate';
 
 const CONFIG_PATH = '/etc/ubbf/config.json';
@@ -110,7 +107,7 @@ function get_handler(req) {
 		let have_leaf = false;
 
 		for (let wild in req.args.paths) {
-			for (let p in wildcard_expand(wild)) {
+			for (let p in dm.wildcard_expand(wild)) {
 				if (substr(p, -1) == '.') {
 					tree_flatten(dm.get_subtree_with_state(p), p, paths);
 				} else {
@@ -452,7 +449,7 @@ function webui_diagnostics_handler(req) {
 		if (type(value) != 'string')
 			return { error: 'INVALID_INPUT', message: key };
 
-	if (ACTIVE_PROTOCOL == 'cwmp')
+	if (cwmp_mode())
 		return webui_diagnostics_cwmp_start(req, id, diag, input);
 
 	if (webui_diagnostics_running[name])
@@ -560,11 +557,11 @@ let bbf_dm_methods = {
 
 // The CWMP methods exist only where CWMP does. In USP mode obuspa owns the
 // protocol state and these would be a second, idle claim on it.
-if (ACTIVE_PROTOCOL == 'cwmp')
+if (cwmp_mode())
 	for (let name, method in cwmp_methods)
 		bbf_dm_methods[name] = method;
 
 let bbf_dm = conn.publish('bbf-dm', bbf_dm_methods);
 
-if (ACTIVE_PROTOCOL == 'cwmp')
+if (cwmp_mode())
 	cwmp_init(bbf_dm);

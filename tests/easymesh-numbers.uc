@@ -14,7 +14,10 @@
 'use strict';
 
 import * as ubbf from 'ubbf';
-import { instance_numbers, instance_rows, instance_key } from 'ubbf.utils.instance-map';
+import { instance_numbers, instance_rows, instance_key } from 'ubbf';
+
+// This process numbers rows, as the agent does.
+ubbf.instance_map_own(true);
 
 let pass = 0, fail = 0;
 
@@ -30,8 +33,6 @@ const api = {
 	operations: {},
 	schema: (k) => k,
 	utils: {
-		'instance-map': { instance_numbers, instance_rows, instance_key },
-		logging: { log_info: () => null, log_warn: () => null, log_err: () => null },
 		'wifi-dataelements': {
 			topology_devices_get: () => global.topo,
 			local_device_get: () => ({ al_address: 'local' }),
@@ -39,8 +40,7 @@ const api = {
 			device_api_data_get: () => ({}),
 			local_api_data_get: () => ({}),
 			steering_stats_get: () => ({}),
-			steering_history_get: () => ({}),
-			radio_band_priority: () => 0
+			steering_history_get: () => ({})
 		}
 	}
 };

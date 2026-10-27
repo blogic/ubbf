@@ -2,6 +2,9 @@
 /* Copyright (C) 2026 John Crispin <john@phrozen.org> */
 
 #include "ubbf.h"
+#include "bindings.h"
+
+#include <arpa/inet.h>
 
 /**
  * Converts a dotted-quad IPv4 address string to a 32-bit integer.
@@ -14,17 +17,12 @@ uc_value_t *
 uc_ubbf_ip_to_int(uc_vm_t *vm, size_t nargs)
 {
 	uc_value_t *ip_val = uc_fn_arg(0);
-	const char *ip;
-	unsigned int a, b, c, d;
+	uint32_t n;
 
-	if (ucv_type(ip_val) != UC_STRING)
+	if (ucv_type(ip_val) != UC_STRING || !ipv4_parse(ucv_string_get(ip_val), &n))
 		return ucv_int64_new(0);
 
-	ip = ucv_string_get(ip_val);
-	if (sscanf(ip, "%u.%u.%u.%u", &a, &b, &c, &d) != 4)
-		return ucv_int64_new(0);
-
-	return ucv_int64_new((int64_t)((a << 24) | (b << 16) | (c << 8) | d));
+	return ucv_int64_new(n);
 }
 
 /**
@@ -99,19 +97,12 @@ uc_value_t *
 uc_ubbf_netmask_to_cidr(uc_vm_t *vm, size_t nargs)
 {
 	uc_value_t *mask_val = uc_fn_arg(0);
-	const char *mask;
-	unsigned int a, b, c, d;
 	uint32_t n;
 	int cidr = 0;
 
-	if (ucv_type(mask_val) != UC_STRING)
+	if (ucv_type(mask_val) != UC_STRING || !ipv4_parse(ucv_string_get(mask_val), &n))
 		return ucv_int64_new(0);
 
-	mask = ucv_string_get(mask_val);
-	if (sscanf(mask, "%u.%u.%u.%u", &a, &b, &c, &d) != 4)
-		return ucv_int64_new(0);
-
-	n = (a << 24) | (b << 16) | (c << 8) | d;
 	while (n & 0x80000000U) {
 		cidr++;
 		n <<= 1;
@@ -121,67 +112,51 @@ uc_ubbf_netmask_to_cidr(uc_vm_t *vm, size_t nargs)
 }
 
 /**
- * Expands an IPv6 address into 32 lowercase hex characters.
+ * Parses an IPv4 address in dotted-quad form.
  *
- * Resolves any `::` zero-run and writes the canonical full form into
- * `result`. The output buffer must be at least 33 bytes (32 hex characters
- * plus the trailing NUL). Empty or null input yields an all-zero address.
- *
- * @param addr   input address string (may contain `::`), or NULL
- * @param result destination buffer of at least 33 bytes
+ * @param s    the address; each part a decimal 0-255, nothing after it
+ * @param out  receives the address in host byte order
+ * @return     false for anything else
  */
-void
-ipv6_expand_to_buf(const char *addr, char *result)
+bool
+ipv4_parse(const char *s, uint32_t *out)
 {
-	uint16_t groups[8] = { 0 };
-	const char *dcolon;
-	int left_cnt = 0, right_cnt = 0;
-	int i;
+	struct in_addr a;
 
-	if (!addr || !*addr) {
-		memcpy(result, "00000000000000000000000000000000", 33);
-		return;
-	}
+	if (!s || inet_pton(AF_INET, s, &a) != 1)
+		return false;
 
-	dcolon = strstr(addr, "::");
+	*out = ntohl(a.s_addr);
 
-	if (dcolon) {
-		char left_buf[64] = "", right_buf[64] = "";
-		size_t left_len = dcolon - addr;
+	return true;
+}
 
-		if (left_len > 0 && left_len < sizeof(left_buf)) {
-			memcpy(left_buf, addr, left_len);
-			left_buf[left_len] = '\0';
+/**
+ * Whether two addresses of one family agree on their first prefix bits:
+ * dotted IPv4, or IPv6 in any RFC 4291 text form.
+ *
+ * @param a       first address
+ * @param b       second address
+ * @param prefix  number of leading bits to compare, 0 to the address size
+ * @return        false for a prefix out of range or an address that does
+ *                not parse
+ */
+bool
+ip_prefix_match(const char *a, const char *b, int prefix)
+{
+	uint8_t ba[16], bb[16];
+	int family = strchr(a, ':') ? AF_INET6 : AF_INET;
+	int bits = family == AF_INET6 ? 128 : 32;
+	int whole = prefix / 8, rest = prefix % 8;
 
-			char *tmp = xstrdup(left_buf);
-			for (char *tok = strtok(tmp, ":"); tok && left_cnt < 8; tok = strtok(NULL, ":"))
-				groups[left_cnt++] = (uint16_t)strtoul(tok, NULL, 16);
-			free(tmp);
-		}
+	if (prefix < 0 || prefix > bits ||
+	    inet_pton(family, a, ba) != 1 || inet_pton(family, b, bb) != 1)
+		return false;
 
-		const char *right_start = dcolon + 2;
-		if (*right_start) {
-			strncpy(right_buf, right_start, sizeof(right_buf) - 1);
+	if (memcmp(ba, bb, whole))
+		return false;
 
-			uint16_t right_groups[8] = { 0 };
-			char *tmp = xstrdup(right_buf);
-			for (char *tok = strtok(tmp, ":"); tok && right_cnt < 8; tok = strtok(NULL, ":"))
-				right_groups[right_cnt++] = (uint16_t)strtoul(tok, NULL, 16);
-			free(tmp);
-
-			for (i = 0; i < right_cnt; i++)
-				groups[8 - right_cnt + i] = right_groups[i];
-		}
-	} else {
-		char *tmp = xstrdup(addr);
-		for (char *tok = strtok(tmp, ":"); tok && left_cnt < 8; tok = strtok(NULL, ":"))
-			groups[left_cnt++] = (uint16_t)strtoul(tok, NULL, 16);
-		free(tmp);
-	}
-
-	snprintf(result, 33, "%04x%04x%04x%04x%04x%04x%04x%04x",
-		 groups[0], groups[1], groups[2], groups[3],
-		 groups[4], groups[5], groups[6], groups[7]);
+	return !rest || !((ba[whole] ^ bb[whole]) & (0xff << (8 - rest)));
 }
 
 #define LIFETIME_INFINITE INT64_MAX
@@ -221,30 +196,6 @@ ipv6_lifetime_str(int64_t preferred, int64_t valid)
 	if (valid <= 0) return "Invalid";
 	if (preferred <= 0) return "Deprecated";
 	return "Preferred";
-}
-
-/**
- * Derives a TR-181 IPv6 lifetime status from preferred/valid lifetimes.
- *
- * Returns `"Invalid"` when `valid` has run out, `"Deprecated"` when
- * `preferred` has, otherwise `"Preferred"`. The two values are read from
- * the passed object under keys `preferred` and `valid` with
- * lifetime_get(); a missing key is an infinite lifetime.
- *
- * @param vm     ucode VM context
- * @param nargs  number of arguments (1 expected: object)
- * @return       status string
- */
-uc_value_t *
-uc_ubbf_ipv6_lifetime_status(uc_vm_t *vm, size_t nargs)
-{
-	uc_value_t *data = uc_fn_arg(0);
-
-	if (ucv_type(data) != UC_OBJECT)
-		return ucv_string_new("Invalid");
-
-	return ucv_string_new(ipv6_lifetime_str(lifetime_get(data, "preferred"),
-						lifetime_get(data, "valid")));
 }
 
 /**
@@ -332,21 +283,9 @@ uc_ubbf_ipv4_addr_to_object(uc_vm_t *vm, size_t nargs)
 static void
 lifetime_datetime(int64_t seconds, char *buf, size_t buflen)
 {
-	struct tm tm;
-	time_t t;
-
-	if (seconds == LIFETIME_INFINITE) {
+	if (seconds == LIFETIME_INFINITE ||
+	    !datetime_utc_format(time(NULL) + (time_t)seconds, -1, buf, buflen))
 		snprintf(buf, buflen, "%s", TR181_DATETIME_FOREVER);
-		return;
-	}
-
-	t = time(NULL) + (time_t)seconds;
-	if (!gmtime_r(&t, &tm)) {
-		snprintf(buf, buflen, "%s", TR181_DATETIME_FOREVER);
-		return;
-	}
-
-	strftime(buf, buflen, "%Y-%m-%dT%H:%M:%SZ", &tm);
 }
 
 /**

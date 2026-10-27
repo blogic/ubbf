@@ -6,7 +6,7 @@
 
 const ubbf = ubbf_module.ubbf;
 const utils = ubbf_module.utils;
-const log_warn = ubbf_module.utils.logging.log_warn;
+const log_warn = ubbf_module.ubbf.log_warn;
 const model = ubbf_module.model;
 const operations = ubbf_module.operations;
 const config_apply = ubbf_module.config_apply;
@@ -22,7 +22,7 @@ const schema_defaults = ubbf_module.schema_defaults;
 const UNKNOWN_TIME = '0001-01-01T00:00:00Z';
 
 let certificates = {};
-include('./certificates.uc', { certificates, instance_map: utils['instance-map'] });
+include('./certificates.uc', { certificates });
 
 /**
  * Returns the certificate scan for the current request.
@@ -33,7 +33,7 @@ include('./certificates.uc', { certificates, instance_map: utils['instance-map']
  * @returns {object} { certs, bundles } structure from certificates.scan()
  */
 function certs_scan() {
-	return utils.cache.call(certificates.scan);
+	return ubbf.cache_call(certificates.scan);
 }
 
 /**
@@ -234,7 +234,7 @@ function certificate_uri_get(input, command_key, instances, root) {
  * @returns {number|null} The negative fault code, or null on success
  */
 function write_done(command, err) {
-	utils.cache.invalidate(certificates.scan);
+	ubbf.cache_invalidate(certificates.scan);
 
 	if (!err)
 		return null;

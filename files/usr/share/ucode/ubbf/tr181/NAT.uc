@@ -2,12 +2,11 @@
 
 import * as ubbf from 'ubbf';
 import * as ubus from 'ubus';
-import * as cache from 'ubbf.utils.cache';
-import { upstream_interface_ref, text_clamp } from 'ubbf.utils.helpers';
+import { upstream_interface_ref, text_clamp } from 'ubbf';
 import { netifd_status_get } from 'ubbf.utils.netifd';
 import { ipv6_prefix_rows } from 'ubbf.utils.ipv6';
-import { nptv6_setting_check, prefix6_parse, prefix6_contains } from 'ubbf.utils.nptv6';
-import { instance_items, instance_floor, instance_lookup } from 'ubbf.utils.instance-map';
+import { nptv6_setting_check, prefix6_parse, prefix6_contains } from 'ubbf';
+import { instance_items, instance_floor, instance_lookup } from 'ubbf';
 
 // UPnP mappings live in upnpd, not in the configuration. The instance map
 // numbers them by the mapping id of upnpd, which survives a restart of the
@@ -87,7 +86,7 @@ function port_mapping_get(ctx) {
 		};
 	}
 
-	let mappings = instance_items(PORT_MAPPING_TABLE, cache.call(upnp_mappings_fetch),
+	let mappings = instance_items(PORT_MAPPING_TABLE, ubbf.cache_call(upnp_mappings_fetch),
 		(m) => sprintf('%d', m.id), instance_floor(ctx.root?.Device?.NAT?.PortMapping));
 	let iface_ref = upstream_interface_ref(ctx.root);
 
@@ -122,7 +121,7 @@ function port_mapping_del(ctx) {
 		data: { id: +id }
 	});
 
-	cache.invalidate(upnp_mappings_fetch);
+	ubbf.cache_invalidate(upnp_mappings_fetch);
 
 	return res != null && !res.error;
 }

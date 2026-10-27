@@ -1,12 +1,11 @@
 'use strict';
 
-import * as fs from 'fs';
 import * as ubus from 'ubus';
 import * as ubbf from 'ubbf';
-import { call as cache_call } from 'ubbf.utils.cache';
+import { cache_call } from 'ubbf';
 import { interface_resolve } from 'ubbf.utils.path';
 import { netifd_status_get } from 'ubbf.utils.netifd';
-import { instance_rows } from 'ubbf.utils.instance-map';
+import { instance_rows } from 'ubbf';
 
 /**
  * Fetches snooped DHCP client data from udhcpsnoop (uncached).
@@ -24,48 +23,6 @@ function dhcpsnoop_dump_fetch() {
  */
 export function dhcpsnoop_dump_get() {
 	return cache_call(dhcpsnoop_dump_fetch);
-};
-
-/**
- * Fetches IPv6 leases from odhcpd via ubus (uncached).
- *
- * @returns {object} Map of MAC addresses to arrays of IPv6 addresses
- */
-function ipv6_leases_fetch() {
-	let leases = ubus?.call('dhcp', 'ipv6leases', {});
-	if (!leases || !leases.device)
-		return {};
-
-	let result = {};
-
-	for (let dev_name, dev_data in leases.device) {
-		if (!dev_data.leases)
-			continue;
-
-		for (let lease in dev_data.leases) {
-			let mac = lease.mac ? uc(lease.mac) : ubbf.mac_from_duid(lease.duid);
-			if (!mac)
-				continue;
-
-			if (!result[mac])
-				result[mac] = [];
-
-			for (let addr in lease['ipv6-addr'])
-				if (addr.address)
-					push(result[mac], addr.address);
-		}
-	}
-
-	return result;
-}
-
-/**
- * Gets IPv6 leases from odhcpd via ubus (cached).
- *
- * @returns {object} Map of MAC addresses to arrays of IPv6 addresses
- */
-export function ipv6_leases_get() {
-	return cache_call(ipv6_leases_fetch);
 };
 
 /**
@@ -87,51 +44,38 @@ export function ipv6_leases_raw_get() {
 };
 
 /**
+ * Maps the odhcpd IPv6 leases by MAC, from the cached raw response.
+ *
+ * @returns {object} Map of MAC addresses to arrays of IPv6 addresses
+ */
+function ipv6_leases_fetch() {
+	return ubbf.ipv6_leases_by_mac(ipv6_leases_raw_get());
+}
+
+/**
+ * Gets the IPv6 leases from odhcpd by MAC (cached).
+ *
+ * @returns {object} Map of MAC addresses to arrays of IPv6 addresses
+ */
+export function ipv6_leases_get() {
+	return cache_call(ipv6_leases_fetch);
+};
+
+/**
  * Returns the clients of a DHCPv6 server pool, one per DUID, in the order
- * of the odhcpd leases. ipv6_pool_clients_numbered() gives them their
- * instance numbers.
+ * of the odhcpd leases (ipv6_pool_clients_build() in dhcp.c of ubbf.so).
+ * ipv6_pool_clients_numbered() gives them their instance numbers.
  *
  * @param {object} root - Root data model object
  * @param {object} pool - Pool row with its Interface reference
  * @returns {array} { duid, mac, hostname, addresses, prefixes } per client
  */
 export function ipv6_pool_clients(root, pool) {
-	let iface_ref = pool?.Interface;
-	if (!iface_ref)
+	let name = ubbf.interface_to_name(root, pool?.Interface);
+	if (!name)
 		return [];
 
-	let iface = ubbf.navigate_data(root, ubbf.path_to_parts(iface_ref));
-	if (!iface?.Name)
-		return [];
-
-	let status = netifd_status_get(iface.Name);
-	let device_name = status?.l3_device ?? status?.device;
-	let device_leases = ipv6_leases_raw_get()?.device?.[device_name]?.leases;
-	if (!device_name || !device_leases)
-		return [];
-
-	let clients = {};
-	for (let lease in device_leases) {
-		let duid = lease.duid;
-		if (!duid)
-			continue;
-
-		clients[duid] ??= {
-			duid: duid,
-			mac: lease.mac ? uc(lease.mac) : ubbf.mac_from_duid(duid),
-			hostname: lease.hostname,
-			addresses: [],
-			prefixes: []
-		};
-
-		for (let addr in lease['ipv6-addr'])
-			push(clients[duid].addresses, addr);
-
-		for (let prefix in lease['ipv6-prefix'])
-			push(clients[duid].prefixes, prefix);
-	}
-
-	return values(clients);
+	return ubbf.ipv6_pool_clients_build(netifd_status_get(name), ipv6_leases_raw_get());
 };
 
 /**
@@ -151,220 +95,17 @@ export function ipv6_pool_clients_numbered(pool_path, root, pool) {
 };
 
 /**
- * Validates that an IPv6 prefix length lands on a nibble boundary
- * (multiple of 4 bits, in [0, 128]). RFC 7084 / TR-181 PD recommends
- * delegating only on nibble boundaries (typically /48, /52, /56, /60, /64).
- *
- * @param {string|number} len - Prefix length value
- * @returns {boolean} true if the value is an integer in [0,128] and (len % 4) == 0
- */
-export function prefix_length_nibble_check(len) {
-	if (len == null || len == '')
-		return false;
-
-	let n = +len;
-	if (type(n) != 'int')
-		return false;
-	if (n < 0 || n > 128)
-		return false;
-	if ((n % 4) != 0)
-		return false;
-	return true;
-};
-
-export const leases_parse = ubbf.leases_parse;
-
-/**
- * Returns leases whose IP falls inside a DHCPv4 pool address range,
- * sorted by lease expiry descending so the most recently granted lease
- * appears first. pool_leases_numbered() gives them their instance numbers.
- *
- * @param {object} pool_config - Pool object with MinAddress and MaxAddress
- * @returns {array} Leases inside the pool range, newest expiry first
- */
-export function leases_for_pool(pool_config) {
-	let min_addr = pool_config?.MinAddress;
-	let max_addr = pool_config?.MaxAddress;
-
-	if (!min_addr || !max_addr)
-		return [];
-
-	let min_int = ubbf.ip_to_int(min_addr);
-	let max_int = ubbf.ip_to_int(max_addr);
-
-	if (min_int == 0 || max_int == 0)
-		return [];
-
-	let all_leases = leases_parse();
-	let pool_leases = [];
-
-	for (let lease in all_leases)
-		if (lease.ip_int >= min_int && lease.ip_int <= max_int)
-			push(pool_leases, lease);
-
-	sort(pool_leases, (a, b) => (b?.expiry ?? 0) - (a?.expiry ?? 0));
-
-	return pool_leases;
-};
-
-/**
  * Numbers the leases of a DHCPv4 server pool by client MAC, so that a
  * client keeps its number across renewals while other clients come and
- * go. A second lease of one MAC is known by MAC and address.
+ * go; pool_leases_by_key() in dhcp.c of ubbf.so gives the keys.
  *
  * @param {string} pool_path - Path of the pool, e.g. Device.DHCPv4.Server.Pool.1
  * @param {object} pool_config - Pool object with MinAddress and MaxAddress
  * @returns {object} Instance number to lease
  */
 export function pool_leases_numbered(pool_path, pool_config) {
-	let by_key = {};
-	for (let lease in leases_for_pool(pool_config)) {
-		let key = lc(lease.mac);
-		if (by_key[key])
-			key = sprintf('%s/%s', key, lease.ip);
-		by_key[key] = lease;
-	}
+	let by_key = ubbf.pool_leases_by_key(pool_config);
 	return instance_rows(pool_path + '.Client', keys(by_key), (key) => by_key[key]);
-};
-
-/**
- * Reports whether a StaticAddress row fits its pool: Chaddr is a MAC address
- * and Yiaddr is a host address of the pool subnet.
- *
- * @param {object} pool - Pool row with MinAddress and SubnetMask
- * @param {object} row - StaticAddress row
- * @returns {boolean} True when dnsmasq can serve the row
- */
-function static_address_valid(pool, row) {
-	if (!match(row.Chaddr ?? '', /^[0-9A-Fa-f]{2}(:[0-9A-Fa-f]{2}){5}$/))
-		return false;
-
-	if (length(iptoarr(row.Yiaddr ?? '')) != 4)
-		return false;
-
-	let mask = ubbf.ip_to_int(pool.SubnetMask ?? '');
-	let base = ubbf.ip_to_int(pool.MinAddress ?? '');
-	if (!mask || !base)
-		return true;
-
-	let addr = ubbf.ip_to_int(row.Yiaddr);
-	let net = base & mask;
-	let bcast = net | (~mask & 0xffffffff);
-
-	return (addr & mask) == net && addr != net && addr != bcast;
-}
-
-/**
- * Adds a row reference to the group of a key.
- *
- * @param {object} groups - Map of key to array of [pool key, row key]
- * @param {string} key - Grouping key
- * @param {array} ref - [pool key, row key]
- */
-function static_group_add(groups, key, ref) {
-	groups[key] ??= [];
-	push(groups[key], ref);
-}
-
-/**
- * Computes the configured state of every
- * Device.DHCPv4.Server.Pool.{i}.StaticAddress.{i} row. A row of a disabled
- * pool is Disabled. Enabled rows that share a Chaddr or a Yiaddr, across all
- * enabled pools, are Error_DuplicateAddress, because dnsmasq cannot serve
- * both.
- *
- * @param {object} root - Root data model object
- * @returns {object} Map of pool key to map of row key to Status
- */
-export function static_address_states(root) {
-	let states = {};
-	let by_mac = {};
-	let by_ip = {};
-
-	for (let pool_key, pool in (root?.Device?.DHCPv4?.Server?.Pool ?? {})) {
-		if (type(pool) != 'object')
-			continue;
-
-		states[pool_key] = {};
-		let pool_enabled = ubbf.to_bool(pool.Enable);
-
-		for (let row_key, row in (pool.StaticAddress ?? {})) {
-			if (type(row) != 'object')
-				continue;
-
-			if (!pool_enabled || !ubbf.to_bool(row.Enable)) {
-				states[pool_key][row_key] = 'Disabled';
-				continue;
-			}
-
-			if (!static_address_valid(pool, row)) {
-				states[pool_key][row_key] = 'Error_Misconfigured';
-				continue;
-			}
-
-			states[pool_key][row_key] = 'Active';
-			static_group_add(by_mac, lc(row.Chaddr), [ pool_key, row_key ]);
-			static_group_add(by_ip, arrtoip(iptoarr(row.Yiaddr)), [ pool_key, row_key ]);
-		}
-	}
-
-	for (let group in [ ...values(by_mac), ...values(by_ip) ]) {
-		if (length(group) < 2)
-			continue;
-
-		for (let ref in group)
-			states[ref[0]][ref[1]] = 'Error_DuplicateAddress';
-	}
-
-	return states;
-};
-
-/**
- * Looks up the hex value of a DHCP option by numeric tag.
- *
- * @param {array} options - Snooped options array [{tag, value}, ...]
- * @param {number} tag - DHCP option tag
- * @returns {string} Hex value or empty string when the option is missing
- */
-export function dhcp_option_value(options, tag) {
-	if (type(options) != 'array')
-		return '';
-
-	for (let opt in options) {
-		if (opt?.tag == tag)
-			return opt.value ?? '';
-	}
-
-	return '';
-};
-
-/**
- * Decodes a hex string to a printable ASCII string. Returns an empty string
- * when the input is not valid hex or contains any non-printable byte, so that
- * callers for parameters like VendorClassID never emit garbled output.
- *
- * @param {string} hex_str - Even-length hex string
- * @returns {string} Decoded printable string, or "" when any byte is non-printable
- */
-export function hex_to_printable(hex_str) {
-	if (!hex_str || type(hex_str) != 'string')
-		return '';
-
-	let len = length(hex_str);
-	if (len == 0 || (len % 2) != 0)
-		return '';
-
-	let out = '';
-	for (let i = 0; i < len; i += 2) {
-		let byte = hex(substr(hex_str, i, 2));
-		// hex() yields NaN for invalid input, which passes every
-		// comparison below; NaN != NaN catches it
-		if (byte == null || byte != byte || byte < 32 || byte > 126)
-			return '';
-		out += chr(byte);
-	}
-
-	return out;
 };
 
 /**

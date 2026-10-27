@@ -32,11 +32,8 @@ let hooks = [];
 let applied = [];
 
 const api = {
-	ubbf,
-	utils: {
-		cache: { call: (fn, ...args) => fn(...args) },
-		logging: { log_info: () => null, log_err: () => null, log_exception: () => null }
-	},
+	ubbf: proto({ cache_call: (fn, ...args) => fn(...args) }, ubbf),
+	utils: {},
 	schema: (k) => k,
 	on_commit: (cb) => push(hooks, cb),
 	on_abort: () => null,

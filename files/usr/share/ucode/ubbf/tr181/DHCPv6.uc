@@ -3,10 +3,10 @@
 import * as ubus from 'ubus';
 import * as uci from 'uci';
 import {
-	ipv6_pool_clients_numbered, prefix_length_nibble_check, client_snoop_entry
+	ipv6_pool_clients_numbered, client_snoop_entry
 } from 'ubbf.utils.dhcp';
-import { log_err } from 'ubbf.utils.logging';
-import { datetime_format } from 'ubbf.utils.helpers';
+import { log_err, prefix_length_nibble_check } from 'ubbf';
+import { datetime_format } from 'ubbf';
 import * as ubbf from 'ubbf';
 
 /**

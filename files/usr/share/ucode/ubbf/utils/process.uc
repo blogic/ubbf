@@ -3,57 +3,13 @@
 import * as uloop from 'uloop';
 import * as fs from 'fs';
 import * as ubbf from 'ubbf';
-import { log_debug, log_err, log_exception } from 'ubbf.utils.logging';
+import { log_debug, log_err, log_exception } from 'ubbf';
 
 const TASK_POLL_MS = 1000;
 
 // Added to the time limit of the processes a task starts, to give the
 // watchdog timeout of task_run().
 export const TASK_MARGIN_S = 60;
-
-/**
- * Build a shell command string from an argv-style list.
- *
- * Each element of `parts` is quoted with ubbf.shell_escape() so
- * interpolating user-controlled values cannot inject shell
- * metacharacters. Behaviour by element type:
- *
- *   string         shell-escaped (the safe default)
- *   int / double   formatted with %d, no escaping; fractional
- *                  doubles are truncated, convert manually if
- *                  fractional precision matters
- *   null           skipped entirely, so callers can express
- *                  conditional flags as
- *                    cond ? '--flag' : null, value
- *   {raw: 'text'}  inserted verbatim, no escaping, for literal
- *                  shell syntax such as redirections ('2>&1'),
- *                  pipes, or command substitution
- *   boolean        falls through to the %s default and yields the
- *                  literal strings 'true' / 'false'; pass an int
- *                  if a numeric flag value is required
- *
- * Anything else is stringified with %s and then shell-escaped.
- *
- * @param {array} parts - Argv-style list of command fragments
- * @returns {string} Shell command string ready for popen/system
- */
-export function cmd_build(parts) {
-	let out = [];
-	for (let p in parts) {
-		if (p == null)
-			continue;
-		if (type(p) == 'object' && p.raw != null) {
-			push(out, p.raw);
-			continue;
-		}
-		if (type(p) == 'int' || type(p) == 'double') {
-			push(out, sprintf('%d', p));
-			continue;
-		}
-		push(out, ubbf.shell_escape(sprintf('%s', p)));
-	}
-	return join(' ', out);
-};
 
 /**
  * Runs a function in a forked uloop task and calls the callback once.
@@ -140,13 +96,13 @@ export function task_run(fn, callback, opts) {
  * Executes a command asynchronously using uloop task.
  *
  * `cmd` may be a shell command string or an argv-style array
- * that is passed through cmd_build(). The array form is the
+ * that is passed through ubbf.cmd_build(). The array form is the
  * safe default for user-controlled input; prefer it unless you
  * genuinely need shell syntax.
  *
  * The callback runs once, also when the child dies; see task_run().
  *
- * @param {string|array} cmd - Command string or cmd_build parts
+ * @param {string|array} cmd - Command string or ubbf.cmd_build() parts
  * @param {function} callback - Callback receiving result object
  * @param {object} opts - Options (capture_time: boolean, timeout: seconds)
  * @returns {object|null} The uloop task object, or null on creation failure
@@ -155,7 +111,7 @@ export function popen_async(cmd, callback, opts) {
 	opts ??= {};
 
 	if (type(cmd) == 'array')
-		cmd = cmd_build(cmd);
+		cmd = ubbf.cmd_build(cmd);
 
 	log_debug('popen_async: %s', cmd);
 

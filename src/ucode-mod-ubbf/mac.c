@@ -2,6 +2,7 @@
 /* Copyright (C) 2026 John Crispin <john@phrozen.org> */
 
 #include "ubbf.h"
+#include "bindings.h"
 
 /**
  * Builds a TR-181 Alias from a MAC address.
@@ -96,7 +97,7 @@ uc_ubbf_mac_normalise(uc_vm_t *vm, size_t nargs)
 	if (ucv_type(sep_val) == UC_STRING)
 		sep = ucv_string_get(sep_val);
 
-	out = malloc(len + 1);
+	out = xalloc(len + 1);
 	for (i = 0, j = 0; i < len; i++) {
 		char c = s[i];
 		if (sep && strchr(sep, c))
@@ -117,7 +118,53 @@ uc_ubbf_mac_normalise(uc_vm_t *vm, size_t nargs)
  * Extracts a MAC address from a DHCPv6 DUID hex string.
  *
  * Recognises DUID-LL (type 3, hw-type 1) and DUID-LLT (type 1, hw-type 1);
- * other DUID types yield null. Output is uppercase `XX:XX:XX:XX:XX:XX`.
+ * other DUID types carry none. Output is uppercase `XX:XX:XX:XX:XX:XX`.
+ *
+ * @param s    hex DUID
+ * @param len  length of `s`
+ * @param mac  receives the MAC
+ * @return     false when the DUID does not carry a MAC
+ */
+bool
+duid_mac_get(const char *s, size_t len, char mac[18])
+{
+	unsigned int duid_type, hw_type;
+	size_t offset;
+	int i;
+
+	if (len < 16)
+		return false;
+
+	if (sscanf(s, "%4x%4x", &duid_type, &hw_type) != 2)
+		return false;
+	if (hw_type != 1)
+		return false;
+
+	if (duid_type == 3)
+		offset = 8;
+	else if (duid_type == 1)
+		offset = 16;
+	else
+		return false;
+
+	if (len < offset + 12)
+		return false;
+
+	for (i = 0; i < 6; i++) {
+		int hi = hex_nibble(s[offset + i * 2]);
+		int lo = hex_nibble(s[offset + i * 2 + 1]);
+		if (hi < 0 || lo < 0)
+			return false;
+		mac[i * 3]     = "0123456789ABCDEF"[hi];
+		mac[i * 3 + 1] = "0123456789ABCDEF"[lo];
+		mac[i * 3 + 2] = (i < 5) ? ':' : '\0';
+	}
+
+	return true;
+}
+
+/**
+ * ucode: `mac_from_duid(duid)`, see duid_mac_get().
  *
  * @param vm     ucode VM context
  * @param nargs  number of arguments (1 expected: hex DUID string)
@@ -127,45 +174,10 @@ uc_value_t *
 uc_ubbf_mac_from_duid(uc_vm_t *vm, size_t nargs)
 {
 	uc_value_t *val = uc_fn_arg(0);
-	const char *s;
-	size_t len;
-	unsigned int duid_type, hw_type;
-	size_t offset;
 	char mac[18];
-	int i;
 
-	if (ucv_type(val) != UC_STRING)
+	if (ucv_type(val) != UC_STRING || !duid_mac_get(ucv_string_get(val), ucv_string_length(val), mac))
 		return NULL;
-
-	s = ucv_string_get(val);
-	len = ucv_string_length(val);
-	if (len < 16)
-		return NULL;
-
-	if (sscanf(s, "%4x%4x", &duid_type, &hw_type) != 2)
-		return NULL;
-	if (hw_type != 1)
-		return NULL;
-
-	if (duid_type == 3)
-		offset = 8;
-	else if (duid_type == 1)
-		offset = 16;
-	else
-		return NULL;
-
-	if (len < offset + 12)
-		return NULL;
-
-	for (i = 0; i < 6; i++) {
-		int hi = hex_nibble(s[offset + i * 2]);
-		int lo = hex_nibble(s[offset + i * 2 + 1]);
-		if (hi < 0 || lo < 0)
-			return NULL;
-		mac[i * 3]     = "0123456789ABCDEF"[hi];
-		mac[i * 3 + 1] = "0123456789ABCDEF"[lo];
-		mac[i * 3 + 2] = (i < 5) ? ':' : '\0';
-	}
 
 	return ucv_string_new(mac);
 }

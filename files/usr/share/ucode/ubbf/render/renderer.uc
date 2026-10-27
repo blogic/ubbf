@@ -25,7 +25,9 @@ import {
 	ipversion_to_family,
 	protocols_to_uci,
 	format_ip_with_mask,
-	target_to_uci
+	target_to_uci,
+	rule_window_set,
+	redirect_emit_reflection
 } from 'ubbf.render.uci_helpers';
 
 import * as ubbf from 'ubbf';
@@ -41,27 +43,26 @@ import * as services from 'ubbf.render.services';
 import * as ubus from 'ubus';
 import * as wifi from 'ubbf.utils.wifi';
 import * as digest from 'digest';
-import { log_warn, log_err } from 'ubbf.utils.logging';
+import { log_warn, log_err } from 'ubbf';
 import { device_state_set, device_state_list_add } from 'ubbf.render.helpers';
 import { cursor as uci_cursor } from 'uci';
-import { deviceinfo_get } from 'ubbf.utils.deviceinfo';
-import { upstream_interface_ref, lower_layers_wifi, port_snooped } from 'ubbf.utils.helpers';
+import { deviceinfo_get } from 'ubbf';
+import { upstream_interface_ref, lower_layers_wifi, port_snooped } from 'ubbf';
 import { netifd_status_get } from 'ubbf.utils.netifd';
-import { static_address_states } from 'ubbf.utils.dhcp';
+import { static_address_states } from 'ubbf';
 import { dm_visible } from 'ubbf.utils.dm-version';
-import { nptv6_setting_check } from 'ubbf.utils.nptv6';
+import { nptv6_setting_check } from 'ubbf';
 import {
 	router_table_id, forwarding_policy_set, policy_resolve, source_prefix, source_tables,
-	main_source_rules, source_rules, source_table_contents, prefix_intersect
-} from 'ubbf.utils.routing';
+	main_source_rules, source_rules, source_table_contents, prefix_intersect, MAIN_TABLE
+} from 'ubbf';
 import {
-	redirect_emit_reflection, chain_rule_unsupported, chain_rules_ordered, chain_rule_set_matches,
-	firewall_set_resolve, rule_window_set
-} from 'ubbf.utils.firewall';
+	chain_rule_unsupported, chain_rules_ordered, chain_rule_set_matches, firewall_set_resolve
+} from 'ubbf';
 import * as ssh_keys from 'ubbf.utils.ssh_keys';
-import { dns_learned_row, DNS_RESOLV_AUTO, DNS_RESOLV_FILTERED } from 'ubbf.utils.dns';
-import { schedule_windows } from 'ubbf.utils.schedule';
-import { instance_map_readonly } from 'ubbf.utils.instance-map';
+import { dns_learned_row } from 'ubbf';
+import { DNS_RESOLV_AUTO, DNS_RESOLV_FILTERED } from 'ubbf.utils.dns';
+import { schedule_windows } from 'ubbf';
 
 /**
  * Generates UCI configuration from UBBF data model.
@@ -129,6 +130,7 @@ export function generate(config, logs, dry_run) {
 		wifi,
 		digest,
 		ssh_keys,
+		key_acceptable: ubbf.key_acceptable,
 
 		log_warn,
 		log_err,
@@ -153,6 +155,7 @@ export function generate(config, logs, dry_run) {
 		source_rules,
 		source_table_contents,
 		prefix_intersect,
+		MAIN_TABLE,
 		redirect_emit_reflection,
 		chain_rule_unsupported,
 		chain_rules_ordered,
@@ -162,7 +165,6 @@ export function generate(config, logs, dry_run) {
 		dns_learned_row,
 		DNS_RESOLV_AUTO,
 		DNS_RESOLV_FILTERED,
-		instance_map_readonly,
 		schedule_windows: (refs, inline_rows) =>
 			schedule_windows(config, refs, inline_rows, schedules_installed),
 

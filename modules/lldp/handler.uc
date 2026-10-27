@@ -64,12 +64,12 @@ function lldp_neighbors_fetch() {
  * @returns {object|null} Parsed JSON output from lldpcli or null on failure
  */
 function lldp_neighbors_get() {
-	return utils.cache.call(lldp_neighbors_fetch);
+	return ubbf.cache_call(lldp_neighbors_fetch);
 }
 
 // lldpcli escapes control characters in its JSON and json() decodes them
 // back, so the neighbour strings go through text_clamp().
-const text_clamp = utils.helpers.text_clamp;
+const text_clamp = ubbf.text_clamp;
 
 /**
  * Wraps a single lldpcli element in an array: the writer collapses an
@@ -216,7 +216,7 @@ function port_entry_build(port_data, age) {
 		mac_address: (port_id_type == 'mac') ? port_id : '',
 		// lldpd reports the age since the port data last changed, not
 		// since the last frame; liblldpctl exposes nothing else.
-		last_update: utils.helpers.datetime_format(
+		last_update: ubbf.datetime_format(
 			(age_seconds != null) ? time() - age_seconds : null)
 	};
 }
@@ -344,7 +344,7 @@ function port_to_object(port) {
  */
 function device_to_object(root, dev) {
 	return {
-		Interface: utils.path.ethernet_interface_path(root, dev.interface),
+		Interface: ubbf.ethernet_interface_path(root, dev.interface),
 		ChassisIDSubtype: sprintf('%d', dev.chassis_subtype),
 		ChassisID: dev.chassis_id,
 		Host: utils.hosts.host_path_by_mac(root, dev.mac),
@@ -391,7 +391,7 @@ function device_get(ctx) {
  *
  * Returning the full DeviceInformation slice (including VendorSpecific.{i})
  * also makes a leaf-level get handler on VendorSpecific.{i} unnecessary:
- * dispatch_subtree's ancestor block descends through `VendorSpecific.<inst>`
+ * subtree_dispatch's ancestor block descends through `VendorSpecific.<inst>`
  * to reach the per-TLV leaves. Registering a get handler at VendorSpecific.{i}
  * would force the existing-instances runtime-discovery branch to fire, and
  * because LLDP discovery is never persisted to the runtime tree the

@@ -490,7 +490,7 @@ function result_to_output(result) {
 	let out = result.Output;
 
 	if (code != 0)
-		utils.logging.log_err('iplayercap: udpst error %d: %s', code, message);
+		ubbf.log_err('iplayercap: udpst error %d: %s', code, message);
 
 	// A warning (1 to 49) still comes with the results of the test.
 	if (!out || code >= 50)
@@ -541,7 +541,7 @@ function result_to_output(result) {
  * @param {function} complete - Completion callback
  */
 function run_complete(result, instance, complete) {
-	utils.logging.log_debug('iplayercap: output:\n%s', result.data ?? '');
+	ubbf.log_debug('iplayercap: output:\n%s', result.data ?? '');
 
 	if (result.error) {
 		complete(instance, USP_ERR_COMMAND_FAILURE, result.error, {});
@@ -557,7 +557,7 @@ function run_complete(result, instance, complete) {
 
 	let text = trim(result.data ?? '');
 	if (type(parsed) != 'object' && result.exitcode >= 50 && result.exitcode < 75) {
-		utils.logging.log_err('iplayercap: udpst refused the input: %s', text);
+		ubbf.log_err('iplayercap: udpst refused the input: %s', text);
 		complete(instance, USP_ERR_INVALID_ARGUMENTS, text, {});
 		return;
 	}
@@ -566,11 +566,11 @@ function run_complete(result, instance, complete) {
 	if (type(parsed) == 'object') {
 		output = result_to_output(parsed);
 	} else {
-		utils.logging.log_err('iplayercap: no JSON from udpst (exit %d): %s', result.exitcode, text);
+		ubbf.log_err('iplayercap: no JSON from udpst (exit %d): %s', result.exitcode, text);
 		output = failure_output('Error_Internal', result.exitcode ?? 255, text);
 	}
 
-	utils.logging.log_info('iplayercap: complete status=%s', output.Status);
+	ubbf.log_info('iplayercap: complete status=%s', output.Status);
 	complete(instance, 0, null, output);
 }
 
@@ -609,11 +609,11 @@ function iplayercapacity_handler(input, instance, complete, command_key, root) {
 		}
 	}
 
-	let cmd = utils.process.cmd_build([
+	let cmd = ubbf.cmd_build([
 		{raw: '/usr/bin/udpst'},
 		...udpst_args(input, servers, iface_name),
 	]);
-	utils.logging.log_info('iplayercap: %s', cmd);
+	ubbf.log_info('iplayercap: %s', cmd);
 
 	test_running = true;
 	let task = utils.process.popen_async(cmd, (result) => {

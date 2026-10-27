@@ -8,7 +8,7 @@
 // the bbf-dm process, so the restore goes over ubus.
 
 import * as ubus from 'ubus';
-import { log_init, log_info, log_err } from 'ubbf.utils.logging';
+import { log_init, log_info, log_err } from 'ubbf';
 
 // An apply and the rollback of a failed one each restart services.
 const RESTORE_TIMEOUT = 300;

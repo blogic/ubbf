@@ -3,7 +3,7 @@
 import * as ubus from 'ubus';
 import * as ubbf from 'ubbf';
 import { dm_event_send } from 'ubbf.utils.events';
-import { instance_numbers_known } from 'ubbf.utils.instance-map';
+import { instance_numbers_known } from 'ubbf';
 
 const EVENT_BUFFER_MAX = 64;
 

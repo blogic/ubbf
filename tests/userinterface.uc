@@ -10,7 +10,10 @@ import * as fs from 'fs';
 import * as uloop from 'uloop';
 import * as ubbf from 'ubbf';
 import { generate } from 'ubbf.render.renderer';
-import { instance_numbers, instance_key, instance_rows, instance_prune } from 'ubbf.utils.instance-map';
+import { instance_numbers, instance_key, instance_rows, instance_prune } from 'ubbf';
+
+// This process numbers rows, as the agent does.
+ubbf.instance_map_own(true);
 
 const RUN_DIR = '/var/run/ubbf-ui';
 const WEBSESSIONS_DIR = `${RUN_DIR}/websessions`;
@@ -48,12 +51,8 @@ let applied = [];
 let commit_hook;
 
 const api = {
-	ubbf,
-	utils: {
-		helpers: { datetime_format: (t) => t },
-		logging: { log_err: () => null, log_info: () => null, log_exception: (l, e) => warn(`${e}\n`) },
-		'instance-map': { instance_numbers, instance_key, instance_rows, instance_prune }
-	},
+	ubbf: proto({ datetime_format: (t) => t }, ubbf),
+	utils: {},
 	schema: (k) => k,
 	on_commit: (fn) => { commit_hook = fn; },
 	config_apply: (ops) => { push(applied, ...ops); return { success: true }; },

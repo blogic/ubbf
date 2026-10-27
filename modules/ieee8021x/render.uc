@@ -2,7 +2,7 @@ function render_config() {
 	const CLOSED_VID_TOP = 4094;
 
 	let certificates = {};
-	include('../security/certificates.uc', { certificates, instance_map: instance_map_readonly });
+	include('../security/certificates.uc', { certificates });
 
 	let ieee8021x = {};
 	include('shared.uc', { ieee8021x, certificates });

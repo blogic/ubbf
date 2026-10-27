@@ -1,4 +1,4 @@
-// Host test of utils/schedule.uc: the time windows of schedule rows, their
+// Host test of schedule.c of ubbf.so: the time windows of schedule rows, their
 // fw4 form, Status and TimeLeft, and the check of ScheduleRef. Run from the
 // repository root:
 //   ucode -L "$PWD/tests/hosts/*.uc" -L "$PWD/files/usr/share/ucode" \
@@ -10,7 +10,7 @@ import {
 	schedule_intervals, intervals_union, intervals_complement, intervals_to_windows,
 	intervals_active, schedule_state, refs_intervals, schedule_refs_check,
 	start_time_valid, week_seconds
-} from 'ubbf.utils.schedule';
+} from 'ubbf';
 
 let pass = 0, fail = 0;
 

@@ -1,4 +1,4 @@
-// Host test of acl_can_add() in acl.uc: only a write rule that grants the
+// Host test of acl_can_add() of ubbf.so: only a write rule that grants the
 // whole instance of a table lets a web UI role create rows in it. Run from
 // the repository root with the native module built for the host;
 // tests/hosts/ holds a stand-in for udebug:
@@ -6,7 +6,7 @@
 //     -L "<host build>/*.so" tests/acl-add.uc
 'use strict';
 
-import { acl_can_add } from 'ubbf.acl';
+import { acl_can_add } from 'ubbf';
 
 let pass = 0, fail = 0;
 

@@ -35,7 +35,7 @@ const KEY = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHu6JdtbcJvAMYdc6iDsMaQfeaVb6Ln
 
 const config = { Device: {
 	DeviceInfo: { KernelFaults: { MaxKernelFaultEntries: '50' } },
-	SSH: { Enable: 'true', Server: {}, AuthorizedKey: { '1': { Key: KEY } } },
+	SSH: { Enable: 'true', Server: {}, AuthorizedKey: { '1': { Key: KEY }, '2': { Key: 'ssh-dss AAAAB3NzaC1kc3M=' } } },
 	IP: { Interface: { '1': { Enable: 'true', Name: 'wan', Upstream: 'true', LowerLayers: 'Device.PPP.Interface.1' } } },
 	PPP: { Interface: { '1': { Enable: 'true', Name: 'wan' } } },
 	Firewall: { Enable: 'true', X_UBBF_DoSProtection: { IcmpRateLimit: 'true' },
@@ -61,6 +61,7 @@ for (let path in [ '/etc/dropbear/authorized_keys', '/etc/ubbf/kernel-faults.jso
 		   '/tmp/ubbf/firewall-alg.json', '/tmp/ubbf/firewall-dos.nft',
 		   '/tmp/ubbf/qosify.conf', '/tmp/ubbf/umdns/web.json', '/run/ubbf-logd/config.json' ])
 	check(`an apply writes ${path}`, index(files, path) >= 0, true);
+check('only the accepted key is deployed', trim(fs.readfile('/etc/dropbear/authorized_keys')), KEY);
 
 if (fail)
 	printf('render logs: %J\nfiles: %J\n', logs, files);

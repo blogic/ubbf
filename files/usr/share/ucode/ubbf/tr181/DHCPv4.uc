@@ -2,7 +2,8 @@
 
 import * as ubus from 'ubus';
 import * as ubbf from 'ubbf';
-import { pool_leases_numbered, leases_parse, dhcpsnoop_dump_get, client_snoop_entry, static_address_states } from 'ubbf.utils.dhcp';
+import { pool_leases_numbered, dhcpsnoop_dump_get, client_snoop_entry } from 'ubbf.utils.dhcp';
+import { leases_parse, static_address_states } from 'ubbf';
 import { netifd_status_get } from 'ubbf.utils.netifd';
 
 /**

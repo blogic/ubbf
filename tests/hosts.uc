@@ -10,7 +10,11 @@
 'use strict';
 
 import * as fs from 'fs';
-import { hosts_state_get, hosts_downstream_get, hosts_inactive_remove, hosts_numbered, host_by_instance } from 'ubbf.utils.hosts';
+import { hosts_build, hosts_state_get, hosts_downstream_get, hosts_inactive_remove, hosts_numbered, host_by_instance } from 'ubbf.utils.hosts';
+import { instance_map_own } from 'ubbf';
+
+// This process numbers rows, as the agent does.
+instance_map_own(true);
 
 let pass = 0, fail = 0;
 
@@ -83,6 +87,15 @@ for (let n, h in hosts_numbered({}))
 delete away_numbers['02:00:00:00:00:02'];
 check('hosts keep their numbers when one leaves', renumbered, away_numbers);
 check('host by its number', host_by_instance({}, away_numbers['02:00:00:00:00:04'])?.mac, '02:00:00:00:00:04');
+
+// hosts_build() caches the scan of the system, not the root of the
+// first caller
+let root_a = { Device: {} }, root_b = { Device: {} };
+let built_a = hosts_build(root_a);
+check('inventory of the second root', hosts_build(root_b).config === root_b, true);
+check('inventory of the first root again', hosts_build(root_a).config === root_a, true);
+check('same root, same inventory', hosts_build(root_a) === hosts_build(root_a), true);
+check('same scan for both roots', hosts_build(root_b).hosts === built_a.hosts, true);
 
 printf('passed: %d\nfailed: %d\n', pass, fail);
 exit(fail ? 1 : 0);

@@ -10,7 +10,7 @@
 
 import * as fs from 'fs';
 import { dm, operations_apply, object_delete } from 'ubbf.datamodel';
-import { instance_numbers } from 'ubbf.utils.instance-map';
+import { instance_numbers } from 'ubbf';
 
 const TABLE = 'Device.Optical.Interface';
 const MAPPINGS = 'Device.NAT.PortMapping';

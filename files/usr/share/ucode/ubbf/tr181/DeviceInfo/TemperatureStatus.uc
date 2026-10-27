@@ -1,8 +1,7 @@
 'use strict';
 
 import * as ubus from 'ubus';
-import * as cache from 'ubbf.utils.cache';
-import { datetime_format } from 'ubbf.utils.helpers';
+import { datetime_format } from 'ubbf';
 import * as ubbf from 'ubbf';
 
 /**
@@ -20,7 +19,7 @@ function daemon_status_fetch() {
  * @returns {object} Daemon response with sensors array
  */
 function daemon_status_get() {
-	return cache.call(daemon_status_fetch);
+	return ubbf.cache_call(daemon_status_fetch);
 }
 
 /**
@@ -84,7 +83,7 @@ function sensor_set(ctx) {
 		high_alarm_value: int(config.HighAlarmValue ?? '-274'),
 		polling_interval: int(config.PollingInterval ?? '0')
 	});
-	cache.invalidate(daemon_status_fetch);
+	ubbf.cache_invalidate(daemon_status_fetch);
 }
 
 /**
@@ -116,7 +115,7 @@ function reset_op(input, command_key, instances) {
 		return null;
 
 	let result = ubus.call('bbf-device', 'temperature_reset', { index: idx - 1 });
-	cache.invalidate(daemon_status_fetch);
+	ubbf.cache_invalidate(daemon_status_fetch);
 	if (!result || result.error)
 		return null;
 

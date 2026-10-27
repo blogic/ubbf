@@ -1,10 +1,10 @@
-// Host test of the bridge port helpers in utils/helpers.uc
+// Host test of the bridge port helpers of ubbf.so
 // (Device.Bridging.Bridge.{i}.Port.{i}.IGMP and MLD). Run from the
 // repository root with the native module built for the host:
 //   ucode -L "$PWD/files/usr/share/ucode/*.uc" -L "<host build>/*.so" tests/bridging.uc
 'use strict';
 
-import { port_snooped, lower_layers_wifi } from 'ubbf.utils.helpers';
+import { port_snooped, lower_layers_wifi } from 'ubbf';
 
 let pass = 0, fail = 0;
 

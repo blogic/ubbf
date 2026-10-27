@@ -30,8 +30,8 @@ let table = build_dir && length(ubbf.schema_tables_load(build_dir + '/schema-har
 printf('schemas: %s\n', table ? 'compiled table' : 'objects');
 
 const api = {
-	ubbf,
-	utils: { cache: { call: (fn, ...args) => fn(...args), invalidate: () => null } },
+	ubbf: proto({ cache_call: (fn, ...args) => fn(...args), cache_invalidate: () => null }, ubbf),
+	utils: {},
 	schema: (k) => table ? `hardware.${k}` : schemas[k],
 	schema_defaults: (k) => table ? ubbf.schema_defaults(`hardware.${k}`) : schemas[k]?.defaults,
 	model: {},

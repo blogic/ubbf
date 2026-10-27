@@ -3,7 +3,7 @@
 import * as fs from 'fs';
 import * as ubus from 'ubus';
 import * as ubbf from 'ubbf';
-import { log_info, log_err } from 'ubbf.utils.logging';
+import { log_info, log_err } from 'ubbf';
 import { dm_visible } from 'ubbf.utils.dm-version';
 
 const STATE_PATH = '/tmp/ubbf/ip-block-list.json';

@@ -13,7 +13,10 @@
 
 import * as fs from 'fs';
 import * as ubbf from 'ubbf';
-import { instance_numbers, instance_key, instance_rows, instance_prune } from 'ubbf.utils.instance-map';
+import { instance_numbers, instance_key, instance_rows, instance_prune } from 'ubbf';
+
+// This process numbers rows, as the agent does.
+ubbf.instance_map_own(true);
 
 let pass = 0, fail = 0;
 
@@ -139,12 +142,8 @@ let schemas = {};
 include('../modules/ieee8021x/schema.uc', { schemas });
 
 const api = {
-	ubbf,
-	utils: {
-		cache: { call: (fn, ...args) => fn(...args), invalidate: () => null },
-		logging: { log_err: () => null },
-		'instance-map': { instance_numbers, instance_key, instance_rows, instance_prune }
-	},
+	ubbf: proto({ cache_call: (fn, ...args) => fn(...args), cache_invalidate: () => null }, ubbf),
+	utils: {},
 	schema: (key) => key,
 	schema_defaults: (key) => schemas[key]?.defaults,
 	model: {},

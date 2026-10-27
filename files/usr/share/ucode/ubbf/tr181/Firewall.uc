@@ -3,15 +3,14 @@
 import * as fs from 'fs';
 import * as ubus from 'ubus';
 import * as ubbf from 'ubbf';
-import * as cache from 'ubbf.utils.cache';
 import { interface_resolve } from 'ubbf.utils.path';
-import { upstream_interface_ref } from 'ubbf.utils.helpers';
-import { last_changed_get } from 'ubbf.utils.uci_change_track';
-import { chain_rule_unsupported } from 'ubbf.utils.firewall';
-import { log_err } from 'ubbf.utils.logging';
+import { upstream_interface_ref } from 'ubbf';
+import { uci_last_changed } from 'ubbf';
+import { chain_rule_unsupported } from 'ubbf';
+import { log_err } from 'ubbf';
 import { modules_registered } from 'ubbf.utils.modules';
-import { refs_intervals, intervals_active, week_seconds } from 'ubbf.utils.schedule';
-import { instance_items, instance_floor, instance_lookup } from 'ubbf.utils.instance-map';
+import { refs_intervals, intervals_active, week_seconds } from 'ubbf';
+import { instance_items, instance_floor, instance_lookup } from 'ubbf';
 
 const CONFIG_PATH = '/etc/ubbf/config.json';
 
@@ -44,7 +43,7 @@ const CHAIN_RULE_UNSUPPORTED_BY = {
  * @returns {string} ISO 8601 timestamp, or '0001-01-01T00:00:00Z' when unknown
  */
 function last_change_get() {
-	let ts = last_changed_get('firewall');
+	let ts = uci_last_changed('firewall');
 	if (ts)
 		return ts;
 
@@ -200,7 +199,7 @@ function upnp_pinhole_to_object(p, iface_ref) {
  * @returns {object|null} One instance, or the UPnP rows in enumerate mode
  */
 function upnp_pinholes_get(ctx) {
-	let pinholes = instance_items(PINHOLE_TABLE, cache.call(upnp_pinholes_fetch),
+	let pinholes = instance_items(PINHOLE_TABLE, ubbf.cache_call(upnp_pinholes_fetch),
 		(p) => sprintf('%d', p.id), instance_floor(ctx.root?.Device?.Firewall?.Pinhole));
 	let iface_ref = upstream_interface_ref(ctx.root);
 
@@ -235,7 +234,7 @@ function pinhole_del(ctx) {
 		data: { id: +id }
 	});
 
-	cache.invalidate(upnp_pinholes_fetch);
+	ubbf.cache_invalidate(upnp_pinholes_fetch);
 
 	return res != null && !res.error;
 }

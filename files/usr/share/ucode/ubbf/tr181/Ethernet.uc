@@ -2,8 +2,9 @@
 
 import * as ubbf from 'ubbf';
 import { vlan_termination_bridge_resolve } from 'ubbf.render.ubbf_helpers';
-import { ethtool_properties_get, ethtool_stats_get } from 'ubbf.utils.ethtool';
-import { ifop_status_derive } from 'ubbf.utils.status';
+import { ethtool_properties_get, ethtool_stats_get } from 'ubbf';
+import { ifop_status_derive } from 'ubbf';
+import { ssid_ifname_get } from 'ubbf.utils.wifi';
 import { last_change_get } from 'ubbf.utils.netdev_change';
 import { ifstats_get, ifstats_reset } from 'ubbf.utils.ifstats';
 import { modules_registered } from 'ubbf.utils.modules';
@@ -82,7 +83,7 @@ function link_get(ctx) {
 		...ctx.config,
 		...props,
 		Status: ifop_status_derive(ctx.config.Enable, ifname,
-		                           ctx.config.LowerLayers, ctx.root),
+		                           ctx.config.LowerLayers, ctx.root, ssid_ifname_get),
 		LastChange: last_change_get(ifname)
 	};
 }
@@ -118,7 +119,7 @@ function vlan_termination_get(ctx) {
 	return {
 		...ctx.config,
 		Status: ifop_status_derive(ctx.config.Enable, ctx.config.Name,
-		                           ctx.config.LowerLayers, ctx.root),
+		                           ctx.config.LowerLayers, ctx.root, ssid_ifname_get),
 		LastChange: last_change_get(ctx.config.Name)
 	};
 }
@@ -199,17 +200,19 @@ function counter_string(value, uint32) {
 }
 
 /**
- * Get handler for Device.Ethernet.RMONStats.{i}. The counters are the
+ * Builds a Device.Ethernet.RMONStats.{i} row. The counters are the
  * receive counters of RFC 2819 etherStats, read from the IEEE 802.3 MAC
- * and the RMON statistics of the driver (ethtool stats-get). The driver
- * counts the whole port, so a row that filters on a VLAN or a queue
- * reports Error. A counter that the driver does not provide reads 0;
- * DropEvents has no counter in the driver statistics.
+ * and the RMON statistics of the driver. The driver counts the whole
+ * port, so a row that filters on a VLAN or a queue reports Error. A
+ * counter that the driver does not provide reads 0; DropEvents has no
+ * counter in the driver statistics.
  *
  * @param {object} ctx - Context with config and root
+ * @param {function} stats_fetch - Returns the driver statistics of a
+ *     netdev in the form of ubbf.ethtool_stats_get()
  * @returns {object|null} RMON statistics
  */
-function rmon_stats_get(ctx) {
+export function rmon_stats_build(ctx, stats_fetch) {
 	let cfg = ctx.config;
 	if (!cfg)
 		return null;
@@ -224,7 +227,7 @@ function rmon_stats_get(ctx) {
 	if (ubbf.to_int(cfg.VLANID) || (cfg.Queue && !ubbf.to_bool(cfg.AllQueues)))
 		return { ...cfg, Name: iface.Name, Status: 'Error' };
 
-	let stats = ethtool_stats_get(iface.Name);
+	let stats = stats_fetch(iface.Name);
 	if (!stats || (!length(stats.mac) && !length(stats.rmon)))
 		return { ...cfg, Name: iface.Name, Status: 'Error' };
 
@@ -249,6 +252,17 @@ function rmon_stats_get(ctx) {
 		Packets512to1023Bytes: counter_string(rmon_bucket(stats, 512, 1023)),
 		Packets1024to1518Bytes: counter_string(rmon_bucket(stats, 1024, 1518))
 	};
+};
+
+/**
+ * Get handler for Device.Ethernet.RMONStats.{i}, on the ethtool
+ * statistics of the driver.
+ *
+ * @param {object} ctx - Context with config and root
+ * @returns {object|null} RMON statistics
+ */
+function rmon_stats_get(ctx) {
+	return rmon_stats_build(ctx, ethtool_stats_get);
 }
 
 /**

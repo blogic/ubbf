@@ -2,7 +2,7 @@
 
 import * as fs from 'fs';
 import { netifd_status_get } from 'ubbf.utils.netifd';
-import { log_err } from 'ubbf.utils.logging';
+import { log_err } from 'ubbf';
 import * as ubbf from 'ubbf';
 
 // The parameters of NeighborDiscovery.InterfaceSetting.{i} that TR-181 2.21

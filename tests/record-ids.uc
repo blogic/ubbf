@@ -18,6 +18,10 @@ import { model as reboot_model, last_reboot_path } from 'ubbf.tr181.DeviceInfo.R
 import * as process_faults from 'ubbf.device.process-faults';
 import * as kernel_faults from 'ubbf.device.kernel-faults';
 import * as reboots from 'ubbf.device.reboots';
+import { instance_map_own } from 'ubbf';
+
+// This process numbers rows, as the agent does.
+instance_map_own(true);
 
 let pass = 0, fail = 0;
 

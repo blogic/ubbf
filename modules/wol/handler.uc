@@ -6,7 +6,7 @@
 
 const ubbf = ubbf_module.ubbf;
 const lower_layer_resolve_vlan = ubbf_module.utils.ubbf_helpers.lower_layer_resolve_vlan;
-const log_warn = ubbf_module.utils.logging.log_warn;
+const log_warn = ubbf_module.ubbf.log_warn;
 const model = ubbf_module.model;
 const operations = ubbf_module.operations;
 

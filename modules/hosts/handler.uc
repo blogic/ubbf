@@ -9,7 +9,7 @@ const utils = ubbf_module.utils;
 const model = ubbf_module.model;
 const operations = ubbf_module.operations;
 const members = ubbf_module.members;
-const log_warn = utils.logging.log_warn;
+const log_warn = ubbf.log_warn;
 
 const fs = require('fs');
 
@@ -70,7 +70,7 @@ function nlbwmon_stats_fetch() {
  * @returns {object} Map of MAC address to traffic counters
  */
 function nlbwmon_stats_get() {
-	return utils.cache.call(nlbwmon_stats_fetch);
+	return ubbf.cache_call(nlbwmon_stats_fetch);
 }
 
 /**
@@ -92,7 +92,7 @@ function host_interface_find(mac, lookup) {
 	if (ssid)
 		return { layer1: sprintf('Device.WiFi.SSID.%d', ssid), type: 'Wi-Fi' };
 
-	let ethernet = (port && lookup.config) ? utils.path.ethernet_interface_path(lookup.config, port) : '';
+	let ethernet = (port && lookup.config) ? ubbf.ethernet_interface_path(lookup.config, port) : '';
 	if (ethernet != '')
 		return { layer1: ethernet, type: 'Ethernet' };
 
@@ -161,8 +161,8 @@ function host_name_get(host, lookup) {
 
 	if (name == '') {
 		let snoop = lookup.snoop_by_mac?.[lc(host.mac)];
-		name = utils.dhcp.hex_to_printable(
-			utils.dhcp.dhcp_option_value(snoop?.options ?? [], DHCP_OPT_HOST_NAME));
+		name = ubbf.hex_to_printable(
+			ubbf.dhcp_option_value(snoop?.options ?? [], DHCP_OPT_HOST_NAME));
 	}
 
 	return substr(name, 0, HOST_NAME_MAX);
@@ -188,7 +188,7 @@ function host_converter_create(lookup, state) {
 		let layer3 = ubbf.layer3_interface_find(lookup.config, primary_ip,
 			lookup.netifd_ifaces);
 
-		let active_last_change = utils.hosts.host_active_track(state, mac, active, {
+		let active_last_change = ubbf.host_active_track(state, mac, active, {
 			ipv4_addresses: host.ipv4_addresses,
 			ipv6_addresses: host.ipv6_addresses,
 			hostname: host_name,
@@ -242,7 +242,7 @@ function host_get(ctx) {
 		result = converter(host);
 	}
 
-	utils.hosts.hosts_state_flush(state);
+	ubbf.hosts_state_flush(state);
 	return result;
 }
 

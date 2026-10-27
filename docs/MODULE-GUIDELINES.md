@@ -295,7 +295,7 @@ function container_get(ctx) {
 }
 ```
 
-A table can have its own `{i}` handler and no stored rows. In this case the dispatcher writes `<Child>NumberOfEntries` on the parent, if the parent schema declares that key. `dispatch_subtree()` in `src/ucode-mod-ubbf/dm.c` counts the rows after the model walk. The parent handler does not need to calculate the count. This also covers a module table under a core parent, where the module cannot change the parent handler.
+A table can have its own `{i}` handler and no stored rows. In this case the dispatcher writes `<Child>NumberOfEntries` on the parent, if the parent schema declares that key. `subtree_dispatch()` in `src/ucode-mod-ubbf/dm_get.c` counts the rows after the model walk. The parent handler does not need to calculate the count. This also covers a module table under a core parent, where the module cannot change the parent handler.
 
 ## Converter Functions
 
@@ -361,10 +361,10 @@ function device_to_object(dev) {
 
 ### Cache for Expensive Calls
 
-An expensive call can occur more than once in one request, for example a ubus call or an iwinfo query. For such a call, use the cache utility:
+An expensive call can occur more than once in one request, for example a ubus call or an iwinfo query. For such a call, use the cache of `ubbf.so` (`ubbf_module.ubbf.cache_call` in a module):
 
 ```ucode
-import { call as cache_call } from 'ubbf.utils.cache';
+import { cache_call } from 'ubbf';
 ```
 
 `cache_call(fn, ...args)` returns the result of `fn(...args)` and keeps it for 2 seconds. The first call that stores a result starts a 2-second timer. When the timer expires, the complete cache clears. There is no expiry per entry.
@@ -428,7 +428,7 @@ function devices_fetch() {
 
 ### Get Handlers
 
-The dispatcher calls a get handler with the context `{ instance, config, parent, root }`. Source: `call_get_handler()` in `src/ucode-mod-ubbf/dm.c`.
+The dispatcher calls a get handler with the context `{ instance, config, parent, root }`. Source: `get_handler_call()` in `src/ucode-mod-ubbf/dm_get.c`.
 
 | Field | Content |
 |-------|---------|
@@ -455,7 +455,7 @@ function instance_get(ctx) {
 
 ### Set Handlers
 
-The dispatcher stores the new value first. Then it calls the set handler with the context `{ path, param, value, instance, config, root }`. Source: `set_handler_invoke()` and `uc_dm_params_set()` in `src/ucode-mod-ubbf/dm.c`.
+The dispatcher stores the new value first. Then it calls the set handler with the context `{ path, param, value, instance, config, root }`. Source: `set_handler_invoke()` and `uc_dm_params_set()` in `src/ucode-mod-ubbf/dm_set.c`.
 
 | Field | Content |
 |-------|---------|
@@ -663,7 +663,7 @@ Before you write new code, find out if a helper exists:
 3. Enumerate mode: `ubbf.enumerate_instances()` and `ubbf.get_by_instance()`.
 4. Sysfs and other small files: `ubbf.readfile_trim()` and `ubbf.readfile_int()`.
 5. Netifd status: `netifd_status_get()` in `utils/netifd.uc`.
-6. Cached calls: `call()` in `utils/cache.uc`.
+6. Cached calls: `ubbf.cache_call()` and `ubbf.cache_invalidate()`.
 7. Alias values: `ubbf.alias_from_mac()` and `ubbf.alias_from_name()`.
 
 ### New Utilities
@@ -1116,12 +1116,12 @@ Rules for such a handler:
 - With `ctx.config` set, return the persisted row.
 - With `ctx.config` null and `ctx.instance` set, return the runtime row with that number, or `null`.
 - With `ctx.config` null and no instance, return an object keyed by instance number with every runtime row.
-- Number the runtime rows through the instance map (`utils['instance-map']`), with a stable key per row and `instance_floor()` of the stored table as floor, so that they follow the persisted rows: `instance_numbers()` or `instance_rows()`, or `instance_items()` for keys that never come back, such as a daemon's row id. Persisted and runtime rows then share one pool of numbers: a controller add takes the next number of the map (see "Instance numbers of runtime rows" in `ARCHITECTURE.md`). A `del` hook finds the key of a number with `instance_lookup()`, which numbers nothing. Source: `port_mapping_get()` and `port_mapping_del()` in `tr181/NAT.uc`.
+- Number the runtime rows through the instance map (`ubbf.instance_*()`), with a stable key per row and `instance_floor()` of the stored table as floor, so that they follow the persisted rows: `instance_numbers()` or `instance_rows()`, or `instance_items()` for keys that never come back, such as a daemon's row id. Persisted and runtime rows then share one pool of numbers: a controller add takes the next number of the map (see "Instance numbers of runtime rows" in `ARCHITECTURE.md`). A `del` hook finds the key of a number with `instance_lookup()`, which numbers nothing. Source: `port_mapping_get()` and `port_mapping_del()` in `tr181/NAT.uc`.
 
 The parent's `<Table>NumberOfEntries` is recounted on the merged table, so the parent handler needs no change.
 
 A controller can write only the stored rows. A Set on a runtime row stores nothing: USP answers 7013 (parameter read-only) for a row that exists at run time, and 7016 for an instance that does not exist at all.
 
-A table that the CPE maintains but whose rows have writable parameters, for example `Device.Optical.Interface.{i}` (`Enable`, `Alias`), sets `writable_rows: true` next to `runtime_instances: true`. A write into a runtime row then stores that row: the dispatcher asks the get handler for the instance (`runtime_row_live()` in `src/ucode-mod-ubbf/dm.c`) and accepts the write only when the handler returns the row, so no row is stored for an instance that does not exist. An add of a row in a table below such a runtime row (`object_add()`) follows the same rule: the dispatcher accepts it only when the get handler returns the parent row. The enumerate mode of the handler leaves out the instances that the configuration stores, and the stored mode returns the live values over the stored ones; the live rows of the other instances stay visible. `path_runtime_instance_absent()` in `src/ucode-mod-ubbf/dm.c` and `runtime_row_exists()` in `datamodel.uc` implement this. A runtime row is addressed by its instance number only: alias paths resolve against the stored rows. After a `del` hook removes a row at its source, it calls `invalidate()` from `utils/cache.uc` for its fetch function, so that a read in the same 2 seconds no longer lists the row.
+A table that the CPE maintains but whose rows have writable parameters, for example `Device.Optical.Interface.{i}` (`Enable`, `Alias`), sets `writable_rows: true` next to `runtime_instances: true`. A write into a runtime row then stores that row: the dispatcher asks the get handler for the instance (`runtime_row_live()` in `src/ucode-mod-ubbf/dm_set.c`) and accepts the write only when the handler returns the row, so no row is stored for an instance that does not exist. An add of a row in a table below such a runtime row (`object_add()`) follows the same rule: the dispatcher accepts it only when the get handler returns the parent row. The enumerate mode of the handler leaves out the instances that the configuration stores, and the stored mode returns the live values over the stored ones; the live rows of the other instances stay visible. `path_runtime_instance_absent()` in `src/ucode-mod-ubbf/dm_set.c` and `runtime_row_exists()` in `datamodel.uc` implement this. A runtime row is addressed by its instance number only: alias paths resolve against the stored rows. After a `del` hook removes a row at its source, it calls `ubbf.cache_invalidate()` for its fetch function, so that a read in the same 2 seconds no longer lists the row.
 
-A `del` hook on the same entry receives `{ path, instance }` before the configuration is touched. It returns `true` when it removed a runtime row at its source. It returns a negative USP error code to refuse the delete, for example `-USP_ERR_OBJECT_NOT_DELETABLE` for a static row. Otherwise the persisted path goes through `dm.object_del()`. The hook runs outside the configuration transaction. USP, CWMP and `bbf-dm` all delete through `object_delete()` in `datamodel.uc`, so the hook sees every delete. Source: `runtime_del()` and `object_delete()` in `datamodel.uc`, the table walk in `src/ucode-mod-ubbf/dm.c`, `port_mapping_get()` and `port_mapping_del()` in `tr181/NAT.uc`, and `system_row_del()` in `modules/users/handler.uc`.
+A `del` hook on the same entry receives `{ path, instance }` before the configuration is touched. It returns `true` when it removed a runtime row at its source. It returns a negative USP error code to refuse the delete, for example `-USP_ERR_OBJECT_NOT_DELETABLE` for a static row. Otherwise the persisted path goes through `dm.object_del()`. The hook runs outside the configuration transaction. USP, CWMP and `bbf-dm` all delete through `object_delete()` in `datamodel.uc`, so the hook sees every delete. Source: `runtime_del()` and `object_delete()` in `datamodel.uc`, the table walk in `src/ucode-mod-ubbf/dm_set.c`, `port_mapping_get()` and `port_mapping_del()` in `tr181/NAT.uc`, and `system_row_del()` in `modules/users/handler.uc`.

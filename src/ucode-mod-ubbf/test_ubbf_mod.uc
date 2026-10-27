@@ -360,34 +360,6 @@ let test_config = {
 dm.trans_start();
 dm.trans_abort();
 
-/* test find_get_handler */
-let handler = dm.find_get_handler('Device.WiFi');
-assert_eq('find_get_handler: finds WiFi handler',
-	handler?.pattern, 'Device.WiFi');
-assert_eq('find_get_handler: handler is callable',
-	type(handler?.handler), 'function');
-
-let handler2 = dm.find_get_handler('Device.WiFi.Radio.1.Enable');
-assert_eq('find_get_handler: finds Radio handler',
-	handler2?.pattern, 'Device.WiFi.Radio.{i}');
-assert_eq('find_get_handler: extracts instance',
-	handler2?.instance, 1);
-assert_eq('find_get_handler: remaining parts',
-	handler2?.remaining, ['Enable']);
-
-let handler3 = dm.find_get_handler('Device.Ethernet');
-assert_null('find_get_handler: no match returns null', handler3);
-
-/* test find_set_handler */
-let set_handler = dm.find_set_handler('Device.WiFi.Radio.1.Enable');
-assert_eq('find_set_handler: finds Radio set handler',
-	set_handler?.pattern, 'Device.WiFi.Radio.{i}');
-assert_eq('find_set_handler: extracts instance',
-	set_handler?.instance, 1);
-
-let set_handler2 = dm.find_set_handler('Device.WiFi.RadioNumberOfEntries');
-assert_null('find_set_handler: no set handler on WiFi', set_handler2);
-
 /* ---- dm.params_get / dm.params_set ------------------------------------ */
 
 let dm2 = ubbf.create();
@@ -475,25 +447,6 @@ assert_null('dm.object_del: instance removed',
 	cfg3?.Device?.Test?.Item?.[sprintf('%d', new_inst)]);
 assert_eq('dm.object_del: NumberOfEntries updated',
 	cfg3?.Device?.Test?.ItemNumberOfEntries, '1');
-dm2.trans_abort();
-
-/* A numberer gives the number of a table that shares its numbers with
- * runtime rows: it gets the table path and one above the highest stored
- * row, and a number that a stored row holds or null falls back to the
- * lowest free one. */
-let numberer_args = [];
-dm2.trans_start();
-let numbered = dm2.object_add('Device.Test.Item', (table, floor) => {
-	push(numberer_args, [ table, floor ]);
-	return 7;
-});
-assert_eq('dm.object_add: numberer gives the number', numbered, 7);
-assert_eq('dm.object_add: numberer gets the table and the floor',
-	numberer_args, [ [ 'Device.Test.Item', 2 ] ]);
-assert_eq('dm.object_add: a number of a stored row falls back',
-	dm2.object_add('Device.Test.Item', () => 1), 2);
-assert_eq('dm.object_add: a null number falls back',
-	dm2.object_add('Device.Test.Item', () => null), 3);
 dm2.trans_abort();
 
 /* ---- runtime table counts on the parent ------------------------------- */
@@ -912,12 +865,6 @@ assert_eq('readfile_trim: default on missing',
 let pid_max = ubbf.readfile_int('/proc/sys/kernel/pid_max', 0);
 assert_true('readfile_int: reads integer', pid_max > 0);
 
-/* ---- operstate_to_status ---------------------------------------------- */
-
-assert_eq('operstate_to_status: up', ubbf.operstate_to_status('up'), 'Up');
-assert_eq('operstate_to_status: down', ubbf.operstate_to_status('down'), 'Down');
-assert_eq('operstate_to_status: unknown', ubbf.operstate_to_status('bogus'), 'Error');
-
 /* ---- host discovery --------------------------------------------------- */
 
 let arp = ubbf.arp_parse();
@@ -1189,16 +1136,7 @@ assert_eq('wifi_operating_standard: unknown flag',
 assert_eq('wifi_operating_standard: non-array',
 	ubbf.wifi_operating_standard(null), '');
 
-/* ---- inet.c: ipv6_lifetime_status / addr+prefix builders ------------- */
-
-assert_eq('ipv6_lifetime_status: preferred',
-	ubbf.ipv6_lifetime_status({ preferred: 3600, valid: 7200 }), 'Preferred');
-assert_eq('ipv6_lifetime_status: deprecated',
-	ubbf.ipv6_lifetime_status({ preferred: 0, valid: 7200 }), 'Deprecated');
-assert_eq('ipv6_lifetime_status: invalid',
-	ubbf.ipv6_lifetime_status({ preferred: 3600, valid: 0 }), 'Invalid');
-assert_eq('ipv6_lifetime_status: non-object',
-	ubbf.ipv6_lifetime_status(null), 'Invalid');
+/* ---- inet.c: addr+prefix builders ---------------------------------- */
 
 let v4 = ubbf.ipv4_addr_to_object({ address: '192.168.1.1', mask: 24 });
 assert_eq('ipv4_addr_to_object: IPAddress',
@@ -1253,10 +1191,6 @@ assert_eq('ipv6_addr_to_object: forever IPAddress',
 /* netifd leaves out an infinite lifetime and wraps an expired valid one;
  * 0xffffffff is infinite (RFC 4861) */
 const FOREVER = '9999-12-31T23:59:59Z';
-assert_eq('ipv6_lifetime_status: no lifetimes is infinite',
-	ubbf.ipv6_lifetime_status({}), 'Preferred');
-assert_eq('ipv6_lifetime_status: wrapped valid is expired',
-	ubbf.ipv6_lifetime_status({ preferred: 0, valid: 4294967290 }), 'Invalid');
 
 let v6inf = ubbf.ipv6_addr_to_object({ address: '2001:db8::2' });
 assert_eq('ipv6_addr_to_object: no lifetimes',
@@ -1449,7 +1383,7 @@ assert_eq('ethernet_properties_get: MACAddress present',
 assert_eq('ethernet_properties_get: non-string',
 	ubbf.ethernet_properties_get(null), {});
 
-/* ---- atomic.c: tmpfile_name / write_file_atomic / counter_bump ------ */
+/* ---- atomic.c: tmpfile_name / write_file_atomic --------------------- */
 
 let tmpname = ubbf.tmpfile_name('ubbf_test', '.tmp');
 assert_eq('tmpfile_name: under /tmp',
@@ -1481,16 +1415,6 @@ assert_true('write_file_atomic: mode 0600 over a stale temp file',
 	ubbf.write_file_atomic(atomic_path, 'secret', 0600) && (fs_mod.stat(atomic_path).mode & 0777) == 0600);
 ubbf.write_file_atomic(atomic_path, '');
 
-let counter_path = sprintf('/tmp/ubbf_unittest_counter_%d', time());
-assert_eq('counter_bump: first call returns 0',
-	ubbf.counter_bump(counter_path), 0);
-assert_eq('counter_bump: second call returns 1',
-	ubbf.counter_bump(counter_path), 1);
-assert_eq('counter_bump: third call returns 2',
-	ubbf.counter_bump(counter_path), 2);
-assert_null('counter_bump: non-string path',
-	ubbf.counter_bump(42));
-ubbf.write_file_atomic(counter_path, '');
 
 /* ---- rate_limit.c: rate_limit_check --------------------------------- */
 
@@ -1541,7 +1465,7 @@ for (let pw in ['aabbccdd', 'aabbccddeeff', 'aa:bb:cc:dd', 'aa-bb-cc-dd-ee-ff'])
 	assert_eq(`wol_send: password ${pw} accepted`,
 		type(wol_lib.send('nonexistent_iface', 'aa:bb:cc:dd:ee:ff', pw)), 'bool');
 
-/* ---- sys.c: arch_get / apk_version / statvfs_info / du_kib ---------- */
+/* ---- sys.c: arch_get / apk_version / statvfs_info ------------------ */
 
 assert_eq('arch_get: returns string',
 	type(ubbf.arch_get()), 'string');
@@ -1567,12 +1491,6 @@ assert_null('statvfs_info: missing path',
 assert_null('statvfs_info: non-string',
 	ubbf.statvfs_info(null));
 
-assert_true('du_kib: /tmp >= 0',
-	ubbf.du_kib('/tmp') >= 0);
-assert_eq('du_kib: non-string',
-	ubbf.du_kib(null), -1);
-assert_eq('du_kib: missing path',
-	ubbf.du_kib('/nonexistent/path/xyz'), -1);
 
 /* ---- led.c: led_read_info ------------------------------------------- */
 

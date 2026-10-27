@@ -15,7 +15,10 @@ import * as dns from 'ubbf.utils.dns';
 import { dns_relay_plan } from 'ubbf.render.ubbf_helpers';
 import { model } from 'ubbf.tr181.DNS';
 import * as dns_filter from 'ubbf.device.dns-filter';
-import { instance_pins_load } from 'ubbf.utils.instance-map';
+import { config_pins_take, instance_map_own } from 'ubbf';
+
+// This process numbers rows, as the agent does.
+instance_map_own(true);
 
 let pass = 0, fail = 0;
 
@@ -63,7 +66,7 @@ global.netifd = {
 
 // The map starts empty, as after a reboot; the pin of config.json gives the
 // stored learned row its number back.
-instance_pins_load({ 'Device.DNS.Client.Server': { '5': 'DHCPv4|Device.IP.Interface.1|172.16.100.1' } });
+config_pins_take({ _instances: { 'Device.DNS.Client.Server': { '5': 'DHCPv4|Device.IP.Interface.1|172.16.100.1' } } });
 let stored = learned('false');
 let root = root_make({ '5': stored });
 check('after a reboot a stored learned row keeps its number',
@@ -135,7 +138,7 @@ function render(servers, forwardings) {
 	} };
 	let output = [];
 
-	include(TEMPLATE, { ...h, ...dns, output, config, ubbf,
+	include(TEMPLATE, { ...h, ...dns, output, config, ubbf, dns_learned_row: ubbf.dns_learned_row,
 		ubbf_get: ubbf.get, ubbf_instances: ubbf.instances, ubbf_to_bool: ubbf.to_bool,
 		ubbf_to_int: ubbf.to_int, csv_to_list: ubbf.csv_to_list,
 		interface_to_name: ubbf.interface_to_name, dns_relay_plan,
@@ -172,7 +175,7 @@ function relay_render(relay) {
 	} };
 	let output = [];
 
-	include(TEMPLATE, { ...h, ...dns, output, config, ubbf,
+	include(TEMPLATE, { ...h, ...dns, output, config, ubbf, dns_learned_row: ubbf.dns_learned_row,
 		ubbf_get: ubbf.get, ubbf_instances: ubbf.instances, ubbf_to_bool: ubbf.to_bool,
 		ubbf_to_int: ubbf.to_int, csv_to_list: ubbf.csv_to_list,
 		interface_to_name: ubbf.interface_to_name, dns_relay_plan,

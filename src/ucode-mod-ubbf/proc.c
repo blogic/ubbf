@@ -2,6 +2,7 @@
 /* Copyright (C) 2026 John Crispin <john@phrozen.org> */
 
 #include "ubbf.h"
+#include "bindings.h"
 #include <ctype.h>
 #include <dirent.h>
 #include <errno.h>
@@ -164,7 +165,7 @@ state_label(char c)
  * `comm` field surrounded by parentheses.
  */
 static int
-read_cmdline(int pid, char *out, size_t out_len)
+cmdline_read(int pid, char *out, size_t out_len)
 {
 	char path[64];
 	char buf[4096];
@@ -278,7 +279,7 @@ uc_ubbf_process_info(uc_vm_t *vm, size_t nargs)
 	/* Walk the post-comm fields. Field index 0 is the state char,
 	 * field 11/12 are utime/stime, field 15 is priority. */
 	field = 0;
-	for (p = strtok_r(close_paren + 2, " \t\n", &save); p;
+	for (p = strtok_r(close_paren + 1, " \t\n", &save); p;
 	     p = strtok_r(NULL, " \t\n", &save), field++) {
 		switch (field) {
 		case 0:  state = state_label(p[0]); break;
@@ -291,7 +292,7 @@ uc_ubbf_process_info(uc_vm_t *vm, size_t nargs)
 	}
 	free(stat);
 
-	/* Memory in KiB; statm reports in pages, assume 4 KiB. */
+	/* Memory in KiB; statm reports in pages */
 	snprintf(path, sizeof(path), "/proc/%lld/statm", (long long)pid);
 	char *statm = sysfs_read_file(path);
 	if (statm) {
@@ -299,14 +300,14 @@ uc_ubbf_process_info(uc_vm_t *vm, size_t nargs)
 		free(statm);
 	}
 
-	if (!read_cmdline((int)pid, cmdline, sizeof(cmdline)))
+	if (!cmdline_read((int)pid, cmdline, sizeof(cmdline)))
 		snprintf(cmdline, sizeof(cmdline), "(%s)", comm);
 
 	obj = ucv_object_new(vm);
 	snprintf(buf, sizeof(buf), "%lld", (long long)pid);
 	ucv_object_add(obj, "PID", ucv_string_new(buf));
 	ucv_object_add(obj, "Command", ucv_string_new(cmdline));
-	snprintf(buf, sizeof(buf), "%lld", size_pages * 4);
+	snprintf(buf, sizeof(buf), "%lld", size_pages * (sysconf(_SC_PAGESIZE) / 1024));
 	ucv_object_add(obj, "Size", ucv_string_new(buf));
 	snprintf(buf, sizeof(buf), "%d", priority);
 	ucv_object_add(obj, "Priority", ucv_string_new(buf));
@@ -325,6 +326,38 @@ uc_ubbf_process_info(uc_vm_t *vm, size_t nargs)
 #define DM_HOST_FD	3
 
 /**
+ * Runs a program with posix_spawn(), with an empty signal mask and the
+ * default action for all signals: the caller may block or ignore signals
+ * that the program expects.
+ *
+ * @param pid   receives the process id
+ * @param argv  NULL-terminated argument list; argv[0] is the program path,
+ *              or a name that the PATH lookup of posix_spawnp() resolves
+ * @param fa    the file actions of the child
+ * @return      0, or the error number of posix_spawn()
+ */
+static int
+process_spawn(pid_t *pid, char *const argv[], const posix_spawn_file_actions_t *fa)
+{
+	posix_spawnattr_t attr;
+	sigset_t none, all;
+	int rv;
+
+	sigemptyset(&none);
+	sigfillset(&all);
+	posix_spawnattr_init(&attr);
+	posix_spawnattr_setflags(&attr, POSIX_SPAWN_SETSIGMASK | POSIX_SPAWN_SETSIGDEF);
+	posix_spawnattr_setsigmask(&attr, &none);
+	posix_spawnattr_setsigdefault(&attr, &all);
+
+	rv = posix_spawnp(pid, argv[0], fa, &attr, argv, environ);
+
+	posix_spawnattr_destroy(&attr);
+
+	return rv;
+}
+
+/**
  * Starts a native data model module: dm-host with the module path as its
  * argument and one end of a socket pair as fd 3. obuspa runs several
  * threads, so the child must not run anything but exec after the fork;
@@ -337,8 +370,6 @@ uc_ubbf_module_spawn(uc_vm_t *vm, size_t nargs)
 {
 	uc_value_t *host = uc_fn_arg(0), *module = uc_fn_arg(1), *obj;
 	posix_spawn_file_actions_t fa;
-	posix_spawnattr_t attr;
-	sigset_t none, all;
 	char *argv[3];
 	int sv[2], rv;
 	pid_t pid;
@@ -360,21 +391,13 @@ uc_ubbf_module_spawn(uc_vm_t *vm, size_t nargs)
 	posix_spawn_file_actions_init(&fa);
 	posix_spawn_file_actions_adddup2(&fa, sv[1], DM_HOST_FD);
 
-	sigemptyset(&none);
-	sigfillset(&all);
-	posix_spawnattr_init(&attr);
-	posix_spawnattr_setflags(&attr, POSIX_SPAWN_SETSIGMASK | POSIX_SPAWN_SETSIGDEF);
-	posix_spawnattr_setsigmask(&attr, &none);
-	posix_spawnattr_setsigdefault(&attr, &all);
-
 	argv[0] = (char *)ucv_string_get(host);
 	argv[1] = (char *)ucv_string_get(module);
 	argv[2] = NULL;
 
-	rv = (sv[1] < 0) ? -1 : posix_spawn(&pid, argv[0], &fa, &attr, argv, environ);
+	rv = (sv[1] < 0) ? -1 : process_spawn(&pid, argv, &fa);
 
 	posix_spawn_file_actions_destroy(&fa);
-	posix_spawnattr_destroy(&attr);
 	if (sv[1] >= 0)
 		close(sv[1]);
 
@@ -409,4 +432,71 @@ uc_ubbf_module_kill(uc_vm_t *vm, size_t nargs)
 		;
 
 	return ucv_boolean_new(true);
+}
+
+/**
+ * Runs a program from an argument list, without a shell, and collects its
+ * output, stdout and stderr together as `cmd 2>&1` gives them. See
+ * process_spawn() for the signal setup of the child.
+ *
+ * @param argv    NULL-terminated argument list; argv[0] is the program path
+ *                or a name to look up in PATH
+ * @param status  receives the exit code, or -1 when the program did not run
+ *                or ended by a signal
+ * @return        the output, freed by the caller, or NULL when the program
+ *                did not run
+ */
+char *
+spawn_output(char *const argv[], int *status)
+{
+	posix_spawn_file_actions_t fa;
+	size_t len = 0, size = 4096;
+	int fds[2], rv, ws;
+	char *buf;
+	ssize_t n;
+	pid_t pid;
+
+	*status = -1;
+
+	if (pipe2(fds, O_CLOEXEC))
+		return NULL;
+
+	posix_spawn_file_actions_init(&fa);
+	posix_spawn_file_actions_adddup2(&fa, fds[1], STDOUT_FILENO);
+	posix_spawn_file_actions_adddup2(&fa, fds[1], STDERR_FILENO);
+
+	rv = process_spawn(&pid, argv, &fa);
+
+	posix_spawn_file_actions_destroy(&fa);
+	close(fds[1]);
+
+	if (rv) {
+		close(fds[0]);
+		return NULL;
+	}
+
+	buf = xalloc(size);
+	for (;;) {
+		n = read(fds[0], buf + len, size - len - 1);
+		if (n < 0 && errno == EINTR)
+			continue;
+		if (n <= 0)
+			break;
+
+		len += n;
+		if (size - len - 1 == 0) {
+			size *= 2;
+			buf = xrealloc(buf, size);
+		}
+	}
+	buf[len] = '\0';
+	close(fds[0]);
+
+	while ((rv = waitpid(pid, &ws, 0)) < 0 && errno == EINTR)
+		;
+
+	if (rv == pid && WIFEXITED(ws))
+		*status = WEXITSTATUS(ws);
+
+	return buf;
 }

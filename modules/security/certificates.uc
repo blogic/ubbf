@@ -1,11 +1,10 @@
 'use strict';
 
-// Included with { certificates, instance_map } as the scope, by handler.uc
-// in the agent and by the syslog, userinterface and ieee8021x modules, so
-// all of them number the certificates the same way. Each function is added
-// to `certificates`. The agent passes utils['instance-map'], which numbers
-// new certificates; the render and ubbf-device pass instance_map_readonly
-// from utils/instance-map.uc, which only reads the numbers.
+// Included with { certificates } as the scope, by handler.uc in the agent
+// and by the syslog, userinterface and ieee8021x modules, so all of them
+// number the certificates the same way. Each function is added to
+// `certificates`. The instance map of ubbf.so numbers new certificates in
+// the agent; in the render and ubbf-device it only reads the numbers.
 
 const fs = require('fs');
 const openssl = require('openssl');
@@ -15,8 +14,6 @@ const ubbf = require('ubbf');
 // certificate when the CA store changes (TR-369 R-ARC.8), so the instance
 // numbers come from the instance map and are never given to another
 // certificate; config.json pins the ones that it names.
-const instance_numbers = instance_map.instance_numbers;
-const instance_retire = instance_map.instance_retire;
 const CERTIFICATE_TABLE = 'Device.Security.Certificate';
 const CABUNDLE_TABLE = 'Device.Security.CABundle';
 const CAFILE_DIR = '/var/run/ubbf-security';
@@ -227,7 +224,7 @@ function certs_scan_live() {
 		});
 	}
 
-	let numbers = instance_numbers(CERTIFICATE_TABLE, map(found.certs, (e) => e.key));
+	let numbers = ubbf.instance_numbers(CERTIFICATE_TABLE, map(found.certs, (e) => e.key));
 
 	let aliases = map_load(ALIASES_PATH);
 	for (let entry in found.certs) {
@@ -236,7 +233,7 @@ function certs_scan_live() {
 		entry.added = index(entry.path, CERTS_DIR + '/') == 0;
 	}
 
-	let bundle_numbers = instance_numbers(CABUNDLE_TABLE, map(added, (s) => s.bundle), length(BUNDLE_SOURCES) + 1);
+	let bundle_numbers = ubbf.instance_numbers(CABUNDLE_TABLE, map(added, (s) => s.bundle), length(BUNDLE_SOURCES) + 1);
 
 	for (let bundle in bundles)
 		bundle.instance ??= bundle_numbers[bundle.name];
@@ -600,7 +597,7 @@ function cabundle_delete(instance) {
 	if (!fs.rmdir(bundle.path))
 		return USP_ERR_COMMAND_FAILURE;
 
-	instance_retire(CABUNDLE_TABLE, bundle.name);
+	ubbf.instance_retire(CABUNDLE_TABLE, bundle.name);
 
 	return 0;
 }

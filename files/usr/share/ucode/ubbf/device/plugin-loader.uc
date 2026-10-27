@@ -4,7 +4,7 @@
 // only letters, digits and '_' (uc_require_path() in ucode lib.c).
 
 import * as fs from 'fs';
-import { log_err, log_exception, log_info } from 'ubbf.utils.logging';
+import { log_err, log_exception, log_info } from 'ubbf';
 
 export const PLUGIN_DIR = '/usr/share/ucode/ubbf/device/plugins';
 export const PLUGIN_PREFIX = 'ubbf.device.plugins.';

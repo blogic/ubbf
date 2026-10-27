@@ -2,11 +2,11 @@
 /* Copyright (C) 2026 John Crispin <john@phrozen.org> */
 
 #include "ubbf.h"
+#include "bindings.h"
 #include <sys/utsname.h>
 #include <sys/statvfs.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <ftw.h>
 #include <stdint.h>
 
 /**
@@ -141,46 +141,44 @@ uc_ubbf_statvfs_info(uc_vm_t *vm, size_t nargs)
 	return obj;
 }
 
-static uint64_t du_total_bytes;
+#define DEVICEINFO_PATH	"/etc/usp/deviceinfo.json"
+#define DEVICEINFO_REG	"ubbf.deviceinfo"
 
-static int
-du_walk_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
+/**
+ * Returns the device identity of /etc/usp/deviceinfo.json
+ * (ManufacturerOUI, SerialNumber and others). The file is read once per
+ * VM; a missing or invalid file gives an empty object.
+ *
+ * @param vm  ucode VM context
+ * @return    the device info object (borrowed), shared by all callers
+ */
+uc_value_t *
+deviceinfo_value(uc_vm_t *vm)
 {
-	(void)fpath;
-	(void)ftwbuf;
+	uc_value_t *info = uc_vm_registry_get(vm, DEVICEINFO_REG);
 
-	if (typeflag == FTW_F || typeflag == FTW_D)
-		du_total_bytes += (uint64_t)sb->st_blocks * 512;
+	if (!info) {
+		info = json_file_load(vm, DEVICEINFO_PATH);
+		if (ucv_type(info) != UC_OBJECT) {
+			ucv_put(info);
+			info = ucv_object_new(vm);
+		}
 
-	return 0;
+		uc_vm_registry_set(vm, DEVICEINFO_REG, info);
+	}
+
+	return info;
 }
 
 /**
- * Returns the total disk usage of a path tree, in KiB.
- *
- * Uses `nftw(3)` with `FTW_PHYS` so symlinks are not followed; sums
- * `stat.st_blocks * 512` per entry, matching the semantics of
- * `du -sk`. Returns -1 on error.
- *
- * The walker uses a process-global accumulator so this helper is not
- * re-entrant or thread-safe. That is acceptable for ucode, which runs
- * single-threaded.
+ * ucode: `deviceinfo_get()`, see deviceinfo_value().
  *
  * @param vm     ucode VM context
- * @param nargs  number of arguments (1 expected: path)
- * @return       integer KiB, or -1 on error
+ * @param nargs  number of arguments (none expected)
+ * @return       device info object
  */
 uc_value_t *
-uc_ubbf_du_kib(uc_vm_t *vm, size_t nargs)
+uc_ubbf_deviceinfo_get(uc_vm_t *vm, size_t nargs)
 {
-	uc_value_t *path_val = uc_fn_arg(0);
-
-	if (ucv_type(path_val) != UC_STRING)
-		return ucv_int64_new(-1);
-
-	du_total_bytes = 0;
-	if (nftw(ucv_string_get(path_val), du_walk_cb, 16, FTW_PHYS) != 0)
-		return ucv_int64_new(-1);
-
-	return ucv_int64_new((int64_t)(du_total_bytes / 1024));
+	return ucv_get(deviceinfo_value(vm));
 }

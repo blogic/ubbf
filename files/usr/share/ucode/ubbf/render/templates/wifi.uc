@@ -17,7 +17,7 @@ function render_config() {
 	// 802.11u QoS Map Set IE and pushes it to the driver via
 	// NL80211_CMD_SET_QOS_MAP for AP-side TX classification. Declared before
 	// generate_interface / generate_mlo_interface so those closures capture it.
-	let qos_map_set_csv = wifi.qos_map_set_render(
+	let qos_map_set_csv = ubbf.qos_map_set_render(
 		ubbf_instances(config, 'Device.WiFi.X_UBBF_QoSMap')
 	);
 
@@ -183,7 +183,7 @@ function render_config() {
 		uci_set_string(output, `wireless.${radio_name}.type`, 'mac80211');
 		uci_set_boolean(output, `wireless.${radio_name}.disabled`, disabled);
 
-		let band = wifi.band_to_uci(radio_data.OperatingFrequencyBand);
+		let band = ubbf.band_to_uci(radio_data.OperatingFrequencyBand);
 		uci_set_string(output, `wireless.${radio_name}.band`, band);
 
 		let cap = capabilities.radios?.[band];
@@ -204,18 +204,18 @@ function render_config() {
 
 		if (auto_channel || channel == 0) {
 			uci_set_string(output, `wireless.${radio_name}.channel`, 'auto');
-		} else if (!wifi.channel_valid_for_bandwidth(phy, band_idx, channel, requested_bw)) {
+		} else if (!ubbf.channel_valid_for_bandwidth(phy, band_idx, channel, requested_bw)) {
 			warn('Radio %s: channel %d invalid for %s, falling back to auto', radio_name, channel, requested_bw);
 			uci_set_string(output, `wireless.${radio_name}.channel`, 'auto');
 		} else {
 			uci_set_number(output, `wireless.${radio_name}.channel`, channel);
 		}
 
-		let max_std = wifi.phy_max_standard(phy, band_idx);
-		let max_bw = wifi.phy_max_bandwidth(phy, band_idx);
+		let max_std = ubbf.phy_max_standard(phy, band_idx);
+		let max_bw = ubbf.phy_max_bandwidth(phy, band_idx);
 
-		let requested_std = wifi.standards_to_highest(radio_data.OperatingStandards);
-		let htmode = wifi.clamp_htmode(requested_std, requested_bw, max_std, max_bw);
+		let requested_std = ubbf.standards_to_highest(radio_data.OperatingStandards);
+		let htmode = ubbf.clamp_htmode(requested_std, requested_bw, max_std, max_bw);
 		uci_set_string(output, `wireless.${radio_name}.htmode`, htmode);
 
 		if (radio_data.RegulatoryDomain) {
@@ -228,10 +228,10 @@ function render_config() {
 		// a percentage of a cap that is only known then. Write nothing in
 		// that case: the radio keeps the driver default until the next
 		// render, which is better than a power derived from a guess.
-		let max_dbm = wifi.phy_max_txpower(phy, band_idx);
+		let max_dbm = ubbf.phy_max_txpower(phy, band_idx);
 		if (max_dbm != null) {
 			let txpower_pct = ubbf_to_int(radio_data.TransmitPower);
-			let txpower_dbm = wifi.txpower_pct_to_dbm(txpower_pct, max_dbm);
+			let txpower_dbm = ubbf.txpower_pct_to_dbm(txpower_pct, max_dbm);
 			if (txpower_dbm != null)
 				uci_set_number(output, `wireless.${radio_name}.txpower`, txpower_dbm);
 		}
@@ -639,7 +639,7 @@ function render_config() {
 		if (!radio_data?.Name)
 			return null;
 
-		let band = wifi.band_to_uci(radio_data.OperatingFrequencyBand);
+		let band = ubbf.band_to_uci(radio_data.OperatingFrequencyBand);
 		return { ap, ssid_inst, ssid_data, radio: radio_data.Name,
 			 path: capabilities.radios?.[band]?.path };
 	}

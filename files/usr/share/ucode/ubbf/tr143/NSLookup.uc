@@ -1,7 +1,7 @@
 'use strict';
 
 import * as fs from 'fs';
-import { log_info, log_debug, log_err } from 'ubbf.utils.logging';
+import { log_info, log_debug, log_err } from 'ubbf';
 import { task_run, TASK_MARGIN_S } from 'ubbf.utils.process';
 import * as ubbf from 'ubbf';
 import { netifd_status_get } from 'ubbf.utils.netifd';

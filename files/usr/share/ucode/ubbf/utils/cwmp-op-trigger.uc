@@ -2,7 +2,6 @@
 
 import * as fs from 'fs';
 import * as ubus from 'ubus';
-import { CWMP_MODE } from 'ubbf.utils.protocol';
 import * as ubbf from 'ubbf';
 
 // Shared DM-side glue for invoking data-model operations over CWMP.
@@ -69,7 +68,7 @@ export function overlay_write(path, data) {
  */
 export function op_overlay_get(path) {
 	return (ctx) => {
-		if (!CWMP_MODE)
+		if (!ubbf.cwmp_mode())
 			return ubbf.ctx_config(ctx);
 		return { ...ubbf.ctx_config(ctx), ...overlay_read(path) };
 	};
@@ -89,7 +88,7 @@ export function op_overlay_get(path) {
  */
 export function op_trigger_set(path, trigger) {
 	return (ctx) => {
-		if (!CWMP_MODE || ctx.param != trigger || ctx.value != 'Requested')
+		if (!ubbf.cwmp_mode() || ctx.param != trigger || ctx.value != 'Requested')
 			return;
 
 		let input = { ...(ctx.config ?? {}) };

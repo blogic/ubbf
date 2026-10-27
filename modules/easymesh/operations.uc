@@ -6,12 +6,12 @@
 
 const ubbf = ubbf_module.ubbf;
 const operations = ubbf_module.operations;
-const log_info = ubbf_module.utils.logging.log_info;
-const log_warn = ubbf_module.utils.logging.log_warn;
+const log_info = ubbf_module.ubbf.log_info;
+const log_warn = ubbf_module.ubbf.log_warn;
 const wifi_dataelements = ubbf_module.utils['wifi-dataelements'];
 const ubus_topology_get = wifi_dataelements.ubus_topology_get;
 const device_api_data_get = wifi_dataelements.device_api_data_get;
-const radio_band_priority = wifi_dataelements.radio_band_priority;
+const radio_band_priority = ubbf_module.ubbf.radio_band_priority;
 const bss_by_instance = em.bss_by_instance;
 const sta_by_instance = em.sta_by_instance;
 

@@ -2,7 +2,7 @@
 
 import { popen_async } from 'ubbf.utils.process';
 import { interface_resolve } from 'ubbf.utils.path';
-import { log_info, log_debug } from 'ubbf.utils.logging';
+import { log_info, log_debug } from 'ubbf';
 import * as ubbf from 'ubbf';
 
 /**

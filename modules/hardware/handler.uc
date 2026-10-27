@@ -37,7 +37,7 @@ function device_status_fetch() {
  * @returns {object} State from device_status_fetch()
  */
 function device_status_get() {
-	return utils.cache.call(device_status_fetch);
+	return ubbf.cache_call(device_status_fetch);
 }
 
 /**
@@ -305,7 +305,7 @@ function simulate_op(action) {
 			return;
 		}
 
-		utils.cache.invalidate(device_status_fetch);
+		ubbf.cache_invalidate(device_status_fetch);
 		complete(instance, 0, null, {});
 	};
 }

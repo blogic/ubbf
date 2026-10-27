@@ -6,9 +6,9 @@
 
 const ubbf = ubbf_module.ubbf;
 const model = ubbf_module.model;
-const cache_call = ubbf_module.utils.cache.call;
+const cache_call = ubbf_module.ubbf.cache_call;
 const netifd_status_get = ubbf_module.utils.netifd.netifd_status_get;
-const cmd_build = ubbf_module.utils.process.cmd_build;
+const cmd_build = ubbf_module.ubbf.cmd_build;
 
 const fs = require('fs');
 

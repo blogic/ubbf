@@ -2,7 +2,7 @@
 'use strict';
 
 import { readfile, open, stat } from 'fs';
-import { log_init, log_info, log_err, log_warn } from 'ubbf.utils.logging';
+import { log_init, log_info, log_err, log_warn } from 'ubbf';
 
 const STATE_PATH = '/tmp/ubbf/firewall-alg.json';
 

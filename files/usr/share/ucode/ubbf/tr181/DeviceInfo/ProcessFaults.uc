@@ -2,13 +2,13 @@
 
 import * as fs from 'fs';
 import * as ubus from 'ubus';
-import { transfer_complete, datetime_format } from 'ubbf.utils.helpers';
-import { curl_upload, CURL_TRANSFER_TIMEOUT_S } from 'ubbf.utils.curl';
-import { log_info, log_err } from 'ubbf.utils.logging';
+import { transfer_complete, datetime_format } from 'ubbf';
+import { curl_upload, CURL_TRANSFER_TIMEOUT_S } from 'ubbf';
+import { log_info, log_err } from 'ubbf';
 import { task_run, TASK_MARGIN_S } from 'ubbf.utils.process';
 import * as ubbf from 'ubbf';
 import { faults_state_normalise, entries_find, json_state_load } from 'ubbf.device.common';
-import { instance_id_rows } from 'ubbf.utils.instance-map';
+import { instance_id_rows } from 'ubbf';
 
 const FAULTS_PATH = '/etc/ubbf/process-faults.json';
 

@@ -6,13 +6,12 @@
 
 const ubbf = ubbf_module.ubbf;
 const wifi_dataelements = ubbf_module.utils['wifi-dataelements'];
-const ht_caps_encode = wifi_dataelements.ht_caps_encode;
-const vht_caps_encode = wifi_dataelements.vht_caps_encode;
-const sta_he_caps_from_frame_body = wifi_dataelements.sta_he_caps_from_frame_body;
+const ht_caps_encode = ubbf.ht_caps_encode;
+const vht_caps_encode = ubbf.vht_caps_encode;
+const sta_he_caps_from_frame_body = ubbf.sta_he_caps_from_frame_body;
 const ubus_topology_get = wifi_dataelements.ubus_topology_get;
-const radio_band_priority = wifi_dataelements.radio_band_priority;
+const radio_band_priority = ubbf.radio_band_priority;
 const client_query_get = wifi_dataelements.client_query_get;
-const instance_map = ubbf_module.utils['instance-map'];
 
 const wde_lib = require('wde');
 
@@ -682,7 +681,7 @@ function keyed_rows(table, items, key_fn, fn) {
 		if (key != '' && !by_key[key])
 			by_key[key] = item;
 	}
-	return instance_map.instance_rows(table, keys(by_key), (key) => fn(by_key[key]));
+	return ubbf.instance_rows(table, keys(by_key), (key) => fn(by_key[key]));
 }
 
 /**
@@ -696,7 +695,7 @@ function keyed_rows(table, items, key_fn, fn) {
  */
 function keyed_item(table, items, key_fn, instance) {
 	let present = filter(map(items ?? [], key_fn), (key) => key != '');
-	let key = instance_map.instance_key(table, present, instance);
+	let key = ubbf.instance_key(table, present, instance);
 	return (key == null) ? null : filter(items, (item) => key_fn(item) == key)[0];
 }
 
@@ -1558,7 +1557,7 @@ function apmld_to_object_factory(api_data) {
 					// synthesised from channel utilisation, so there is nothing
 					// truthful to report per link. Emitted empty rather than
 					// omitted: this object is built from live data, so the
-					// schema default fallback in dm.c never reaches it and a
+					// schema default fallback in dm_get.c never reaches it and a
 					// missing key fails the Get of the whole object.
 					EstServiceParametersBE: "",
 					EstServiceParametersBK: "",

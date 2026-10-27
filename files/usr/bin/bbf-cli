@@ -2,7 +2,7 @@
 'use strict';
 
 import * as ubus from 'ubus';
-import { log_init, log_err } from 'ubbf.utils.logging';
+import { log_init, log_err } from 'ubbf';
 
 log_init('bbf-cli');
 

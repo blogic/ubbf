@@ -1,0 +1,4 @@
+#!/bin/sh
+# Stand-in for curl: logs one argument per line to $CURL_LOG.
+printf '%s\n' "$@" > "$CURL_LOG"
+exit 0

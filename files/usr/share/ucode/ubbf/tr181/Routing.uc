@@ -4,7 +4,7 @@ import * as ubus from 'ubus';
 import * as ubbf from 'ubbf';
 import {
 	router_table_id, forwarding_policy_set, policy_resolve, source_prefix, source_tables
-} from 'ubbf.utils.routing';
+} from 'ubbf';
 
 /**
  * Get handler for Device.Routing.Router.{i}.

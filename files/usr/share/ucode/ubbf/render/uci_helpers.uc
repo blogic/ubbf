@@ -267,3 +267,41 @@ export function target_to_uci(target) {
 		return t;
 	return 'DROP';
 };
+
+/**
+ * Sets the time options of a schedule window on the most recently emitted
+ * firewall.@rule[-1] section.
+ *
+ * @param {string[]} output - UCI batch line accumulator
+ * @param {object} window - Window from intervals_to_windows() of ubbf.so
+ */
+export function rule_window_set(output, window) {
+	uci_set_string(output, 'firewall.@rule[-1].start_time', window.start_time);
+	uci_set_string(output, 'firewall.@rule[-1].stop_time', window.stop_time);
+	// fw4 rejects a list for weekdays; it wants one space separated option
+	uci_set_string(output, 'firewall.@rule[-1].weekdays', join(' ', window.weekdays));
+};
+
+/**
+ * Appends fw4 reflection options to the most recently emitted
+ * firewall.@redirect[-1] section. fw4 defaults to reflection=1 with
+ * reflection_src=internal, so without this the SNAT source on a
+ * hairpinned packet is the gateway LAN IP. To give the target the
+ * external WAN IP/port as source, Device.NAT.X_UBBF_Hairpinning.Enable=true
+ * flips reflection_src to external, false hard-disables reflection.
+ *
+ * @param {object} config - UBBF config root
+ * @param {string[]} output - UCI batch line accumulator
+ */
+export function redirect_emit_reflection(config, output) {
+	let hairpin = ubbf.get(config, 'Device.NAT.X_UBBF_Hairpinning');
+	let enabled = ubbf.to_bool(hairpin?.Enable ?? "false");
+
+	if (enabled) {
+		uci_set_boolean(output, 'firewall.@redirect[-1].reflection', true);
+		uci_set_string(output, 'firewall.@redirect[-1].reflection_src', 'external');
+		return;
+	}
+
+	uci_set_boolean(output, 'firewall.@redirect[-1].reflection', false);
+};

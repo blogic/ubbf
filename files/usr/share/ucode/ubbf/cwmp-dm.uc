@@ -16,7 +16,7 @@ import {
 	dm, param_schema, paths_expand, names_list, operations_apply, config_write,
 	on_commit
 } from 'ubbf.datamodel';
-import { log_info, log_err, log_exception } from 'ubbf.utils.logging';
+import { log_info, log_err, log_exception } from 'ubbf';
 import { write_reply } from 'ubbf.utils.write-gate';
 
 const STATE_PATH = '/etc/ubbf/cwmp-state.json';

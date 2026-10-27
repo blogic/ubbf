@@ -1,9 +1,9 @@
-// Host test of utils/nptv6.uc (Device.NAT.NPTv6.InterfaceSetting.{i}).
+// Host test of nptv6.c of ubbf.so (Device.NAT.NPTv6.InterfaceSetting.{i}).
 // Run from the repository root with the native module built for the host:
-//   ucode -L "$PWD/files/usr/share/ucode/*.uc" -L "<host build>/*.so" tests/nptv6.uc
+//   ucode -L "<host build>/*.so" tests/nptv6.uc
 'use strict';
 
-import { prefix6_parse, prefix6_contains, nptv6_setting_check } from 'ubbf.utils.nptv6';
+import { prefix6_parse, prefix6_contains, nptv6_setting_check } from 'ubbf';
 
 let pass = 0, fail = 0;
 

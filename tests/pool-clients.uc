@@ -14,6 +14,10 @@ import * as fs from 'fs';
 import * as uloop from 'uloop';
 import { model as v4 } from 'ubbf.tr181.DHCPv4';
 import { model as v6 } from 'ubbf.tr181.DHCPv6';
+import { instance_map_own } from 'ubbf';
+
+// This process numbers rows, as the agent does.
+instance_map_own(true);
 
 let pass = 0, fail = 0;
 
@@ -42,7 +46,7 @@ function chaddrs(rows) {
 	return by_number(rows, 'Chaddr');
 }
 
-// utils/cache.uc keeps the odhcpd leases for 2 s of event loop time.
+// ubbf.cache_call() keeps the odhcpd leases for 2 s of event loop time.
 function cache_expire() {
 	uloop.init();
 	uloop.timer(2100, () => uloop.end());
@@ -64,6 +68,20 @@ check('a leaving client does not shift the other, a new one gets a new number',
 	chaddrs(rows.Client), { '2': '02:00:00:00:00:0A', '3': '02:00:00:00:00:0C' });
 check('count', rows.ClientNumberOfEntries, '2');
 check('another pool has its own numbers', keys(v4_pool({ config: pool, instance: 2 }).Client), [ '1', '2' ]);
+
+function addresses(rows) {
+	let out = {};
+	for (let n in sort(keys(rows ?? {}), (a, b) => +a - +b))
+		out[n] = rows[n].IPv4Address['1'].IPAddress;
+	return out;
+}
+
+// One client with two leases: a renewal that changes their expiry order
+// keeps each address on its number.
+leases_write([ [ now + 100, '02:00:00:00:00:0D', '192.168.1.120' ], [ now + 200, '02:00:00:00:00:0D', '192.168.1.121' ] ]);
+let two_leases = addresses(v4_pool({ config: pool, instance: 3 }).Client);
+leases_write([ [ now + 900, '02:00:00:00:00:0D', '192.168.1.120' ], [ now + 200, '02:00:00:00:00:0D', '192.168.1.121' ] ]);
+check('two leases keep their numbers', addresses(v4_pool({ config: pool, instance: 3 }).Client), two_leases);
 
 global.netifd = { lan: { up: true, l3_device: 'br-lan' } };
 const v6_pool_cfg = { Enable: 'true', Interface: 'Device.IP.Interface.2' };

@@ -38,11 +38,8 @@ check('enabled: service and both listeners', render('true'), { service: true, li
 check('disabled: no service and no listener', render('false'), { service: false, listeners: 0 });
 
 const api = {
-	ubbf,
-	utils: {
-		helpers: { datetime_format: (t) => t },
-		logging: { log_err: () => null, log_exception: () => null }
-	},
+	ubbf: proto({ datetime_format: (t) => t }, ubbf),
+	utils: {},
 	schema: (k) => k,
 	on_commit: () => null,
 	config_apply: () => ({ success: true }),

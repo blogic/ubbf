@@ -71,7 +71,7 @@ add_library(ubbf_util STATIC util.c)
 set_target_properties(ubbf_util PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(ubbf_util INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_library(ubbf_lib MODULE
+set(UBBF_LIB_SOURCES
 	ubbf.c
 	path.c
 	coerce.c
@@ -79,7 +79,11 @@ add_library(ubbf_lib MODULE
 	mac.c
 	string.c
 	firewall.c
+	firewall_reconcile.c
 	wifi.c
+	wifi_dataelements.c
+	wifi_phy.c
+	wifi_psk.c
 	time.c
 	atomic.c
 	sys.c
@@ -90,12 +94,63 @@ add_library(ubbf_lib MODULE
 	instance.c
 	sysfs.c
 	dm.c
+	dm_model.c
+	dm_get.c
+	dm_set.c
+	dm_names.c
 	schema.c
+	schedule.c
+	routing.c
+	nptv6.c
+	sfp.c
+	ssh_keys.c
+	curl.c
+	dns.c
+	hosts.c
+	ifstats.c
+	ipv6.c
+	log.c
+	protocol.c
+	map.c
+	config.c
+	order.c
+	gate.c
+	cache.c
+	netlink.c
+	rtnl.c
+	ethtool.c
+	uci_track.c
+	acl.c
+	status.c
+	vm.c
 )
+
+find_library(ubox_library NAMES ubox)
+find_path(ubox_include_dir NAMES libubox/ulog.h)
+find_library(nl_tiny_library NAMES nl-tiny)
+find_path(nl_tiny_include_dir NAMES netlink/msg.h PATH_SUFFIXES libnl-tiny)
+if(NOT nl_tiny_library OR NOT nl_tiny_include_dir)
+	message(FATAL_ERROR "libnl-tiny not found; rtnl.c needs it")
+endif()
+find_library(md_library NAMES md)
+find_path(md_include_dir NAMES sha2.h)
+if(NOT md_library OR NOT md_include_dir)
+	message(FATAL_ERROR "libmd not found; config.c needs it")
+endif()
+
+add_library(ubbf_lib MODULE ${UBBF_LIB_SOURCES})
 set_target_properties(ubbf_lib PROPERTIES OUTPUT_NAME ubbf PREFIX "")
-target_include_directories(ubbf_lib SYSTEM PRIVATE ${ucode_include_dir})
-target_link_libraries(ubbf_lib ${ucode_library} m ${CMAKE_DL_LIBS} ubbf_util)
+target_include_directories(ubbf_lib SYSTEM PRIVATE ${ucode_include_dir} ${ubox_include_dir} ${nl_tiny_include_dir} ${md_include_dir})
+target_link_libraries(ubbf_lib ${ucode_library} ${ubox_library} ${nl_tiny_library} ${md_library} m ${CMAKE_DL_LIBS} ubbf_util)
 
 install(TARGETS ubbf_lib
 	LIBRARY DESTINATION lib/ucode
 )
+
+# Host only: the OpenWrt package build leaves this off.
+option(UBBF_UNIT_TESTS "Build the cmocka unit tests of ubbf.so" OFF)
+
+if(UBBF_UNIT_TESTS)
+	enable_testing()
+	add_subdirectory(tests)
+endif()

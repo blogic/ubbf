@@ -9,8 +9,8 @@ import * as fs from 'fs';
 import * as ubus from 'ubus';
 import * as uloop from 'uloop';
 import * as ubbf from 'ubbf';
-import { log_err } from 'ubbf.utils.logging';
-import { dns_learned_row, DNS_RESOLV_AUTO, DNS_RESOLV_FILTERED } from 'ubbf.utils.dns';
+import { log_err, dns_learned_row } from 'ubbf';
+import { DNS_RESOLV_AUTO, DNS_RESOLV_FILTERED } from 'ubbf.utils.dns';
 
 const CONFIG_PATH = '/etc/ubbf/config.json';
 

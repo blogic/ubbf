@@ -10,8 +10,10 @@
 'use strict';
 
 import * as ubbf from 'ubbf';
-import { instance_numbers, instance_key, instance_rows } from 'ubbf.utils.instance-map';
-import * as sfp from 'ubbf.utils.sfp';
+import { instance_numbers, instance_key, instance_rows } from 'ubbf';
+
+// This process numbers rows, as the agent does.
+ubbf.instance_map_own(true);
 
 let pass = 0, fail = 0;
 
@@ -24,18 +26,14 @@ function check(name, got, expected) {
 let reset_ok = true;
 
 const api = {
-	ubbf,
+	ubbf: proto({ cache_call: (fn, ...args) => fn(...args),
+		ethtool_properties_get: () => ({ SupportedLinkModes: '1000baseX/Full,10000baseSR/Full,2500baseX/Full' }),
+		upstream_interface_ref: (root) => root?.Device?.IP?.Interface ? 'Device.IP.Interface.1' : null }, ubbf),
 	utils: {
-		cache: { call: (fn, ...args) => fn(...args) },
-		'instance-map': { instance_numbers, instance_key, instance_rows },
 		'dm-version': { dm_visible: () => true },
-		ethtool: { ethtool_properties_get: () => ({ SupportedLinkModes: '1000baseX/Full,10000baseSR/Full,2500baseX/Full' }) },
 		netdev_change: { last_change_get: (netdev) => (netdev == 'eth2') ? '42' : '0' },
-		helpers: { upstream_interface_ref: (root) => root?.Device?.IP?.Interface ? 'Device.IP.Interface.1' : null },
 		netifd: { netifd_status_get: (name) => (name == 'wan') ? { device: 'eth2' } : null },
-		ifstats: { ifstats_get: () => ({}), ifstats_basic_get: () => ({}), ifstats_reset: () => reset_ok },
-		logging: { log_warn: () => null },
-		sfp
+		ifstats: { ifstats_get: () => ({}), ifstats_basic_get: () => ({}), ifstats_reset: () => reset_ok }
 	},
 	schema: (k) => k,
 	model: {},

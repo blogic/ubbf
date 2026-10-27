@@ -1,11 +1,11 @@
 'use strict';
 
 import * as fs from 'fs';
-import { log_info } from 'ubbf.utils.logging';
+import { log_info } from 'ubbf';
 import {
 	firmware_version_get, entries_remove, json_state_load, json_state_save
 } from 'ubbf.device.common';
-import { instance_ids } from 'ubbf.utils.instance-map';
+import { instance_ids } from 'ubbf';
 
 const REBOOTS_PATH = '/etc/ubbf/reboots.json';
 const REBOOTS_MAX_ENTRIES = 100;

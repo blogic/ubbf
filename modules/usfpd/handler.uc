@@ -18,7 +18,6 @@ const USFPD = 'usfpd';
 // Optical.Interface rows follow the cages that hold an optical SFP now; the
 // instance map keeps each cage on its number while others come and go.
 const OPTICAL_TABLE = 'Device.Optical.Interface';
-const instance_map = utils['instance-map'];
 
 /**
  * Fetches the cage name list from the usfpd daemon.
@@ -67,7 +66,7 @@ function optical_status_fetch(name) {
  * @returns {string[]} Array of cage names
  */
 function cages_get() {
-	return utils.cache.call(cages_fetch);
+	return ubbf.cache_call(cages_fetch);
 }
 
 /**
@@ -77,7 +76,7 @@ function cages_get() {
  * @returns {object} Cage status payload
  */
 function cage_status_get(name) {
-	return utils.cache.call(cage_status_fetch, name);
+	return ubbf.cache_call(cage_status_fetch, name);
 }
 
 /**
@@ -87,7 +86,7 @@ function cage_status_get(name) {
  * @returns {object} Transceiver payload
  */
 function transceiver_get(name) {
-	return utils.cache.call(transceiver_fetch, name);
+	return ubbf.cache_call(transceiver_fetch, name);
 }
 
 /**
@@ -97,7 +96,7 @@ function transceiver_get(name) {
  * @returns {object} Optical status payload
  */
 function optical_status_get(name) {
-	return utils.cache.call(optical_status_fetch, name);
+	return ubbf.cache_call(optical_status_fetch, name);
 }
 
 /**
@@ -144,7 +143,7 @@ function optical_cages_get() {
  * @returns {string|null} Cage name, or null when no optical cage has it
  */
 function optical_cage(instance) {
-	return instance_map.instance_key(OPTICAL_TABLE, optical_cages_get(), instance);
+	return ubbf.instance_key(OPTICAL_TABLE, optical_cages_get(), instance);
 }
 
 /**
@@ -175,8 +174,8 @@ function cage_to_object(name, root) {
 	let sfps = root?.Device?.SFPs;
 	let ident = transceiver_get(name).vendor ?? {};
 
-	row.SFPType = utils.sfp.sfp_type_resolve(sfps, ident, row.SFPType);
-	row.IsAllowed = utils.sfp.sfp_allowed(sfps, ident, row.SFPType) ? 'true' : 'false';
+	row.SFPType = ubbf.sfp_type_resolve(sfps, ident, row.SFPType);
+	row.IsAllowed = ubbf.sfp_allowed(sfps, ident, row.SFPType) ? 'true' : 'false';
 
 	return row;
 }
@@ -346,7 +345,7 @@ function sff8472_to_object(name) {
 function sfps_get(ctx) {
 	return {
 		SFPCageNumberOfEntries: sprintf('%d', length(cages_get())),
-		SupportedSFPTypes: join(',', utils.sfp.SUPPORTED_SFP_TYPES)
+		SupportedSFPTypes: join(',', ubbf.SUPPORTED_SFP_TYPES)
 	};
 }
 
@@ -445,7 +444,7 @@ function optical_get(ctx) {
  * @returns {number} Mbit/s, 0 when ethtool reports no mode
  */
 function max_bit_rate_get(netdev) {
-	let modes = utils.ethtool.ethtool_properties_get(netdev).SupportedLinkModes ?? '';
+	let modes = ubbf.ethtool_properties_get(netdev).SupportedLinkModes ?? '';
 	let best = 0;
 
 	for (let mode in split(modes, ','))
@@ -463,7 +462,7 @@ function max_bit_rate_get(netdev) {
  * @returns {boolean} true for the WAN side
  */
 function upstream_get(root, netdev) {
-	let ref = utils.helpers.upstream_interface_ref(root);
+	let ref = ubbf.upstream_interface_ref(root);
 	let iface = ref ? ubbf.navigate_data(root, ubbf.path_to_parts(ref)) : null;
 	let device = iface?.Name ? utils.netifd.netifd_status_get(iface.Name)?.device : null;
 
@@ -537,7 +536,7 @@ function interface_row(name, stored, root) {
 function interface_get(ctx) {
 	if (ctx.instance == null) {
 		let stored = ctx.root?.Device?.Optical?.Interface ?? {};
-		let rows = instance_map.instance_rows(OPTICAL_TABLE, optical_cages_get(),
+		let rows = ubbf.instance_rows(OPTICAL_TABLE, optical_cages_get(),
 			(name, n) => interface_row(name, {}, ctx.root));
 
 		for (let n in keys(rows))
@@ -611,13 +610,13 @@ function interface_stats_get(ctx) {
 function interface_stats_reset(input, command_key, instances) {
 	let name = optical_cage(instances[0]);
 	if (!name) {
-		utils.logging.log_warn('Optical.Interface.%s.Stats.Reset(): no optical SFP', instances[0]);
+		ubbf.log_warn('Optical.Interface.%s.Stats.Reset(): no optical SFP', instances[0]);
 		return -USP_ERR_OBJECT_DOES_NOT_EXIST;
 	}
 
 	let netdev = optical_status_get(name)?.Name ?? name;
 	if (!utils.ifstats.ifstats_reset(netdev)) {
-		utils.logging.log_warn('Optical.Interface.%s.Stats.Reset(): counters of %s not reset', instances[0], netdev);
+		ubbf.log_warn('Optical.Interface.%s.Stats.Reset(): counters of %s not reset', instances[0], netdev);
 		return -USP_ERR_COMMAND_FAILURE;
 	}
 

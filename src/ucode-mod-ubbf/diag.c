@@ -2,7 +2,9 @@
 /* Copyright (C) 2026 John Crispin <john@phrozen.org> */
 
 #include "ubbf.h"
+#include "bindings.h"
 #include <ctype.h>
+#include <arpa/inet.h>
 
 /**
  * Adds an integer pair `<key>: "<v>"` to an output object.
@@ -22,14 +24,13 @@ add_int_str(uc_value_t *o, const char *key, long long v)
  * Download/Upload TR-143 handlers that previously did a per-line
  * `match(line, /^([^:]+):(.+)$/)` regex pass.
  *
- * @param vm     ucode VM context
- * @param nargs  number of arguments (1 expected: text)
- * @return       object of parsed metrics, possibly empty
+ * @param vm    ucode VM context
+ * @param data  text
+ * @return      new object of parsed metrics, possibly empty
  */
 uc_value_t *
-uc_ubbf_curl_w_metrics_parse(uc_vm_t *vm, size_t nargs)
+curl_metrics_new(uc_vm_t *vm, uc_value_t *data)
 {
-	uc_value_t *data = uc_fn_arg(0);
 	uc_value_t *out = ucv_object_new(vm);
 	const char *p, *line_start, *colon, *line_end;
 	const char *end;
@@ -62,6 +63,19 @@ uc_ubbf_curl_w_metrics_parse(uc_vm_t *vm, size_t nargs)
 	}
 
 	return out;
+}
+
+/**
+ * ucode: `curl_w_metrics_parse(text)`, see curl_metrics_new().
+ *
+ * @param vm     ucode VM context
+ * @param nargs  number of arguments (1 expected: text)
+ * @return       object of parsed metrics, possibly empty
+ */
+uc_value_t *
+uc_ubbf_curl_w_metrics_parse(uc_vm_t *vm, size_t nargs)
+{
+	return curl_metrics_new(vm, uc_fn_arg(0));
 }
 
 /**
@@ -155,6 +169,9 @@ uc_ubbf_ping_output_parse(uc_vm_t *vm, size_t nargs)
 
 	/* without a statistics line the FailureCount fallback of `count`
 	 * from above must survive */
+	/* a reply can come twice, so received may exceed transmitted */
+	if (received > transmitted)
+		received = transmitted;
 	if (transmitted > 0) {
 		add_int_str(out, "SuccessCount", received);
 		add_int_str(out, "FailureCount", transmitted - received);
@@ -259,6 +276,7 @@ uc_ubbf_traceroute_output_parse(uc_vm_t *vm, size_t nargs)
 
 		const char *open = strchr(q, '(');
 		const char *close = open ? strchr(open + 1, ')') : NULL;
+		const char *rest = q;
 		if (open && close && close > open + 1) {
 			size_t hn = open - q;
 			while (hn > 0 && (q[hn - 1] == ' ' || q[hn - 1] == '\t'))
@@ -270,30 +288,41 @@ uc_ubbf_traceroute_output_parse(uc_vm_t *vm, size_t nargs)
 			if (an >= sizeof(addr)) an = sizeof(addr) - 1;
 			memcpy(addr, open + 1, an);
 			addr[an] = '\0';
-		} else if (isdigit((unsigned char)*q)) {
-			size_t an = 0;
-			while (q[an] && (isdigit((unsigned char)q[an]) || q[an] == '.'))
-				an++;
-			if (an >= sizeof(addr)) an = sizeof(addr) - 1;
-			memcpy(addr, q, an);
-			addr[an] = '\0';
-			strcpy(host, addr);
+			rest = close + 1;
+		} else {
+			/* numeric output names the responder by its address only */
+			size_t an = strcspn(q, " \t");
+			uint8_t bin[16];
+
+			if (an > 0 && an < sizeof(addr)) {
+				memcpy(addr, q, an);
+				addr[an] = '\0';
+				if (inet_pton(AF_INET, addr, bin) == 1 || inet_pton(AF_INET6, addr, bin) == 1) {
+					strcpy(host, addr);
+					rest = q + an;
+				} else {
+					addr[0] = '\0';
+				}
+			}
 		}
 
-		/* Sum the rtt values: split "ms" boundaries, parse trailing number per part. */
+		/* Sum the probe times after the responder: each is a number
+		 * followed by the separate word "ms". */
 		double sum = 0;
 		int times = 0;
-		const char *part_start = q;
+		const char *part_start = rest;
 		const char *ms;
 		while ((ms = strstr(part_start, "ms")) != NULL) {
 			const char *r = ms;
+			bool word = (ms[2] == '\0' || ms[2] == ' ' || ms[2] == '\t');
 			while (r > part_start && (r[-1] == ' ' || r[-1] == '\t'))
 				r--;
 			const char *ns = r;
 			while (ns > part_start &&
 			       (isdigit((unsigned char)ns[-1]) || ns[-1] == '.'))
 				ns--;
-			if (ns < r) {
+			if (word && r < ms && ns < r &&
+			    (ns == part_start || ns[-1] == ' ' || ns[-1] == '\t')) {
 				sum += strtod(ns, NULL);
 				times++;
 			}

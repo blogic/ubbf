@@ -3,7 +3,7 @@
 
 import * as socket from 'socket';
 import * as fs from 'fs';
-import { cmd_build } from 'ubbf.utils.process';
+import { cmd_build } from 'ubbf';
 
 let config = {
 	hosts: null,

@@ -35,7 +35,7 @@ function render(relay_config) {
 	} };
 	let output = [];
 
-	include(TEMPLATE, { ...h, ...dns, output, config, ubbf,
+	include(TEMPLATE, { ...h, ...dns, output, config, ubbf, dns_learned_row: ubbf.dns_learned_row,
 		ubbf_get: ubbf.get, ubbf_instances: ubbf.instances, ubbf_to_bool: ubbf.to_bool,
 		ubbf_to_int: ubbf.to_int, csv_to_list: ubbf.csv_to_list,
 		interface_to_name: ubbf.interface_to_name, dns_relay_plan,

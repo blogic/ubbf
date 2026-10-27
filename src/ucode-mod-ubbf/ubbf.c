@@ -4,63 +4,7 @@
 
 #include <ucode/module.h>
 #include "ubbf.h"
-
-/**
- * Formats a Unix timestamp as a USP-style ISO 8601 datetime string.
- *
- * Returns the literal `0001-01-01T00:00:00Z` (USP's "unknown time") when
- * the timestamp cannot be expressed in UTC.
- *
- * @param vm     ucode VM context
- * @param nargs  number of arguments (1 expected: integer seconds since epoch)
- * @return       ISO 8601 datetime string, or null on bad input
- */
-static uc_value_t *
-uc_usp_unix_to_datetime(uc_vm_t *vm, size_t nargs)
-{
-	uc_value_t *arg = uc_fn_arg(0);
-	struct tm tm;
-	char buf[32];
-	time_t t;
-
-	if (ucv_type(arg) != UC_INTEGER)
-		return NULL;
-
-	t = (time_t)ucv_int64_get(arg);
-	if (!gmtime_r(&t, &tm))
-		return ucv_string_new("0001-01-01T00:00:00Z");
-
-	strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%SZ", &tm);
-
-	return ucv_string_new(buf);
-}
-
-/**
- * Parses a USP-style ISO 8601 datetime string into a Unix timestamp.
- *
- * Accepts up to second precision; trailing fractional or timezone
- * suffix is ignored. Returns 0 when parsing fails.
- *
- * @param vm     ucode VM context
- * @param nargs  number of arguments (1 expected: datetime string)
- * @return       integer seconds since epoch, or null on bad input
- */
-static uc_value_t *
-uc_usp_datetime_to_unix(uc_vm_t *vm, size_t nargs)
-{
-	uc_value_t *arg = uc_fn_arg(0);
-	const char *str;
-	struct tm tm = { 0 };
-
-	if (ucv_type(arg) != UC_STRING)
-		return NULL;
-
-	str = ucv_string_get(arg);
-	if (!strptime(str, "%Y-%m-%dT%H:%M:%S", &tm))
-		return ucv_int64_new(0);
-
-	return ucv_int64_new((int64_t)timegm(&tm));
-}
+#include "bindings.h"
 
 const struct constval dm_type_vals[] = {
 	{ "STRING",    DM_STRING },
@@ -193,6 +137,11 @@ static const uc_function_list_t module_fns[] = {
 	{ "enabled",                     uc_ubbf_enabled },
 	{ "interface_to_name",           uc_ubbf_interface_to_name },
 	{ "lower_layer_resolve",         uc_ubbf_lower_layer_resolve },
+	{ "ethernet_interface_path",     uc_ubbf_ethernet_interface_path },
+	{ "upstream_interface_ref",      uc_ubbf_upstream_interface_ref },
+	{ "lower_layers_wifi",           uc_ubbf_lower_layers_wifi },
+	{ "port_snooped",                uc_ubbf_port_snooped },
+	{ "tree_leaves",                 uc_ubbf_tree_leaves },
 	{ "navigate_data",               uc_ubbf_navigate },
 	{ "instance_count",              uc_ubbf_count_instances },
 	{ "ctx_config",                  uc_ubbf_ctx_config },
@@ -202,12 +151,12 @@ static const uc_function_list_t module_fns[] = {
 	{ "get_by_instance",             uc_ubbf_get_by_instance },
 	{ "shell_escape",                uc_ubbf_shell_escape },
 	{ "iso8601_format",              uc_ubbf_iso8601_format },
+	{ "datetime_format",             uc_ubbf_datetime_format },
 	{ "iso8601_format_usec",         uc_ubbf_iso8601_format_usec },
 	{ "iso8601_local_format",        uc_ubbf_iso8601_local_format },
 	{ "readfile_trim",               uc_ubbf_readfile_trim },
 	{ "readfile_int",                uc_ubbf_readfile_int },
 	{ "uptime_read",                 uc_ubbf_uptime_read },
-	{ "operstate_to_status",         uc_ubbf_operstate_to_status },
 	{ "link_properties_get",         uc_ubbf_link_properties_get },
 	{ "ethernet_properties_get",     uc_ubbf_ethernet_properties_get },
 	{ "arp_parse",                   uc_ubbf_arp_parse },
@@ -218,6 +167,8 @@ static const uc_function_list_t module_fns[] = {
 	{ "host_primary_ip",             uc_ubbf_host_primary_ip },
 	{ "name_sanitise",               uc_ubbf_name_sanitise },
 	{ "uci_value_sanitise",          uc_ubbf_uci_value_sanitise },
+	{ "text_clamp",                  uc_ubbf_text_clamp },
+	{ "cmd_build",                   uc_ubbf_cmd_build },
 	{ "mac_is_valid",                uc_ubbf_mac_is_valid },
 	{ "transfer_url_validate",       uc_ubbf_transfer_url_validate },
 	{ "mac_normalise",               uc_ubbf_mac_normalise },
@@ -225,21 +176,110 @@ static const uc_function_list_t module_fns[] = {
 	{ "tr181_ref_parse",             uc_ubbf_tr181_ref_parse },
 	{ "port_range_format",           uc_ubbf_port_range_format },
 	{ "protocol_to_uci",             uc_ubbf_protocol_to_uci },
+	{ "chain_rules_ordered",         uc_ubbf_chain_rules_ordered },
+	{ "firewall_set_resolve",        uc_ubbf_firewall_set_resolve },
+	{ "chain_rule_set_matches",      uc_ubbf_chain_rule_set_matches },
+	{ "chain_rule_unsupported",      uc_ubbf_chain_rule_unsupported },
+	{ "firewall_rules_expired",      uc_ubbf_firewall_rules_expired },
+	{ "firewall_expiry_next",        uc_ubbf_firewall_expiry_next },
+	{ "firewall_reconcile",          uc_ubbf_firewall_reconcile },
+	{ "start_time_valid",            uc_ubbf_start_time_valid },
+	{ "intervals_union",             uc_ubbf_intervals_union },
+	{ "intervals_complement",        uc_ubbf_intervals_complement },
+	{ "schedule_intervals",          uc_ubbf_schedule_intervals },
+	{ "intervals_to_windows",        uc_ubbf_intervals_to_windows },
+	{ "week_seconds",                uc_ubbf_week_seconds },
+	{ "intervals_active",            uc_ubbf_intervals_active },
+	{ "schedule_state",              uc_ubbf_schedule_state },
+	{ "refs_intervals",              uc_ubbf_refs_intervals },
+	{ "schedule_windows",            uc_ubbf_schedule_windows },
+	{ "schedule_refs_check",         uc_ubbf_schedule_refs_check },
+	{ "schedule_refs_prune",         uc_ubbf_schedule_refs_prune },
+	{ "router_table_id",             uc_ubbf_router_table_id },
+	{ "forwarding_policy_set",       uc_ubbf_forwarding_policy_set },
+	{ "source_prefix",               uc_ubbf_source_prefix },
+	{ "route_dest",                  uc_ubbf_route_dest },
+	{ "prefix_intersect",            uc_ubbf_prefix_intersect },
+	{ "source_tables",               uc_ubbf_source_tables },
+	{ "source_table_contents",       uc_ubbf_source_table_contents },
+	{ "source_rules",                uc_ubbf_source_rules },
+	{ "main_source_rules",           uc_ubbf_main_source_rules },
+	{ "policy_resolve",              uc_ubbf_policy_resolve },
+	{ "prefix6_parse",               uc_ubbf_prefix6_parse },
+	{ "prefix6_contains",            uc_ubbf_prefix6_contains },
+	{ "nptv6_setting_check",         uc_ubbf_nptv6_setting_check },
+	{ "sfp_type_resolve",            uc_ubbf_sfp_type_resolve },
+	{ "sfp_allowed",                 uc_ubbf_sfp_allowed },
+	{ "key_acceptable",              uc_ubbf_key_acceptable },
+	{ "dns_learned_row",             uc_ubbf_dns_learned_row },
+	{ "hosts_leases_by_mac",         uc_ubbf_hosts_leases_by_mac },
+	{ "hosts_ap_ssids",              uc_ubbf_hosts_ap_ssids },
+	{ "ipv6_maps_merge",             uc_ubbf_ipv6_maps_merge },
+	{ "netifd_interfaces_build",     uc_ubbf_netifd_interfaces_build },
+	{ "ap_by_ssid_instance",         uc_ubbf_ap_by_ssid_instance },
+	{ "pool_client_paths",           uc_ubbf_pool_client_paths },
+	{ "hosts_state_load",            uc_ubbf_hosts_state_load },
+	{ "host_active_track",           uc_ubbf_host_active_track },
+	{ "hosts_downstream_build",      uc_ubbf_hosts_downstream_build },
+	{ "hosts_inactive_drop",         uc_ubbf_hosts_inactive_drop },
+	{ "hosts_state_flush",           uc_ubbf_hosts_state_flush },
+	{ "host_path_by_ip_find",        uc_ubbf_host_path_by_ip_find },
+	{ "ifstats_build",               uc_ubbf_ifstats_build },
+	{ "ipv6_leases_by_mac",          uc_ubbf_ipv6_leases_by_mac },
+	{ "ipv6_pool_clients_build",     uc_ubbf_ipv6_pool_clients_build },
+	{ "pool_leases_by_key",          uc_ubbf_pool_leases_by_key },
+	{ "static_address_states",       uc_ubbf_static_address_states },
+	{ "dhcp_option_value",           uc_ubbf_dhcp_option_value },
+	{ "hex_to_printable",            uc_ubbf_hex_to_printable },
+	{ "prefix_length_nibble_check",  uc_ubbf_prefix_length_nibble_check },
+	{ "ra_prefixes_hook_read",       uc_ubbf_ra_prefixes_hook_read },
+	{ "ipv6_prefix_rows_build",      uc_ubbf_ipv6_prefix_rows_build },
+	{ "ip_interface_members",        uc_ubbf_ip_interface_members },
 	{ "freq_to_channel",             uc_ubbf_freq_to_channel },
 	{ "antenna_count",               uc_ubbf_antenna_count },
-	{ "ipv6_lifetime_status",        uc_ubbf_ipv6_lifetime_status },
 	{ "tmpfile_name",                uc_ubbf_tmpfile_name },
 	{ "write_file_atomic",           uc_ubbf_write_file_atomic },
-	{ "counter_bump",                uc_ubbf_counter_bump },
 	{ "arch_get",                    uc_ubbf_arch_get },
 	{ "apk_version",                 uc_ubbf_apk_version },
 	{ "statvfs_info",                uc_ubbf_statvfs_info },
-	{ "du_kib",                      uc_ubbf_du_kib },
 	{ "ipv4_addr_to_object",         uc_ubbf_ipv4_addr_to_object },
 	{ "ipv6_addr_to_object",         uc_ubbf_ipv6_addr_to_object },
 	{ "ipv6_prefix_to_object",       uc_ubbf_ipv6_prefix_to_object },
 	{ "txpower_pct_to_dbm",          uc_ubbf_txpower_pct_to_dbm },
 	{ "wifi_operating_standard",     uc_ubbf_wifi_operating_standard },
+	{ "standards_to_highest",        uc_ubbf_standards_to_highest },
+	{ "standards_bandwidth_to_htmode", uc_ubbf_standards_bandwidth_to_htmode },
+	{ "clamp_htmode",                uc_ubbf_clamp_htmode },
+	{ "channel_width_to_bandwidth",  uc_ubbf_channel_width_to_bandwidth },
+	{ "band_to_uci",                 uc_ubbf_band_to_uci },
+	{ "band_to_index",               uc_ubbf_band_to_index },
+	{ "radio_address_derive",        uc_ubbf_radio_address_derive },
+	{ "dscp_parse",                  uc_ubbf_dscp_parse },
+	{ "qos_map_set_render",          uc_ubbf_qos_map_set_render },
+	{ "phy_max_standard",            uc_ubbf_phy_max_standard },
+	{ "phy_supported_bandwidths",    uc_ubbf_phy_supported_bandwidths },
+	{ "phy_max_bandwidth",           uc_ubbf_phy_max_bandwidth },
+	{ "phy_max_ssids",               uc_ubbf_phy_max_ssids },
+	{ "phy_max_bitrate",             uc_ubbf_phy_max_bitrate },
+	{ "phy_max_txpower",             uc_ubbf_phy_max_txpower },
+	{ "phy_supported_bands",         uc_ubbf_phy_supported_bands },
+	{ "phy_supported_standards",     uc_ubbf_phy_supported_standards },
+	{ "phy_possible_channels",       uc_ubbf_phy_possible_channels },
+	{ "channel_valid_for_bandwidth", uc_ubbf_channel_valid_for_bandwidth },
+	{ "wpa_psk",                     uc_ubbf_wpa_psk },
+	{ "ht_caps_encode",              uc_ubbf_ht_caps_encode },
+	{ "vht_caps_encode",             uc_ubbf_vht_caps_encode },
+	{ "sta_he_caps_build",           uc_ubbf_sta_he_caps_build },
+	{ "sta_he_caps_from_nl80211",    uc_ubbf_sta_he_caps_from_nl80211 },
+	{ "sta_he_caps_from_flags",      uc_ubbf_sta_he_caps_from_flags },
+	{ "sta_he_caps_from_frame_body", uc_ubbf_sta_he_caps_from_frame_body },
+	{ "chipset_vendor_get",          uc_ubbf_chipset_vendor_get },
+	{ "radio_survey_build",          uc_ubbf_radio_survey_build },
+	{ "radio_capability_build",      uc_ubbf_radio_capability_build },
+	{ "local_sta_data_build",        uc_ubbf_local_sta_data_build },
+	{ "radio_band_priority",         uc_ubbf_radio_band_priority },
+	{ "topology_devices_build",      uc_ubbf_topology_devices_build },
+	{ "device_api_data_build",       uc_ubbf_device_api_data_build },
 	{ "cpu_stats",                   uc_ubbf_cpu_stats },
 	{ "process_count",               uc_ubbf_process_count },
 	{ "process_info",                uc_ubbf_process_info },
@@ -247,16 +287,69 @@ static const uc_function_list_t module_fns[] = {
 	{ "module_kill",                 uc_ubbf_module_kill },
 	{ "leases_parse",                uc_ubbf_leases_parse },
 	{ "curl_w_metrics_parse",        uc_ubbf_curl_w_metrics_parse },
+	{ "curl_insecure_allowed",       uc_ubbf_curl_insecure_allowed },
+	{ "curl_exit_to_status",         uc_ubbf_curl_exit_to_status },
+	{ "curl_download",               uc_ubbf_curl_download },
+	{ "curl_send",                   uc_ubbf_curl_send },
+	{ "curl_upload",                 uc_ubbf_curl_upload },
 	{ "ping_output_parse",           uc_ubbf_ping_output_parse },
 	{ "traceroute_output_parse",     uc_ubbf_traceroute_output_parse },
 	{ "schema_get",                  uc_ubbf_schema_get },
 	{ "schema_defaults",             uc_ubbf_schema_defaults },
 	{ "schema_param_info",           uc_ubbf_schema_param_info },
+	{ "schema_extract",              uc_ubbf_schema_extract },
 	{ "schema_entry_addable",        uc_ubbf_schema_entry_addable },
 	{ "schema_protocol_set",         uc_ubbf_schema_protocol_set },
 	{ "schema_version_set",          uc_ubbf_schema_version_set },
 	{ "schema_tables",               uc_ubbf_schema_tables },
 	{ "schema_tables_load",          uc_ubbf_schema_tables_load },
+	{ "log_init",                    uc_ubbf_log_init },
+	{ "log_debug",                   uc_ubbf_log_debug },
+	{ "log_info",                    uc_ubbf_log_info },
+	{ "log_warn",                    uc_ubbf_log_warn },
+	{ "log_err",                     uc_ubbf_log_err },
+	{ "log_exception",               uc_ubbf_log_exception },
+	{ "active_protocol",             uc_ubbf_active_protocol },
+	{ "cwmp_mode",                   uc_ubbf_cwmp_mode },
+	{ "transfer_complete",           uc_ubbf_transfer_complete },
+	{ "write_gate_create",           uc_ubbf_write_gate_create },
+	{ "cache_call",                  uc_ubbf_cache_call },
+	{ "cache_invalidate",            uc_ubbf_cache_invalidate },
+	{ "link_local_addresses_get",    uc_ubbf_link_local_addresses_get },
+	{ "ra_prefixes_get",             uc_ubbf_ra_prefixes_get },
+	{ "ethtool_properties_get",      uc_ubbf_ethtool_properties_get },
+	{ "ethtool_stats_get",           uc_ubbf_ethtool_stats_get },
+	{ "uci_change_update",           uc_ubbf_uci_change_update },
+	{ "uci_last_changed",            uc_ubbf_uci_last_changed },
+	{ "deviceinfo_get",              uc_ubbf_deviceinfo_get },
+	{ "acl_role_load",               uc_ubbf_acl_role_load },
+	{ "acl_can_diagnose",            uc_ubbf_acl_can_diagnose },
+	{ "acl_can_write",               uc_ubbf_acl_can_write },
+	{ "acl_can_add",                 uc_ubbf_acl_can_add },
+	{ "acl_filter_tree",             uc_ubbf_acl_filter_tree },
+	{ "ifop_status_derive",          uc_ubbf_ifop_status_derive },
+	{ "bridge_status_derive",        uc_ubbf_bridge_status_derive },
+	{ "order_snapshot",              uc_ubbf_order_snapshot },
+	{ "orders_compute",              uc_ubbf_orders_compute },
+	{ "config_path_check",           uc_ubbf_config_path_check },
+	{ "config_validate",             uc_ubbf_config_validate },
+	{ "config_restore_hook_set",     uc_ubbf_config_restore_hook_set },
+	{ "config_restore",              uc_ubbf_config_restore },
+	{ "config_pins_take",            uc_ubbf_config_pins_take },
+	{ "instance_map_own",            uc_ubbf_instance_map_own },
+	{ "instance_numbers",            uc_ubbf_instance_numbers },
+	{ "instance_numbers_known",      uc_ubbf_instance_numbers_known },
+	{ "instance_number",             uc_ubbf_instance_number },
+	{ "instance_prune",              uc_ubbf_instance_prune },
+	{ "instance_key",                uc_ubbf_instance_key },
+	{ "instance_lookup",             uc_ubbf_instance_lookup },
+	{ "instance_rows",               uc_ubbf_instance_rows },
+	{ "instance_items",              uc_ubbf_instance_items },
+	{ "instance_floor",              uc_ubbf_instance_floor },
+	{ "instance_ids",                uc_ubbf_instance_ids },
+	{ "instance_id_rows",            uc_ubbf_instance_id_rows },
+	{ "instance_stack",              uc_ubbf_instance_stack },
+	{ "instance_retire",             uc_ubbf_instance_retire },
 };
 
 /**
@@ -272,6 +365,10 @@ static const uc_function_list_t module_fns[] = {
 void uc_module_init(uc_vm_t *vm, uc_value_t *scope)
 {
 	dm_register_type(vm);
+	write_gate_register_type(vm);
 	uc_function_list_register(scope, module_fns);
+	scope_add_constants(scope, routing_vals, routing_vals_count);
+	scope_add_constants(scope, curl_vals, curl_vals_count);
+	sfp_constants_add(vm, scope);
 	scope_inject_globals(vm);
 }

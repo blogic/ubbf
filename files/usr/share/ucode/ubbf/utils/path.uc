@@ -34,26 +34,3 @@ export function interface_resolve(root, iface_path) {
 
 	return device_from_name(name);
 };
-
-/**
- * Returns the Device.Ethernet.Interface row of a netdev, the reverse of
- * interface_resolve() for a layer 1 interface.
- *
- * The rows are read directly: ubbf.instances() would add `.instance` and
- * `.path` keys to the tree it walks, and those leak into later responses.
- *
- * @param {object} root - Root data model object
- * @param {string} netdev - Linux device name, for example "lan1"
- * @returns {string} Row path, or '' when no row has that Name
- */
-export function ethernet_interface_path(root, netdev) {
-	if (!netdev)
-		return '';
-
-	for (let key, iface in root?.Device?.Ethernet?.Interface ?? {}) {
-		if (ubbf.is_instance_key(key) && type(iface) == 'object' && iface.Name == netdev)
-			return sprintf('Device.Ethernet.Interface.%s', key);
-	}
-
-	return '';
-};

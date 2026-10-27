@@ -2,6 +2,7 @@
 /* Copyright (C) 2026 John Crispin <john@phrozen.org> */
 
 #include "ubbf.h"
+#include "bindings.h"
 #include "schema-table.h"
 
 #include <ctype.h>
@@ -941,7 +942,10 @@ item_check(const struct value_rule *vr, const char *s, char *why, size_t why_len
 	if (int_type(type)) {
 		if (!integer_parse(s, &n))
 			return "not an integer";
-		if (!integer_fits(type, s, n))
+		/* an explicit range may go beyond the type, as unsignedInt(-1,576:)
+		 * of Routing.Router.{i}.IPv4Forwarding.{i}.MTU does in TR-181 */
+		if (!integer_fits(type, s, n) &&
+		    !(r->range_count && ranges_hold(vr->ranges, r->range_count, n)))
 			return "outside the range of its type";
 		if ((r->flags & SCHEMA_RULE_MIN) && n < r->min)
 			return snprintf(why, why_len, "below the minimum of %" PRId64, r->min), why;
@@ -974,9 +978,29 @@ item_check(const struct value_rule *vr, const char *s, char *why, size_t why_len
 	return NULL;
 }
 
+/* The comma that ends a list item, or the end of the text; a comma inside
+ * square brackets belongs to a nested list and ends nothing. */
+static char *
+list_item_end(char *s)
+{
+	int depth = 0;
+
+	for (; *s; s++) {
+		if (*s == '[')
+			depth++;
+		else if (*s == ']' && depth > 0)
+			depth--;
+		else if (*s == ',' && !depth)
+			break;
+	}
+
+	return s;
+}
+
 /**
  * Checks a comma-separated list: the list lengths apply to the whole value,
- * the other rules to each item, with the blanks around it removed.
+ * the other rules to each item, with the blanks around it and the
+ * brackets of a nested list removed.
  */
 static const char *
 list_check(const struct value_rule *vr, char *s, char *why, size_t why_len)
@@ -997,15 +1021,23 @@ list_check(const struct value_rule *vr, char *s, char *why, size_t why_len)
 		const char *reason;
 		char *end;
 
-		next = strchr(item, ',');
-		if (next)
+		next = list_item_end(item);
+		if (*next)
 			*next++ = '\0';
+		else
+			next = NULL;
 
 		while (isspace((unsigned char)*item))
 			item++;
 		for (end = item + strlen(item); end > item && isspace((unsigned char)end[-1]); end--)
 			;
 		*end = '\0';
+
+		/* TR-106 nested lists put each inner list in square brackets */
+		if (*item == '[' && end > item + 1 && end[-1] == ']') {
+			end[-1] = '\0';
+			item++;
+		}
 
 		reason = item_check(vr, item, item_why, sizeof(item_why));
 		if (reason)
@@ -1180,17 +1212,12 @@ module_name_valid(const char *name, size_t len)
 static uc_value_t *
 schema_module_load(uc_vm_t *vm, const char *name, size_t len)
 {
-	uc_value_t *cache = uc_vm_registry_get(vm, "ubbf.schema_modules");
-	uc_value_t *loadstring, *mod;
+	uc_value_t *cache = registry_get(vm, "ubbf.schema_modules", UC_OBJECT);
+	uc_value_t *loadstring, *loaded, *code, *mod;
 	char *key, *src;
 
 	if (!module_name_valid(name, len))
 		return NULL;
-
-	if (!cache) {
-		cache = ucv_object_new(vm);
-		uc_vm_registry_set(vm, "ubbf.schema_modules", cache);
-	}
 
 	key = xstrdup(name);
 	key[len] = '\0';
@@ -1208,17 +1235,20 @@ schema_module_load(uc_vm_t *vm, const char *name, size_t len)
 	}
 
 	xasprintf(&src, "import * as m from 'ubbf.schemas.%s'; return m;", key);
-	uc_vm_stack_push(vm, ucv_get(loadstring));
-	uc_vm_stack_push(vm, ucv_string_new(src));
+	code = ucv_string_new(src);
 	free(src);
 
-	if (uc_vm_call(vm, false, 1) != EXCEPTION_NONE ||
-	    uc_vm_call(vm, false, 0) != EXCEPTION_NONE) {
+	loaded = callback_invoke(vm, loadstring, 1, code);
+	ucv_put(code);
+	mod = loaded ? callback_invoke(vm, loaded, 0) : NULL;
+	ucv_put(loaded);
+
+	if (vm->exception.type != EXCEPTION_NONE || !mod) {
+		ucv_put(mod);
 		free(key);
 		return NULL;
 	}
 
-	mod = uc_vm_stack_pop(vm);
 	ucv_object_add(cache, key, mod);
 	free(key);
 
@@ -1394,7 +1424,37 @@ uc_ubbf_schema_get(uc_vm_t *vm, size_t nargs)
 }
 
 /**
- * Builds the defaults object of a schema name.
+ * Builds the defaults object of a schema name, such as `Firewall.Service`:
+ * from the schema table, or from the schema module when no table is
+ * built in.
+ *
+ * @param vm    ucode VM context
+ * @param name  schema name
+ * @return      new defaults object, or NULL for an unknown name
+ */
+uc_value_t *
+schema_defaults_new(uc_vm_t *vm, const char *name)
+{
+	uc_value_t *id, *def, *defaults;
+	struct schema_ref ref;
+
+	if (schema_object_find(name, &ref))
+		return object_defaults_new(vm, &ref);
+
+	if (schema_core_table())
+		return NULL;
+
+	id = ucv_string_new(name);
+	def = schema_module_export(vm, id);
+	defaults = ucv_get(ucv_object_get(def, "defaults", NULL));
+	ucv_put(def);
+	ucv_put(id);
+
+	return defaults;
+}
+
+/**
+ * Builds the defaults object of a schema name, see schema_defaults_new().
  *
  * @param vm     ucode VM context
  * @param nargs  number of arguments (1 expected: schema name)
@@ -1403,20 +1463,58 @@ uc_ubbf_schema_get(uc_vm_t *vm, size_t nargs)
 uc_value_t *
 uc_ubbf_schema_defaults(uc_vm_t *vm, size_t nargs)
 {
-	uc_value_t *def, *defaults;
-	struct schema_ref ref;
+	uc_value_t *name = uc_fn_arg(0);
 
-	if (arg_object(vm, nargs, &ref))
-		return object_defaults_new(vm, &ref);
-
-	if (schema_core_table())
+	if (ucv_type(name) != UC_STRING)
 		return NULL;
 
-	def = schema_module_export(vm, uc_fn_arg(0));
-	defaults = ucv_get(ucv_object_get(def, "defaults", NULL));
-	ucv_put(def);
+	return schema_defaults_new(vm, ucv_string_get(name));
+}
 
-	return defaults;
+static uc_value_t *
+command_info_new(uc_vm_t *vm, uc_value_t *def)
+{
+	uc_value_t *out = ucv_object_new(vm);
+
+	ucv_object_add(out, "command", ucv_boolean_new(true));
+	ucv_object_add(out, "type", ucv_get(ucv_object_get(def, "type", NULL)));
+	ucv_object_add(out, "input", ucv_get(ucv_object_get(def, "input", NULL)));
+	ucv_object_add(out, "output", ucv_get(ucv_object_get(def, "output", NULL)));
+
+	return out;
+}
+
+/**
+ * Describes one member of an object schema, the form of a module without a
+ * schema table: `{ schema: { name: type bits | command }, constraints }`.
+ * The decoded type and writability win, so a constraints entry can add
+ * facts but never contradict the type it annotates.
+ */
+static uc_value_t *
+object_param_info_new(uc_vm_t *vm, uc_value_t *schema, const char *name)
+{
+	uc_value_t *members = ucv_object_get(schema, "schema", NULL);
+	uc_value_t *value = ucv_object_get(members, name, NULL);
+	uc_value_t *rules, *out;
+	uint32_t type;
+
+	if (ucv_type(value) == UC_OBJECT)
+		return command_info_new(vm, value);
+
+	if (ucv_type(value) != UC_INTEGER)
+		return NULL;
+
+	type = (uint32_t)ucv_int64_get(value);
+	rules = ucv_object_get(ucv_object_get(schema, "constraints", NULL), name, NULL);
+	out = ucv_object_new(vm);
+
+	ucv_object_foreach(rules, key, rule)
+		ucv_object_add(out, key, ucv_get(rule));
+
+	ucv_object_add(out, "writable", ucv_boolean_new((type & DM_WRITABLE) != 0));
+	ucv_object_add(out, "type", type_name_new(type));
+
+	return out;
 }
 
 /**
@@ -1424,19 +1522,27 @@ uc_ubbf_schema_defaults(uc_vm_t *vm, size_t nargs)
  * and type of a parameter, or the definition of a command.
  *
  * @param vm     ucode VM context
- * @param nargs  number of arguments (2 expected: schema name, member name)
+ * @param nargs  number of arguments (2 expected: schema name or object
+ *               schema, member name)
  * @return       facts object, or null when the schema does not describe the
  *               member
  */
 uc_value_t *
 uc_ubbf_schema_param_info(uc_vm_t *vm, size_t nargs)
 {
+	uc_value_t *schema = uc_fn_arg(0);
 	uc_value_t *name = uc_fn_arg(1);
 	const struct schema_member *m;
 	uc_value_t *out, *def;
 	struct schema_ref ref;
 
-	if (!arg_object(vm, nargs, &ref) || ucv_type(name) != UC_STRING)
+	if (ucv_type(name) != UC_STRING)
+		return NULL;
+
+	if (ucv_type(schema) == UC_OBJECT)
+		return object_param_info_new(vm, schema, ucv_string_get(name));
+
+	if (!arg_object(vm, nargs, &ref))
 		return NULL;
 
 	m = object_member_find(&ref, ucv_string_get(name));
@@ -1445,11 +1551,7 @@ uc_ubbf_schema_param_info(uc_vm_t *vm, size_t nargs)
 
 	if (m->kind == SCHEMA_KIND_COMMAND) {
 		def = json_value_parse(vm, ref.table->pool, m->info);
-		out = ucv_object_new(vm);
-		ucv_object_add(out, "command", ucv_boolean_new(true));
-		ucv_object_add(out, "type", ucv_get(ucv_object_get(def, "type", NULL)));
-		ucv_object_add(out, "input", ucv_get(ucv_object_get(def, "input", NULL)));
-		ucv_object_add(out, "output", ucv_get(ucv_object_get(def, "output", NULL)));
+		out = command_info_new(vm, def);
 		ucv_put(def);
 
 		return out;
@@ -1464,6 +1566,71 @@ uc_ubbf_schema_param_info(uc_vm_t *vm, size_t nargs)
 	ucv_object_add(out, "type", type_name_new(m->type));
 
 	return out;
+}
+
+static void
+members_extract(uc_vm_t *vm, uc_value_t *schema, const char *path,
+		uc_value_t *members)
+{
+	uc_value_t *objects = ucv_object_get(schema, "objects", NULL);
+	uc_value_t *events = ucv_object_get(schema, "events", NULL);
+	uc_value_t *params = ucv_object_new(vm);
+	uc_value_t *type, *input;
+	char *event_path;
+
+	ucv_object_foreach(members, name, def) {
+		type = ucv_object_get(def, "type", NULL);
+		if (ucv_type(def) != UC_OBJECT || ucv_type(type) != UC_STRING ||
+		    strcmp(ucv_string_get(type), "event")) {
+			ucv_object_add(params, name, ucv_get(def));
+			continue;
+		}
+
+		input = ucv_object_get(def, "input", NULL);
+		xasprintf(&event_path, "%s.%s", path, name);
+		ucv_object_add(events, event_path, input ? ucv_get(input) : ucv_array_new(vm));
+		free(event_path);
+	}
+
+	ucv_object_add(objects, path, params);
+}
+
+/**
+ * Extracts the schema the USP core registers from a model: the parameters
+ * and commands of each object pattern, and its events apart.
+ *
+ * @param vm     ucode VM context
+ * @param nargs  number of arguments (2 expected: model, function that
+ *               returns the schema members of a model entry, given the
+ *               entry and its object pattern)
+ * @return       `{ objects, events }`, or null when the function throws
+ */
+uc_value_t *
+uc_ubbf_schema_extract(uc_vm_t *vm, size_t nargs)
+{
+	uc_value_t *model = uc_fn_arg(0);
+	uc_value_t *members_get = uc_fn_arg(1);
+	uc_value_t *schema = ucv_object_new(vm);
+	uc_value_t *members, *pattern;
+
+	ucv_object_add(schema, "objects", ucv_object_new(vm));
+	ucv_object_add(schema, "events", ucv_object_new(vm));
+
+	ucv_object_foreach(model, path, entry) {
+		pattern = ucv_string_new(path);
+		members = callback_invoke(vm, members_get, 2, entry, pattern);
+		ucv_put(pattern);
+
+		if (vm->exception.type != EXCEPTION_NONE) {
+			ucv_put(schema);
+			return NULL;
+		}
+
+		members_extract(vm, schema, path, members);
+		ucv_put(members);
+	}
+
+	return schema;
 }
 
 /**

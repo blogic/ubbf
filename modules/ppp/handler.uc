@@ -410,7 +410,7 @@ function ipcp_get(ctx) {
  * @returns {string|null} Link-local IPv6 address or null
  */
 function dev_link_local_get(dev) {
-	let addrs = utils.ipv6.link_local_addresses_get(dev);
+	let addrs = ubbf.link_local_addresses_get(dev);
 	return length(addrs) > 0 ? addrs[0].address : null;
 }
 
@@ -522,8 +522,8 @@ function session_to_object(s) {
 		Alias: ubbf.alias_from_mac(s.client_mac ?? ''),
 		ClientMACAddress: s.client_mac ?? '',
 		SessionID: sprintf('%d', s.session_id ?? 0),
-		StartTime: utils.helpers.datetime_format(s.start_time ?? 0),
-		LastActivityTime: utils.helpers.datetime_format(s.last_activity ?? 0)
+		StartTime: ubbf.datetime_format(s.start_time ?? 0),
+		LastActivityTime: ubbf.datetime_format(s.last_activity ?? 0)
 	};
 }
 
@@ -535,7 +535,7 @@ function session_to_object(s) {
  */
 function passthrough_get(ctx) {
 	let lan_ref = ctx.config?.LANInterface ?? '';
-	let status = utils.cache.call(passthrough_status_fetch, lan_ref);
+	let status = ubbf.cache_call(passthrough_status_fetch, lan_ref);
 	let count = status?.session_count ?? 0;
 
 	return {
@@ -556,7 +556,7 @@ function passthrough_get(ctx) {
  */
 function session_get(ctx) {
 	let lan_ref = ctx.parent?.PPPoE?.X_UBBF_Passthrough?.LANInterface ?? '';
-	let sessions = (lan_ref != '') ? utils.cache.call(passthrough_sessions_fetch, lan_ref) : [];
+	let sessions = (lan_ref != '') ? ubbf.cache_call(passthrough_sessions_fetch, lan_ref) : [];
 
 	if (ctx.instance == null)
 		return ubbf.enumerate_instances(sessions, session_to_object);

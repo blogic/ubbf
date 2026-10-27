@@ -4,8 +4,8 @@
 import { access, readfile, writefile, lsdir, unlink, mkdir } from 'fs';
 import { generate } from 'ubbf.render.renderer';
 import * as services from 'ubbf.render.services';
-import { log_init, log_info, log_err } from 'ubbf.utils.logging';
-import { update_after_apply } from 'ubbf.utils.uci_change_track';
+import { log_init, log_info, log_err } from 'ubbf';
+import { uci_change_update } from 'ubbf';
 
 log_init('ubbf-apply');
 
@@ -114,7 +114,7 @@ if (rc != 0) {
 }
 
 try {
-	update_after_apply(TMP_SHADOW, '/tmp/ubbf/uci-last-changed.json');
+	uci_change_update(TMP_SHADOW, '/tmp/ubbf/uci-last-changed.json');
 } catch (e) {
 	log_err('uci change tracking failed: %s', e);
 }

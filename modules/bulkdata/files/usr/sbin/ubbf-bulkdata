@@ -12,7 +12,7 @@ import { deflate } from 'zlib';
 import { task_run, TASK_MARGIN_S } from 'ubbf.utils.process';
 import { curl_send } from 'ubbf.utils.curl';
 import { dm_event_send } from 'ubbf.utils.events';
-import { log_init, log_info, log_warn, log_err, log_exception } from 'ubbf.utils.logging';
+import { log_init, log_info, log_warn, log_err, log_exception } from 'ubbf';
 import { json_value } from 'ubbf.utils.bulkdata-encode';
 
 log_init('ubbf-bulkdata');

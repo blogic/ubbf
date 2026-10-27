@@ -3,9 +3,9 @@
 import * as uloop from 'uloop';
 import * as fs from 'fs';
 import * as digest from 'digest';
-import { transfer_complete } from 'ubbf.utils.helpers';
-import { curl_download, curl_exit_to_status } from 'ubbf.utils.curl';
-import { log_err } from 'ubbf.utils.logging';
+import { transfer_complete } from 'ubbf';
+import { curl_download, curl_exit_to_status } from 'ubbf';
+import { log_err } from 'ubbf';
 import { task_run, TASK_MARGIN_S } from 'ubbf.utils.process';
 import * as ubus from 'ubus';
 import * as ubbf from 'ubbf';
