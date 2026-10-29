@@ -4,8 +4,10 @@ import * as fs from 'fs';
 import * as uloop from 'uloop';
 import { cmd_build } from 'ubbf';
 import { log_info, log_warn, log_err, config_path_check } from 'ubbf';
+import { popen_async, status_describe } from 'ubbf.utils.process';
 
 const CONFIG_PATH = '/etc/ubbf/config.json';
+const APPLY_PATH = '/usr/libexec/ubbf/apply';
 const SHUTDOWN_PATH = '/etc/ubbf/shutdown.json';
 
 const BACKUP_PATH = '/tmp/ubbf-backup.tgz';
@@ -68,7 +70,79 @@ const RESET_KEEP_FILES = [
 ];
 
 let apply_timer;
+let apply_proc;
+let apply_pending;
+let apply_waiters = [];
 let shutting_down;
+
+function apply_busy() {
+	return apply_timer != null || apply_proc != null;
+}
+
+/**
+ * Runs `fn` now, or once no real apply is scheduled, running or pending.
+ *
+ * @param {function} fn - Work that must not cut a real apply short
+ */
+function apply_idle_run(fn) {
+	if (apply_busy()) {
+		push(apply_waiters, fn);
+		return;
+	}
+
+	fn();
+}
+
+let apply_start;
+
+function apply_next() {
+	if (apply_pending) {
+		apply_start();
+		return;
+	}
+
+	if (apply_busy())
+		return;
+
+	let waiters = apply_waiters;
+	apply_waiters = [];
+	for (let fn in waiters)
+		fn();
+}
+
+// One real apply at a time: apply replaces /var/run/uci as a whole.
+apply_start = function() {
+	apply_pending = false;
+	log_info('applying configuration');
+
+	apply_proc = uloop.process(APPLY_PATH, [ CONFIG_PATH ], null, (status) => {
+		apply_proc = null;
+		if (status != 0)
+			log_err('apply failed (%s)', status_describe(status));
+		apply_next();
+	});
+
+	if (!apply_proc) {
+		log_err('apply could not start: %s', uloop.error());
+		apply_next();
+	}
+};
+
+function apply_schedule() {
+	if (apply_timer)
+		apply_timer.cancel();
+
+	log_info('apply scheduled in 1 second');
+	apply_timer = uloop.timer(1000, function() {
+		apply_timer = null;
+		if (apply_proc) {
+			apply_pending = true;
+			log_info('apply queued behind the running apply');
+			return;
+		}
+		apply_start();
+	});
+}
 
 function backup_create(dest, wanted) {
 	let files = [];
@@ -111,7 +185,7 @@ function reboot_handler(req) {
 
 	log_warn('reboot scheduled local=%s', local);
 
-	uloop.timer(1000, function() {
+	uloop.timer(1000, () => apply_idle_run(function() {
 		pstore_write({
 			reason: 'reboot',
 			command_key: command_key,
@@ -122,7 +196,7 @@ function reboot_handler(req) {
 			log_err('reboot failed (exit %d), resuming normal operation', rc);
 			shutting_down = false;
 		}
-	});
+	}));
 
 	return { status: 'scheduled' };
 }
@@ -163,7 +237,7 @@ function factory_reset_handler(req) {
 	if (!keep)
 		log_warn('factory reset: no archive kept, the ACS binding will be lost');
 
-	uloop.timer(1000, function() {
+	uloop.timer(1000, () => apply_idle_run(function() {
 		pstore_write({
 			reason: 'factoryreset',
 			command_key: command_key,
@@ -175,7 +249,7 @@ function factory_reset_handler(req) {
 			fs.unlink(RESET_KEEP_PATH);
 			shutting_down = false;
 		}
-	});
+	}));
 
 	return { status: 'scheduled' };
 }
@@ -193,7 +267,7 @@ function sysupgrade_handler(req) {
 
 	let backup = backup_create(BACKUP_PATH, BACKUP_FILES);
 
-	uloop.timer(1000, function() {
+	uloop.timer(1000, () => apply_idle_run(function() {
 		pstore_write({
 			reason: 'sysupgrade',
 			command_key: command_key,
@@ -210,9 +284,43 @@ function sysupgrade_handler(req) {
 			log_err('sysupgrade failed (exit %d), resuming normal operation', rc);
 			shutting_down = false;
 		}
-	});
+	}));
 
 	return { status: 'scheduled' };
+}
+
+/**
+ * Makes the reply of the apply method from the end of its dry-run, and
+ * schedules the real apply after a dry-run that succeeded.
+ *
+ * @param {object} result - Result of popen_async()
+ * @param {boolean} do_apply - Whether the caller asked for the real apply
+ * @returns {object} Reply of the apply method
+ */
+function dry_run_reply(result, do_apply) {
+	let raw = result.data ?? '';
+
+	if (result.exitcode != 0)
+		return { success: false, error: 'Dry-run failed', logs: [], output: raw };
+
+	let dry_result;
+	try {
+		dry_result = json(raw);
+	} catch (e) {
+		dry_result = null;
+	}
+	if (!dry_result)
+		return { success: false, error: 'Failed to parse dry-run output', logs: [], output: raw };
+
+	if (do_apply)
+		apply_schedule();
+
+	return {
+		success: true,
+		logs: dry_result.logs ?? [],
+		output: dry_result.uci ?? '',
+		scheduled: do_apply
+	};
 }
 
 function apply_handler(req) {
@@ -228,46 +336,14 @@ function apply_handler(req) {
 	if (do_apply && file_path != CONFIG_PATH)
 		return { success: false, error: 'file is only valid for a dry run', logs: [] };
 
-	let p = fs.popen(cmd_build([ '/usr/libexec/ubbf/apply', '--dry-run', file_path ]), 'r');
-	let raw = p ? p.read('all') : '';
-	let rc = p ? p.close() : -1;
-
-	if (rc != 0)
-		return { success: false, error: 'Dry-run failed', logs: [], output: raw };
-
-	let dry_result;
-	try {
-		dry_result = json(raw);
-	} catch (e) {
-		dry_result = null;
-	}
-	if (!dry_result)
-		return { success: false, error: 'Failed to parse dry-run output', logs: [], output: raw };
-
-	if (do_apply) {
-		if (apply_timer)
-			apply_timer.cancel();
-
-		log_info('apply scheduled in 1 second');
-		apply_timer = uloop.timer(1000, function() {
-			apply_timer = null;
-			log_info('applying configuration');
-			system('/usr/libexec/ubbf/apply /etc/ubbf/config.json');
-		});
-	}
-
-	return {
-		success: true,
-		logs: dry_result.logs ?? [],
-		output: dry_result.uci ?? '',
-		scheduled: do_apply
-	};
+	req.defer();
+	popen_async([ { raw: APPLY_PATH }, '--dry-run', file_path ],
+		(result) => req.reply(dry_run_reply(result, do_apply)));
 }
 
-// The apply itself runs in system() and blocks this daemon, so a caller
-// only gets this answer once a running apply has finished.
+// The apply runs beside the event loop, so a running apply is still pending.
 function apply_state_handler(req) {
-	return { pending: apply_timer != null };
+	return { pending: apply_busy() };
 }
 
 /**

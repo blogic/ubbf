@@ -123,6 +123,14 @@ function cmd_program(cmd) {
 }
 
 /**
+ * @param {number} status - Exit code, or the negative signal number
+ * @returns {string} The end of a child in words
+ */
+export function status_describe(status) {
+	return status < 0 ? sprintf('signal %d', -status) : sprintf('exit %d', status);
+};
+
+/**
  * Executes a command asynchronously using uloop task.
  *
  * `cmd` may be a shell command string or an argv-style array

@@ -110,6 +110,16 @@ service reloads
 
 The render itself changes nothing on the device. `apply --dry-run` (the validation that bbf-device runs before every apply, `bbf-cli apply -n` and `config_validate()`) runs the same render and prints the UCI batch, the logs, the services and the effects as JSON, then exits. The printed batch masks each value that a template sets with `uci_set_secret()`; the batch of a real apply holds the values. Only a real apply runs the effects, with `effects_run()`, after the UCI copy and before the service loop: a daemon that an effect reloads then reads its new UCI.
 
+bbf-device (`device/lifecycle.uc`) runs both as children of its event
+loop, so it answers its other ubus methods while either runs. The `apply`
+method replies after its dry-run (`popen_async()`, a deferred reply); dry-runs
+can run side by side, since the render only reads. With `apply: true` it
+starts the real apply 1 s later as a uloop process, and a later call within
+that second moves the start. One real apply runs at a time, because it
+replaces `/var/run/uci`: a start that finds one running waits, and starts once
+when it ends, on the config then persisted. `reboot`, `factory_reset` and
+`sysupgrade` wait until no real apply is scheduled, running or waiting.
+
 ## Programs
 
 ### Command line
