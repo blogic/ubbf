@@ -400,7 +400,7 @@ export const AccessPoint_Security = {
 };
 ```
 
-`secured` is the TR-181 attribute of the same name. Over CWMP and USP, the parameter reads back as an empty string. It stays listed and writable, and the stored value does not change. The local interfaces (`bbf-dm get`, `show`, `bbf-cli`, `webui-show`) show the real value, because the rule applies to an ACS or a controller, not to a local operator.
+`secured` is the TR-181 attribute of the same name. Over CWMP and USP, the parameter reads back as an empty string. It stays listed and writable, and the stored value does not change. The local interfaces (`bbf-dm get`, `show`, `bbf-cli`) show the real value, because the rule applies to an ACS or a controller, not to a local operator. `webui-show` shows the real value only where the read rules of the session role permit that parameter, for any form of the requested path (`ACL-FORMAT.md`).
 
 Do not use a `dm_type` bit for this kind of property. OBUSPA keeps its own copy of the `dm_type` constants. It passes all bits except `WRITABLE` to the USP core as a type value. A new bit therefore registers an incorrect type until the OBUSPA package is built again.
 

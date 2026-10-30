@@ -178,12 +178,12 @@ filter_check(uc_value_t *inst, uc_value_t *filter)
 /**
  * The segment of a path right after a pattern, the property that a rule
  * with a property list judges; NULL when the path does not go beyond the
- * pattern or the segment is empty (a key that starts with a dot).
+ * pattern.
  */
 static const char *
 property_after(struct segs *path, size_t pattern_len)
 {
-	if (path->cnt <= pattern_len || !*path->part[pattern_len])
+	if (path->cnt <= pattern_len)
 		return NULL;
 
 	return path->part[pattern_len];
@@ -467,14 +467,39 @@ filter_object(uc_vm_t *vm, uc_value_t *acl, uc_value_t *obj, const char *path,
 }
 
 /**
- * Filters a data tree by the read rules of an ACL.
+ * The tree of a base path, from the root of the model, as the instance
+ * filters address it.
+ */
+static uc_value_t *
+tree_root_build(uc_vm_t *vm, uc_value_t *tree, char **parts, int cnt)
+{
+	uc_value_t *root, *cur, *next;
+
+	if (!cnt)
+		return ucv_get(tree);
+
+	root = cur = ucv_object_new(vm);
+	for (int i = 0; i + 1 < cnt; i++) {
+		next = ucv_object_new(vm);
+		ucv_object_add(cur, parts[i], next);
+		cur = next;
+	}
+	ucv_object_add(cur, parts[cnt - 1], ucv_get(tree));
+
+	return root;
+}
+
+/**
+ * Filters a data tree by the read rules of an ACL. The base path is read
+ * with path_split(), as the data model reads the path that gave the tree. A
+ * tree that is not an object is the value of the parameter at the base path.
  *
  * @param vm     ucode VM context
  * @param nargs  number of arguments (3 expected: ACL, tree, base path of
  *               the tree)
  * @return       the tree with only the permitted properties; an empty
- *               object when the base path has more than
- *               `PATH_PARTS_MAX` segments
+ *               object when the rules refuse a parameter value, or when
+ *               path_split() refuses the base path
  */
 uc_value_t *
 uc_ubbf_acl_filter_tree(uc_vm_t *vm, size_t nargs)
@@ -482,33 +507,33 @@ uc_ubbf_acl_filter_tree(uc_vm_t *vm, size_t nargs)
 	uc_value_t *acl = uc_fn_arg(0);
 	uc_value_t *tree = uc_fn_arg(1);
 	uc_value_t *base = uc_fn_arg(2);
-	uc_value_t *root, *cur, *next, *rv;
-	const char *base_path = ucv_type(base) == UC_STRING ? ucv_string_get(base) : "";
-	struct segs segs;
+	char *buf, *path, *parts[PATH_PARTS_MAX];
+	uc_value_t *root, *rv;
+	int cnt;
 
 	if (!ucv_is_truish(acl) || !ucv_is_truish(tree))
 		return ucv_object_new(vm);
 
-	if (!*base_path)
-		return filter_object(vm, acl, tree, base_path, tree);
-
-	/* the instance filters address the tree from the root of the model */
-	if (!segs_split(&segs, base_path)) {
-		free(segs.buf);
+	buf = xstrdup(ucv_type(base) == UC_STRING ? ucv_string_get(base) : "");
+	cnt = path_split(buf, parts, ARRAY_SIZE(parts), 0);
+	if (cnt < 0) {
+		free(buf);
 		return ucv_object_new(vm);
 	}
 
-	root = cur = ucv_object_new(vm);
-	for (size_t i = 0; i + 1 < segs.cnt; i++) {
-		next = ucv_object_new(vm);
-		ucv_object_add(cur, segs.part[i], next);
-		cur = next;
-	}
-	ucv_object_add(cur, segs.part[segs.cnt - 1], ucv_get(tree));
-	free(segs.buf);
+	path = path_join(parts, 0, cnt);
+	root = tree_root_build(vm, tree, parts, cnt);
 
-	rv = filter_object(vm, acl, tree, base_path, root);
+	if (ucv_type(tree) == UC_OBJECT)
+		rv = filter_object(vm, acl, tree, path, root);
+	else if (acl_can_read(acl, path, root))
+		rv = ucv_get(tree);
+	else
+		rv = ucv_object_new(vm);
+
 	ucv_put(root);
+	free(path);
+	free(buf);
 
 	return rv;
 }

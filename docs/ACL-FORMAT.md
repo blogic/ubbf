@@ -86,6 +86,8 @@ If more than one pattern matches a path, the pattern with the most segments appl
 
 Do not write two patterns with the same number of segments that match the same path. In that case, the code uses the first match in the key order of the JSON object.
 
+`webui-show` reads the requested path as the data model reads it: one leading and one trailing dot do not change the path, and a path with an empty segment gives `{}`. If the path names a parameter, the read rules decide on that parameter, and a refused parameter gives `{}`. A rule with a `filter` refuses such a path, because the value alone holds no property to compare.
+
 ## Property Access Formats
 
 Each path pattern maps to a rule. The rule has one of the formats below.

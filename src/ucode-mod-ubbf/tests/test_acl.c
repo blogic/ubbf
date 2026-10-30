@@ -159,6 +159,41 @@ test_filter_tree(void **state)
 }
 
 static void
+base_expect(uc_vm_t *vm, const char *tree, const char *base, const char *expected)
+{
+	uc_value_t *res = vm_call(vm, uc_ubbf_acl_filter_tree, 3, vm_json(vm, ACL),
+				  vm_json(vm, tree), ucv_string_new(base));
+
+	assert_json_equal(vm, res, expected);
+	ucv_put(res);
+}
+
+static void
+test_filter_base_path(void **state)
+{
+	static const char HOST[] = "{ \"HostName\": \"h\", \"IPAddress\": \"i\" }";
+	static const char LISTED[] = "{ \"HostName\": \"h\" }";
+	uc_vm_t *vm = *state;
+
+	base_expect(vm, HOST, "Device.Hosts.Host.4", LISTED);
+	base_expect(vm, HOST, "Device.Hosts.Host.4.", LISTED);
+	base_expect(vm, HOST, ".Device.Hosts.Host.4", LISTED);
+	base_expect(vm, HOST, "Device.Hosts.Host.4..", "{ }");
+	base_expect(vm, HOST, "Device.Hosts..Host.4", "{ }");
+
+	base_expect(vm, "\"h\"", "Device.Hosts.Host.4.HostName", "\"h\"");
+	base_expect(vm, "\"h\"", "Device.Hosts.Host.4.HostName.", "\"h\"");
+	base_expect(vm, "\"i\"", "Device.Hosts.Host.4.IPAddress", "{ }");
+	base_expect(vm, "\"i\"", "Device.Hosts.Host.4.IPAddress.", "{ }");
+	base_expect(vm, "\"i\"", "Device.NoRule.Value", "{ }");
+
+	base_expect(vm, "{ \"SSID\": \"x\", \"Guest\": \"false\" }", "Device.WiFi.SSID.7.", "{ }");
+
+	/* an empty key is no property of a list */
+	base_expect(vm, "{ \"\": \"e\", \"HostName\": \"h\" }", "Device.Hosts.Host.4", LISTED);
+}
+
+static void
 acl_file_put(const char *path, const char *text)
 {
 	FILE *f = fopen(path, "w");
@@ -207,6 +242,7 @@ main(void)
 		cmocka_unit_test(test_write_and_add),
 		cmocka_unit_test(test_lists),
 		cmocka_unit_test(test_filter_tree),
+		cmocka_unit_test(test_filter_base_path),
 		cmocka_unit_test(test_load),
 	};
 

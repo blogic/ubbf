@@ -1643,3 +1643,92 @@ describe('writable_rows', () => {
 		dm.trans_abort();
 	});
 });
+
+// The read rules name AccessPoint.*.Security and AccessPoint.*.WPS with lists,
+// as the role files do; the keys below them must not pass by any form of the path.
+describe('webui-show paths', () => {
+	const ACL = { read: {
+		'Device.WiFi': true,
+		'Device.WiFi.AccessPoint.*.Security': [ 'ModeEnabled' ],
+		'Device.WiFi.AccessPoint.*.WPS': [ 'Enable' ],
+		'Device.IP.Interface.*': { filter: { Upstream: 'false' }, properties: [ 'Name' ] }
+	} };
+	const NARROW = { ModeEnabled: 'WPA2' };
+
+	function dm_create() {
+		let dm = ubbf.create();
+
+		dm.register({
+			'Device.WiFi': {},
+			'Device.WiFi.AccessPoint.{i}': { schema: { schema: { Alias: T_STRING, Enable: T_BOOL }, defaults: { Alias: '', Enable: 'true' } } },
+			'Device.WiFi.AccessPoint.{i}.Security': { schema: { schema: { ModeEnabled: T_STRING, KeyPassphrase: T_STRING }, defaults: {} } },
+			'Device.WiFi.AccessPoint.{i}.WPS': { schema: { schema: { Enable: T_BOOL, PIN: T_STRING }, defaults: {} } },
+			'Device.IP': {},
+			'Device.IP.Interface.{i}': { schema: { schema: { Name: T_STRING, Router: T_STRING, Upstream: T_STRING }, defaults: {} } }
+		});
+		dm.load('/dev/null');
+		dm.set_config({ Device: {
+			WiFi: { AccessPoint: { '1': { Alias: 'ap-one', Enable: 'true',
+				Security: { ModeEnabled: 'WPA2', KeyPassphrase: 'kp1' },
+				WPS: { Enable: 'true', PIN: '12345670' } } } },
+			IP: { Interface: { '1': { Name: 'lan', Router: 'r', Upstream: 'false' },
+				'2': { Name: 'wan', Router: 'r', Upstream: 'true' } } }
+		} });
+		dm.runtime_reload();
+
+		return dm;
+	}
+
+	function read(dm, path) {
+		return ubbf.acl_filter_tree(ACL, dm.get_subtree_with_state(path), path);
+	}
+
+	it('a dot at either end of the path changes nothing', () => {
+		let dm = dm_create();
+		const SEC = 'Device.WiFi.AccessPoint.1.Security';
+
+		assert.match(NARROW, read(dm, SEC), 'plain');
+		assert.match(NARROW, read(dm, SEC + '.'), 'trailing dot');
+		assert.match(NARROW, read(dm, '.' + SEC), 'leading dot');
+		assert.match({}, read(dm, SEC + '..'), 'two dots');
+
+		for (let path in [ 'Device.WiFi', 'Device.WiFi.AccessPoint', 'Device.WiFi.AccessPoint.1',
+		                   'Device.WiFi.AccessPoint.1.WPS', 'Device.IP.Interface.1', 'Device.IP.Interface.2' ]) {
+			assert.match(read(dm, path), read(dm, path + '.'), path + ' with a trailing dot');
+			assert.match(read(dm, path), read(dm, '.' + path), path + ' with a leading dot');
+		}
+
+		assert.match(NARROW, read(dm, 'Device.WiFi.')?.AccessPoint?.['1']?.Security, 'table below the path');
+		assert.match({}, read(dm, 'Device.IP.Interface.2.'), 'instance filter');
+	});
+
+	it('the rules decide on a path that names a parameter', () => {
+		let dm = dm_create();
+		const AP = 'Device.WiFi.AccessPoint.1';
+
+		for (let dot in [ '', '.' ]) {
+			assert.match({}, read(dm, AP + '.Security.KeyPassphrase' + dot), 'withheld secret' + dot);
+			assert.match({}, read(dm, AP + '.WPS.PIN' + dot), 'withheld PIN' + dot);
+			assert.match({}, read(dm, 'Device.IP.Interface.1.Router' + dot), 'unlisted parameter' + dot);
+			assert.match({}, read(dm, 'Device.IP.Interface.2.Name' + dot), 'listed, filter refuses' + dot);
+			assert.match('WPA2', read(dm, AP + '.Security.ModeEnabled' + dot), 'listed parameter' + dot);
+			assert.match({}, read(dm, 'Device.IP.Interface.1.Name' + dot), 'the value alone holds no filter property' + dot);
+		}
+	});
+
+	it('an instance named by anything but its key reads nothing', () => {
+		let dm = dm_create();
+
+		for (let inst in [ '*', '01', 'ap-one', '[ap-one]' ])
+			assert.match({}, read(dm, `Device.WiFi.AccessPoint.${inst}.Security`), inst);
+	});
+
+	it('the root reads the same with and without a dot', () => {
+		let dm = dm_create();
+		let whole = ubbf.acl_filter_tree(ACL, dm.get_subtree_with_state('Device'), 'Device');
+
+		assert.match(NARROW, whole?.WiFi?.AccessPoint?.['1']?.Security);
+		assert.match(whole, read(dm, 'Device.'), 'Device.');
+		assert.match(whole, read(dm, '.')?.Device, 'the dot alone');
+	});
+});
