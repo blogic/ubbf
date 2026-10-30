@@ -155,6 +155,19 @@ describe('DataElements instance numbers', () => {
 		assert.match({ '2': 'q', '3': 'r' }, ssids(root), 'entries without a number keep the one they had at the add');
 	});
 
+	it('keeps the local row off the map, so the first agent takes number 1 when EasyMesh starts', () => {
+		let off = { Device: { WiFi: { DataElements: { Network: {} } } } };
+		assert.match({ '1': [ 'local', null ] }, devices(off), 'the local row has number 1');
+		assert.match('local', device_get({ root: off, instance: 1 }).ID, 'the local row by number');
+
+		let root = root_new();
+		topo = [ { al_address: 'aa' }, { al_address: 'bb' } ];
+		assert.match({ '1': [ 'aa', null ], '2': [ 'bb', 'stored-b' ] }, devices(root), 'the agents number from 1');
+
+		assert.match({ '1': [ 'local', null ] }, devices(off), 'the local row again with EasyMesh off');
+		assert.match({ '1': [ 'aa', null ], '2': [ 'bb', 'stored-b' ] }, devices(root), 'the agents keep their numbers');
+	});
+
 	it('gives Network.SSID the numbers of WiFi.SSID outside EasyMesh', () => {
 		let plain = { Device: { WiFi: { SSID: { '1': { SSID: 'a' }, '3': { SSID: 'c' } } } } };
 		assert.match({ '1': 'a', '3': 'c' }, ssids(plain));

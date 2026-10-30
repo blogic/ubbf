@@ -31,20 +31,26 @@ const ubus = require('ubus');
 const DEVICE_TABLE = 'Device.WiFi.DataElements.Network.Device';
 
 /**
+ * Tells whether the controller or the agent of EasyMesh is enabled.
+ *
+ * @param {object} root - Root configuration object
+ * @returns {boolean} true when the topology lists the devices
+ */
+function easymesh_enabled(root) {
+	let network = root.Device?.WiFi?.DataElements?.Network;
+
+	return ubbf.to_bool(network?.X_UBBF_EasyMesh?.Controller?.Enable) ||
+		ubbf.to_bool(network?.X_UBBF_EasyMesh?.Agent?.Enable);
+}
+
+/**
  * Gets list of devices from EasyMesh topology or local device.
  *
  * @param {object} root - Root configuration object
  * @returns {array} Array of device objects from topology
  */
 function devices_get(root) {
-	let network = root.Device?.WiFi?.DataElements?.Network;
-	let controller_enabled = ubbf.to_bool(network?.X_UBBF_EasyMesh?.Controller?.Enable);
-	let agent_enabled = ubbf.to_bool(network?.X_UBBF_EasyMesh?.Agent?.Enable);
-
-	if (!controller_enabled && !agent_enabled)
-		return [local_device_get()];
-
-	return topology_devices_get();
+	return easymesh_enabled(root) ? topology_devices_get() : [local_device_get()];
 }
 
 /**
@@ -54,7 +60,11 @@ function devices_get(root) {
  * @returns {object} Instance number to device
  */
 function devices_numbered(root) {
-	let devices = devices_get(root);
+	// The local row has no AL MAC, and a number on the map is not given again.
+	if (!easymesh_enabled(root))
+		return { '1': local_device_get() };
+
+	let devices = topology_devices_get();
 	let numbers = ubbf.instance_numbers(DEVICE_TABLE, map(devices, (d) => d.al_address));
 	let rows = {};
 	for (let d in devices)
