@@ -11,6 +11,9 @@ import { describe, it, assert, beforeEach, setup } from 'utest';
 import { state_clear } from 'test_env';
 import { netifd_patch } from 'netifd_mock';
 import * as ubbf from 'ubbf';
+import { capability_radios_get } from 'ubbf.utils.capabilities';
+import { radio_instances_for_bands } from 'ubbf.utils.wifi_radio';
+import { radios_bss_sort } from 'ubbf.utils.wifi-dataelements';
 
 let topo;
 
@@ -27,8 +30,11 @@ const api = {
 			device_api_data_get: () => ({}),
 			local_api_data_get: () => ({}),
 			steering_stats_get: () => ({}),
-			steering_history_get: () => ({})
-		}
+			steering_history_get: () => ({}),
+			radios_bss_sort
+		},
+		capabilities: { capability_radios_get },
+		wifi_radio: { radio_instances_for_bands }
 	}
 };
 
