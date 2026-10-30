@@ -6,11 +6,12 @@ function render_config() {
 	if (capabilities_raw && !capabilities)
 		log_warn('Failed to parse %s', CAPABILITIES_PATH);
 	capabilities ??= {};
+	let cap_radios = type(capabilities.radios) == 'array' ? capabilities.radios : [];
 
 	// Out-of-band 6 GHz discovery (RNR) only makes sense when there is a
 	// 6 GHz BSS to advertise. Resolved once per render and consulted from
 	// generate_interface / generate_mlo_interface.
-	let has_6ghz_radio = capabilities.radios?.['6g'] != null;
+	let has_6ghz_radio = length(filter(cap_radios, (radio) => radio.band == '6g')) > 0;
 
 	// One global DSCP -> 802.1D UP table per device. Computed once and
 	// applied to every BSS that has WMM enabled. hostapd embeds it in the
@@ -186,7 +187,9 @@ function render_config() {
 		let band = ubbf.band_to_uci(radio_data.OperatingFrequencyBand);
 		uci_set_string(output, `wireless.${radio_name}.band`, band);
 
-		let cap = capabilities.radios?.[band];
+		let cap = wifi_radio.radio_capability_find(cap_radios, band, radio_name);
+		if (!cap && length(cap_radios))
+			warn('Radio %s: no %s radio of the device matches it', radio_name, band);
 		if (cap?.path)
 			uci_set_string(output, `wireless.${radio_name}.path`, cap.path);
 		if (cap?.num_global_macaddr)
@@ -194,15 +197,19 @@ function render_config() {
 		if (cap?.radio != null)
 			uci_set_number(output, `wireless.${radio_name}.radio`, cap.radio);
 
-		let phy_info = wifi.phy_for_band(band);
+		let phy_info = wifi.radio_phy_get(cap, band);
 		let phy = phy_info?.phy;
 		let band_idx = phy_info?.band_idx ?? 0;
 
 		let channel = ubbf_to_int(radio_data.Channel);
 		let auto_channel = ubbf_to_bool(radio_data.AutoChannelEnable);
 		let requested_bw = radio_data.OperatingChannelBandwidth ?? '20MHz';
+		let channel_freq = wifi_radio.channel_to_freq(radio_data.OperatingFrequencyBand, channel);
 
 		if (auto_channel || channel == 0) {
+			uci_set_string(output, `wireless.${radio_name}.channel`, 'auto');
+		} else if (!wifi_radio.radio_freq_usable(cap, channel_freq)) {
+			warn('Radio %s: channel %d is outside the radio, falling back to auto', radio_name, channel);
 			uci_set_string(output, `wireless.${radio_name}.channel`, 'auto');
 		} else if (!ubbf.channel_valid_for_bandwidth(phy, band_idx, channel, requested_bw)) {
 			warn('Radio %s: channel %d invalid for %s, falling back to auto', radio_name, channel, requested_bw);
@@ -640,8 +647,8 @@ function render_config() {
 			return null;
 
 		let band = ubbf.band_to_uci(radio_data.OperatingFrequencyBand);
-		return { ap, ssid_inst, ssid_data, radio: radio_data.Name,
-			 path: capabilities.radios?.[band]?.path };
+		let cap = wifi_radio.radio_capability_find(cap_radios, band, radio_data.Name);
+		return { ap, ssid_inst, ssid_data, radio: radio_data.Name, path: cap?.path };
 	}
 
 	/**

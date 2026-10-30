@@ -8,7 +8,8 @@ import {
 	assoclist_get,
 	stations_numbered,
 	iwinfo_update,
-	phy_for_band
+	radio_phy_get,
+	capability_radios_get
 } from 'ubbf.utils.wifi';
 import {
 	log_info,
@@ -24,6 +25,7 @@ import {
 	phy_max_bitrate,
 	wpa_psk
 } from 'ubbf';
+import { channel_to_freq, radio_capability_find, radio_freq_usable } from 'ubbf.utils.wifi_radio';
 import { popen_async } from 'ubbf.utils.process';
 import { last_change_get } from 'ubbf.utils.netdev_change';
 import { ifstats_get, ifstats_basic_get, ifstats_reset } from 'ubbf.utils.ifstats';
@@ -220,7 +222,8 @@ function radio_get(ctx) {
 	}
 
 	let band = band_to_uci(ctx.config.OperatingFrequencyBand);
-	let phy_info = phy_for_band(band);
+	let cap = radio_capability_find(capability_radios_get(), band, radio_name);
+	let phy_info = radio_phy_get(cap, band);
 	if (phy_info) {
 		let phy = phy_info.phy;
 		let band_idx = phy_info.band_idx;
@@ -325,27 +328,6 @@ function ssid_stats_get(ctx) {
 }
 
 /**
- * Maps an IEEE 802.11 channel number plus band label to a centre frequency
- * in MHz, for the bands UBBF radios actually run on. Returns 0 when the
- * channel is out of the band's valid range.
- */
-function channel_to_freq(band, channel) {
-	if (band == '2.4GHz') {
-		if (channel == 14)
-			return 2484;
-		if (channel >= 1 && channel <= 13)
-			return 2407 + channel * 5;
-	} else if (band == '5GHz') {
-		if (channel >= 36 && channel <= 177)
-			return 5000 + channel * 5;
-	} else if (band == '6GHz') {
-		if (channel >= 1 && channel <= 233)
-			return 5950 + channel * 5;
-	}
-	return 0;
-}
-
-/**
  * Sync operation handler for Device.WiFi.Radio.{i}.X_UBBF_ChannelSwitch().
  *
  * Drives a runtime CSA on the radio's first AP iface so the hostapd
@@ -376,6 +358,10 @@ function channel_switch_op(input, command_key, instances, root) {
 	let freq = channel_to_freq(band, channel);
 	if (!freq)
 		die(sprintf('channel_switch: channel %d invalid for band %s', channel, band));
+
+	let cap = radio_capability_find(capability_radios_get(), band_to_uci(band), radio.Name);
+	if (!radio_freq_usable(cap, freq))
+		die(sprintf('channel_switch: channel %d is outside radio %s', channel, radio.Name));
 
 	let ifname = radio_ifname_get(radio.Name);
 	if (!ifname)

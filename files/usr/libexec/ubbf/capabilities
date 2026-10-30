@@ -3,44 +3,7 @@
 
 import * as uci from 'uci';
 import { readfile, writefile, mkdir, unlink } from 'fs';
-
-const valid_bands = [ '2g', '5g', '6g' ];
-
-function radios_extract(board, wireless_config) {
-	let radios = {};
-
-	for (let section_name, section_data in wireless_config) {
-		if (section_data['.type'] != 'wifi-device')
-			continue;
-
-		let path = section_data.path;
-		let band = section_data.band;
-		if (!path || !band || index(valid_bands, band) < 0)
-			continue;
-
-		let radio = { path, name: section_name };
-
-		if (section_data.radio != null)
-			radio.radio = int(section_data.radio);
-		if (section_data.num_global_macaddr)
-			radio.num_global_macaddr = int(section_data.num_global_macaddr);
-
-		for (let phy_name, phy_data in board?.wlan) {
-			if (phy_data.path != path)
-				continue;
-
-			let band_info = phy_data.info?.bands?.[uc(band)];
-			if (band_info?.modes)
-				radio.modes = band_info.modes;
-
-			break;
-		}
-
-		radios[band] = radio;
-	}
-
-	return radios;
-}
+import { radios_extract } from 'ubbf.utils.wifi_radio';
 
 function devices_extract(iface) {
 	if (!iface)

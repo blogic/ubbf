@@ -3,9 +3,43 @@
 import * as iwinfo from 'iwinfo';
 import * as ubus from 'ubus';
 import * as ubbf from 'ubbf';
+import { readfile } from 'fs';
 import { cache_call } from 'ubbf';
 import { log_exception } from 'ubbf';
 import { instance_number, instance_rows } from 'ubbf';
+import { phy_radio_restrict } from 'ubbf.utils.wifi_radio';
+
+const CAPABILITIES_PATH = '/tmp/ubbf/capabilities.json';
+
+/**
+ * Reads the radios of the capabilities file (uncached).
+ *
+ * @returns {array} Capability radios, empty when the file is missing or malformed
+ */
+function capability_radios_fetch() {
+	let raw = readfile(CAPABILITIES_PATH);
+	if (!raw)
+		return [];
+
+	let capabilities;
+	try {
+		capabilities = json(raw);
+	} catch (e) {
+		log_exception(CAPABILITIES_PATH, e);
+		return [];
+	}
+
+	return type(capabilities?.radios) == 'array' ? capabilities.radios : [];
+}
+
+/**
+ * Reads the radios of the capabilities file (cached).
+ *
+ * @returns {array} Capability radios
+ */
+export function capability_radios_get() {
+	return cache_call(capability_radios_fetch);
+};
 
 /**
  * Fetches wireless status from network.wireless ubus (uncached).
@@ -190,6 +224,28 @@ export function phy_for_band(band) {
 	}
 
 	return fallback;
+};
+
+/**
+ * Finds the PHY a radio runs on, restricted to the radio's frequencies.
+ *
+ * The capability radio names its wiphy as board.json does. A wiphy that
+ * still has another name, as before netifd renamed it, is found by band.
+ *
+ * @param {object} radio - Capability radio, or null when unknown
+ * @param {string} band - UCI band name
+ * @returns {object|null} Object with phy and band_idx, or null
+ */
+export function radio_phy_get(radio, band) {
+	let band_idx = ubbf.band_to_index(band);
+	let phy = radio?.phy ? filter(iwinfo.phys ?? [], (p) => p?.wiphy_name == radio.phy)[0] : null;
+
+	if (!phy?.wiphy_bands?.[band_idx])
+		phy = phy_for_band(band)?.phy;
+	if (!phy)
+		return null;
+
+	return { phy: phy_radio_restrict(phy, band_idx, radio), band_idx };
 };
 
 /**

@@ -5,6 +5,7 @@
 import * as fs from 'fs';
 import * as ubbf from 'ubbf';
 import { cursor } from 'uci';
+import { channel_to_freq, radio_freq_usable, radios_order } from 'ubbf.utils.wifi_radio';
 
 // Host use: `default_config --dry-run [--initial FILE] [--capabilities FILE]
 // [--board NAME] [--mode NAME]` prints the four mode presets and the test
@@ -243,7 +244,7 @@ const band_config = {
 		freq: '2.4GHz',
 		standards: 'g,n,ax',
 		bandwidth: '20MHz',
-		channel: '1',
+		channels: [ '1' ],
 		alias_suffix: '2G',
 		wlan_prefix: 'wlan0'
 	},
@@ -251,7 +252,7 @@ const band_config = {
 		freq: '5GHz',
 		standards: 'a,n,ac,ax',
 		bandwidth: '80MHz',
-		channel: '36',
+		channels: [ '36', '149' ],
 		alias_suffix: '5G',
 		wlan_prefix: 'wlan1'
 	},
@@ -259,11 +260,57 @@ const band_config = {
 		freq: '6GHz',
 		standards: 'ax',
 		bandwidth: '160MHz',
-		channel: '37',
+		channels: [ '37' ],
 		alias_suffix: '6G',
 		wlan_prefix: 'wlan2'
 	}
 };
+
+/**
+ * Picks the first default channel of the band that the radio can use.
+ *
+ * @param {object} cfg - Entry of band_config
+ * @param {object} radio_info - Capability radio
+ * @returns {string|null} Channel, or null when the radio can use none
+ */
+function radio_channel_default(cfg, radio_info) {
+	for (let channel in cfg.channels) {
+		if (radio_freq_usable(radio_info, channel_to_freq(cfg.freq, int(channel))))
+			return channel;
+	}
+
+	return null;
+}
+
+/**
+ * Names the radios of the device. The first radio of a band takes the
+ * band's alias suffix and interface name; a further radio of the band
+ * takes the suffix with its count in the band and the next free name.
+ *
+ * @param {array} radios - Capability radios in instance order
+ * @returns {array} One { info, cfg, suffix, wlan } per radio
+ */
+function radios_plan(radios) {
+	let count = {};
+	// wlan0 to wlan2 name the first radio of each band
+	let wlan_next = length(band_config);
+	let plan = [];
+
+	for (let info in radios) {
+		let cfg = band_config[info.band];
+		let rank = count[info.band] ?? 0;
+		count[info.band] = rank + 1;
+
+		push(plan, {
+			info,
+			cfg,
+			suffix: rank ? sprintf('%s%d', cfg.alias_suffix, rank + 1) : cfg.alias_suffix,
+			wlan: rank ? sprintf('wlan%d', wlan_next++) : cfg.wlan_prefix
+		});
+	}
+
+	return plan;
+}
 
 /**
  * @param {object} radio_info - Radio info from capabilities with modes array
@@ -313,9 +360,8 @@ function provision_country_get() {
 }
 
 function wifi_generate(radios) {
-	let band_order = ['2g', '5g', '6g'];
-	let sorted_bands = filter(band_order, band => band in radios);
-	let num_radios = length(sorted_bands);
+	let plan = radios_plan(radios_order(filter(radios, (radio) => radio?.band in band_config)));
+	let num_radios = length(plan);
 
 	if (num_radios == 0)
 		return null;
@@ -335,22 +381,24 @@ function wifi_generate(radios) {
 	let ap_home_instance = 1;
 	let ap_guest_instance = num_radios + 1;
 
-	for (let band in sorted_bands) {
-		let cfg = band_config[band];
-		let radio_info = radios[band];
+	for (let radio in plan) {
+		let cfg = radio.cfg;
+		let radio_info = radio.info;
 
 		let standards = cfg.standards;
 		if (band_has_eht(radio_info))
 			standards += ',be';
 
+		let channel = radio_channel_default(cfg, radio_info);
+
 		radio_entries[radio_instance] = {
 			Enable: 'true',
-			Alias: sprintf('Radio%s', cfg.alias_suffix),
+			Alias: sprintf('Radio%s', radio.suffix),
 			Name: radio_info.name ?? sprintf('radio%d', radio_instance - 1),
 			OperatingFrequencyBand: cfg.freq,
 			OperatingStandards: standards,
-			Channel: cfg.channel,
-			AutoChannelEnable: 'false',
+			Channel: channel ?? '0',
+			AutoChannelEnable: channel ? 'false' : 'true',
 			OperatingChannelBandwidth: cfg.bandwidth,
 			TransmitPower: '100',
 			RegulatoryDomain: sprintf('%.2s ', country)
@@ -358,8 +406,8 @@ function wifi_generate(radios) {
 
 		ssid_entries[ssid_home_instance] = {
 			Enable: 'true',
-			Alias: sprintf('SSID%s', cfg.alias_suffix),
-			Name: cfg.wlan_prefix,
+			Alias: sprintf('SSID%s', radio.suffix),
+			Name: radio.wlan,
 			LowerLayers: sprintf('Device.WiFi.Radio.%d', radio_instance),
 			SSID: 'Home',
 			MACAddress: ''
@@ -367,8 +415,8 @@ function wifi_generate(radios) {
 
 		ssid_entries[ssid_guest_instance] = {
 			Enable: 'true',
-			Alias: sprintf('GuestSSID%s', cfg.alias_suffix),
-			Name: sprintf('%s-guest', cfg.wlan_prefix),
+			Alias: sprintf('GuestSSID%s', radio.suffix),
+			Name: sprintf('%s-guest', radio.wlan),
 			LowerLayers: sprintf('Device.WiFi.Radio.%d', radio_instance),
 			SSID: 'Guest',
 			MACAddress: ''
@@ -376,7 +424,7 @@ function wifi_generate(radios) {
 
 		ap_entries[ap_home_instance] = {
 			Enable: 'true',
-			Alias: sprintf('AP%s', cfg.alias_suffix),
+			Alias: sprintf('AP%s', radio.suffix),
 			SSIDReference: sprintf('Device.WiFi.SSID.%d', ssid_home_instance),
 			SSIDAdvertisementEnabled: 'true',
 			WMMEnable: 'true',
@@ -389,7 +437,7 @@ function wifi_generate(radios) {
 
 		ap_entries[ap_guest_instance] = {
 			Enable: 'true',
-			Alias: sprintf('GuestAP%s', cfg.alias_suffix),
+			Alias: sprintf('GuestAP%s', radio.suffix),
 			SSIDReference: sprintf('Device.WiFi.SSID.%d', ssid_guest_instance),
 			SSIDAdvertisementEnabled: 'true',
 			WMMEnable: 'true',
@@ -412,7 +460,7 @@ function wifi_generate(radios) {
 	let eht_bands = [];
 
 	for (let i = 0; i < num_radios; i++) {
-		if (band_has_eht(radios[sorted_bands[i]]))
+		if (band_has_eht(plan[i].info))
 			push(eht_bands, i);
 	}
 
@@ -441,7 +489,7 @@ function wifi_generate(radios) {
 			ap_entries[home_ap].APMLDTemplateRef = 'Device.WiFi.Templates.APMLDTemplate.1';
 			ap_entries[guest_ap].APMLDTemplateRef = 'Device.WiFi.Templates.APMLDTemplate.2';
 
-			if (sorted_bands[i] == '6g') {
+			if (plan[i].info.band == '6g') {
 				ap_entries[home_ap].Security = {
 					ModeEnabled: 'WPA3-Personal',
 					SAEPassphrase: home_psk
@@ -460,7 +508,7 @@ function wifi_generate(radios) {
 		AccessPoint: ap_entries,
 		Templates: templates,
 		_num_radios: num_radios,
-		_sorted_bands: sorted_bands
+		_radios: plan
 	};
 }
 
@@ -477,17 +525,15 @@ function guest_bridge_generate(wifi) {
 	port_instance++;
 
 	let num_radios = wifi._num_radios;
-	let sorted_bands = wifi._sorted_bands;
 
 	for (let i = 0; i < num_radios; i++) {
-		let band = sorted_bands[i];
-		let cfg = band_config[band];
+		let radio = wifi._radios[i];
 		let guest_ssid_instance = num_radios + 1 + i;
 
 		bridge_ports[port_instance] = {
 			Enable: 'true',
-			Alias: sprintf('GuestWiFi%s', cfg.alias_suffix),
-			Name: sprintf('%s-guest', cfg.wlan_prefix),
+			Alias: sprintf('GuestWiFi%s', radio.suffix),
+			Name: sprintf('%s-guest', radio.wlan),
 			LowerLayers: sprintf('Device.WiFi.SSID.%d', guest_ssid_instance),
 			ManagementPort: 'false'
 		};
@@ -505,17 +551,14 @@ function guest_bridge_generate(wifi) {
 function qos_shaper_generate(wifi) {
 	let shapers = {};
 	let num_radios = wifi._num_radios;
-	let sorted_bands = wifi._sorted_bands;
 
 	for (let i = 0; i < num_radios; i++) {
-		let band = sorted_bands[i];
-		let cfg = band_config[band];
 		let guest_ssid_instance = num_radios + 1 + i;
 		let shaper_instance = i + 1;
 
 		shapers[shaper_instance] = {
 			Enable: 'true',
-			Alias: sprintf('GuestShaper%s', cfg.alias_suffix),
+			Alias: sprintf('GuestShaper%s', wifi._radios[i].suffix),
 			Interface: sprintf('Device.WiFi.SSID.%d', guest_ssid_instance),
 			ShapingRate: '10000000'
 		};
@@ -937,9 +980,9 @@ if (!config)
 let capabilities_json = fs.readfile(opts.capabilities);
 let capabilities = capabilities_json ? json(capabilities_json) : {};
 let network = capabilities.network ?? {};
-let radios = capabilities.radios ?? {};
+let radios = type(capabilities.radios) == 'array' ? capabilities.radios : [];
 
-let wifi = length(keys(radios)) > 0 ? wifi_generate(radios) : null;
+let wifi = wifi_generate(radios);
 let optical_map = optical_cages_query();
 
 if (length(network.wan) || length(network.lan)) {

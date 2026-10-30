@@ -42,6 +42,7 @@ import {
 import * as services from 'ubbf.render.services';
 import * as ubus from 'ubus';
 import * as wifi from 'ubbf.utils.wifi';
+import * as wifi_radio from 'ubbf.utils.wifi_radio';
 import * as digest from 'digest';
 import { log_warn, log_err } from 'ubbf';
 import { device_state_set, device_state_list_add } from 'ubbf.render.helpers';
@@ -128,6 +129,7 @@ export function generate(config, logs, dry_run) {
 		services,
 		ubus,
 		wifi,
+		wifi_radio,
 		digest,
 		ssh_keys,
 		key_acceptable: ubbf.key_acceptable,
