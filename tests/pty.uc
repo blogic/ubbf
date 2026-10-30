@@ -106,7 +106,10 @@ describe('upty shell on a PTY', () => {
 
 		term.write('sleep 777 &\n');
 		term.write('grep SigIgn /proc/self/status\n');
-		term.write(`head -c ${PASTE_SIZE} > ${PASTE_PATH}\n`);
+		// The shell reads ahead of the line it runs, so the paste waits until
+		// the shell runs the head line.
+		term.write(`echo paste-$((2 + 1)); head -c ${PASTE_SIZE} > ${PASTE_PATH}\n`);
+		output_wait(/paste-3/);
 		assert.match(true, term.write(sprintf(`%0${PASTE_SIZE}d`, 0)), 'paste queued');
 		term.write('echo done-$((6 * 7))\n');
 		output_wait(/done-42/);
