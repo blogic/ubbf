@@ -68,6 +68,8 @@ export const ManagementServer = {
 	// 3.2.1.1 states k in thousandths, so 1000 is a multiplier of 1.0
 	// and anything below it would shorten the wait on every retry.
 	"CWMPRetryIntervalMultiplier": { min: 1000, max: 65535 },
+	"Password": { secured: true },
+	"ConnectionRequestPassword": { secured: true },
 	"X_UBBF_InformWatchdogTime": { lengths: [ [ 0, 0 ], [ 5, 5 ] ] },
 	"X_UBBF_TLSMinVersion": { enum: [ "1.2", "1.3" ] },
 	// cwmpd's buffer for the list
