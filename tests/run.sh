@@ -1,5 +1,7 @@
 #!/bin/sh
-# Runs the ucode host tests with utest in a private mount namespace. The
+# Runs the ucode host tests with utest in a private mount and network
+# namespace, so that the neighbours and bridges of the host stay out of the
+# results. The
 # source tree is laid out below /usr/share/ucode/ubbf, as on the device, and
 # /etc, /run, /tmp and /var/log are empty tmpfs; the tests of tests/sysfs/
 # get an empty tmpfs on /sys as well. The stand-in programs of tests/bin/
@@ -17,7 +19,7 @@ shift
 namespace_run() {
 	sysfs=$1
 	shift
-	UBBF_HOST_BUILD=$build unshare -rm sh -e -c '
+	UBBF_HOST_BUILD=$build unshare -rmn sh -e -c '
 		repo=$1 sysfs=$2
 		shift 2
 		mount -t tmpfs none /mnt
