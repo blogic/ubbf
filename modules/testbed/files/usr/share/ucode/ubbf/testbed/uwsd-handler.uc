@@ -105,30 +105,38 @@ function apply_idle() {
 	return state != null && !state.pending;
 }
 
+function interface_carrier_get(iface) {
+	return ubus.call('network.device', 'status', { name: iface.l3_device })?.carrier;
+}
+
 /**
- * Names the DHCPv6 interfaces that are not up. A link with no DHCPv6 server
- * and no RA keeps its interface pending for as long as it runs, so only an
- * interface that was up before a change has to come back.
+ * Takes what a change does not have to bring up. A link with no DHCPv6 server
+ * and no RA keeps its interface pending for as long as it runs, and a static
+ * interface stays up on a bridge with no cable and no Wi-Fi. A DHCPv6
+ * interface or a carrier that was there before the change has to come back.
  *
- * @returns {object} Interface name to true
+ * @returns {object} Interface name to true, in dhcpv6_waiting and no_carrier
  */
-function dhcpv6_waiting_get() {
-	let waiting = {};
+function interfaces_excused_get() {
+	let excused = { dhcpv6_waiting: {}, no_carrier: {} };
 
-	for (let iface in ubus.call('network.interface', 'dump')?.interface)
+	for (let iface in ubus.call('network.interface', 'dump')?.interface) {
 		if (iface.proto == 'dhcpv6' && !iface.up)
-			waiting[iface.interface] = true;
+			excused.dhcpv6_waiting[iface.interface] = true;
+		else if (iface.up && !interface_carrier_get(iface))
+			excused.no_carrier[iface.interface] = true;
+	}
 
-	return waiting;
+	return excused;
 }
 
 /**
  * Finds what keeps the network from being settled.
  *
- * @param {object} waiting - Result of dhcpv6_waiting_get() before the change
+ * @param {object} excused - Result of interfaces_excused_get() before the change
  * @returns {string|null} The blocking interface and why, null when settled
  */
-function interface_unsettled(waiting) {
+function interface_unsettled(excused) {
 	let dump = ubus.call('network.interface', 'dump');
 	if (!dump?.interface)
 		return 'no interface dump';
@@ -137,13 +145,12 @@ function interface_unsettled(waiting) {
 		if (!iface.autostart || !iface.available)
 			continue;
 		if (!iface.up || iface.pending) {
-			if (waiting[iface.interface])
+			if (excused.dhcpv6_waiting[iface.interface])
 				continue;
 			return sprintf('%s is not up', iface.interface);
 		}
 
-		let device = ubus.call('network.device', 'status', { name: iface.l3_device });
-		if (!device?.carrier)
+		if (!excused.no_carrier[iface.interface] && !interface_carrier_get(iface))
 			return sprintf('%s has no carrier on %s', iface.interface, iface.l3_device);
 	}
 
@@ -160,10 +167,10 @@ function interface_unsettled(waiting) {
  * time of the DHCP lease.
  *
  * @param {boolean} network - Whether to wait for the interfaces
- * @param {object} waiting - Result of dhcpv6_waiting_get() before the change
+ * @param {object} excused - Result of interfaces_excused_get() before the change
  * @returns {string|null} Why the device did not settle, null when it did
  */
-function device_settle(network, waiting) {
+function device_settle(network, excused) {
 	if (!wait_until(apply_idle, time() + APPLY_TIMEOUT))
 		return sprintf('apply did not end within %ds', APPLY_TIMEOUT);
 
@@ -173,7 +180,7 @@ function device_settle(network, waiting) {
 	ubus.call('network', 'reload');
 
 	let blocking;
-	if (!wait_until(() => !(blocking = interface_unsettled(waiting)), time() + SETTLE_TIMEOUT))
+	if (!wait_until(() => !(blocking = interface_unsettled(excused)), time() + SETTLE_TIMEOUT))
 		return sprintf('network did not settle within %ds: %s', SETTLE_TIMEOUT, blocking);
 
 	return null;
@@ -206,9 +213,9 @@ function handle_apply_config(request, id, params) {
 
 	log.syslog(log.LOG_INFO, 'applying %s (%s)', config_path, profile);
 
-	let waiting = dhcpv6_waiting_get();
+	let excused = interfaces_excused_get();
 	let result = command_exec(`bbf-cli apply ${config_path}`);
-	let unsettled = result.success ? device_settle(true, waiting) : null;
+	let unsettled = result.success ? device_settle(true, excused) : null;
 	if (unsettled) {
 		result.success = false;
 		result.output += unsettled + '\n';
@@ -239,13 +246,13 @@ function handle_dm_set(request, id, params) {
 
 	log.syslog(log.LOG_INFO, 'setting %s', join(', ', map(operations, (op) => op.path)));
 
-	let waiting = dhcpv6_waiting_get();
+	let excused = interfaces_excused_get();
 	let result = ubus.call('bbf-dm', 'batch', { operations });
 	if (!result?.success)
 		return reply_error(request, id, ERROR_INTERNAL,
 				   result?.error ?? ubus.error() ?? 'bbf-dm batch failed');
 
-	let unsettled = device_settle(operations_touch_network(operations), waiting);
+	let unsettled = device_settle(operations_touch_network(operations), excused);
 	if (unsettled)
 		return reply_error(request, id, ERROR_INTERNAL, unsettled);
 
