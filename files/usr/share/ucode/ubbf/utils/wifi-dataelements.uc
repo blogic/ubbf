@@ -11,7 +11,8 @@ import { iwinfo_update } from 'ubbf.utils.wifi_iwinfo';
 import { capability_radios_get } from 'ubbf.utils.capabilities';
 import { band_to_index } from 'ubbf';
 import {
-	phy_radio_restrict, radio_capability_find, wiphy_radios_get, radio_address_key, radio_addresses_assign
+	phy_radio_restrict, radio_capability_find, radio_link_find, wiphy_radios_get, radio_address_key,
+	radio_addresses_assign
 } from 'ubbf.utils.wifi_radio';
 
 /**
@@ -140,6 +141,28 @@ function radio_rank_get(phy, config) {
 }
 
 /**
+ * Gets the BSSID of an AP interface on a radio. The status lists an AP MLD
+ * under each of its radios with one netdev, whose address is the MLD address:
+ * the BSSID on a radio is the address of the link the radio carries.
+ *
+ * @param {object} iface - Interface entry of the wireless status
+ * @param {string} band - UCI band of the radio
+ * @param {object} cap - Capability radio
+ * @returns {string|null} BSSID, null while the radio has no link of the AP MLD
+ */
+function local_bss_address_get(iface, band, cap) {
+	if (ubbf.to_bool(iface.config?.mlo))
+		return radio_link_find(iwinfo.ifaces?.[iface.ifname]?.mlo_links, band, cap)?.mac;
+
+	// the runtime BSSID is the netdev MAC; the UCI config rarely
+	// pins macaddr, so fall back to sysfs rather than the ifname
+	if (iface.config?.macaddr)
+		return iface.config.macaddr;
+
+	return iface.ifname ? ubbf.readfile_trim(`/sys/class/net/${iface.ifname}/address`) : null;
+}
+
+/**
  * Fetches list of local radios with their BSS information (uncached).
  * Each AP BSS node carries its associated_clients inline, mirroring the
  * shape of umap topology devices.
@@ -168,17 +191,13 @@ function local_radios_fetch() {
 		if (!ruid)
 			continue;
 
+		let cap = radio_capability_find(capability_radios_get(), config.band, radio_name);
 		let bss_list = [];
 		for (let iface in radio_status.interfaces ?? []) {
 			if (iface.config?.mode != 'ap')
 				continue;
-			// the runtime BSSID is the netdev MAC; the UCI config rarely
-			// pins macaddr, so fall back to sysfs rather than the ifname
-			let bss_mac = iface.config?.macaddr;
-			if (!bss_mac && iface.ifname)
-				bss_mac = ubbf.readfile_trim(`/sys/class/net/${iface.ifname}/address`);
 			push(bss_list, {
-				mac_address: bss_mac ?? "",
+				mac_address: local_bss_address_get(iface, config.band, cap) ?? "",
 				ssid: iface.config?.ssid ?? "",
 				associated_clients: local_sta_data_get(iface.ifname),
 				_ifname: iface.ifname
@@ -191,7 +210,7 @@ function local_radios_fetch() {
 			_radio_name: radio_name,
 			_phy_name: phy_name,
 			_band_idx: band_to_index(config.band),
-			_cap: radio_capability_find(capability_radios_get(), config.band, radio_name)
+			_cap: cap
 		});
 	}
 	return result;

@@ -383,6 +383,20 @@ function channel_freq_band(freq) {
 	return null;
 }
 
+/**
+ * Finds the link of an AP MLD that a radio carries, by the frequency of the
+ * link.
+ *
+ * @param {array} links - mlo_links of the nl80211 interface entry
+ * @param {string} band - UCI band of the radio
+ * @param {object} radio - Capability radio with optional freq_ranges
+ * @returns {object|null} The link, or null when the radio carries none
+ */
+export function radio_link_find(links, band, radio) {
+	return filter(links ?? [], (link) => channel_freq_band(link?.wiphy_freq) == band &&
+		radio_freq_usable(radio, link.wiphy_freq))[0];
+};
+
 // The order of the bands in umapd's band bits
 const BAND_BIT = { '2g': 1, '5g': 2, '60g': 4, '6g': 8 };
 
