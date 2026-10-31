@@ -57,7 +57,7 @@ function render_config() {
 				uci_set_string(output, 'network.@device[-1].multicast_vlan_snooping', dev.multicast_vlan_snooping);
 			if (dev.multicast_fast_leave != null)
 				uci_set_string(output, 'network.@device[-1].multicast_fast_leave', dev.multicast_fast_leave);
-			for (let opt in [ 'igmp_version', 'mld_version', 'robustness', 'query_interval',
+			for (let opt in [ 'snoop_igmp_version', 'snoop_mld_version', 'robustness', 'query_interval',
 					  'query_response_interval', 'last_member_interval' ])
 				if (dev[opt] != null)
 					uci_set_string(output, `network.@device[-1].${opt}`, dev[opt]);

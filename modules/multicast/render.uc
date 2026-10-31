@@ -144,11 +144,11 @@ function snooping_render() {
 
 		let igmp_ver = version_to_uci(snoop.IGMPVersion);
 		if (igmp_ver)
-			device_state_set(render_state, bridge_name, 'igmp_version', igmp_ver);
+			device_state_set(render_state, bridge_name, 'snoop_igmp_version', igmp_ver);
 
 		let mld_ver = version_to_uci(snoop.MLDVersion);
 		if (mld_ver)
-			device_state_set(render_state, bridge_name, 'mld_version', mld_ver);
+			device_state_set(render_state, bridge_name, 'snoop_mld_version', mld_ver);
 
 		let robustness = ubbf_to_int(snoop.Robustness);
 		if (robustness)

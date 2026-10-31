@@ -131,8 +131,8 @@ function render_config() {
 		device_state_set(render_state, br_name, 'multicast_vlan_snooping', '1');
 		// IGMPv3 and MLDv2 queriers; v2 and v1 hosts still answer them
 		// (RFC 3376 section 7, RFC 3810 section 8).
-		device_state_set(render_state, br_name, 'igmp_version', '3');
-		device_state_set(render_state, br_name, 'mld_version', '2');
+		device_state_set(render_state, br_name, 'snoop_igmp_version', '3');
+		device_state_set(render_state, br_name, 'snoop_mld_version', '2');
 
 		let stp = ubbf_get(config, `Device.Bridging.Bridge.${bridge_inst}.STP`);
 		if (stp) {
