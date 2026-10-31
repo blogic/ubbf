@@ -1,4 +1,4 @@
-// Calls the bbf-device apply method for tests/secret-output.uc, runs the
+// Calls the bbf-device apply method for tests/lib/device_apply.uc, runs the
 // dry-run it starts and prints the reply as JSON: device-apply.uc <config>.
 'use strict';
 

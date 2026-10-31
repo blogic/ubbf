@@ -9,7 +9,7 @@
 import * as fs from 'fs';
 import { describe, it, assert, mock, beforeEach } from 'utest';
 import { state_clear } from 'test_env';
-import * as ubbf from 'ubbf';
+import { LIB_PATHS, device_apply_cmd, process_read } from 'device_apply';
 import { render_scope_build, templates_render } from 'ubbf.render.renderer';
 import { uci_secret_set, uci_output_masked, EASYMESH_SECRETS } from 'ubbf.render.uci_helpers';
 
@@ -188,24 +188,8 @@ function secrets_in(names, text) {
 	return sort(map(filter(keys(names), (v) => index(text, v) >= 0), (v) => names[v]));
 }
 
-function process_read(cmd) {
-	let p = fs.popen(cmd, 'r');
-	let out = p.read('all');
-	return { out, rc: p.close() };
-}
-
-const LIB_PATHS = `-L '${TESTS}/lib/*.uc' -L /usr/share/ucode -L '${getenv('UBBF_BUILD_DIR')}/*.so'`;
-
-// The bbf-device apply of this tree in a mount namespace of its own: the device
-// has umapd, and /usr/libexec/ubbf/apply is the apply of this tree.
 function device_apply_reply() {
-	let shadow = `shadow() { host=$(mktemp -d); mount --bind "$1" "$host"; mount -t tmpfs none "$1"; ` +
-		`for entry in "$host"/*; do ln -s "$entry" "$1"/; done; }; ` +
-		`shadow /usr/sbin; touch /usr/sbin/umapd; shadow /usr/libexec; rm -f /usr/libexec/ubbf; mkdir /usr/libexec/ubbf; ` +
-		`printf '#!/bin/sh\\nexec ucode -L "${TESTS}/datamodel/*.uc" ${replace(LIB_PATHS, /'/g, '"')} ${REPO}/files/usr/libexec/ubbf/apply "$@"\\n' > /usr/libexec/ubbf/apply; ` +
-		`chmod +x /usr/libexec/ubbf/apply; ` +
-		`exec ucode -L '${TESTS}/datamodel/*.uc' ${LIB_PATHS} ${TESTS}/secret-output/device-apply.uc ${CONFIG_PATH}`;
-	let r = process_read(`unshare -m sh -ec ${ubbf.shell_escape(shadow)}`);
+	let r = process_read(device_apply_cmd(CONFIG_PATH));
 	assert.match(0, r.rc, `the apply method runs: ${r.out}`);
 	return json(r.out);
 }
