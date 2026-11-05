@@ -25,6 +25,8 @@ const assoc = chr(0x31, 0x04, 0x0a, 0x00) + elements;
 const reassoc = chr(0x31, 0x04, 0x0a, 0x00, 0x02, 0, 0, 0, 0, 0x01) + elements;
 // a Current AP Address that starts with 00 looks like an SSID element
 const reassoc_zero = chr(0x31, 0x04, 0x0a, 0x00, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55) + elements;
+// and one whose length ends that element exactly at the end of the frame
+const reassoc_exact = chr(0x31, 0x04, 0x0a, 0x00, 0x00, length(elements) + 4, 0x22, 0x33, 0x44, 0x55) + elements;
 
 function sts(body) {
 	let caps = sta_he_caps_from_frame_body(b64enc(body));
@@ -54,6 +56,7 @@ describe('STA HE capabilities from a frame body', () => {
 		assert.match([ true, 3, 5 ], sts(assoc), 'association request');
 		assert.match([ true, 3, 5 ], sts(reassoc), 'reassociation request');
 		assert.match([ true, 3, 5 ], sts(reassoc_zero), 'reassociation request, AP address 00:...');
+		assert.match([ true, 3, 5 ], sts(reassoc_exact), 'reassociation request, AP address walks to the end at 4');
 	});
 
 	it('gives null without an HE element or a complete body', () => {

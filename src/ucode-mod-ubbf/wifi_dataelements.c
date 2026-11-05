@@ -367,7 +367,8 @@ frame_elements_at(const uint8_t *body, size_t len, size_t pos)
  * EasyMesh gives without a frame type: the elements follow 4 octets of
  * fixed fields in an Association Request and 10 in a Reassociation
  * Request, which adds the Current AP Address (802.11-2024 Tables 9-64 and
- * 9-66).
+ * 9-66). The walk at 10 comes first: an address that begins 00 can read as
+ * an SSID element at 4.
  *
  * @param vm     ucode VM context
  * @param nargs  number of arguments (1 expected: base64 frame body)
@@ -390,7 +391,7 @@ uc_ubbf_sta_he_caps_from_frame_body(uc_vm_t *vm, size_t nargs)
 	n = b64_decode(ucv_string_get(b64), body, cap);
 	len = (n > 0) ? (size_t)n : 0;
 
-	pos = frame_elements_at(body, len, 4) ? 4 : frame_elements_at(body, len, 10) ? 10 : 0;
+	pos = frame_elements_at(body, len, 10) ? 10 : frame_elements_at(body, len, 4) ? 4 : 0;
 
 	while (pos && pos + 2 <= len) {
 		elem_len = body[pos + 1];
