@@ -4,7 +4,7 @@ import * as uloop from 'uloop';
 import * as log from 'log';
 import * as ubus from 'ubus';
 import * as socket from 'socket';
-import { readfile, writefile, rename, readlink, lsdir, unlink, realpath } from 'fs';
+import { readfile, writefile, rename, readlink, lsdir, unlink, realpath, stat } from 'fs';
 
 const ERROR_PARSE = -32700;
 const ERROR_INVALID_REQUEST = -32600;
@@ -105,15 +105,48 @@ function apply_idle() {
 	return state != null && !state.pending;
 }
 
+// netifd gives no devtype for a wlan device: it reads the link settings first,
+// and mac80211 has none.
+function device_wlan(name) {
+	return stat(`/sys/class/net/${name}/phy80211`) != null;
+}
+
+function device_carrier_get(name) {
+	return ubus.call('network.device', 'status', { name })?.carrier;
+}
+
+/**
+ * Tells whether an interface has the carrier that a change waits for. A Wi-Fi
+ * link is no such carrier: the change on this device or on its peer can remove
+ * it, and it comes back only when a BSS is there. A wlan device and a bridge
+ * with no other member have nothing to wait for. Any other bridge needs a
+ * member that is not wlan to have a carrier, as well as its own carrier.
+ *
+ * @param {object} iface - Entry of the network.interface dump
+ * @returns {boolean} false when a carrier that a change waits for is missing
+ */
 function interface_carrier_get(iface) {
-	return ubus.call('network.device', 'status', { name: iface.l3_device })?.carrier;
+	let name = iface.l3_device;
+	if (device_wlan(name))
+		return true;
+
+	let status = ubus.call('network.device', 'status', { name });
+	let members = status?.['bridge-members'];
+	if (!members)
+		return status?.carrier;
+
+	let wired = filter(members, (member) => !device_wlan(member));
+	if (!length(wired))
+		return true;
+
+	return status.carrier && length(filter(wired, device_carrier_get)) > 0;
 }
 
 /**
  * Takes what a change does not have to bring up. A link with no DHCPv6 server
  * and no RA keeps its interface pending for as long as it runs, and a static
- * interface stays up on a bridge with no cable and no Wi-Fi. A DHCPv6
- * interface or a carrier that was there before the change has to come back.
+ * interface stays up on a bridge with no cable. A DHCPv6 interface or a wired
+ * carrier that was there before the change has to come back.
  *
  * @returns {object} Interface name to true, in dhcpv6_waiting and no_carrier
  */
