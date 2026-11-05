@@ -243,6 +243,23 @@ function topo_interface_to_object(iface) {
 }
 
 /**
+ * Lists the addresses a Link Metric entry can name for a local interface. A
+ * Neighbor Device TLV names a BSS of an AP MLD, and a Link Metric TLV the AP MLD.
+ *
+ * @param {object} dev - Device data
+ * @param {string} local_if_mac - Local interface MAC
+ * @returns {array} The local interface MAC and that of its AP MLD
+ */
+function topo_metric_interfaces(dev, local_if_mac) {
+	for (let mld in dev.map?.ap_mlds)
+		for (let ap in mld.affiliated_aps)
+			if (ap.affiliated_ap_mac_addr == local_if_mac)
+				return [ local_if_mac, mld.ap_mld_mac_addr ];
+
+	return [ local_if_mac ];
+}
+
+/**
  * Builds IEEE1905Neighbor metric instances from device metrics data.
  *
  * @param {object} dev - Device data
@@ -251,6 +268,7 @@ function topo_interface_to_object(iface) {
  * @returns {object} Enumerated Metric instances
  */
 function topo_neighbor_metrics_build(dev, local_if_mac, neighbor_al_mac) {
+	const local_macs = topo_metric_interfaces(dev, local_if_mac);
 	let metrics = {};
 	let idx = 0;
 
@@ -260,7 +278,7 @@ function topo_neighbor_metrics_build(dev, local_if_mac, neighbor_al_mac) {
 			continue;
 
 		for (let lm in tx_entry.link_metrics) {
-			if (lm.local_if_mac_address == local_if_mac)
+			if (index(local_macs, lm.local_if_mac_address) >= 0)
 				tx_metrics[lm.remote_if_mac_address] = lm;
 		}
 	}
@@ -271,7 +289,7 @@ function topo_neighbor_metrics_build(dev, local_if_mac, neighbor_al_mac) {
 			continue;
 
 		for (let lm in rx_entry.link_metrics) {
-			if (lm.local_if_mac_address == local_if_mac)
+			if (index(local_macs, lm.local_if_mac_address) >= 0)
 				rx_metrics[lm.remote_if_mac_address] = lm;
 		}
 	}
