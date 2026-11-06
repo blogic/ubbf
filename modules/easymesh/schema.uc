@@ -363,7 +363,9 @@ schemas.Network_Device = {
 		"APMetricsReportingInterval": { max: 255 },
 		"AssociatedSTAReportingInterval": { max: 255 },
 		"LocalSteeringDisallowedSTAList": { list: true, max_length: 17 },
-		"BTMSteeringDisallowedSTAList": { list: true, max_length: 17 }
+		"BTMSteeringDisallowedSTAList": { list: true, max_length: 17 },
+		// umapd's controller sends no CAC Request (EasyMesh 6.1 8.2.2)
+		"CoordinatedCACAllowed": { enum: [ "false", "0" ] }
 	},
 	addable: false
 };
