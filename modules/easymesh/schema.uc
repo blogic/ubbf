@@ -2735,7 +2735,7 @@ schemas.Steering = {
 	defaults: {
 		"Enable": "false",
 		"Backend": "umap",
-		"LogLevel": "3",
+		"LogLevel": "6",
 		"PeriodicInterval": "10000",
 		"MetricStaleInterval": "30000",
 		"APMetricsReportingInterval": "30",
