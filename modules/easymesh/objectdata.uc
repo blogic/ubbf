@@ -1634,6 +1634,7 @@ function device_to_object(device, api_data, is_controller, easymesh, device_cfg,
 	let ident = device.identification ?? {};
 	let caps = device.map?.capabilities ?? {};
 	let capability = api_data.capability ?? {};
+	let metric_intervals = capability.metric_intervals ?? {};
 	let radios = radios_bss_sort(device.map?.ap_operational_bss, capability);
 	let policy = api_data.policy?.policy ?? {};
 	let config_policy = config_policy_resolve(easymesh, device.al_address);
@@ -1671,11 +1672,11 @@ function device_to_object(device, api_data, is_controller, easymesh, device_cfg,
 	return {
 		ID: device.al_address ?? "",
 		MultiAPCapabilities: multiap_capabilities_encode(capability.ap_capability),
-		CollectionInterval: sprintf('%d', policy?.metric_reporting?.collection_interval ?? 0),
+		CollectionInterval: sprintf('%d', metric_intervals.collection_ms ?? 0),
 		ReportUnsuccessfulAssociations: policy?.metric_reporting?.report_unsuccessful_associations ? "true" : "false",
 		MaxReportingRate: sprintf('%d', policy?.metric_reporting?.max_reporting_rate ?? 0),
-		APMetricsReportingInterval: sprintf('%d', policy?.metric_reporting?.ap_metrics_interval ?? 0),
-		AssociatedSTAReportingInterval: sprintf('%d', policy?.metric_reporting?.sta_metrics_interval ?? 0),
+		APMetricsReportingInterval: sprintf('%d', metric_intervals.ap_metrics_s ?? 0),
+		AssociatedSTAReportingInterval: sprintf('%d', metric_intervals.sta_metrics_s ?? 0),
 		Manufacturer: ident.manufacturer_name ?? "",
 		SerialNumber: ident.serial_number ?? "",
 		ManufacturerModel: ident.manufacturer_model ?? "",

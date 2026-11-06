@@ -1,3 +1,3 @@
 // Stand-in for the native wde module, which modules/easymesh/objectdata.uc
-// loads; the functions that the tests reach do not call it.
-return {};
+// loads; a device with no DSCP map is the only call that the tests reach.
+return { dscp_map_to_hex: () => "" };
