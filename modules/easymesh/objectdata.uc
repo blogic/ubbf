@@ -1025,6 +1025,16 @@ function txpower_limit_get(txpower_entries, ruid, opclass) {
 	return null;
 }
 
+function policy_radios_by_ruid(policy_part) {
+	let by_ruid = {};
+
+	for (let r in policy_part?.radios ?? [])
+		if (r.radio_unique_identifier)
+			by_ruid[r.radio_unique_identifier] = r;
+
+	return by_ruid;
+}
+
 /**
  * Creates a factory function for converting radio data to TR-181 format.
  *
@@ -1038,18 +1048,13 @@ function radio_to_object_factory(api_data, al_mac, easymesh, device_cfg) {
 	let radio_idx = 0;
 
 	let merged_policy = api_data?.policy?.policy ?? {};
-	let cfg_steer = merged_policy.steering;
 	let cfg_mr = merged_policy.metric_reporting;
+	let cfg_steer_by_ruid = policy_radios_by_ruid(merged_policy.steering);
+	let cfg_mr_by_ruid = policy_radios_by_ruid(cfg_mr);
 
 	let user_policy = easymesh?.ConfigPolicy?.[al_mac] ?? easymesh?.ConfigPolicy?.['*'] ?? {};
-	let user_steer_by_ruid = {};
-	for (let r in user_policy.steering?.radios ?? [])
-		if (r.radio_unique_identifier)
-			user_steer_by_ruid[r.radio_unique_identifier] = r;
-	let user_mr_by_ruid = {};
-	for (let r in user_policy.metric_reporting?.radios ?? [])
-		if (r.radio_unique_identifier)
-			user_mr_by_ruid[r.radio_unique_identifier] = r;
+	let user_steer_by_ruid = policy_radios_by_ruid(user_policy.steering);
+	let user_mr_by_ruid = policy_radios_by_ruid(user_policy.metric_reporting);
 
 	return function(radio_bss) {
 		radio_idx++;
@@ -1064,6 +1069,8 @@ function radio_to_object_factory(api_data, al_mac, easymesh, device_cfg) {
 		let multiap = raw_data?.multiap_policy;
 		let user_steer_radio = user_steer_by_ruid[ruid];
 		let user_mr_radio = user_mr_by_ruid[ruid];
+		let cfg_steer_radio = cfg_steer_by_ruid[ruid];
+		let cfg_mr_radio = cfg_mr_by_ruid[ruid];
 		let combined_fb = advanced_caps.combined_front_back ? "true" : "false";
 		let onboard_protocol = raw_data?.config_method ? uc(raw_data.config_method) : "";
 		let scan_results = api_data?.scan_results?.radios?.[ruid] ?? [];
@@ -1095,17 +1102,17 @@ function radio_to_object_factory(api_data, al_mac, easymesh, device_cfg) {
 			ReceiveOther: sprintf('%d', radio_survey?.receive_other ?? 0),
 			TrafficSeparationCombinedFronthaul: combined_fb,
 			TrafficSeparationCombinedBackhaul: combined_fb,
-			SteeringPolicy: sprintf('%d', user_steer_radio?.steering_policy ?? cfg_steer?.policy ?? multiap?.steering_policy ?? 0),
-			ChannelUtilizationThreshold: sprintf('%d', user_steer_radio?.channel_utilization_threshold ?? cfg_steer?.channel_utilization_threshold ?? multiap?.channel_utilization_threshold ?? 0),
-			RCPISteeringThreshold: sprintf('%d', user_steer_radio?.rcpi_steering_threshold ?? cfg_steer?.rcpi_threshold ?? multiap?.rcpi_steering_threshold ?? 0),
-			STAReportingRCPIThreshold: sprintf('%d', user_mr_radio?.sta_metrics_reporting_rcpi_threshold ?? cfg_mr?.rcpi_threshold ?? multiap?.sta_metrics_reporting_rcpi_threshold ?? 0),
-			STAReportingRCPIHysteresisMarginOverride: sprintf('%d', user_mr_radio?.sta_metrics_reporting_rcpi_hysteresis_margin_override ?? cfg_mr?.rcpi_hysteresis ?? multiap?.sta_metrics_reporting_rcpi_hysteresis_margin_override ?? 0),
-			ChannelUtilizationReportingThreshold: sprintf('%d', user_mr_radio?.ap_metrics_channel_utilization_reporting_threshold ?? cfg_mr?.channel_utilization_threshold ?? multiap?.ap_metrics_channel_utilization_reporting_threshold ?? 0),
-			AssociatedSTATrafficStatsInclusionPolicy: (user_mr_radio?.associated_sta_traffic_stats_inclusion_policy ?? cfg_mr?.include_traffic_stats ?? multiap?.associated_sta_traffic_stats_inclusion_policy) ? "true" : "false",
-			AssociatedSTALinkMetricsInclusionPolicy: (user_mr_radio?.associated_sta_link_metrics_inclusion_policy ?? cfg_mr?.include_link_metrics ?? multiap?.associated_sta_link_metrics_inclusion_policy) ? "true" : "false",
+			SteeringPolicy: sprintf('%d', user_steer_radio?.steering_policy ?? cfg_steer_radio?.steering_policy ?? multiap?.steering_policy ?? 0),
+			ChannelUtilizationThreshold: sprintf('%d', user_steer_radio?.channel_utilization_threshold ?? cfg_steer_radio?.channel_utilization_threshold ?? multiap?.channel_utilization_threshold ?? 0),
+			RCPISteeringThreshold: sprintf('%d', user_steer_radio?.rcpi_steering_threshold ?? cfg_steer_radio?.rcpi_steering_threshold ?? multiap?.rcpi_steering_threshold ?? 0),
+			STAReportingRCPIThreshold: sprintf('%d', user_mr_radio?.sta_metrics_reporting_rcpi_threshold ?? cfg_mr_radio?.sta_metrics_reporting_rcpi_threshold ?? multiap?.sta_metrics_reporting_rcpi_threshold ?? 0),
+			STAReportingRCPIHysteresisMarginOverride: sprintf('%d', user_mr_radio?.sta_metrics_reporting_rcpi_hysteresis_margin_override ?? cfg_mr_radio?.sta_metrics_reporting_rcpi_hysteresis_margin_override ?? multiap?.sta_metrics_reporting_rcpi_hysteresis_margin_override ?? 0),
+			ChannelUtilizationReportingThreshold: sprintf('%d', user_mr_radio?.ap_metrics_channel_utilization_reporting_threshold ?? cfg_mr_radio?.ap_metrics_channel_utilization_reporting_threshold ?? multiap?.ap_metrics_channel_utilization_reporting_threshold ?? 0),
+			AssociatedSTATrafficStatsInclusionPolicy: (user_mr_radio?.associated_sta_traffic_stats_inclusion_policy ?? cfg_mr_radio?.associated_sta_traffic_stats_inclusion_policy ?? cfg_mr?.associated_sta_traffic_stats_inclusion_policy ?? multiap?.associated_sta_traffic_stats_inclusion_policy) ? "true" : "false",
+			AssociatedSTALinkMetricsInclusionPolicy: (user_mr_radio?.associated_sta_link_metrics_inclusion_policy ?? cfg_mr_radio?.associated_sta_link_metrics_inclusion_policy ?? cfg_mr?.associated_sta_link_metrics_inclusion_policy ?? multiap?.associated_sta_link_metrics_inclusion_policy) ? "true" : "false",
 			ChipsetVendor: api_data?.capability?.device_inventory?.radios?.[ruid]?.chipset_vendor ?? "",
 			X_UBBF_OnboardProtocol: onboard_protocol,
-			APMetricsWiFi6: (user_mr_radio?.associated_wifi6_sta_status_inclusion_policy ?? cfg_mr?.wifi6_metrics ?? multiap?.associated_wifi6_sta_status_inclusion_policy) ? "true" : "false",
+			APMetricsWiFi6: (user_mr_radio?.associated_wifi6_sta_status_inclusion_policy ?? cfg_mr_radio?.associated_wifi6_sta_status_inclusion_policy ?? cfg_mr?.associated_wifi6_sta_status_inclusion_policy ?? multiap?.associated_wifi6_sta_status_inclusion_policy) ? "true" : "false",
 			MaxBSS: sprintf('%d', radio_caps?.max_bss_supported ?? 0),
 			Capabilities: capabilities_to_object(radio_caps, advanced_caps, akm_caps, wifi6_caps, raw_data,
 				wifi7_radio_caps_find(api_data?.capability?.wifi7_capabilities, ruid),
@@ -1687,10 +1694,10 @@ function device_to_object(device, api_data, is_controller, easymesh, device_cfg,
 		PrioritizationSupport: caps.supports_prioritization ? "true" : "false",
 		MaxVIDs: sprintf('%d', caps.max_unique_vids ?? 0),
 		CountryCode: device.country_code ?? "",
-		LocalSteeringDisallowedSTAList: join(',', policy?.steering?.local_steering_disallowed ?? []),
-		BTMSteeringDisallowedSTAList: join(',', policy?.steering?.btm_steering_disallowed ?? []),
+		LocalSteeringDisallowedSTAList: join(',', policy?.steering?.local_steering_disallowed_sta ?? []),
+		BTMSteeringDisallowedSTAList: join(',', policy?.steering?.btm_steering_disallowed_sta ?? []),
 		DFSEnable: "false",
-		ReportIndependentScans: policy?.channel_scan_reporting?.report_independent_scans ? "true" : "false",
+		ReportIndependentScans: policy?.channel_scan_reporting?.report_independent_channel_scans ? "true" : "false",
 		MaxUnsuccessfulAssociationReportingRate: sprintf('%d', policy?.unsuccessful_association?.max_reporting_rate ?? 0),
 		STASteeringState: policy?.agent_steering?.disallowed ? "true" : "false",
 		CoordinatedCACAllowed: policy?.steering?.coordinated_cac_allowed ? "true" : "false",
