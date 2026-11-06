@@ -1196,7 +1196,6 @@ function client_capabilities_get(associated_clients, ubus_object) {
 				vht_capabilities: spatial_streams_adjust(client.vht_capabilities),
 				security: client.security,
 				beacon_report: client.beacon_report,
-				power_management: client.power_management,
 				mbo: client.mbo
 			};
 
@@ -1210,7 +1209,6 @@ function client_capabilities_get(associated_clients, ubus_object) {
 					caps.vht_capabilities ??= spatial_streams_adjust(client_data.vht_capabilities);
 					caps.security ??= client_data.security;
 					caps.beacon_report ??= client_data.beacon_report;
-					caps.power_management ??= client_data.power_management;
 					caps.mbo ??= client_data.mbo;
 				}
 			}
