@@ -19,9 +19,6 @@ const sta_by_instance = em.sta_by_instance;
 
 const ubus = require('ubus');
 const uloop = require('uloop');
-const fs = require('fs');
-const unlink = fs.unlink;
-const writefile = fs.writefile;
 
 let device_by_instance;
 
@@ -1035,12 +1032,13 @@ function agent_provision_save(stored, disable_dpp) {
 function agent_reset_persist(stored, disable_dpp) {
 	agent_provision_save(stored, disable_dpp);
 
+	let state = null;
 	if (disable_dpp)
-		writefile(AGENT_STATE_FILE, '{"dpp_disabled":true}\n');
+		state = '{"dpp_disabled":true}\n';
 	else if (stored)
-		writefile(AGENT_STATE_FILE, sprintf('%J\n', { dpp_state: { bootstrap_key: stored } }));
-	else
-		unlink(AGENT_STATE_FILE);
+		state = sprintf('%J\n', { dpp_state: { bootstrap_key: stored } });
+
+	ubbf.write_file_atomic(AGENT_STATE_FILE, state, 0600);
 }
 
 /**
