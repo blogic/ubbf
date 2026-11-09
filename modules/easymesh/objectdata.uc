@@ -214,30 +214,63 @@ function spatial_reuse_to_object(sr) {
 	};
 }
 
+function unassoc_sta_newer(entry, held) {
+	if (entry._measured != held._measured)
+		return entry._measured > held._measured;
+
+	return entry._current && !held._current;
+}
+
 /**
- * Filters unassociated STA metrics for a specific radio by opclass.
+ * Filters unassociated STA metrics for a specific radio by opclass, one
+ * entry per station.
+ *
+ * TR-181 allows one UnassociatedSTA row per MACAddress, with the class and
+ * channel of the last detection, while umapd keeps a station's measurement
+ * in each class it was asked in. The measurement taken last wins: the report
+ * timestamp less Time_Delta (EasyMesh 6.1 Table 49). On a tie the class the
+ * radio's Operating Channel Report names wins, then the first one seen.
  *
  * @param {object} unassoc_metrics - Device-level unassociated STA metrics keyed by opclass
  * @param {object} raw_data - Raw radio capability data with opclass info
- * @returns {array} Flattened array of unassociated STA entries for this radio
+ * @returns {array} Unassociated STA entries for this radio, one per station
  */
 function unassoc_sta_entries_get(unassoc_metrics, raw_data) {
 	if (!unassoc_metrics)
 		return [];
 
 	let radio_opclasses = {};
+	let current_opclasses = {};
 	for (let oc in raw_data?.basic_capabilities?.opclasses_supported ?? [])
 		radio_opclasses[oc.opclass] = true;
-	for (let oc in raw_data?.operating_classes ?? [])
+	for (let oc in raw_data?.operating_classes ?? []) {
 		radio_opclasses[oc.class] = true;
+		current_opclasses[oc.class] = true;
+	}
 
 	let entries = [];
+	let entry_by_mac = {};
 	for (let opclass_str, data in unassoc_metrics) {
 		let opclass = int(opclass_str);
 		if (!radio_opclasses[opclass])
 			continue;
-		for (let sta in data.sta_entries ?? [])
-			push(entries, { ...sta, _opclass: opclass });
+
+		for (let sta in data.sta_entries ?? []) {
+			let entry = {
+				...sta,
+				_opclass: opclass,
+				_measured: (sta.timestamp ?? 0) - (sta.time_delta ?? 0),
+				_current: current_opclasses[opclass] ?? false
+			};
+			let idx = entry_by_mac[sta.mac_address];
+
+			if (idx == null) {
+				entry_by_mac[sta.mac_address] = length(entries);
+				push(entries, entry);
+			}
+			else if (unassoc_sta_newer(entry, entries[idx]))
+				entries[idx] = entry;
+		}
 	}
 	return entries;
 }
