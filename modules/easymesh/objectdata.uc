@@ -1161,7 +1161,7 @@ function radio_to_object_factory(api_data, al_mac, easymesh, device_cfg) {
 			UnassociatedSTANumberOfEntries: sprintf('%d', length(unassoc_entries)),
 			UnassociatedSTA: ubbf.enumerate_instances(unassoc_entries, (sta) => ({
 				MACAddress: sta.mac_address ?? "",
-				SignalStrength: sprintf('%d', sta.rcpi_uplink ?? 0),
+				SignalStrength: sprintf('%d', sta.uplink_rcpi ?? 0),
 				OperatingClass: sprintf('%d', sta._opclass ?? 0),
 				Channel: sprintf('%d', sta.channel ?? 0)
 			})),
