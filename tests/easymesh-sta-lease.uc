@@ -124,6 +124,13 @@ describe('DataElements STA and STAMLD addresses and name from the leases', () =>
 		assert.match([ '', '', '' ], stamld_read());
 	});
 
+	it('leaves out a dnsmasq lease whose expiry is now', () => {
+		// dnsmasq drops a lease at now >= expires.
+		leases_write([ [ time(), STA, '192.168.1.102', 'laptop' ] ]);
+
+		assert.match([ '', '', '' ], sta_read());
+	});
+
 	it('keeps a dnsmasq lease of expiry 0', () => {
 		leases_write([ [ 0, STA, '192.168.1.102', 'laptop' ] ]);
 
