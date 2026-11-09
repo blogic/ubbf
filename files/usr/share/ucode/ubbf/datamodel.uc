@@ -14,6 +14,7 @@ import {
 	hosts_state_get, hosts_inactive_remove
 } from 'ubbf.utils.hosts';
 import { ifstats_get, ifstats_basic_get, ifstats_reset } from 'ubbf.utils.ifstats';
+import { ipv6_leases_get } from 'ubbf.utils.dhcp';
 import { netifd_status_get } from 'ubbf.utils.netifd';
 import { interface_resolve } from 'ubbf.utils.path';
 import { popen_async, task_run, TASK_MARGIN_S } from 'ubbf.utils.process';
@@ -327,6 +328,7 @@ function module_api_build(name) {
 				hosts_state_get, hosts_inactive_remove
 			},
 			ifstats: { ifstats_get, ifstats_basic_get, ifstats_reset },
+			dhcp: { ipv6_leases_get },
 			netifd: { netifd_status_get },
 			path: { interface_resolve, path_kind: (p) => model_path_known(p) },
 			process: { popen_async, task_run, TASK_MARGIN_S },

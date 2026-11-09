@@ -12,6 +12,7 @@ const RUID = '02:00:00:00:01:01';
 const api = {
 	ubbf,
 	utils: {
+		dhcp: { ipv6_leases_get: () => ({}) },
 		'wifi-dataelements': {
 			ubus_topology_get: () => ({}),
 			radios_bss_sort: () => [ { radio_unique_identifier: RUID, bss: [] } ],

@@ -23,6 +23,7 @@ const api = {
 	operations: {},
 	schema: (k) => k,
 	utils: {
+		dhcp: { ipv6_leases_get: () => ({}) },
 		'wifi-dataelements': {
 			topology_devices_get: () => topo,
 			local_device_get: () => ({ al_address: 'local' }),

@@ -9,6 +9,7 @@ import * as ubbf from 'ubbf';
 const api = {
 	ubbf,
 	utils: {
+		dhcp: { ipv6_leases_get: () => ({}) },
 		'wifi-dataelements': {
 			ubus_topology_get: () => ({}),
 			radios_bss_sort: () => [],

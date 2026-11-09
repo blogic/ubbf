@@ -12,6 +12,7 @@ const sta_he_caps_from_frame_body = ubbf.sta_he_caps_from_frame_body;
 const ubus_topology_get = wifi_dataelements.ubus_topology_get;
 const radios_bss_sort = wifi_dataelements.radios_bss_sort;
 const client_query_get = wifi_dataelements.client_query_get;
+const ipv6_leases_get = ubbf_module.utils.dhcp.ipv6_leases_get;
 
 const wde_lib = require('wde');
 
@@ -759,9 +760,43 @@ function sta_by_instance(bss, instance) {
 	return keyed_item(sta_table(bss?.mac_address), bss?.associated_clients, sta_key, instance);
 }
 
+/**
+ * Reads the DHCP leases that this device serves, once per Get of a device.
+ *
+ * @returns {object} `v4`: the dnsmasq leases by upper-case MAC, `v6`: the
+ *   addresses of the odhcpd leases by upper-case MAC
+ */
+function sta_leases_get() {
+	return { v4: ubbf.hosts_leases_by_mac(), v6: ipv6_leases_get() };
+}
+
+/**
+ * Returns the addresses and the name that the leases give a station MAC or
+ * a client MLD MAC; "" where no lease gives one.
+ *
+ * @param {object} leases - Result of sta_leases_get()
+ * @param {string} mac - Station or MLD MAC address, in any case
+ * @returns {object} `ipv4`, `ipv6` and `hostname`
+ */
+function sta_lease_fields(leases, mac) {
+	let key = uc(mac);
+	let v4 = leases.v4[key];
+
+	// dnsmasq writes expiry 0 for a lease that never expires.
+	if (v4?.expiry && v4.expiry <= time())
+		v4 = null;
+
+	return {
+		ipv4: v4?.ip ?? "",
+		ipv6: leases.v6[key]?.[0] ?? "",
+		hostname: v4?.hostname ?? ""
+	};
+}
+
 function sta_to_object_factory(api_data, bssid) {
 	return function(sta) {
 		let sta_mac = sta.mac_address ?? sta.mac ?? "";
+		let lease = sta_lease_fields(api_data.sta_leases, sta_mac);
 
 		let link = sta.link_metrics ?? {};
 		let traffic = sta.traffic_stats ?? {};
@@ -806,9 +841,9 @@ function sta_to_object_factory(api_data, bssid) {
 			RetransCount: counter_format(traffic.retransmission_count),
 			MeasurementReport: meas.MeasurementReport ?? "",
 			NumberOfMeasureReports: meas.NumberOfMeasureReports ?? "0",
-			IPV4Address: "",
-			IPV6Address: "",
-			Hostname: "",
+			IPV4Address: lease.ipv4,
+			IPV6Address: lease.ipv6,
+			Hostname: lease.hostname,
 			CellularDataPreference: cellular_data_pref_name(sta_caps.mbo?.cellular_data_preference),
 			ReAssociationDelay: "0",
 			SleepMode: "",
@@ -1479,14 +1514,16 @@ function stamld_affiliated_sta_to_object(s) {
  *
  * @param {object|null} t2lm_entry - T2LM entry for this AP MLD
  * @param {object} link_to_bssid - linkid-to-BSSID lookup
+ * @param {object} leases - Result of sta_leases_get()
  * @returns {function} converter function (sta) => TR-181 STAMLD object
  */
-function stamld_to_object_factory(t2lm_entry, link_to_bssid) {
+function stamld_to_object_factory(t2lm_entry, link_to_bssid, leases) {
 	let t2lm_neg = t2lm_entry?.tid_to_link_mapping_negotiation ? "true" : "false";
 
 	return function(sta) {
 		let affiliated = sta.affiliated_stas ?? [];
 		let sta_mac = sta.sta_mld_mac_addr ?? "";
+		let lease = sta_lease_fields(leases, sta_mac);
 
 		let sta_tid_link_map = [];
 		for (let m in t2lm_entry?.mappings ?? [])
@@ -1496,6 +1533,9 @@ function stamld_to_object_factory(t2lm_entry, link_to_bssid) {
 
 		return {
 			MLDMACAddress: sta_mac,
+			Hostname: lease.hostname,
+			IPv4Address: lease.ipv4,
+			IPv6Address: lease.ipv6,
 			IsbSTA: "false",
 			WiFi7Capabilities: {
 				EMLMRSupport: sta.emlmr ? "true" : "false",
@@ -1592,7 +1632,7 @@ function apmld_to_object_factory(api_data) {
 			},
 			STAMLDNumberOfEntries: sprintf('%d', length(sta_mlds)),
 			STAMLD: ubbf.enumerate_instances(sta_mlds,
-				stamld_to_object_factory(t2lm_entry, link_to_bssid)),
+				stamld_to_object_factory(t2lm_entry, link_to_bssid, api_data.sta_leases)),
 			LinkToOpClassMapNumberOfEntries: sprintf('%d', length(link_opclass)),
 			LinkToOpClassMap: ubbf.enumerate_instances(link_opclass, (e) => e)
 		};
@@ -1676,6 +1716,7 @@ function device_to_object(device, api_data, is_controller, easymesh, device_cfg,
 	api_data.backhaul_bss_configuration = device.map?.backhaul_bss_configuration ?? [];
 	api_data.association_status = device.map?.association_status ?? [];
 	api_data.qos_management_descriptors = device.map?.qos_management_descriptors ?? [];
+	api_data.sta_leases = sta_leases_get();
 	let ident = device.identification ?? {};
 	let caps = device.map?.capabilities ?? {};
 	let capability = api_data.capability ?? {};

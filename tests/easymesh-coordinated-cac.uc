@@ -18,6 +18,7 @@ const api = {
 	model: {},
 	operations: {},
 	utils: {
+		dhcp: { ipv6_leases_get: () => ({}) },
 		'wifi-dataelements': {
 			topology_devices_get: () => [ { al_address: AL } ],
 			local_device_get: () => ({ al_address: AL }),
