@@ -230,6 +230,8 @@ function unassoc_sta_newer(entry, held) {
  * in each class it was asked in. The measurement taken last wins: the report
  * timestamp less Time_Delta (EasyMesh 6.1 Table 49). On a tie the class the
  * radio's Operating Channel Report names wins, then the first one seen.
+ * An entry without an uplink RCPI takes no part: umapd gives null for a
+ * reserved RCPI, which the recipient ignores (EasyMesh 6.1 3.1.2).
  *
  * @param {object} unassoc_metrics - Device-level unassociated STA metrics keyed by opclass
  * @param {object} raw_data - Raw radio capability data with opclass info
@@ -256,6 +258,9 @@ function unassoc_sta_entries_get(unassoc_metrics, raw_data) {
 			continue;
 
 		for (let sta in data.sta_entries ?? []) {
+			if (sta.uplink_rcpi == null)
+				continue;
+
 			let entry = {
 				...sta,
 				_opclass: opclass,
@@ -1161,7 +1166,7 @@ function radio_to_object_factory(api_data, al_mac, easymesh, device_cfg) {
 			UnassociatedSTANumberOfEntries: sprintf('%d', length(unassoc_entries)),
 			UnassociatedSTA: ubbf.enumerate_instances(unassoc_entries, (sta) => ({
 				MACAddress: sta.mac_address ?? "",
-				SignalStrength: sprintf('%d', sta.uplink_rcpi ?? 0),
+				SignalStrength: sprintf('%d', sta.uplink_rcpi),
 				OperatingClass: sprintf('%d', sta._opclass ?? 0),
 				Channel: sprintf('%d', sta.channel ?? 0)
 			})),

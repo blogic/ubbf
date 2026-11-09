@@ -1,7 +1,7 @@
 // Host test of SignalStrength of Device.WiFi.DataElements.Network.Device.{i}.
 // Radio.{i}.UnassociatedSTA.{i} in modules/easymesh: the row carries the
 // uplink RCPI that umapd's get_agent exports as uplink_rcpi. umapd gives null
-// for an RCPI in the reserved range, and the row then reads 0.
+// for an RCPI in the reserved range, and such an entry gives no row.
 'use strict';
 
 import { describe, it, assert, beforeEach } from 'utest';
@@ -40,15 +40,21 @@ const em = { easymesh_model: {}, al_index_map: () => ({}), ap_by_ssid_ref_find: 
 const DIR = sourcepath(0, true) + '/../modules/easymesh';
 include(DIR + '/objectdata.uc', { ubbf_module: api, em });
 
-// The entry as umapd's get_agent exports it (linkmetric.uc unassoc_sta_metrics_store()).
-function signal_read(sta_entries) {
+// The entries as umapd's get_agent exports them (linkmetric.uc unassoc_sta_metrics_store()),
+// keyed by operating class.
+function signal_read_classes(unassoc_sta_metrics) {
+	const opclasses_supported = map(keys(unassoc_sta_metrics), (oc) => ({ opclass: int(oc) }));
 	const capability = {
-		unassoc_sta_metrics: { '115': { timestamp: T, sta_entries } },
-		radios: { [RUID]: { basic_capabilities: { opclasses_supported: [ { opclass: 115 } ] } } }
+		unassoc_sta_metrics,
+		radios: { [RUID]: { basic_capabilities: { opclasses_supported } } }
 	};
 	const dev = em.device_to_object({ al_address: AL }, { capability }, false, {}, {}, {});
 
 	return map(values(dev.Radio['1'].UnassociatedSTA ?? {}), (s) => [ s.MACAddress, s.SignalStrength ]);
+}
+
+function signal_read(sta_entries) {
+	return signal_read_classes({ '115': { timestamp: T, sta_entries } });
 }
 
 describe('Radio UnassociatedSTA SignalStrength', () => {
@@ -64,9 +70,35 @@ describe('Radio UnassociatedSTA SignalStrength', () => {
 		]));
 	});
 
-	it('reads 0 where umapd gives no RCPI', () => {
-		assert.match([ [ '0a:00:00:00:00:03', '0' ] ], signal_read([
-			{ mac_address: '0a:00:00:00:00:03', channel: 36, time_delta: 0, uplink_rcpi: null, timestamp: T }
+	it('carries an RCPI of 0', () => {
+		assert.match([ [ '0a:00:00:00:00:04', '0' ] ], signal_read([
+			{ mac_address: '0a:00:00:00:00:04', channel: 36, time_delta: 0, uplink_rcpi: 0, timestamp: T }
 		]));
+	});
+
+	it('gives no row where umapd gives no RCPI', () => {
+		assert.match([ [ '0a:00:00:00:00:01', '180' ] ], signal_read([
+			{ mac_address: '0a:00:00:00:00:03', channel: 36, time_delta: 0, uplink_rcpi: null, timestamp: T },
+			{ mac_address: '0a:00:00:00:00:01', channel: 36, time_delta: 0, uplink_rcpi: 180, timestamp: T }
+		]));
+	});
+
+	it('keeps an older RCPI where a newer reading has none', () => {
+		assert.match([ [ '0a:00:00:00:00:03', '150' ] ], signal_read_classes({
+			'115': { timestamp: T, sta_entries: [
+				{ mac_address: '0a:00:00:00:00:03', channel: 36, time_delta: 0, uplink_rcpi: 150, timestamp: T }
+			] },
+			'118': { timestamp: T + 5000, sta_entries: [
+				{ mac_address: '0a:00:00:00:00:03', channel: 52, time_delta: 0, uplink_rcpi: null, timestamp: T + 5000 }
+			] }
+		}));
+		assert.match([ [ '0a:00:00:00:00:03', '150' ] ], signal_read_classes({
+			'118': { timestamp: T + 5000, sta_entries: [
+				{ mac_address: '0a:00:00:00:00:03', channel: 52, time_delta: 0, uplink_rcpi: null, timestamp: T + 5000 }
+			] },
+			'115': { timestamp: T, sta_entries: [
+				{ mac_address: '0a:00:00:00:00:03', channel: 36, time_delta: 0, uplink_rcpi: 150, timestamp: T }
+			] }
+		}));
 	});
 });
