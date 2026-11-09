@@ -7,3 +7,6 @@ export function cursor() {
 		foreach: () => null
 	};
 };
+
+// The require() of a handler finds this instance, as ubus.uc explains.
+modules.uci ??= { cursor };
