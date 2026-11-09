@@ -41,16 +41,24 @@ const DIR = sourcepath(0, true) + '/../modules/easymesh';
 include(DIR + '/objectdata.uc', { ubbf_module: api, em });
 
 // The entries as umapd's get_agent exports them (linkmetric.uc unassoc_sta_metrics_store()),
-// keyed by operating class.
-function signal_read_classes(unassoc_sta_metrics) {
+// keyed by operating class. operating_classes is the radio's Operating Channel Report.
+function radio_read(unassoc_sta_metrics, operating_classes) {
 	const opclasses_supported = map(keys(unassoc_sta_metrics), (oc) => ({ opclass: int(oc) }));
 	const capability = {
 		unassoc_sta_metrics,
-		radios: { [RUID]: { basic_capabilities: { opclasses_supported } } }
+		radios: { [RUID]: { basic_capabilities: { opclasses_supported }, operating_classes } }
 	};
 	const dev = em.device_to_object({ al_address: AL }, { capability }, false, {}, {}, {});
 
-	return map(values(dev.Radio['1'].UnassociatedSTA ?? {}), (s) => [ s.MACAddress, s.SignalStrength ]);
+	return dev.Radio['1'];
+}
+
+function signal_rows(radio) {
+	return map(values(radio.UnassociatedSTA ?? {}), (s) => [ s.MACAddress, s.SignalStrength ]);
+}
+
+function signal_read_classes(unassoc_sta_metrics) {
+	return signal_rows(radio_read(unassoc_sta_metrics));
 }
 
 function signal_read(sta_entries) {
@@ -77,10 +85,23 @@ describe('Radio UnassociatedSTA SignalStrength', () => {
 	});
 
 	it('gives no row where umapd gives no RCPI', () => {
-		assert.match([ [ '0a:00:00:00:00:01', '180' ] ], signal_read([
+		const radio = radio_read({ '115': { timestamp: T, sta_entries: [
 			{ mac_address: '0a:00:00:00:00:03', channel: 36, time_delta: 0, uplink_rcpi: null, timestamp: T },
 			{ mac_address: '0a:00:00:00:00:01', channel: 36, time_delta: 0, uplink_rcpi: 180, timestamp: T }
-		]));
+		] } });
+
+		assert.match([ [ '0a:00:00:00:00:01', '180' ] ], signal_rows(radio));
+		assert.match('1', radio.UnassociatedSTANumberOfEntries);
+	});
+
+	it('gives no row where umapd gives no RCPI in the class of the Operating Channel Report', () => {
+		const radio = radio_read({ '115': { timestamp: T, sta_entries: [
+			{ mac_address: '0a:00:00:00:00:03', channel: 36, time_delta: 0, uplink_rcpi: null, timestamp: T },
+			{ mac_address: '0a:00:00:00:00:01', channel: 36, time_delta: 0, uplink_rcpi: 180, timestamp: T }
+		] } }, [ { class: 115, channel: 36 } ]);
+
+		assert.match([ [ '0a:00:00:00:00:01', '180' ] ], signal_rows(radio));
+		assert.match('1', radio.UnassociatedSTANumberOfEntries);
 	});
 
 	it('keeps an older RCPI where a newer reading has none', () => {
