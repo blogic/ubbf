@@ -1,6 +1,7 @@
 // Host test of Device.IEEE1905.AL.NetworkTopology in modules/easymesh: Status
 // takes a value of its TR-181 enumeration, Available where umapd answers the
-// topology request and Incomplete where it does not, whatever Enable holds.
+// topology request and Incomplete where it does not, whatever Enable holds,
+// and MaxChangeLogEntries reads a value of its range unsignedInt(1:).
 'use strict';
 
 import { describe, it, assert } from 'utest';
@@ -65,5 +66,11 @@ describe('NetworkTopology Status', () => {
 
 	it('no answer and Enable is not set: Incomplete', () => {
 		assert.match('Incomplete', topology_read(null, null)?.Status);
+	});
+});
+
+describe('NetworkTopology MaxChangeLogEntries', () => {
+	it('reads 1 where the configuration holds no value', () => {
+		assert.match('1', topology_read(ANSWER, null)?.MaxChangeLogEntries);
 	});
 });

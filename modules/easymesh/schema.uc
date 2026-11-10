@@ -2377,7 +2377,7 @@ schemas.AL_NetworkTopology = {
     },
     defaults: {
         "Status": "",
-        "MaxChangeLogEntries": "0",
+        "MaxChangeLogEntries": "1",
         "LastChange": "",
         "IEEE1905DeviceNumberOfEntries": "0",
         "ChangeLogNumberOfEntries": "0"
