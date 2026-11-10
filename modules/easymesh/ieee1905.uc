@@ -530,7 +530,6 @@ function al_interface_get(ctx) {
 function network_topology_get(ctx) {
 	let topo = topology_get();
 	let devices = topo?.devices ?? [];
-	let enabled = ubbf.to_bool(ctx.config?.Enable);
 
 	let device_list = {};
 	for (let i = 0; i < length(devices); i++)
@@ -538,7 +537,7 @@ function network_topology_get(ctx) {
 
 	return {
 		...ubbf.ctx_config(ctx),
-		Status: (enabled && topo) ? "Available" : "Disabled",
+		Status: topo ? "Available" : "Incomplete",
 		IEEE1905DeviceNumberOfEntries: sprintf('%d', length(devices)),
 		ChangeLogNumberOfEntries: "0",
 		IEEE1905Device: device_list,
