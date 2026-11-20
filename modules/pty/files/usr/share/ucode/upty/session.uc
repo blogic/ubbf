@@ -361,6 +361,32 @@ function session_ca_write(pem) {
 }
 
 /**
+ * Applies a pinned session server to a start request. With server_url set,
+ * the request may name that URL or none, and dials it; a request naming
+ * another URL is refused. With ca_cert set as well, a CA certificate in the
+ * request is dropped, so the request cannot widen the trust either.
+ *
+ * @param {object} args - token, url, allow_insecure, ca_cert
+ * @param {object} cfg - The agent configuration
+ * @returns {object} `args`, the request to start; or the refusal, `error`
+ *   and `invalid`
+ */
+export function pin_apply(args, cfg) {
+	if (!length(cfg.server_url))
+		return { args };
+
+	if (length(args.url) && args.url != cfg.server_url)
+		return { error: `url refused, this device dials only ${cfg.server_url}`, invalid: true };
+
+	let pinned = { ...args, url: cfg.server_url };
+
+	if (length(cfg.ca_cert))
+		delete pinned.ca_cert;
+
+	return { args: pinned };
+};
+
+/**
  * Checks a start request.
  *
  * @param {object} args - token, url, allow_insecure, ca_cert
@@ -403,7 +429,12 @@ function start_check(args) {
 
 function start_handler(req) {
 	let cfg = config.get();
-	let args = req.args ?? {};
+	let pin = pin_apply(req.args ?? {}, cfg);
+
+	if (pin.error)
+		return pin;
+
+	let args = pin.args;
 	let refusal = start_check(args);
 
 	if (refusal)

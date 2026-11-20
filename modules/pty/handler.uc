@@ -64,9 +64,13 @@ function upty_get(ctx) {
 function start_session_handler(input, command_key, root) {
 	let args = {
 		token: input?.Token,
-		url: input?.URL,
 		command_key: command_key ?? ''
 	};
+
+	// A device that pins its session server takes a StartSession() without
+	// a URL
+	if (input?.URL)
+		args.url = input.URL;
 
 	if (input?.AllowInsecure != null) {
 		if (index(BOOLEAN_VALUES, lc(`${input.AllowInsecure}`)) < 0) {

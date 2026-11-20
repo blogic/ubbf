@@ -9,7 +9,7 @@ import { describe, it, assert } from 'utest';
 import * as uloop from 'uloop';
 import { readfile, unlink } from 'fs';
 import * as pty from 'upty.pty';
-import { url_check, token_valid, ca_check } from 'upty.session';
+import { url_check, token_valid, ca_check, pin_apply } from 'upty.session';
 
 const URL_CASES = [
 	[ 'wss://172.16.100.1:9446/ws/agent', null ],
@@ -52,6 +52,23 @@ describe('upty input checks', () => {
 		assert.match(null, ca_check('-----BEGIN CERTIFICATE-----\nMII\n-----END CERTIFICATE-----\n'));
 		assert.match(true, ca_check('MIIB') != null);
 		assert.match(true, ca_check('-----BEGIN CERTIFICATE-----' + sprintf('%070000d', 0)) != null);
+	});
+
+	it('dials only a pinned server', () => {
+		let pinned = 'wss://pty.example/ws/agent';
+		let ca = '-----BEGIN CERTIFICATE-----
+MII
+-----END CERTIFICATE-----
+';
+		let req = { token: 'abcdefghijklmnop', ca_cert: ca };
+
+		assert.match({ args: { ...req, url: 'wss://other.example/ws' } },
+			pin_apply({ ...req, url: 'wss://other.example/ws' }, { server_url: '', ca_cert: '' }), 'no pin');
+		assert.match({ args: { ...req, url: pinned } }, pin_apply(req, { server_url: pinned, ca_cert: '' }), 'URL left out');
+		assert.match({ args: { ...req, url: pinned } }, pin_apply({ ...req, url: '' }, { server_url: pinned, ca_cert: '' }), 'empty URL');
+		assert.match({ args: { ...req, url: pinned } }, pin_apply({ ...req, url: pinned }, { server_url: pinned, ca_cert: '' }), 'pinned URL');
+		assert.match(true, pin_apply({ ...req, url: 'wss://other.example/ws' }, { server_url: pinned, ca_cert: '' }).invalid, 'other URL');
+		assert.match(null, pin_apply(req, { server_url: pinned, ca_cert: '/etc/upty/ca.pem' }).args.ca_cert, 'pinned CA');
 	});
 
 	it('takes a window size of 1 to 65535 integer cells', () => {
