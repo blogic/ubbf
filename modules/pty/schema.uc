@@ -4,7 +4,8 @@
 // datamodel.uc and by schema-gen.uc; there is nothing to export from an
 // included file, so each definition is added to that object.
 //
-// StartSession() is a USP command; CWMP has no command for it.
+// StartSession() and StopSession() are USP commands; CWMP has no command
+// for them.
 
 schemas.UPTY = {
     path: 'Device.X_UBBF.UPTY.',
@@ -16,6 +17,11 @@ schemas.UPTY = {
             type: 'sync',
             input: ['Token', 'URL', 'AllowInsecure', 'CACert'],
             output: ['Status', 'Message']
+        },
+        'StopSession()': {
+            type: 'sync',
+            input: [],
+            output: ['Status']
         }
     },
     defaults: {
