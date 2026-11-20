@@ -16,6 +16,11 @@ config upty 'agent'
 	option ca_cert ''
 	option verify_peer '1'
 
+	# Pin the session server. When set, a session dials only this URL: a
+	# controller may leave the URL out, and a session naming another URL is
+	# refused. With ca_cert set too, a CA the controller sends is ignored.
+	option server_url ''
+
 	# Permit plaintext ws:// session URLs. A controller can ask for plaintext
 	# per session (AllowInsecure), but only while this is on. Off by default:
 	# plaintext exposes the token and the whole shell session on the wire.

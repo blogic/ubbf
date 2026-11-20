@@ -64,9 +64,13 @@ function upty_get(ctx) {
 function start_session_handler(input, command_key, root) {
 	let args = {
 		token: input?.Token,
-		url: input?.URL,
 		command_key: command_key ?? ''
 	};
+
+	// A device that pins its session server takes a StartSession() without
+	// a URL
+	if (input?.URL)
+		args.url = input.URL;
 
 	if (input?.AllowInsecure != null) {
 		if (index(BOOLEAN_VALUES, lc(`${input.AllowInsecure}`)) < 0) {
@@ -95,6 +99,28 @@ function start_session_handler(input, command_key, root) {
 	return { Status: 'Started', Message: '' };
 }
 
+/**
+ * Sync handler for Device.X_UBBF.UPTY.StopSession().
+ *
+ * Ends any open session, as a stop from the server would: the shell is
+ * killed and the agent returns to idle. A controller whose session server
+ * lost its sockets uses it to clear the sessions it can no longer reach.
+ *
+ * @param {object} input - No input
+ * @param {string} command_key - Command key of the controller
+ * @param {object} root - Configuration tree
+ * @returns {object} Status 'Stopped', 'Idle' when no session was open, or
+ *   'Error' when the agent is not reachable
+ */
+function stop_session_handler(input, command_key, root) {
+	let result = ubus.call('upty', 'stop', { reason: 'stopped by the controller' });
+
+	if (!result)
+		return { Status: 'Error' };
+
+	return { Status: result.stopped ? 'Stopped' : 'Idle' };
+}
+
 model['Device.X_UBBF.UPTY'] = {
 	schema: schema('UPTY'),
 	get: upty_get
@@ -103,4 +129,9 @@ model['Device.X_UBBF.UPTY'] = {
 operations['Device.X_UBBF.UPTY.StartSession()'] = {
 	type: 'sync',
 	handler: start_session_handler
+};
+
+operations['Device.X_UBBF.UPTY.StopSession()'] = {
+	type: 'sync',
+	handler: stop_session_handler
 };

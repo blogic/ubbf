@@ -1,5 +1,6 @@
 // Host test of the pty module handler: Status, Enable and LastError, and
-// the result of StartSession(). A ubus mock answers for the upty agent.
+// the results of StartSession() and StopSession(). A ubus mock answers for
+// the upty agent.
 'use strict';
 
 import { describe, it, assert, mock } from 'utest';
@@ -17,6 +18,7 @@ include('../modules/pty/handler.uc', { ubbf_module: api });
 
 const get = api.model['Device.X_UBBF.UPTY'].get;
 const start = api.operations['Device.X_UBBF.UPTY.StartSession()'].handler;
+const stop = api.operations['Device.X_UBBF.UPTY.StopSession()'].handler;
 
 const INPUT = { Token: 'abcdefghijklmnop', URL: 'wss://172.16.100.1:9446/ws/agent' };
 
@@ -82,5 +84,24 @@ describe('UPTY StartSession()', () => {
 	it('reports an Error while the agent is down', () => {
 		agent_set({ start: null });
 		assert.match('Error', start(INPUT, '', {}).Status);
+	});
+});
+
+describe('UPTY StopSession()', () => {
+	it('ends the open session through the agent', () => {
+		let calls = agent_set({ stop: { stopped: true } });
+		assert.match({ Status: 'Stopped' }, stop({}, 'key-2', {}));
+		assert.match(1, length(calls));
+		assert.match({ method: 'stop', args: { reason: 'stopped by the controller' } }, calls[0]);
+	});
+
+	it('is Idle when no session was open', () => {
+		agent_set({ stop: { stopped: false } });
+		assert.match({ Status: 'Idle' }, stop({}, '', {}));
+	});
+
+	it('reports an Error while the agent is down', () => {
+		agent_set({ stop: null });
+		assert.match({ Status: 'Error' }, stop({}, '', {}));
 	});
 });

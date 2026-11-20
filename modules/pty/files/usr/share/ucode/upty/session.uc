@@ -28,6 +28,12 @@ const CONNECT_TIMEOUT_MS = 15000;
 const PING_TIMEOUT_MS = 30000;
 const LIMIT_TICK_MS = 10000;
 
+// uwsc pings every PING_TIMEOUT_MS and restarts its idle timer on anything
+// received, the server's pongs included. A server that has answered nothing
+// for two pings is gone: a cut link or a vanished host sends no close, and
+// without this the shell would run on until TCP gives up, some 15 minutes.
+const SILENCE_TIMEOUT_MS = 2 * PING_TIMEOUT_MS + 5000;
+
 const TOKEN_RE = /^[A-Za-z0-9_-]{16,128}$/;
 
 // Scheme, an authority without user info, and a path; the token is appended
@@ -274,7 +280,7 @@ function callbacks_make(no) {
 		on_connect: (c) => current() && on_connect(),
 		on_recv: (c, message) => current() && on_recv(message),
 		on_drain: (c) => current() && on_drain(),
-		on_disconnect: (c) => current() && teardown('server closed the connection', state == 'connecting'),
+		on_disconnect: (c) => current() && teardown('server closed the connection or went silent', state == 'connecting'),
 		on_error: (c, error) => {
 			if (!current())
 				return;
@@ -355,6 +361,32 @@ function session_ca_write(pem) {
 }
 
 /**
+ * Applies a pinned session server to a start request. With server_url set,
+ * the request may name that URL or none, and dials it; a request naming
+ * another URL is refused. With ca_cert set as well, a CA certificate in the
+ * request is dropped, so the request cannot widen the trust either.
+ *
+ * @param {object} args - token, url, allow_insecure, ca_cert
+ * @param {object} cfg - The agent configuration
+ * @returns {object} `args`, the request to start; or the refusal, `error`
+ *   and `invalid`
+ */
+export function pin_apply(args, cfg) {
+	if (!length(cfg.server_url))
+		return { args };
+
+	if (length(args.url) && args.url != cfg.server_url)
+		return { error: `url refused, this device dials only ${cfg.server_url}`, invalid: true };
+
+	let pinned = { ...args, url: cfg.server_url };
+
+	if (length(cfg.ca_cert))
+		delete pinned.ca_cert;
+
+	return { args: pinned };
+};
+
+/**
  * Checks a start request.
  *
  * @param {object} args - token, url, allow_insecure, ca_cert
@@ -397,7 +429,12 @@ function start_check(args) {
 
 function start_handler(req) {
 	let cfg = config.get();
-	let args = req.args ?? {};
+	let pin = pin_apply(req.args ?? {}, cfg);
+
+	if (pin.error)
+		return pin;
+
+	let args = pin.args;
 	let refusal = start_check(args);
 
 	if (refusal)
@@ -417,9 +454,10 @@ function start_handler(req) {
 	let opts = {
 		connection_timeout: CONNECT_TIMEOUT_MS,
 		ping_timeout: PING_TIMEOUT_MS,
-		// An operator may legitimately stare at an idle prompt; the session
-		// limits below are ours to enforce, not the transport's
-		idle_timeout: 0,
+		// Not the operator's idle limit, which limits_check() enforces: an
+		// operator may stare at an idle prompt while the server still
+		// answers pings. This one ends a session whose server went silent.
+		idle_timeout: SILENCE_TIMEOUT_MS,
 		// A one-shot session must never redial on its own
 		reconnect_timeout: 0,
 		ssl_verify: cfg.verify_peer,
